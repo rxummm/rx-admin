@@ -1,0 +1,13 @@
+# 生产环境配置
+# 启动方式: java -jar rx-admin.jar --spring.profiles.active=prod
+
+mybatis-plus:
+  configuration:
+    # 生产环境使用 SLF4J 日志（可配日志级别控制），不直接输出 SQL 到控制台
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+logging:
+  level:
+    com.rx.admin: info
+    # 如需排查问题时临时开启 SQL 日志:
+    # com.rx.admin.mapper: debug

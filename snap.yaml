@@ -1,0 +1,178 @@
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - toolbar [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+          - generic [ref=e16]: sinhy
+        - generic [ref=e17]:
+          - generic [ref=e18]: 历代文学
+          - separator [ref=e19]
+          - generic [ref=e20]: 人文古迹
+          - separator [ref=e21]
+          - generic [ref=e22]: 辞典
+      - generic [ref=e23]:
+        - button "支持我们" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]:
+            - img [ref=e26]: 
+            - generic [ref=e27]: 支持我们
+        - separator [ref=e28]
+        - button "关注" [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]:
+            - img [ref=e31]: 
+            - text: 关注
+        - separator [ref=e32]
+        - button "登录" [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]:
+            - text: 登录
+            - img [ref=e36]: 
+  - main [ref=e38]:
+    - generic [ref=e39]:
+      - generic [ref=e41]:
+        - heading "历代文学" [level=5] [ref=e43]
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - tablist [ref=e49]:
+              - generic [ref=e50]:
+                - tab "人物" [selected] [ref=e51] [cursor=pointer]:
+                  - generic [ref=e55]: 人物
+                - tab "诗文" [ref=e56] [cursor=pointer]:
+                  - generic [ref=e60]: 诗文
+                - tab "词牌" [ref=e61] [cursor=pointer]:
+                  - generic [ref=e65]: 词牌
+                - tab "曲牌" [ref=e66] [cursor=pointer]:
+                  - generic [ref=e70]: 曲牌
+                - tab "文言文" [ref=e71] [cursor=pointer]:
+                  - generic [ref=e75]: 文言文
+                - tab "名句" [ref=e76] [cursor=pointer]:
+                  - generic [ref=e80]: 名句
+                - tab "成语" [ref=e81] [cursor=pointer]:
+                  - generic [ref=e85]: 成语
+                - tab "著作" [ref=e86] [cursor=pointer]:
+                  - generic [ref=e90]: 著作
+                - tab "名言 [英]" [ref=e91] [cursor=pointer]:
+                  - generic [ref=e94]:
+                    - generic [ref=e95]: 名言
+                    - generic [ref=e96]: "[英]"
+              - text:  
+            - generic [ref=e99]:
+              - generic [ref=e100]:
+                - generic [ref=e103]:
+                  - generic [ref=e104]:
+                    - generic [ref=e105]: 分类
+                    - generic [ref=e109]:
+                      - textbox [ref=e111]:
+                        - /placeholder: 请选择人物分类
+                      - generic [ref=e113] [cursor=pointer]: 
+                  - generic [ref=e114]:
+                    - generic [ref=e115]: 职业
+                    - generic [ref=e119]:
+                      - textbox [ref=e121]:
+                        - /placeholder: 请选择职业
+                      - generic [ref=e123] [cursor=pointer]: 
+                  - generic [ref=e125]:
+                    - generic [ref=e126]: 人物
+                    - generic [ref=e129]:
+                      - generic [ref=e131]: 
+                      - textbox [ref=e133]:
+                        - /placeholder: 姓名/字号/别名
+                    - button "查询" [ref=e134] [cursor=pointer]:
+                      - generic [ref=e136]: 查询
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - table [ref=e141]:
+                      - rowgroup [ref=e144]:
+                        - row "人物" [ref=e145]:
+                          - generic [ref=e148]: 人物
+                    - table [ref=e150]:
+                      - rowgroup [ref=e163]:
+                        - row "字号/别号 头衔 诗文(首) 词(首) 曲(首) 文言文(篇) 名句(条) 名言(条) 著作 简介 人物分类" [ref=e164]:
+                          - columnheader "字号/别号" [ref=e165]:
+                            - generic [ref=e167]: 字号/别号
+                          - columnheader "头衔" [ref=e168]:
+                            - generic [ref=e170]: 头衔
+                          - columnheader "诗文(首)" [ref=e171] [cursor=pointer]:
+                            - generic [ref=e172]:
+                              - generic [ref=e173]: 诗文(首)
+                              - generic [ref=e174]:
+                                - generic [ref=e175]: 
+                                - generic [ref=e176]: 
+                          - columnheader "词(首)" [ref=e177] [cursor=pointer]:
+                            - generic [ref=e178]:
+                              - generic [ref=e179]: 词(首)
+                              - generic [ref=e180]:
+                                - generic [ref=e181]: 
+                                - generic [ref=e182]: 
+                          - columnheader "曲(首)" [ref=e183] [cursor=pointer]:
+                            - generic [ref=e184]:
+                              - generic [ref=e185]: 曲(首)
+                              - generic [ref=e186]:
+                                - generic [ref=e187]: 
+                                - generic [ref=e188]: 
+                          - columnheader "文言文(篇)" [ref=e189] [cursor=pointer]:
+                            - generic [ref=e190]:
+                              - generic [ref=e191]: 文言文(篇)
+                              - generic [ref=e192]:
+                                - generic [ref=e193]: 
+                                - generic [ref=e194]: 
+                          - columnheader "名句(条)" [ref=e195] [cursor=pointer]:
+                            - generic [ref=e196]:
+                              - generic [ref=e197]: 名句(条)
+                              - generic [ref=e198]:
+                                - generic [ref=e199]: 
+                                - generic [ref=e200]: 
+                          - columnheader "名言(条)" [ref=e201] [cursor=pointer]:
+                            - generic [ref=e202]:
+                              - generic [ref=e203]: 名言(条)
+                              - generic [ref=e204]:
+                                - generic [ref=e205]: 
+                                - generic [ref=e206]: 
+                          - columnheader "著作" [ref=e207] [cursor=pointer]:
+                            - generic [ref=e208]:
+                              - generic [ref=e209]: 著作
+                              - generic [ref=e210]:
+                                - generic [ref=e211]: 
+                                - generic [ref=e212]: 
+                          - columnheader "简介" [ref=e213]:
+                            - generic [ref=e215]: 简介
+                          - columnheader "人物分类" [ref=e216]:
+                            - generic [ref=e218]: 人物分类
+                  - generic [ref=e220]:
+                    - generic:
+                      - table:
+                        - rowgroup
+                    - generic:
+                      - table:
+                        - rowgroup
+                - generic [ref=e226]:
+                  - generic [ref=e227]: 共1条
+                  - navigation [ref=e229]:
+                    - generic [ref=e230]:
+                      - button "Previous page" [disabled] [ref=e231]:
+                        - img [ref=e233]: 
+                      - button "1" [ref=e235] [cursor=pointer]:
+                        - generic [ref=e237]: "1"
+                      - button "Next page" [disabled] [ref=e238]:
+                        - img [ref=e240]: 
+              - img [ref=e242]
+          - generic [ref=e247]:
+            - tablist [ref=e249]:
+              - generic [ref=e250]:
+                - tab "中国" [selected] [ref=e251] [cursor=pointer]:
+                  - generic [ref=e253]: 中国
+                - tab "国外" [ref=e255] [cursor=pointer]:
+                  - generic [ref=e257]: 国外
+              - text:  
+            - tabpanel [ref=e260]:
+              - tabpanel [ref=e261]:
+                - img [ref=e263]
+      - generic [ref=e268]:
+        - img [ref=e269]
+        - generic [ref=e271]: 连接中
+  - contentinfo [ref=e273]:
+    - toolbar [ref=e274]:
+      - link "蜀ICP备2022015751号-4" [ref=e275] [cursor=pointer]:
+        - /url: https://beian.miit.gov.cn
+      - generic [ref=e276]: 免责声明
+      - generic [ref=e277]: 关于
+      - generic [ref=e278]: 开发者

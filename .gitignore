@@ -1,0 +1,31 @@
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+*.log.*
+backend*.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp / Backups
+temp/
+backups/
+.playwright-cli/
+
+# 本地开发配置（含敏感信息）
+application-local.yml
+
+# Node
+node_modules/
+ui/node_modules/
+ui/dist/

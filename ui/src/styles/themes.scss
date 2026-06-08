@@ -1,0 +1,53 @@
+/* ==========================================
+   RX Admin 主题色系统
+   支持5种预设主题色 + 暗黑模式
+   ========================================== */
+
+:root {
+  --rx-primary: #409EFF;
+  --rx-primary-light: #66b1ff;
+  --rx-primary-dark: #3a8ee6;
+  --rx-success: #67C23A;
+  --rx-warning: #E6A23C;
+  --rx-danger: #F56C6C;
+  --rx-info: #909399;
+}
+
+/* 绿色主题 */
+[data-theme="green"] {
+  --rx-primary: #67C23A;
+  --rx-primary-light: #85ce61;
+  --rx-primary-dark: #5daf34;
+}
+
+/* 紫色主题 */
+[data-theme="purple"] {
+  --rx-primary: #9C27B0;
+  --rx-primary-light: #ba68c8;
+  --rx-primary-dark: #7b1fa2;
+}
+
+/* 橙色主题 */
+[data-theme="orange"] {
+  --rx-primary: #E6A23C;
+  --rx-primary-light: #ebb563;
+  --rx-primary-dark: #cf9236;
+}
+
+/* 青色主题 */
+[data-theme="cyan"] {
+  --rx-primary: #00BCD4;
+  --rx-primary-light: #4dd0e1;
+  --rx-primary-dark: #0097a7;
+}
+
+/* Element Plus 主题色覆盖 */
+:root,
+[data-theme="green"],
+[data-theme="purple"],
+[data-theme="orange"],
+[data-theme="cyan"] {
+  --el-color-primary: var(--rx-primary);
+  --el-color-primary-light-3: var(--rx-primary-light);
+  --el-color-primary-dark-2: var(--rx-primary-dark);
+}

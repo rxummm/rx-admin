@@ -1,0 +1,68 @@
+@echo off
+REM 设置ACS jar包的路径
+SET ACS_JAR="C:\IBM\ACS\acsbundle.jar"
+
+REM 设置数据传输请求文件的路径
+SET DTFX_FILE="C:\MyDataTransfers\MyDownloadRequest.dtfx"
+
+REM 运行数据下载命令
+REM /PLUGIN=download 指定使用下载插件
+REM /FILE= 指定要运行的 .dtfx 文件
+java -jar %ACS_JAR% /PLUGIN=download /FILE=%DTFX_FILE%
+
+REM 检查命令执行结果（可选）
+if %ERRORLEVEL% equ 0 (
+    echo 数据下载成功完成。
+) else (
+    echo 数据下载失败，错误代码: %ERRORLEVEL%
+)
+
+REM 暂停以便查看结果（可选，如果需要立即关闭窗口，请删除此行）
+pause
+
+
+@echo off
+REM 设置 ACS 启动器和 .dtfx 文件的完整路径
+
+SET ACS_LAUNCHER="C:\Users\Public\IBM\ClientSolutions\Start_Programs\Windows_x86-64\acslaunch_win-64.exe"
+SET DTFX_FILE="C:\testacs.dtfx"
+
+REM 执行命令
+REM 参数 /plugin=download 和文件路径之间必须有一个空格
+%ACS_LAUNCHER% /plugin=download %DTFX_FILE%
+
+REM 检查命令执行结果（可选）
+if %ERRORLEVEL% equ 0 (
+    echo 数据下载成功完成。
+) else (
+    echo 数据下载失败，错误代码: %ERRORLEVEL%
+)
+
+REM 暂停以便查看结果（可选，如果需要立即关闭窗口，请删除此行）
+pause
+
+C:\scripts\run_acs_download.bat
+
+@echo off
+REM 使用 ACS 启动器执行下载
+"C:\Users\Public\IBM\ClientSolutions\Start_Programs\Windows_x86-64\acslaunch_win-64.exe" /plugin=download C:\testacs.dtfx
+exit 0
+
+
+
+RUNRMTCMD CMD('C:\scripts\run_acs_download.bat') RMTLOCNAME(MYPCNAME *IP)
+
+PGM
+
+DCL VAR(&PCNAME) TYPE(*CHAR) LEN(15) VALUE('MYPCNAME')
+DCL VAR(&CMD) TYPE(*CHAR) LEN(100) VALUE('C:\scripts\run_acs_download.bat')
+
+RUNRMTCMD CMD(&CMD) RMTLOCNAME(&PCNAME *IP)
+
+MONMSG MSGID(CPF9800) EXEC(DO)
+    /* 处理连接失败或其他错误 */
+    SNDPGMMSG MSG('远程命令执行失败，请检查PC服务和网络连接。') MSGTYPE(*ESCAPE)
+ENDDO
+
+ENDPGM
+

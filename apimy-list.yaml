@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - banner [ref=e4]:
+      - navigation [ref=e6]:
+        - generic:
+          - list:
+            - listitem [ref=e7]:
+              - link "Articles" [ref=e8] [cursor=pointer]:
+                - /url: https://apimymymy.wordpress.com/blog/
+            - listitem [ref=e9]:
+              - link "About API – my my" [ref=e10] [cursor=pointer]:
+                - /url: https://apimymymy.wordpress.com/
+      - generic [ref=e11]:
+        - link:
+          - /url: https://apimymymy.wordpress.com/
+        - heading "Articles on Apis" [level=1] [ref=e12]:
+          - link "Articles on Apis" [ref=e13] [cursor=pointer]:
+            - /url: https://apimymymy.wordpress.com/
+        - heading "APIs by Example" [level=2] [ref=e14]
+    - main [ref=e17]:
+      - article [ref=e18]:
+        - link "December 25, 2020" [ref=e21] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2020/12/25/apis-by-example-db2-for-i-services-and-sql-cli-apis-provide-easy-access-to-system-reply-list/
+          - time [ref=e22]: December 25, 2020
+        - generic [ref=e23]:
+          - 'heading "APIs by Example: DB2 for i Services and SQL CLI APIs Provide Easy Access to System Reply List" [level=1] [ref=e25]':
+            - 'link "APIs by Example: DB2 for i Services and SQL CLI APIs Provide Easy Access to System Reply List" [ref=e26] [cursor=pointer]':
+              - /url: https://apimymymy.wordpress.com/2020/12/25/apis-by-example-db2-for-i-services-and-sql-cli-apis-provide-easy-access-to-system-reply-list/
+          - paragraph [ref=e28]: Looking at the past few releases it becomes evident that IBM for some time now has been focusing on delivering more new DB2 for i Services, rather than adding to the system API repository. The DB2 for i Services offer access to a variety of information through system-provided SQL views, procedures, and functions, which in […]
+      - article [ref=e29]:
+        - link "November 1, 2018" [ref=e32] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2018/11/01/apis-by-example-user-space-apis/
+          - time [ref=e33]: November 1, 2018
+        - generic [ref=e34]:
+          - 'heading "APIs by Example: User Space APIs" [level=1] [ref=e36]':
+            - 'link "APIs by Example: User Space APIs" [ref=e37] [cursor=pointer]':
+              - /url: https://apimymymy.wordpress.com/2018/11/01/apis-by-example-user-space-apis/
+          - paragraph [ref=e39]: Anyone who has been programming APIs for some time will probably be familiar with user space objects. The original list APIs, such as the List Objects (QUSLOBJ) or the List Job (QUSLJOB) API, almost all return the requested information to a user space. A user space basically is a chunk of storage of up to […]
+      - article [ref=e40]:
+        - link "September 26, 2018" [ref=e43] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2018/09/26/manage-user-profile-special-authority/
+          - time [ref=e44]: September 26, 2018
+        - generic [ref=e45]:
+          - heading "Manage User Profile Special Authority" [level=1] [ref=e47]:
+            - link "Manage User Profile Special Authority" [ref=e48] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2018/09/26/manage-user-profile-special-authority/
+          - paragraph [ref=e50]: Some time ago I wrote the WRKUSRAUD, ADDUSRAUD and RMVUSRAUD commands to help me manage user profiles object and user action audit requirements. Recently I needed to perform similar updates to user profiles’ special authority setting, and therefore found it useful to create similar commands for the purpose of adding and removing special authority to […]
+      - article [ref=e51]:
+        - link "March 31, 2018" [ref=e54] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2018/03/31/apis-by-example-the-calculate-hash-value-command/
+          - time [ref=e55]: March 31, 2018
+        - generic [ref=e56]:
+          - 'heading "APIs by Example: The Calculate Hash Value Command" [level=1] [ref=e58]':
+            - 'link "APIs by Example: The Calculate Hash Value Command" [ref=e59] [cursor=pointer]':
+              - /url: https://apimymymy.wordpress.com/2018/03/31/apis-by-example-the-calculate-hash-value-command/
+          - paragraph [ref=e61]: Back in time the _CIPHER MI instruction was the only immediately available function to produce an MD5 (Message Digest) or SHA-1 (Secure Hash Algorithm) hash value. Now that the SHA-1 algorithm has been deprecated, it appears that the _CIPHER MI instruction does not support the SHA-256 hash algorithm. IBM probably decided to focus their effort […]
+      - article [ref=e62]:
+        - link "September 26, 2017" [ref=e65] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2017/09/26/apis-by-example-workload-capping-groups-save-license-fees-and-manage-workload-capacity/
+          - time [ref=e66]: September 26, 2017
+        - generic [ref=e67]:
+          - 'heading "APIs by Example: Workload Capping Groups – Save License Fees (?) and Manage Workload Capacity" [level=1] [ref=e69]':
+            - 'link "APIs by Example: Workload Capping Groups – Save License Fees (?) and Manage Workload Capacity" [ref=e70] [cursor=pointer]':
+              - /url: https://apimymymy.wordpress.com/2017/09/26/apis-by-example-workload-capping-groups-save-license-fees-and-manage-workload-capacity/
+          - paragraph [ref=e72]: I had come across the term Workload Capping Groups (WLC) a couple of times before I actually found out what it was about – and exactly how workload capping groups could be taken advantage of. I had noticed a new Workload Capping Group (WLCGRP) attribute on the Change Job (CHGJOB command) at one point. The […]
+      - article [ref=e73]:
+        - link "August 30, 2017" [ref=e76] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2017/08/30/work-with-user-auditing-and-copy-user-auditing-commands/
+          - time [ref=e77]: August 30, 2017
+        - generic [ref=e78]:
+          - heading "Work with User Auditing and Copy User Auditing commands" [level=1] [ref=e80]:
+            - link "Work with User Auditing and Copy User Auditing commands" [ref=e81] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2017/08/30/work-with-user-auditing-and-copy-user-auditing-commands/
+          - paragraph [ref=e83]: When I was planning the WRKUSRAUD command design some time ago, I found out that IBM with release 6.1 added 18 new user audit values to the 13 original ones. As a consequence of this enlightenment – and due to the circumstance that I was planning to integrate the UPDUSRAUD, ADDUSRAUD and RMVUSRAUD commands in […]
+      - article [ref=e84]:
+        - link "April 6, 2015" [ref=e87] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2015/04/06/the-print-ssl-trace-data-prtssltrc-command/
+          - time [ref=e88]: April 6, 2015
+        - generic [ref=e89]:
+          - heading "The Print SSL Trace Data (PRTSSLTRC) command" [level=1] [ref=e91]:
+            - link "The Print SSL Trace Data (PRTSSLTRC) command" [ref=e92] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2015/04/06/the-print-ssl-trace-data-prtssltrc-command/
+          - paragraph [ref=e94]: I think the most common reason for investigating a server’s SSL connections and the protocol version associated with these connections is tightly related to audit and compliance. The type of encryption applied to your SSL traffic can be more or less vulnerable, depending on the cipher algorithms involved. In general you have two considerations to […]
+      - article [ref=e95]:
+        - link "February 11, 2015" [ref=e98] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2015/02/11/cl-command-to-manage-the-ibm-i-intrusion-detection-system/
+          - time [ref=e99]: February 11, 2015
+        - generic [ref=e100]:
+          - heading "CL Command to Manage the IBM i Intrusion Detection System" [level=1] [ref=e102]:
+            - link "CL Command to Manage the IBM i Intrusion Detection System" [ref=e103] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2015/02/11/cl-command-to-manage-the-ibm-i-intrusion-detection-system/
+          - paragraph [ref=e105]: As I was doing additional research on the IDS (Intrusion Detection System) topic, I came across the “Control Intrusion Detection and Prevention API”. This API (Application Programming Interface) is provided by IBM to allow you to perform some vital IDS management routines. I’ve wrapped the API up in a new CL command CTLIDS (Control Intrusion […]
+      - article [ref=e106]:
+        - link "March 29, 2014" [ref=e109] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2014/03/29/crm-api/
+          - time [ref=e110]: March 29, 2014
+        - generic [ref=e111]:
+          - heading "Working with Database Files the API Way." [level=1] [ref=e113]:
+            - link "Working with Database Files the API Way." [ref=e114] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2014/03/29/crm-api/
+          - paragraph [ref=e116]: "A Swiss Army knife provides a variety of useful tools all in one place. In this installment of APIs by Example, I’ll present a similar toolset that helps database programmers get the job done efficiently: the Work with Database Files (WRKDBF2) command. The WRKDBF2 command is the result of me performing repetitive tasks against all […]"
+      - article [ref=e117]:
+        - link "February 25, 2014" [ref=e120] [cursor=pointer]:
+          - /url: https://apimymymy.wordpress.com/2014/02/25/first-blog-post/
+          - time [ref=e121]: February 25, 2014
+        - generic [ref=e122]:
+          - heading "Working with Printers, All Printers, Please." [level=1] [ref=e124]:
+            - link "Working with Printers, All Printers, Please." [ref=e125] [cursor=pointer]:
+              - /url: https://apimymymy.wordpress.com/2014/02/25/first-blog-post/
+          - paragraph [ref=e127]: "Manage local, LAN, and remote output queue writers with one command. In the previous installment of APIs by Example, “Work Management APIs: Keeping an Eye on Job Activity,” I noted that the beauty of APIs is that they give you the opportunity to accommodate specific requirements as challenges arise. The Work with Printers (WRKPRT) command […]"
+  - generic [ref=e129]:
+    - link "Articles on Apis" [ref=e131] [cursor=pointer]:
+      - /url: https://apimymymy.wordpress.com/
+    - link "Blog at WordPress.com." [ref=e133] [cursor=pointer]:
+      - /url: https://wordpress.com/?ref=footer_blog
+  - list [ref=e135]:
+    - listitem [ref=e136]:
+      - link "Subscribe" [ref=e137] [cursor=pointer]:
+        - /url: ""
+        - img [ref=e138]
+        - text: Subscribe
+    - listitem [ref=e140] [cursor=pointer]:
+      - img [ref=e141]
+  - generic [ref=e146]:
+    - button "Close and accept" [ref=e147] [cursor=pointer]
+    - text: "Privacy & Cookies: This site uses cookies. By continuing to use this website, you agree to their use."
+    - text: "To find out more, including how to control cookies, see here:"
+    - link "Cookie Policy" [ref=e148]:
+      - /url: https://automattic.com/cookies/
+  - generic [ref=e150]:
+    - generic [ref=e151]: Design a site like this with WordPress.com
+    - link "Get started" [ref=e152] [cursor=pointer]:
+      - /url: https://wordpress.com/start/?ref=marketing_bar

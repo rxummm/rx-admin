@@ -1,0 +1,199 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+#nprogress .bar {
+  background: var(--color-primary) !important;
+  height: 3px !important;
+}
+
+// 侧边栏菜单样式优化
+.el-menu--vertical {
+  .el-menu-item.is-active {
+    background-color: var(--menu-vertical-active-bg);
+  }
+}
+
+// ====== 表格类页面统一布局（flex column，撑满高度） ======
+.page-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: -4px;
+  padding: 4px;
+}
+
+// ====== 搜索栏（紧凑风格，适配所有表格页面） ======
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  background: var(--search-bar-bg);
+  border-radius: 4px;
+
+  .el-input, .el-select {
+    width: 200px;
+  }
+
+  .el-input {
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .el-input__wrapper {
+    min-height: 28px;
+  }
+
+  .el-button {
+    height: 28px;
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+}
+
+// ====== 表格容器（flex撑满剩余空间） ======
+.table-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--table-container-bg);
+  border-radius: 4px;
+  padding: 16px;
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+
+  // 表格body区域可滚动
+  .el-table__body-wrapper {
+    overflow-y: auto;
+  }
+}
+
+// ====== 分页样式 ======
+.page-pagination {
+  margin-top: 12px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+// ====== 底部操作按钮 ======
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// 登录页样式
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--login-bg);
+
+  .login-card {
+    width: 420px;
+    padding: 40px;
+    background: var(--login-card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+    }
+  }
+}
+
+// ====== 图标选择器（菜单管理） ======
+.icon-picker-popper {
+  padding: 0 !important;
+}
+
+.icon-picker-panel {
+  .icon-picker-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  .icon-picker-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 8px;
+
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+
+      &:hover {
+        background: var(--bg-active);
+        color: var(--color-primary);
+      }
+
+      &.active {
+        background: var(--color-primary);
+        color: #fff;
+        border-color: var(--color-primary);
+      }
+
+      .icon-name {
+        font-size: 11px;
+        line-height: 1.3;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+      }
+    }
+
+    .icon-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 24px 0;
+      font-size: 13px;
+    }
+  }
+}
