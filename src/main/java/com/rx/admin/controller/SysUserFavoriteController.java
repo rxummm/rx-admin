@@ -7,11 +7,13 @@ import com.rx.admin.service.SysUserFavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Tag(name = "快捷收藏夹")
 @RestController
 @RequestMapping("/api/system/favorite")
@@ -40,6 +42,7 @@ public class SysUserFavoriteController {
     @Operation(summary = "切换收藏状态")
     public Result<Map<String, Object>> toggle(@RequestBody SysUserFavorite fav) {
         Long userId = StpUtil.getLoginIdAsLong();
+        log.info("toggle收藏: userId={}, name={}, path={}, icon={}, menuId={}", userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
         SysUserFavorite result = favoriteService.toggleFavorite(userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
         return Result.ok(Map.of("collected", result != null, "id", result != null ? result.getId() : null));
     }

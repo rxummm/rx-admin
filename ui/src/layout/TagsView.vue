@@ -176,7 +176,7 @@ async function handleToggleFavorite() {
       favSet.value.delete(tag.path)
     }
     triggerRefresh()
-  } catch { /* ignore */ }
+  } catch (e) { console.error('[ToggleFavorite]', e) }
   closeContextMenu()
 }
 
