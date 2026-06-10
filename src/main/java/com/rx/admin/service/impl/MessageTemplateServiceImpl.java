@@ -3,7 +3,7 @@ package com.rx.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rx.admin.common.PageResult;
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.entity.SysMessageTemplate;
 import com.rx.admin.mapper.SysMessageTemplateMapper;
 import com.rx.admin.service.MessageTemplateService;

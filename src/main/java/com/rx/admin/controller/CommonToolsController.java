@@ -3,7 +3,7 @@ package com.rx.admin.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SharedFile;
 import com.rx.admin.entity.SysUser;
 import com.rx.admin.service.CommonToolsService;

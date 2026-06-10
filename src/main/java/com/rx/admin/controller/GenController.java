@@ -1,6 +1,6 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -66,7 +66,7 @@ public class GenController {
         StringBuilder entity = new StringBuilder();
         entity.append("package ").append(packageName).append(".entity;\n\n");
         entity.append("import com.baomidou.mybatisplus.annotation.*;\n");
-        entity.append("import com.rx.admin.common.BaseEntity;\n");
+        entity.append("import com.rx.admin.common.base.BaseEntity;\n");
         entity.append("import lombok.Getter;\nimport lombok.Setter;\n\n");
         entity.append("@Getter @Setter\n@TableName(\"").append(tableName).append("\")\n");
         entity.append("public class ").append(entityName).append(" extends BaseEntity {\n");
@@ -96,7 +96,7 @@ public class GenController {
         // Controller
         String controller = "package " + packageName + ".controller;\n\n" +
             "import cn.dev33.satoken.annotation.SaCheckPermission;\n" +
-            "import com.rx.admin.common.BaseCrudController;\n" +
+            "import com.rx.admin.common.base.BaseCrudController;\n" +
             "import " + packageName + ".entity." + entityName + ";\n" +
             "import " + packageName + ".service." + entityName + "Service;\n" +
             "import org.springframework.web.bind.annotation.*;\n\n" +

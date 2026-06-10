@@ -1,9 +1,9 @@
 package com.rx.admin.controller;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.rx.admin.common.OperateLog;
-import com.rx.admin.common.Result;
-import com.rx.admin.config.RateLimiterConfig;
+import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.result.Result;
+import com.rx.admin.framework.web.RateLimiterConfig;
 import com.rx.admin.entity.LoginRequest;
 import com.rx.admin.entity.RegisterRequest;
 import com.rx.admin.service.AuthService;

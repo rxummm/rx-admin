@@ -2,8 +2,8 @@ package com.rx.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rx.admin.common.AesTypeHandler;
-import com.rx.admin.common.BaseEntity;
+import com.rx.admin.common.handler.AesTypeHandler;
+import com.rx.admin.common.base.BaseEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

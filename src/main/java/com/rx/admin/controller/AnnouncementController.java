@@ -2,7 +2,7 @@ package com.rx.admin.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysNotice;
 import com.rx.admin.entity.SysNoticeRead;
 import com.rx.admin.mapper.SysNoticeMapper;

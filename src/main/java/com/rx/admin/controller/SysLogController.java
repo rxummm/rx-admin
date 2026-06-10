@@ -1,7 +1,7 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.PageResult;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.service.SysLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

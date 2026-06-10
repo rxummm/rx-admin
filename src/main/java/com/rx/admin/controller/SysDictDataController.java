@@ -1,8 +1,8 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.rx.admin.common.OperateLog;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysDictData;
 import com.rx.admin.service.SysDictDataService;
 import jakarta.validation.Valid;

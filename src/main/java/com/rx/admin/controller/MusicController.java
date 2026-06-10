@@ -1,7 +1,7 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.PlayRecord;
 import com.rx.admin.entity.Song;
 import com.rx.admin.service.MusicService;

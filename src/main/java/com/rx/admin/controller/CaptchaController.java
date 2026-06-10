@@ -1,6 +1,6 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

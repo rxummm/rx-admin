@@ -2,7 +2,7 @@ package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysExportLog;
 import com.rx.admin.service.ExportLogService;
 import com.rx.admin.service.ExportService;

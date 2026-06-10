@@ -1,7 +1,7 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysMenu;
 import com.rx.admin.service.SysPermissionManageService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,6 +1,6 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.mapper.SysLoginLogMapper;
 import com.rx.admin.mapper.SysExportLogMapper;
 import com.rx.admin.mapper.SysJobLogMapper;

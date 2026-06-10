@@ -1,7 +1,7 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.As400ObjectVO;
 import com.rx.admin.service.As400Service;
 import com.rx.admin.service.LibraryNotFoundException;

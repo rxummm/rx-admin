@@ -2,7 +2,7 @@ package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.service.OnlineUserService;
 import com.rx.admin.service.SysUserService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.PageResult;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.TechBlogArticle;
 import com.rx.admin.service.TechBlogArticleService;
 import cn.dev33.satoken.annotation.SaCheckPermission;

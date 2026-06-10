@@ -1,8 +1,8 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.rx.admin.common.PageResult;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysIpRule;
 import com.rx.admin.service.SysConfigService;
 import com.rx.admin.service.SysIpRuleService;

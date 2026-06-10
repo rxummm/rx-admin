@@ -1,7 +1,7 @@
 package com.rx.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rx.admin.common.BaseEntity;
+import com.rx.admin.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

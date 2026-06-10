@@ -1,9 +1,9 @@
 package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
-import com.rx.admin.common.OperateLog;
-import com.rx.admin.common.PageResult;
-import com.rx.admin.common.Result;
+import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysLoginLog;
 import com.rx.admin.service.LoginLogService;
 import io.swagger.v3.oas.annotations.Operation;

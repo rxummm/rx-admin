@@ -1,6 +1,6 @@
 package com.rx.admin.controller;
 
-import com.rx.admin.common.Result;
+import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.IServiceCategory;
 import com.rx.admin.entity.IServiceItem;
 import com.rx.admin.service.IServiceCategoryService;
