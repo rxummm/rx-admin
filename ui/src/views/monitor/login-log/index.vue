@@ -64,7 +64,7 @@ async function fetchData() {
   loading.value = true
   try {
     const res = await getLoginLogPageApi(buildParams())
-    tableData.value = res.data.list || []
+    tableData.value = res.data.records || []
     pagination.total = res.data.total || 0
   } catch { ElMessage.error('加载失败') } finally { loading.value = false }
 }

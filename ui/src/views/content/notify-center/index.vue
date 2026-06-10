@@ -109,7 +109,7 @@ const tForm = reactive({ name:'', code:'', titleTemplate:'', contentTemplate:'',
 
 async function fetchTemplates() {
   tLoading.value = true
-  try { const res = await getTemplatePageApi({ page: tPage.page, size: tPage.size, name: tSearch.name || undefined }); templates.value = res.data.list||[]; tPage.total = res.data.total||0 } 
+  try { const res = await getTemplatePageApi({ page: tPage.page, size: tPage.size, name: tSearch.name || undefined }); templates.value = res.data.records||[]; tPage.total = res.data.total||0 } 
   catch { ElMessage.error('加载失败') } finally { tLoading.value = false }
 }
 function openTemplateDialog(row) {
@@ -130,7 +130,7 @@ const records = ref([]); const rLoading = ref(false); const rSelected = ref([])
 const rSearch = reactive({ channel: null, status: null }); const rPage = reactive({ page:1, size:10, total:0 })
 async function fetchRecords() {
   rLoading.value = true
-  try { const res = await getNotifyRecordPageApi({ page: rPage.page, size: rPage.size, channel: rSearch.channel, status: rSearch.status }); records.value = res.data.list||[]; rPage.total = res.data.total||0 } 
+  try { const res = await getNotifyRecordPageApi({ page: rPage.page, size: rPage.size, channel: rSearch.channel, status: rSearch.status }); records.value = res.data.records||[]; rPage.total = res.data.total||0 } 
   catch { ElMessage.error('加载失败') } finally { rLoading.value = false }
 }
 async function deleteRecord(id) { await ElMessageBox.confirm('确认删除？','提示',{type:'warning'}); await deleteNotifyRecordApi(id); ElMessage.success('删除成功'); fetchRecords() }
