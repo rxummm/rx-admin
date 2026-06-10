@@ -25,7 +25,7 @@
         <el-timeline-item v-for="msg in tableData" :key="msg.id"
           :timestamp="msg.createTime" placement="top"
           :color="msg.isRead ? '#c0c4cc' : '#409EFF'"
-          :hollow="msg.isRead"
+          :hollow="!!msg.isRead"
           size="large">
           <el-card shadow="never" class="msg-card"
             :class="{ 'is-unread': !msg.isRead }"
@@ -62,7 +62,7 @@
         :page-sizes="[10, 20, 50]"
         :background="true"
         layout="total, sizes, prev, pager, next, jumper"
-        small
+        size="small"
         @change="fetchData"
       />
     </div>
