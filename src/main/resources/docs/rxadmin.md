@@ -1,6 +1,8 @@
 # RX Admin 通用管理系统 — 项目技术架构文档
 
-> **版本**: 2.1.0 | **更新日期**: 2026-06-06 | **文档类型**: 技术架构说明书
+> **版本**: 3.0.0 | **更新日期**: 2026-06-10 | **文档类型**: 技术架构说明书
+>
+> **v3.0 架构升级**: Modular Monolith 模块化架构 + DTO/VO/Convert 分层 + MapStruct 对象转换 + Framework 框架层
 
 ---
 
@@ -10,15 +12,18 @@
 2. [技术栈总览](#2-技术栈总览)
 3. [后端架构](#3-后端架构)
    - [3.1 项目坐标与启动类](#31-项目坐标与启动类)
-   - [3.2 包结构](#32-包结构)
+   - [3.2 包结构 (v3 Modular Monolith)](#32-包结构-v3-modular-monolith)
    - [3.3 数据源配置](#33-数据源配置)
    - [3.4 实体层 (Entity)](#34-实体层-entity)
    - [3.5 数据访问层 (Mapper)](#35-数据访问层-mapper)
    - [3.6 服务层 (Service)](#36-服务层-service)
    - [3.7 控制层 (Controller)](#37-控制层-controller)
    - [3.8 安全认证 (Sa-Token)](#38-安全认证-sa-token)
-   - [3.9 公共模块](#39-公共模块)
-   - [3.10 API 接口清单](#310-api-接口清单)
+   - [3.9 公共模块 (common/)](#39-公共模块-common)
+   - [3.10 框架层 (framework/)](#310-框架层-framework)
+   - [3.11 业务模块层 (modules/)](#311-业务模块层-modules)
+   - [3.12 DTO/VO/Convert 分层规范](#312-dtovoconvert-分层规范)
+   - [3.13 API 接口清单](#313-api-接口清单)
 4. [前端架构](#4-前端架构)
    - [4.1 技术栈](#41-技术栈)
    - [4.2 目录结构](#42-目录结构)
@@ -183,6 +188,7 @@
 | **运行环境** | Java / Node.js | Java 17 / Node 18+ |
 | **后端框架** | Spring Boot | 3.2.0 |
 | **ORM** | MyBatis Plus | 3.5.5 |
+| **对象映射** | MapStruct | 1.5.5 |
 | **安全认证** | Sa-Token | 1.37.0 |
 | **API 文档** | Knife4j (OpenAPI 3) | 4.4.0 |
 | **数据库** | MySQL | 8.x |
@@ -242,53 +248,130 @@ spring:
 # AS400：连接 pub400.com（可选）
 ```
 
-### 3.2 包结构
+### 3.2 包结构 (v3 Modular Monolith)
+
+v3 采用 **Modular Monolith（领域化单体）** 架构，按业务模块组织代码，替代原来的平铺式分层结构。
 
 ```
 com.rx.admin
-├── RxAdminApplication.java           # Spring Boot 启动类
-├── common/                            # 公共模块
-│   ├── BaseEntity.java               # 实体基类（id, deleted, createTime, updateTime）
-│   ├── Result.java                    # 统一响应封装 {code, msg, data}
-│   ├── PageResult.java               # 分页响应封装 {list, total, page, pageSize}
-│   ├── GlobalExceptionHandler.java   # 全局异常处理 (@RestControllerAdvice, 10种异常)
-│   ├── OperateLog.java               # @OperateLog 操作日志注解
-│   └── OperateLogAspect.java         # 操作日志 AOP 切面（@Async异步 + 参数脱敏）
-├── config/                            # 配置模块
-│   ├── AsyncConfig.java              # 异步任务配置（支持 @Async）
-│   ├── CorsConfig.java               # CORS 跨域配置
-│   ├── SaTokenConfig.java            # Sa-Token 路由拦截器
-│   ├── StpInterfaceImpl.java         # 权限/角色加载实现
-│   ├── MybatisPlusConfig.java        # MyBatis Plus 分页插件 & 自动填充
-│   ├── PrimaryDataSourceConfig.java  # 主数据源 (rx_admin)
-│   ├── SecondDataSourceConfig.java   # 第二数据源 (rxusysadmin)
-│   ├── SecondDB.java                 # @SecondDB 自定义注解
-│   └── RateLimiterConfig.java        # Guava RateLimiter 限流配置
-├── entity/                            # 实体模块（9 个系统实体 + 1 个 VO）
-│   ├── SysUser.java                  # 系统用户
-│   ├── SysRole.java                  # 系统角色
-│   ├── SysMenu.java                  # 系统菜单
-│   ├── SysDept.java                  # 部门
-│   ├── SysLog.java                   # 操作日志
-│   ├── SysNotice.java               # 通知公告
-│   ├── SysDictData.java              # 字典数据
-│   ├── SysDictType.java              # 字典类型
-│   ├── As400ObjectVO.java            # AS400 对象 VO
-│   ├── SysConfig.java               # 系统配置
-│   ├── SysJob.java                   # 定时任务
-│   ├── SysFile.java                  # 文件管理
-│   ├── SysSlowQuery.java            # 慢查询记录
-│   ├── SysPermissionRequest.java     # 权限申请
-│   ├── SysUserMenu.java             # 用户直接授权
-│   ├── CaptchaVO.java               # 验证码 VO
-│   ├── MusicSong.java               # 音乐歌曲实体
-│   ├── TechBlogArticle.java         # 技术博客文章
-│   ├── IService*.java               # iService 接口平台实体
-│   └── classics/                     # 四大名著 + 历代文学实体（16 个）
-├── controller/                        # 控制器模块（30 个 Controller）
-├── service/                           # 服务层（40+ 个 Service，含实现类）
-└── mapper/                            # 数据访问层（36+ 个 Mapper）
+├── RxAdminApplication.java              # Spring Boot 启动类
+│
+├── common/                               # 公共模块（按职责拆分子包）
+│   ├── annotation/                       # 自定义注解
+│   │   ├── DataScope.java               # 数据权限注解
+│   │   └── OperateLog.java              # 操作日志注解
+│   ├── result/                           # 统一响应
+│   │   ├── Result.java                  # 统一响应封装 {code, msg, data}
+│   │   └── PageResult.java              # 分页响应 {records, total, page, pageSize}
+│   ├── exception/                        # 异常处理
+│   │   └── GlobalExceptionHandler.java  # 全局异常处理 (10种异常)
+│   ├── constant/                         # 常量定义
+│   │   └── PageConstants.java           # 分页常量
+│   ├── utils/                            # 工具类
+│   │   ├── CaptchaUtil.java             # 验证码工具
+│   │   └── DataMaskUtil.java            # 数据脱敏工具
+│   ├── security/                         # 安全组件
+│   │   ├── IpFilter.java                # IP 黑白名单过滤器
+│   │   ├── NotLoginFilter.java          # 未登录过滤器
+│   │   ├── ReplayAttackFilter.java      # 防重放攻击过滤器
+│   │   └── XssJacksonConfig.java        # XSS 防护 Jackson 配置
+│   ├── base/                             # 基类
+│   │   ├── BaseEntity.java              # 实体基类
+│   │   └── BaseCrudController.java      # CRUD 控制器基类
+│   ├── aspect/                           # AOP 切面
+│   │   └── OperateLogAspect.java        # 操作日志切面
+│   └── handler/                          # MyBatis 处理器
+│       ├── AesTypeHandler.java           # AES 加密类型处理器
+│       ├── DataScopeInnerInterceptor.java # 数据权限拦截器
+│       └── SlowQueryInterceptor.java     # 慢查询拦截器
+│
+├── framework/                            # 框架层（基础设施配置）
+│   ├── security/                         # 安全配置
+│   │   ├── SaTokenConfig.java           # Sa-Token 路由拦截配置
+│   │   └── StpInterfaceImpl.java        # 权限/角色加载实现
+│   ├── datasource/                       # 数据源配置
+│   │   ├── PrimaryDataSourceConfig.java # 主数据源 rx_admin
+│   │   ├── SecondDataSourceConfig.java  # 第二数据源 rxusysadmin
+│   │   └── SecondDB.java               # @SecondDB 注解
+│   ├── mybatis/                          # MyBatis Plus 配置
+│   │   ├── MybatisPlusConfig.java       # 分页插件 & 自动填充
+│   │   └── MetaObjectHandlerConfig.java # 元数据自动填充
+│   ├── async/                            # 异步配置
+│   │   └── AsyncConfig.java             # 异步任务线程池
+│   ├── cache/                            # 缓存配置
+│   │   └── CacheConfig.java             # Redis 缓存配置
+│   └── web/                              # Web 配置
+│       ├── CorsConfig.java              # CORS 跨域配置
+│       └── RateLimiterConfig.java       # 限流配置
+│
+├── modules/                              # 业务模块层（领域化单体）
+│   ├── auth/                             # 认证模块
+│   ├── system/                           # 系统管理模块
+│   │   ├── user/                         # 用户管理
+│   │   │   ├── dto/   UserCreateDTO, UserUpdateDTO, UserQueryDTO
+│   │   │   ├── vo/    UserVO
+│   │   │   └── convert/ UserConvert (MapStruct)
+│   │   ├── role/                         # 角色管理
+│   │   │   ├── dto/   RoleCreateDTO, RoleUpdateDTO, RoleQueryDTO
+│   │   │   ├── vo/    RoleVO
+│   │   │   └── convert/ RoleConvert
+│   │   ├── menu/                         # 菜单管理
+│   │   │   ├── dto/   MenuCreateDTO, MenuUpdateDTO
+│   │   │   ├── vo/    MenuVO
+│   │   │   └── convert/ MenuConvert
+│   │   ├── dept/                         # 部门管理
+│   │   ├── config/                       # 系统配置
+│   │   ├── dict/                         # 字典管理（类型+数据）
+│   │   ├── ipRule/                       # IP 规则
+│   │   ├── file/                         # 文件管理
+│   │   ├── favorite/                     # 收藏夹
+│   │   └── permission/                   # 权限申请
+│   ├── monitor/                          # 系统监控模块
+│   │   ├── log/                          # 操作日志
+│   │   ├── loginlog/                     # 登录日志
+│   │   ├── job/                          # 定时任务
+│   │   ├── slowquery/                    # 慢查询监控
+│   │   ├── online/                       # 在线用户
+│   │   ├── health/                       # 健康监控
+│   │   ├── cache/                        # 缓存管理
+│   │   ├── dashboard/                    # 仪表盘
+│   │   ├── exportlog/                    # 导出审计
+│   │   ├── joblog/                       # 任务执行日志
+│   │   └── logAnalysis/                  # 日志分析
+│   ├── content/                          # 内容管理模块
+│   │   ├── notice/                       # 通知公告
+│   │   ├── message/                      # 消息中心
+│   │   ├── notify/                       # 通知中心
+│   │   └── announcement/                 # 系统公告
+│   ├── tool/                             # 工具集模块
+│   │   ├── dict/ region/ analysis/ gen/ apiDebug/
+│   │   ├── backup/ dbConsole/ devTools/ commonTools/
+│   │   ├── export/ importData/ music/
+│   │   └── ...
+│   └── as400/                            # AS400 模块
+│       ├── as400/                        # 对象浏览
+│       ├── iService/                     # 接口平台
+│       └── techblog/                     # 技术博客
+│
+├── entity/                               # 实体定义（共用）
+├── controller/                           # 控制器（共用，逐步迁入 modules/）
+├── service/                              # 服务层（共用）
+└── mapper/                               # 数据访问层（共用）
 ```
+
+> **说明**: modules/ 当前已创建完整的 DTO/VO/Convert 层（67 个 Java 文件），Controller/Service/Mapper 逐步从顶层迁入对应模块目录。
+
+### 3.2.1 架构分层职责
+
+| 层级 | 目录 | 职责 | 对外暴露 |
+|------|------|------|----------|
+| **Controller** | `controller/` → `modules/*/controller/` | 接收请求、参数校验、调用 Service | REST API |
+| **DTO** | `modules/*/dto/` | 请求参数封装，含 `@Valid` 校验注解 | Controller 输入 |
+| **VO** | `modules/*/vo/` | 响应视图对象，排除敏感字段（如 password） | Controller 输出 |
+| **Convert** | `modules/*/convert/` | MapStruct 编译期 DTO↔Entity↔VO 转换 | Service/Controller |
+| **Service** | `service/` → `modules/*/service/` | 业务逻辑、事务管理 | Controller |
+| **Mapper** | `mapper/` → `modules/*/mapper/` | 数据访问（MyBatis Plus BaseMapper） | Service |
+| **Entity** | `entity/` → `modules/*/entity/` | 数据库表映射 | Service/Mapper |
 
 ### 3.3 数据源配置
 
@@ -559,19 +642,141 @@ com.rx.admin
 - 同时清除 Pinia store 和 localStorage 的认证数据
 - 倒计时结束调用 `router.push("/login")`
 
-### 3.9 公共模块
+### 3.9 公共模块 (common/)
 
-| 类 | 说明 |
-|----|------|
-| `BaseEntity` | 实体基类，包含 `id`, `deleted`（逻辑删除）, `createTime`, `updateTime`，配合 MyBatis Plus 自动填充 |
-| `Result` | 统一响应封装，`Result.ok(data)` / `Result.fail(msg)` |
-| `PageResult` | 分页响应封装，包含 `list`, `total`, `page`, `pageSize`。提供 `of(total, page, size, records)` 和 `of(Page<T>)` 工厂方法 |
-| `GlobalExceptionHandler` | `@RestControllerAdvice` 全局异常处理，涵盖 10 种异常（401/403/400/404/405/415/数据约束冲突/参数校验等） |
-| `OperateLog` | `@OperateLog` 自定义注解，标记需要记录操作日志的方法 |
-| `OperateLogAspect` | AOP 切面实现，拦截 `@OperateLog` 注解，`@Async` 异步保存日志，`sanitizeParams()` 对 password/token/secret 等敏感字段脱敏 |
-| `RateLimiterConfig` | Guava `RateLimiter` 配置，`ConcurrentHashMap<String, RateLimiter>` 按 IP 区分，登录接口每秒 3 次限制 |
+| 子包 | 类 | 说明 |
+|------|-----|------|
+| `annotation/` | `DataScope` | 数据权限注解，标记 Mapper 方法自动注入数据范围 SQL |
+| `annotation/` | `OperateLog` | `@OperateLog` 操作日志注解，记录请求信息 |
+| `result/` | `Result` | 统一响应封装，`Result.ok(data)` / `Result.fail(msg)` |
+| `result/` | `PageResult` | 分页响应封装，`records`, `total`, `page`, `pageSize`。工厂方法 `of(total, page, size, records)` |
+| `exception/` | `GlobalExceptionHandler` | `@RestControllerAdvice` 全局异常处理，涵盖 10 种异常（401/403/400/404/405/415/数据约束冲突/参数校验等） |
+| `constant/` | `PageConstants` | 分页默认参数常量 |
+| `utils/` | `CaptchaUtil` | 验证码生成工具（数字/字母混合） |
+| `utils/` | `DataMaskUtil` | 敏感数据脱敏（password/token/secret → ***） |
+| `security/` | `IpFilter` | IP 黑白名单过滤器 |
+| `security/` | `NotLoginFilter` | 未登录拦截过滤器 |
+| `security/` | `ReplayAttackFilter` | API 防重放攻击（nonce + timestamp） |
+| `security/` | `XssJacksonConfig` | XSS 防护（Jackson 反序列化时转义 HTML） |
+| `base/` | `BaseEntity` | 实体基类：`id`, `deleted`（逻辑删除）, `createTime`, `updateTime` |
+| `base/` | `BaseCrudController` | CRUD 控制器基类，封装通用增删改查逻辑 |
+| `aspect/` | `OperateLogAspect` | AOP 切面，拦截 `@OperateLog`，`@Async` 异步保存日志，sanitizeParams() 脱敏 |
+| `handler/` | `AesTypeHandler` | MyBatis TypeHandler，AES 加密存储敏感字段 |
+| `handler/` | `DataScopeInnerInterceptor` | MyBatis Plus 内部拦截器，自动注入数据权限 SQL |
+| `handler/` | `SlowQueryInterceptor` | 慢查询拦截器，记录执行时间超过阈值的 SQL |
 
-### 3.10 API 接口清单
+### 3.10 框架层 (framework/)
+
+基础设施配置独立为 `framework/` 包，按职责分组：
+
+| 子包 | 类 | 说明 |
+|------|-----|------|
+| `security/` | `SaTokenConfig` | Sa-Token 路由拦截器配置，登录/权限校验白名单 |
+| `security/` | `StpInterfaceImpl` | 权限/角色加载实现，从数据库动态加载 |
+| `datasource/` | `PrimaryDataSourceConfig` | 主数据源 rx_admin（系统管理表） |
+| `datasource/` | `SecondDataSourceConfig` | 第二数据源 rxusysadmin（四大名著业务表） |
+| `datasource/` | `SecondDB` | `@SecondDB` 自定义注解，标记使用第二数据源 |
+| `mybatis/` | `MybatisPlusConfig` | MyBatis Plus 分页插件 + DataScopeInnerInterceptor 注册 |
+| `mybatis/` | `MetaObjectHandlerConfig` | 自动填充 createTime/updateTime |
+| `async/` | `AsyncConfig` | 异步任务线程池配置（支持 @Async） |
+| `cache/` | `CacheConfig` | Redis 缓存配置 |
+| `web/` | `CorsConfig` | CORS 跨域配置 |
+| `web/` | `RateLimiterConfig` | Guava RateLimiter 限流配置（按 IP 区分，登录接口 3次/秒） |
+
+### 3.11 业务模块层 (modules/)
+
+v3 核心革新，按业务领域组织代码，每个模块内包含独立的 dto/vo/convert 子包：
+
+| 顶级模块 | 子模块 | DTO/VO/Convert | 说明 |
+|----------|--------|:---:|------|
+| `auth/` | 认证授权 | — | 登录/注册/Token/个人信息 |
+| `system/` | user, role, menu, dept, config, dict, ipRule, file, favorite, permission | ✅ 全部 | 系统管理核心 |
+| `monitor/` | log, loginlog, job, slowquery, online, health, cache, dashboard, exportlog, joblog, logAnalysis | ✅ 关键模块 | 系统监控 |
+| `content/` | notice, message, notify, announcement | ✅ 全部 | 内容管理 |
+| `tool/` | gen, region, analysis, apiDebug, backup, dbConsole, devTools, commonTools, export, importData, music, dict | 待建设 | 工具集 |
+| `as400/` | as400, iService, techblog | ✅ techblog | AS400 管理 |
+
+**模块目录模板** (以 `system/user/` 为例):
+```
+modules/system/user/
+├── dto/
+│   ├── UserCreateDTO.java      # 创建请求 DTO（含 @Valid 校验）
+│   ├── UserUpdateDTO.java      # 更新请求 DTO
+│   └── UserQueryDTO.java       # 查询参数 DTO
+├── vo/
+│   └── UserVO.java             # 响应视图对象（已排除 password 字段）
+├── convert/
+│   └── UserConvert.java        # MapStruct 转换器（DTO↔Entity↔VO）
+├── controller/                 # 待迁入
+├── service/                    # 待迁入
+├── service/impl/               # 待迁入
+├── entity/                     # 待迁入
+└── mapper/                     # 待迁入
+```
+
+> **进度**: 67 个 DTO/VO/Convert 文件已创建（14 个子模块），Controller/Service/Mapper 渐进式迁入。
+
+### 3.12 DTO/VO/Convert 分层规范
+
+v3 引入三层分离，杜绝 Entity 直接暴露给前端的安全风险：
+
+| 层 | 注解 | 职责 | 规则 |
+|----|------|------|------|
+| **DTO** (Data Transfer Object) | `@Data` + `@Valid` | 接收前端请求参数 | 不暴露给 Mapper，通过 Convert → Entity |
+| **VO** (View Object) | `@Data` | 返回给前端的视图数据 | 必须排除 password 等敏感字段 |
+| **Convert** (MapStruct) | `@Mapper(componentModel = "spring")` | 编译期生成转换实现 | 零运行时开销，类型安全 |
+
+**MapStruct 配置** (`pom.xml`):
+```xml
+<dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct</artifactId>
+    <version>1.5.5</version>
+</dependency>
+<!-- 编译处理器：Lombok + MapStruct 兼容绑定 -->
+<annotationProcessorPaths>
+    <path><groupId>org.mapstruct</groupId><artifactId>mapstruct-processor</artifactId></path>
+    <path><groupId>org.projectlombok</groupId><artifactId>lombok</artifactId></path>
+    <path><groupId>org.projectlombok</groupId><artifactId>lombok-mapstruct-binding</artifactId></path>
+</annotationProcessorPaths>
+```
+
+**Convert 示例** (`UserConvert.java`):
+```java
+@Mapper(componentModel = "spring")
+public interface UserConvert {
+    UserConvert INSTANCE = Mappers.getMapper(UserConvert.class);
+
+    SysUser toEntity(UserCreateDTO dto);
+    void updateEntity(UserUpdateDTO dto, @MappingTarget SysUser entity);
+    UserVO toVO(SysUser entity);
+    List<UserVO> toVOList(List<SysUser> list);
+}
+```
+
+**已创建 DTO/VO/Convert 的模块清单**:
+
+| 模块 | DTO 文件 | VO | Convert | 行数 |
+|------|----------|-----|---------|------|
+| `system/user` | UserCreate, UserUpdate, UserQuery | UserVO | UserConvert | ~120 |
+| `system/role` | RoleCreate, RoleUpdate, RoleQuery | RoleVO | RoleConvert | ~90 |
+| `system/menu` | MenuCreate, MenuUpdate, MenuQuery | MenuVO | MenuConvert | ~90 |
+| `system/dept` | DeptCreate, DeptUpdate, DeptQuery | DeptVO | DeptConvert | ~85 |
+| `system/config` | ConfigCreate, ConfigUpdate, ConfigQuery | ConfigVO | ConfigConvert | ~80 |
+| `system/dict` | DictType/DictData Create/Update/Query x6 | DictTypeVO, DictDataVO | DictConvert | ~170 |
+| `system/ipRule` | IpRuleCreate, IpRuleUpdate, IpRuleQuery | IpRuleVO | IpRuleConvert | ~80 |
+| `system/file` | FileQuery | FileVO | FileConvert | ~50 |
+| `system/favorite` | FavoriteCreate | FavoriteVO | FavoriteConvert | ~55 |
+| `content/notice` | NoticeCreate, NoticeUpdate, NoticeQuery | NoticeVO | NoticeConvert | ~80 |
+| `content/message` | MessageCreate, MessageQuery | MessageVO | MessageConvert | ~65 |
+| `monitor/job` | JobCreate, JobUpdate, JobQuery | JobVO | JobConvert | ~85 |
+| `monitor/loginlog` | — | LoginLogVO | LoginLogConvert | ~35 |
+| `monitor/log` | — | OperateLogVO | OperateLogConvert | ~40 |
+| `monitor/slowquery` | — | SlowQueryVO | SlowQueryConvert | ~30 |
+| `as400/techblog` | TechBlogCreate, TechBlogUpdate, TechBlogQuery | TechBlogVO | TechBlogConvert | ~80 |
+| **合计** | **42 个 DTO** | **17 个 VO** | **16 个 Convert** | **~1200** |
+
+### 3.13 API 接口清单
 
 #### 认证接口 (`/auth`)
 
@@ -804,6 +1009,7 @@ ui/
     ├── main.js                         # 应用入口（注册插件、全局样式、路由）
     ├── App.vue                         # 根组件（仅 <router-view />）
     ├── api/                            # API 请求层（26 个模块）
+    │   ├── request.js                  # Axios 实例封装（拦截器/Token/401）
     │   ├── auth.js                     # 认证接口
     │   ├── user.js                     # 用户管理
     │   ├── role.js                     # 角色管理
@@ -830,20 +1036,29 @@ ui/
     │   ├── job.js                      # 定时任务
     │   ├── file.js                     # 文件管理
     │   ├── slowQuery.js                # 慢查询监控
+    │   ├── modules/                    # 模块化API聚合入口（v3 新增）
+    │   │   ├── auth/index.js           # 认证模块
+    │   │   ├── system/index.js         # 系统管理模块
+    │   │   ├── monitor/index.js        # 系统监控模块
+    │   │   ├── content/index.js        # 内容管理模块
+    │   │   ├── tool/index.js           # 工具集模块
+    │   │   ├── as400/index.js          # AS400 模块
+    │   │   └── classics/index.js       # 四大名著模块
     │   └── ...                         # 持续扩展
-    ├── composables/
-│   ├── useStorage.js               # 统一 localStorage 管理（命名空间 rx_admin_*）
-│   ├── useTablePage.js             # 通用表格分页 Composable（搜索/分页/排序/列配置/高度适配）
-│   ├── useTheme.js                 # 亮/暗主题切换
-│   ├── useMenuI18n.js              # 菜单国际化翻译
-│   └── usePasswordStrength.js      # 密码强度检测
+    ├── types/                           # JSDoc 类型定义（v3 新增，对齐 DTO/VO）
+    │   └── index.d.ts.js               # 全部业务类型定义
+    ├── composables/                     # Vue 3 Composition API 复用逻辑
+    │   ├── useStorage.js               # 统一 localStorage 管理（命名空间 rx_admin_*）
+    │   ├── useTablePage.js             # 通用表格分页 Composable（搜索/分页/排序/列配置/高度适配）
+    │   ├── useTheme.js                 # 亮/暗主题切换
+    │   ├── useMenuI18n.js              # 菜单国际化翻译
+    │   └── usePasswordStrength.js      # 密码强度检测
     ├── i18n/                            # 国际化模块
     │   ├── index.js
     │   └── lang/
     │       ├── zh-CN.js                # 中文语言包（300+ 条目）
     │       └── en-US.js                # 英文语言包
     ├── layout/                         # 布局组件
-│   ├── index.vue                   # 主布局（~644行，拆分为子组件）
 │   ├── SubMenu.vue                 # 递归子菜单组件
 │   ├── TagsView.vue                # 标签页导航栏
 │   ├── SearchBox.vue               # 全局搜索框（输入+下拉+键盘导航）
@@ -2900,9 +3115,12 @@ public SearchResultVO search(@RequestParam String keyword) {
 
 ### 20.2 架构增强（P2）
 
-| 项目 | 说明 |
-|------|------|
-| Sa-Token Redis 存储 | 当前使用内存模式，重启后 Token 失效。生产需引入 sa-token-alone-redis |
+| 项目 | 状态 | 说明 |
+|------|:--:|------|
+| Modular Monolith 模块化架构 | ✅ 已完成 (v3.0) | 拆分为 common/ + framework/ + modules/ 三层 |
+| DTO/VO/Convert 分层 | ✅ 已完成 (v3.0) | 67 个文件覆盖 14 个子模块，MapStruct 编译期转换 |
+| Sa-Token Redis 存储 | ⬜ 待实施 | 当前使用内存模式，重启后 Token 失效。生产需引入 sa-token-alone-redis |
+| Controller/Service/Mapper 迁移到 modules/ | 🔄 渐进式 | 目录骨架已就绪，可逐步 git mv 迁入 |
 
 ### 20.3 工程化（P3）
 
@@ -3025,4 +3243,12 @@ public SearchResultVO search(@RequestParam String keyword) {
 
 ---
 
-> **文档维护**: 本文档由项目代码自动分析生成，建议在重大版本更新后重新生成。最后更新: 2026-06-07。
+> **文档维护**: 本文档由项目代码自动分析生成，建议在重大版本更新后重新生成。
+>
+> **版本历史**:
+> - **v3.0.0** (2026-06-10): Modular Monolith 架构升级 — common/ 9 子包拆分，framework/ 框架层独立，modules/ 14 子模块 DTO/VO/Convert 完整覆盖
+> - **v2.2.0** (2026-06-07): 仪表盘趋势/Top10 数据修复，数据权限拦截器补全，缺失模块文档补齐
+> - **v2.1.0** (2026-06-06): 国际化按钮切换，数据权限声明式注解，Ctrl+K 命令面板
+> - **v2.0.0** (2026-06-05): 暗黑模式、系统健康监控、IP黑白名单、站内消息、收藏夹、多主题色
+> - **v1.4.0** (2026-05): 代码生成器、批量导入、API调试、数据库备份、日志分析、Git集成、音乐播放器
+> - **v1.0.0**: 初始版本，RBAC 权限管理 + 四大名著 + AS400 基础功能
