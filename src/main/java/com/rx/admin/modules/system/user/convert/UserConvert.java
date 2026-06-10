@@ -11,6 +11,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 用户对象转换器（MapStruct 编译期生成实现）
  * 统一管理 Entity ↔ DTO ↔ VO 的转换逻辑
