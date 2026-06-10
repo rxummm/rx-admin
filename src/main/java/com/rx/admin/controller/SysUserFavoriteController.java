@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,11 @@ public class SysUserFavoriteController {
         Long userId = StpUtil.getLoginIdAsLong();
         log.info("toggle收藏: userId={}, name={}, path={}, icon={}, menuId={}", userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
         SysUserFavorite result = favoriteService.toggleFavorite(userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
-        return Result.ok(Map.of("collected", result != null, "id", result != null ? result.getId() : null));
+        // Map.of() 不允许 null 值，取消收藏时 result 为 null 会导致 NPE，改用 HashMap
+        Map<String, Object> data = new HashMap<>();
+        data.put("collected", result != null);
+        if (result != null) data.put("id", result.getId());
+        return Result.ok(data);
     }
 
     @DeleteMapping("/{id}")
