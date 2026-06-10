@@ -133,7 +133,7 @@ fetchData()
 .page-message {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 84px);
+  height: 100%;
   background: #f5f7fa;
   border-radius: 8px;
   overflow: hidden;
