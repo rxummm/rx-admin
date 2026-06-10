@@ -42,18 +42,26 @@
         <li @click="handleCloseAll">
           <el-icon><Remove /></el-icon> {{ $t('layout.tags.closeAll') }}
         </li>
+        <li class="context-menu-divider" />
+        <li @click="handleToggleFavorite">
+          <el-icon><StarFilled v-if="isTagFav" color="#F56C6C" /><Star v-else /></el-icon>
+          {{ isTagFav ? $t('layout.tags.removeFav') : $t('layout.tags.addFav') }}
+        </li>
       </ul>
     </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useTagsStore } from '@/stores/tags'
 import { useMenuI18n } from '@/composables/useMenuI18n'
 import { ElMessage } from 'element-plus'
+import { Star, StarFilled } from '@element-plus/icons-vue'
+import { toggleFavoriteApi } from '@/api/favorite'
+import { useFavEvents } from '@/composables/useFavEvents'
 
 const { t } = useI18n()
 const { tMenu } = useMenuI18n()
@@ -136,6 +144,39 @@ async function handleCloseAll() {
     const target = visitedViews.value.length > 0 ? visitedViews.value[0].path : '/dashboard'
     await router.push(target)
   }
+  closeContextMenu()
+}
+
+// 收藏夹切换
+const { triggerRefresh } = useFavEvents()
+const favSet = ref(new Set<string>())
+onMounted(() => {
+  // 从 localStorage 恢复已收藏路径
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (k?.startsWith('fav_')) favSet.value.add(k.slice(4))
+  }
+})
+const isTagFav = computed(() => favSet.value.has(selectedTag.value.path))
+
+async function handleToggleFavorite() {
+  const tag = selectedTag.value
+  try {
+    const res = await toggleFavoriteApi({
+      name: tag.meta?.title || tag.name,
+      path: tag.path,
+      icon: tag.meta?.icon || '',
+      menuId: tag.meta?.id || null
+    })
+    if (res.data?.collected) {
+      localStorage.setItem(`fav_${tag.path}`, res.data?.id || '1')
+      favSet.value.add(tag.path)
+    } else {
+      localStorage.removeItem(`fav_${tag.path}`)
+      favSet.value.delete(tag.path)
+    }
+    triggerRefresh()
+  } catch { /* ignore */ }
   closeContextMenu()
 }
 
@@ -294,6 +335,17 @@ onUnmounted(() => {
         background: transparent;
         color: var(--text-placeholder);
       }
+    }
+  }
+
+  .context-menu-divider {
+    height: 1px;
+    margin: 4px 8px;
+    background: var(--border-color);
+    padding: 0 !important;
+    cursor: default !important;
+    &:hover {
+      background: var(--border-color) !important;
     }
   }
 }

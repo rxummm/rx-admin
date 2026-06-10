@@ -139,6 +139,8 @@
       closeOthers: 'Close Others',
       closeAll: 'Close All',
       affixWarning: 'Fixed tab cannot be closed',
+      addFav: 'Add to Favorites',
+      removeFav: 'Remove from Favorites',
     },
   },
 

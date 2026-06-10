@@ -11,12 +11,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getFavoritesApi, deleteFavoriteApi } from '@/api/favorite'
+import { useFavEvents } from '@/composables/useFavEvents'
 
 const router = useRouter()
 const favorites = ref([])
+const { refreshTick } = useFavEvents()
 
 const fetchFavorites = async () => {
   try {
@@ -28,6 +30,7 @@ const fetchFavorites = async () => {
 const goTo = (path) => router.push(path)
 
 onMounted(fetchFavorites)
+watch(refreshTick, fetchFavorites)
 </script>
 
 <style scoped>

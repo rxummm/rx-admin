@@ -139,6 +139,8 @@
       closeOthers: '关闭其他',
       closeAll: '关闭所有',
       affixWarning: '固定标签页不可关闭',
+      addFav: '添加到收藏夹',
+      removeFav: '取消收藏',
     },
   },
 
