@@ -1,46 +1,70 @@
 <template>
-  <div class="page-container">
-    <div class="search-bar">
-      <span style="font-size: 16px; font-weight: 600;">{{ $t('content.message.title') }}</span>
-      <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" style="margin-left: 8px;">
-        <span style="color:#909399;font-size:12px;">{{ $t('content.message.unread') }}</span>
-      </el-badge>
-      <el-radio-group v-model="msgType" size="small" style="margin-left:16px;" @change="fetchData">
-        <el-radio-button value="">{{ $t('content.message.all') }}</el-radio-button>
-        <el-radio-button value="system">{{ $t('content.message.system') }}</el-radio-button>
-        <el-radio-button value="notice">{{ $t('content.message.notification') }}</el-radio-button>
-        <el-radio-button value="info">{{ $t('content.message.info') }}</el-radio-button>
-      </el-radio-group>
-      <div style="flex:1" />
-      <el-button @click="handleMarkAllRead" :disabled="unreadCount === 0" type="warning" plain>{{ $t('content.message.allRead') }}</el-button>
+  <div class="page-message">
+    <!-- 顶部工具栏 -->
+    <div class="msg-header">
+      <div class="header-left">
+        <span class="title">{{ $t('content.message.title') }}</span>
+        <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99">
+          <span class="unread-label">{{ $t('content.message.unread') }}</span>
+        </el-badge>
+        <el-radio-group v-model="msgType" size="small" @change="fetchData">
+          <el-radio-button value="">{{ $t('content.message.all') }}</el-radio-button>
+          <el-radio-button value="system">{{ $t('content.message.system') }}</el-radio-button>
+          <el-radio-button value="notice">{{ $t('content.message.notification') }}</el-radio-button>
+          <el-radio-button value="info">{{ $t('content.message.info') }}</el-radio-button>
+        </el-radio-group>
+      </div>
+      <el-button @click="handleMarkAllRead" :disabled="unreadCount === 0" type="warning" plain size="small">
+        {{ $t('content.message.allRead') }}
+      </el-button>
     </div>
 
-    <div class="table-container">
-      <el-timeline v-if="tableData.length > 0" style="padding: 20px 40px;">
+    <!-- 消息列表（可滚动区域） -->
+    <div class="msg-body" v-loading="loading">
+      <el-timeline v-if="tableData.length > 0" class="msg-timeline">
         <el-timeline-item v-for="msg in tableData" :key="msg.id"
           :timestamp="msg.createTime" placement="top"
-          :color="msg.isRead ? '#909399' : '#409EFF'">
-          <el-card shadow="hover" :body-style="{ padding: '12px 16px' }"
-            :style="{ cursor: msg.linkPath ? 'pointer' : 'default', borderLeft: msg.isRead ? 'none' : '3px solid #409EFF' }"
+          :color="msg.isRead ? '#c0c4cc' : '#409EFF'"
+          :hollow="msg.isRead"
+          size="large">
+          <el-card shadow="never" class="msg-card"
+            :class="{ 'is-unread': !msg.isRead }"
             @click="handleClick(msg)">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div>
-                <span :style="{ fontWeight: msg.isRead ? 'normal' : 'bold', fontSize: '15px' }">{{ formatMsgText(msg.title, msg) }}</span>
-                <el-tag size="small" style="margin-left:8px;" :type="tagType(msg.messageType)">{{ typeLabel(msg.messageType) }}</el-tag>
+            <div class="card-header">
+              <div class="card-title-row">
+                <span class="card-title">{{ formatMsgText(msg.title, msg) }}</span>
+                <el-tag size="small" :type="tagType(msg.messageType)" effect="plain">
+                  {{ typeLabel(msg.messageType) }}
+                </el-tag>
               </div>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <el-button v-if="!msg.isRead" link type="primary" size="small" @click.stop="handleRead(msg)">{{ $t('content.message.markRead') }}</el-button>
-                <el-button link type="danger" size="small" @click.stop="handleDelete(msg)">{{ $t('common.delete') }}</el-button>
+              <div class="card-actions">
+                <el-button v-if="!msg.isRead" link type="primary" size="small" @click.stop="handleRead(msg)">
+                  {{ $t('content.message.markRead') }}
+                </el-button>
+                <el-button link type="danger" size="small" @click.stop="handleDelete(msg)">
+                  {{ $t('common.delete') }}
+                </el-button>
               </div>
             </div>
-            <div style="color:#606266;font-size:13px;margin-top:6px;line-height:1.5;" v-html="formatMsgText(msg.content?.substring(0, 200), msg)"></div>
+            <div class="card-body" v-html="formatMsgText(msg.content?.substring(0, 200), msg)"></div>
           </el-card>
         </el-timeline-item>
       </el-timeline>
       <el-empty v-else :description="$t('content.message.noMessage')" />
+    </div>
 
-      <el-pagination v-if="total > 0" class="page-pagination" v-model:current-page="page" v-model:page-size="size"
-        :total="total" :page-sizes="[10,20,50]" layout="total,sizes,prev,pager,next" @change="fetchData" />
+    <!-- 分页器（固定底部） -->
+    <div class="msg-footer" v-if="total > 0">
+      <el-pagination
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50]"
+        :background="true"
+        layout="total, sizes, prev, pager, next, jumper"
+        small
+        @change="fetchData"
+      />
     </div>
   </div>
 </template>
@@ -103,3 +127,162 @@ const handleDelete = async (msg) => {
 
 fetchData()
 </script>
+
+<style scoped>
+/* ========== 页面容器：flex 纵向布局，填满可用高度 ========== */
+.page-message {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 84px);
+  background: #f5f7fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ========== 顶部工具栏 ========== */
+.msg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #ebeef5;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.unread-label {
+  color: #909399;
+  font-size: 12px;
+  cursor: default;
+}
+
+/* ========== 消息列表（可滚动区域）========== */
+.msg-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+  position: relative;
+}
+
+/* 自定义滚动条 */
+.msg-body::-webkit-scrollbar {
+  width: 6px;
+}
+.msg-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.msg-body::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 3px;
+}
+.msg-body::-webkit-scrollbar-thumb:hover {
+  background: #909399;
+}
+
+.msg-timeline {
+  padding: 4px 32px 16px !important;
+}
+
+/* 时间线时间戳 */
+.msg-timeline :deep(.el-timeline-item__timestamp) {
+  font-size: 13px;
+  color: #909399;
+}
+
+/* ========== 消息卡片 ========== */
+.msg-card {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  border-left-width: 0 !important;
+  margin-bottom: 4px;
+}
+
+.msg-card.is-unread {
+  border-left: 3px solid #409EFF !important;
+  background: linear-gradient(135deg, #ecf5ff 0%, #ffffff 100%);
+}
+
+.msg-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px);
+}
+
+.msg-card.is-unread:hover {
+  box-shadow: 0 4px 16px rgba(64, 158, 255, 0.15) !important;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0; /* 允许文字截断 */
+}
+
+.card-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #303133;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.is-unread .card-title {
+  color: #1a1a1a;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.msg-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-body {
+  color: #606266;
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 1.7;
+  word-break: break-all;
+}
+
+.card-body :deep(p) { margin: 0; }
+
+/* ========== 分页器（固定底部）========== */
+.msg-footer {
+  padding: 12px 20px;
+  background: #fff;
+  border-top: 1px solid #ebeef5;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.msg-footer :deep(.el-pagination) {
+  justify-content: center;
+}
+</style>
