@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rx.admin.entity.SysUserFavorite;
 import com.rx.admin.mapper.SysUserFavoriteMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, SysUserFavorite> {
 
@@ -20,9 +22,11 @@ public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, S
     public SysUserFavorite toggleFavorite(Long userId, String name, String path, String icon, Long menuId) {
         LambdaQueryWrapper<SysUserFavorite> w = new LambdaQueryWrapper<>();
         w.eq(SysUserFavorite::getUserId, userId).eq(SysUserFavorite::getPath, path);
-        SysUserFavorite exist = getOne(w);
+        // 使用 getOne(w, false) 避免多条记录时抛异常
+        SysUserFavorite exist = getOne(w, false);
         if (exist != null) {
             removeById(exist.getId());
+            log.info("取消收藏: userId={}, path={}", userId, path);
             return null;
         }
         SysUserFavorite f = new SysUserFavorite();
@@ -33,6 +37,7 @@ public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, S
         f.setMenuId(menuId);
         f.setSortOrder(0);
         save(f);
+        log.info("添加收藏: userId={}, path={}", userId, path);
         return f;
     }
 

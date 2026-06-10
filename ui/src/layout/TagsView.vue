@@ -149,7 +149,7 @@ async function handleCloseAll() {
 
 // 收藏夹切换
 const { triggerRefresh } = useFavEvents()
-const favSet = ref(new Set<string>())
+const favSet = ref(new Set())
 onMounted(() => {
   // 从 localStorage 恢复已收藏路径
   for (let i = 0; i < localStorage.length; i++) {
