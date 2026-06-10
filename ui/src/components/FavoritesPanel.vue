@@ -49,13 +49,17 @@ const fetchFavorites = async () => {
 
 const goTo = (path) => router.push(path)
 
-// 点击星星取消收藏
+// 点击星星取消收藏（乐观更新：先移除UI，API后台确认）
 const toggleFav = async (fav) => {
+  favorites.value = favorites.value.filter(f => f.id !== fav.id)
+  localStorage.removeItem(`fav_${fav.path}`)
+  triggerRefresh()
   try {
     await toggleFavoriteApi({ name: fav.name, path: fav.path, icon: fav.icon || '', menuId: fav.menuId })
-    localStorage.removeItem(`fav_${fav.path}`)
-    triggerRefresh()
-  } catch (e) { /* */ }
+  } catch (e) {
+    console.error('[FavoritesPanel] toggleFav API失败，重新拉取', e)
+    fetchFavorites()
+  }
 }
 
 // 显示右键菜单
