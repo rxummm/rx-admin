@@ -1,9 +1,9 @@
 package com.rx.admin.common.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.rx.admin.common.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 /**
