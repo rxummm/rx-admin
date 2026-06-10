@@ -20,25 +20,31 @@ public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, S
     }
 
     public SysUserFavorite toggleFavorite(Long userId, String name, String path, String icon, Long menuId) {
-        LambdaQueryWrapper<SysUserFavorite> w = new LambdaQueryWrapper<>();
-        w.eq(SysUserFavorite::getUserId, userId).eq(SysUserFavorite::getPath, path);
-        // 使用 getOne(w, false) 避免多条记录时抛异常
-        SysUserFavorite exist = getOne(w, false);
-        if (exist != null) {
-            removeById(exist.getId());
-            log.info("取消收藏: userId={}, path={}", userId, path);
-            return null;
+        try {
+            LambdaQueryWrapper<SysUserFavorite> w = new LambdaQueryWrapper<>();
+            w.eq(SysUserFavorite::getUserId, userId).eq(SysUserFavorite::getPath, path);
+            // 使用 getOne(w, false) 避免多条记录时抛异常
+            SysUserFavorite exist = getOne(w, false);
+            if (exist != null) {
+                // 按条件删除而非按 ID 删除，避免 id 不匹配或重复记录导致的问题
+                boolean removed = remove(w);
+                log.info("取消收藏: userId={}, path={}, removed={}, existId={}", userId, path, removed, exist.getId());
+                return null;
+            }
+            SysUserFavorite f = new SysUserFavorite();
+            f.setUserId(userId);
+            f.setName(name);
+            f.setPath(path);
+            f.setIcon(icon);
+            f.setMenuId(menuId);
+            f.setSortOrder(0);
+            save(f);
+            log.info("添加收藏: userId={}, path={}, id={}", userId, path, f.getId());
+            return f;
+        } catch (Exception e) {
+            log.error("toggleFavorite异常: userId={}, path={}", userId, path, e);
+            throw e;
         }
-        SysUserFavorite f = new SysUserFavorite();
-        f.setUserId(userId);
-        f.setName(name);
-        f.setPath(path);
-        f.setIcon(icon);
-        f.setMenuId(menuId);
-        f.setSortOrder(0);
-        save(f);
-        log.info("添加收藏: userId={}, path={}", userId, path);
-        return f;
     }
 
     public void updateSort(List<Long> ids) {
