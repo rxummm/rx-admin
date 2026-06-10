@@ -3,22 +3,42 @@
     <div class="fav-header">
       <span style="font-size: 12px; color: #909399;">快捷收藏</span>
     </div>
-    <div v-for="fav in favorites" :key="fav.id" class="fav-item" @click="goTo(fav.path)" :title="fav.name">
-      <div class="fav-icon">⭐</div>
+    <div
+      v-for="fav in favorites"
+      :key="fav.id"
+      class="fav-item"
+      @click="goTo(fav.path)"
+      @contextmenu.prevent="(e) => showMenu(e, fav)"
+      :title="fav.name"
+    >
+      <div class="fav-icon star-btn" @click.stop="toggleFav(fav)" :class="{ active: true }">⭐</div>
       <span class="fav-name">{{ fav.name }}</span>
     </div>
+
+    <!-- 右键菜单 -->
+    <teleport to="body">
+      <ul class="context-menu" v-show="visible" :style="{ left: x + 'px', top: y + 'px' }" @click.self="closeMenu">
+        <li @click="removeFav">取消收藏</li>
+      </ul>
+    </teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getFavoritesApi, deleteFavoriteApi } from '@/api/favorite'
+import { getFavoritesApi, toggleFavoriteApi } from '@/api/favorite'
 import { useFavEvents } from '@/composables/useFavEvents'
 
 const router = useRouter()
 const favorites = ref([])
-const { refreshTick } = useFavEvents()
+const { refreshTick, triggerRefresh } = useFavEvents()
+
+// 右键菜单状态
+const visible = ref(false)
+const x = ref(0)
+const y = ref(0)
+let currentFav = null
 
 const fetchFavorites = async () => {
   try {
@@ -28,6 +48,39 @@ const fetchFavorites = async () => {
 }
 
 const goTo = (path) => router.push(path)
+
+// 点击星星取消收藏
+const toggleFav = async (fav) => {
+  try {
+    await toggleFavoriteApi({ name: fav.name, path: fav.path, icon: fav.icon || '', menuId: fav.menuId })
+    localStorage.removeItem(`fav_${fav.path}`)
+    triggerRefresh()
+  } catch (e) { /* */ }
+}
+
+// 显示右键菜单
+const showMenu = (e, fav) => {
+  currentFav = fav
+  x.value = e.clientX
+  y.value = e.clientY
+  visible.value = true
+}
+
+// 取消收藏（右键菜单）
+const removeFav = async () => {
+  if (!currentFav) return
+  await toggleFav(currentFav)
+  closeMenu()
+}
+
+const closeMenu = () => {
+  visible.value = false
+  currentFav = null
+}
+
+// 点击外部关闭菜单
+onMounted(() => document.addEventListener('click', closeMenu))
+onUnmounted(() => document.removeEventListener('click', closeMenu))
 
 onMounted(fetchFavorites)
 watch(refreshTick, fetchFavorites)
@@ -49,5 +102,22 @@ watch(refreshTick, fetchFavorites)
 }
 .fav-item:hover { background: var(--el-fill-color-light); }
 .fav-icon { font-size: 14px; flex-shrink: 0; }
+.fav-icon.star-btn { cursor: pointer; transition: opacity 0.15s; }
+.fav-icon.star-btn:hover { opacity: 0.6; }
 .fav-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 右键菜单 */
+.context-menu {
+  position: fixed; z-index: 9999;
+  list-style: none; margin: 0; padding: 4px 0;
+  min-width: 120px; border-radius: 6px;
+  background: var(--el-bg-color);
+  box-shadow: var(--el-box-shadow-dark); border: 1px solid var(--el-border-color-lighter);
+}
+.context-menu li {
+  padding: 8px 16px; font-size: 13px; color: var(--el-text-color-regular);
+  cursor: pointer; transition: background 0.15s;
+  white-space: nowrap;
+}
+.context-menu li:hover { background: var(--el-fill-color-light); color: var(--el-color-danger); }
 </style>
