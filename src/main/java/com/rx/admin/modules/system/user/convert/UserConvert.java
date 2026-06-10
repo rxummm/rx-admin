@@ -34,8 +34,9 @@ public interface UserConvert {
 
     /** MyBatis-Plus Page → PageResult */
     default PageResult<UserVO> toPageResult(Page<SysUser> page) {
-        return PageResult.of(page, page.getRecords().stream()
+        List<UserVO> voList = page.getRecords().stream()
                 .map(this::toVO)
-                .toList());
+                .toList();
+        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
     }
 }
