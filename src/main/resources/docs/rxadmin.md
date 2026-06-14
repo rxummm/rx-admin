@@ -649,7 +649,7 @@ public interface XxxConvert {
 | 图标库 | @element-plus/icons-vue | ^2.3.1 |
 | 图标库 | @fortawesome/vue-fontawesome | ^3.0.0-5 |
 | 国际化 | Vue I18n | ^9.14.4 |
-| CSS 预处理 | SCSS (Dart Sass) | ^1.69.5 |
+| CSS 预处理 | SCSS (sass-embedded) | ^1.69.5 |
 | 进度条 | NProgress | ^0.2.0 |
 | 图表 | ECharts | ^6.1.0 |
 | Markdown 编辑 | md-editor-v3 | ^6.5.1 |
@@ -694,10 +694,11 @@ ui/
     │   ├── useStorage.js               # localStorage 统一管理
     │   ├── useTablePage.js             # 通用表格分页
     │   ├── useTheme.js                 # 主题切换
-    │   ├── useMenuI18n.js              # 菜单国际化
-    │   ├── usePasswordStrength.js      # 密码强度检测
-    │   ├── useTableHeight.js           # 表格高度自适应
-    │   └── useLayoutSettings.js        # 布局设置
+	│   ├── useMenuI18n.js              # 菜单国际化
+	│   ├── usePasswordStrength.js      # 密码强度检测
+	│   ├── useTableHeight.js           # 表格高度自适应
+	│   ├── useLayoutSettings.js        # 布局设置（含 ECharts 主题联动）
+	│   └── useMarkdownRenderer.js      # Markdown 渲染器（marked + highlight.js 封装）
     ├── i18n/                            # 国际化
     │   ├── index.js
     │   └── lang/
@@ -886,7 +887,7 @@ Element Plus 2.4.3 全量引入 + 中文语言包，暗黑模式由 `element-plu
 
 ### 5.3 主题系统
 
-双主题 CSS 变量方案（`:root` / `html.dark`），50+ CSS 变量覆盖页面背景/文字/边框/侧边栏/顶栏/标签/搜索/通知等。5 套预设主题色通过 `data-theme` 切换。
+双主题 CSS 变量方案（`:root` / `html.dark`），50+ CSS 变量覆盖页面背景/文字/边框/侧边栏/顶栏/标签/搜索/通知等。5 套预设主题色通过 `data-theme` 切换（蓝/绿/紫/橙/青），设计令牌 `--rx-primary` 驱动 ECharts 主题运行时读取。
 
 ### 5.4 全局样式
 

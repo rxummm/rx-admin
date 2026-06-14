@@ -176,6 +176,9 @@ public interface SysXxxConvert {
 - **删除**: 必须 `ElMessageBox.confirm` 二次确认
 - **表单**: 必须有 `rules` 校验规则, 弹窗关闭时重置
 - **Element Plus 受控 prop**: 返回 prop 值的函数/计算属性（如 `ElTag` 的 `type`、`ElButton` 的 `type`、`ElAlert` 的 `type` 等）**禁止返回空字符串 `''` 或 `undefined`**，必须提供有效默认值（如 `'info'`、`'default'` 等），否则会触发控制台 prop validation 警告
+- **ElMessageBox.confirm rejection**: 必须用 try/catch 包裹
+- **字体自托管**: 使用 @fontsource/* 替代 Google Fonts CDN
+- **sass-embedded**: 仅使用 sass-embedded，移除 sass
 
 ## 权限码规范
 

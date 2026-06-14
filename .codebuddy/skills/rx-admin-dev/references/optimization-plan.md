@@ -38,6 +38,14 @@
 | P3 | DashboardController DI 优化 | `@RequiredArgsConstructor` |
 | P3 | 清理根目录杂项文件 | 11 个无用文件已删除 |
 | P3 | **文档体系重构** | SKILL.md / rxadmin-setup.md / AGENT.MD 三份文档更新至最新架构 |
+| P3 | **主题色系统统一** | CSS 变量 → `--rx-primary` 设计令牌，ECharts 运行时读取，5 套预设 + 暗黑 |
+| P3 | **Sentry v10 升级** | 移除废弃 @sentry/tracing，使用 browserTracingIntegration |
+| P3 | **字体自托管** | Google Fonts CDN → @fontsource/* npm 包 |
+| P3 | **sass 去重** | 移除 sass，保留 sass-embedded |
+| P3 | **useMarkdownRenderer** | 抽取 marked + highlight.js 封装 composable |
+| P3 | **构建优化** | 8 manualChunks（vendor/echarts/element-plus/flowchart/editor/export/icons/markdown）+ visualizer + analyze |
+| P3 | **api/config.js** | 新建 8 导出对接 SysConfigController |
+| P3 | **cache-manage bug 修复** | ElMessageBox.confirm() rejection 捕获 |
 
 ## 待实施优化 (测试阶段暂保留)
 

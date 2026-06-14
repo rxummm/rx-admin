@@ -22,9 +22,12 @@
 | **状态管理** | Pinia | ^2.1 | Composition API 风格 |
 | **HTTP 客户端** | Axios | ^1.6 | 统一拦截器封装 |
 | **UI 组件库** | Element Plus | ^2.4 | 全量引入 + 暗黑模式 |
-| **CSS 预处理** | SCSS (Dart Sass) | ^1.69 | 全局变量注入 |
+| **CSS 预处理** | SCSS (sass-embedded) | ^1.69 | 全局变量注入（替代 sass） |
 | **国际化** | Vue I18n | ^9.14 | Composition API 模式 |
 | **进度条** | NProgress | ^0.2 | 路由切换进度条 |
+| **错误监控** | @sentry/vue | ^10.0 | Sentry v10 + browserTracingIntegration |
+| **图表** | ECharts | ^6.1 | 仪表盘/知识图谱/日志分析/健康监控 |
+| **自托管字体** | @fontsource/dm-sans, ibm-plex-sans, jetbrains-mono | ^5.x | 替代 Google Fonts CDN |
 
 ## 禁止引入的技术
 
@@ -35,3 +38,6 @@
 - **Vue 2 / Options API**：统一使用 Vue 3 Composition API
 - **Vuex**：使用 Pinia 替代
 - **Webpack**：使用 Vite 替代
+- **sass（Dart Sass 旧版）**：使用 sass-embedded 替代
+- **@sentry/tracing**：使用 @sentry/vue v10 browserTracingIntegration 替代
+- **Google Fonts CDN**：使用 @fontsource 自托管替代

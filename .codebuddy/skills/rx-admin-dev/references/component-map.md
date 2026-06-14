@@ -75,6 +75,15 @@ export const componentMap = {
   'classics/shuihu/chapters/index':     { component: () => import('@/views/classics/shuihu/chapters/index.vue'),     name: 'ClassicsShuihuChapters' },
   'classics/literature/index':          { component: () => import('@/views/classics/literature/index.vue'),          name: 'ClassicsLiteratureIndex' },
   'classics/literature/works/index':    { component: () => import('@/views/classics/literature/works/index.vue'),      name: 'ClassicsLiteratureWorks' },
+  'tool/emailSender/index':             { component: () => import('@/views/tool/emailSender/index.vue'),             name: 'ToolEmailSender' },
+  'tool/dbConsole/index':               { component: () => import('@/views/tool/dbConsole/index.vue'),               name: 'ToolDbConsole' },
+  'tool/devTools/index':                { component: () => import('@/views/tool/devTools/index.vue'),                name: 'ToolDevTools' },
+  'monitor/login-log/index':            { component: () => import('@/views/monitor/login-log/index.vue'),            name: 'MonitorLoginLog' },
+  'monitor/export-log/index':           { component: () => import('@/views/monitor/export-log/index.vue'),           name: 'MonitorExportLog' },
+  'monitor/job-log/index':              { component: () => import('@/views/monitor/job-log/index.vue'),              name: 'MonitorJobLog' },
+  'monitor/cache-manage/index':         { component: () => import('@/views/monitor/cache-manage/index.vue'),         name: 'MonitorCacheManage' },
+  'content/notify-center/index':        { component: () => import('@/views/content/notify-center/index.vue'),        name: 'ContentNotifyCenter' },
+  'dashboard/knowledgeGraph/index':     { component: () => import('@/views/dashboard/knowledgeGraph/index.vue'),     name: 'DashboardKnowledgeGraph' },
 }
 ```
 

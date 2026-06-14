@@ -1,6 +1,6 @@
 # AGENT.MD — RX Admin AI 开发参考手册
 
-> **项目**: RX Admin 通用管理系统 | **版本**: 1.1 | **生成日期**: 2026-06-05 | **更新日期**: 2026-06-13
+> **项目**: RX Admin 通用管理系统 | **版本**: 1.2 | **生成日期**: 2026-06-05 | **更新日期**: 2026-06-15
 >
 > 本文档整合了 [rxadmin.md](./src/main/resources/docs/rxadmin.md)、[SKILL.md](./src/main/resources/docs/SKILL.md)、[rxadmin-setup.md](./src/main/resources/docs/rxadmin-setup.md)、[rxadmin-optimization.md](./src/main/resources/docs/rxadmin-optimization.md) 四份文档的核心规则，供 AI 辅助开发时作为第一参考。
 
@@ -55,6 +55,9 @@
 - ❌ Webpack（用 Vite）
 - ❌ MyBatis XML 映射文件（用注解）
 - ❌ Redis（项目决策不使用）
+- ❌ sass（保留 sass-embedded，Dart Sass 新 API）
+- ❌ Google Fonts CDN（使用 @fontsource 自托管）
+- ❌ @sentry/tracing（使用 @sentry/vue v10 browserTracingIntegration）
 
 ---
 
@@ -101,7 +104,7 @@ ui/
 ├── src/
 │   ├── main.js                        # 入口：ElementPlus + Router + Pinia + i18n
 │   ├── api/                           # 每个模块一个文件（auth.js, user.js, ...）
-│   ├── composables/                   # useStorage, useTablePage, useTheme, useMenuI18n, usePasswordStrength, useTableHeight
+│   ├── composables/                   # useStorage, useTablePage, useTheme, useMenuI18n, usePasswordStrength, useTableHeight, useLayoutSettings, useMarkdownRenderer
 │   ├── i18n/lang/                     # zh-CN.js, en-US.js
 │   ├── layout/                        # index.vue, SearchBox.vue, NoticePopover.vue, SubMenu.vue, TagsView.vue
 │   ├── router/
@@ -842,7 +845,7 @@ html.dark {
 
 ## 11. 当前实现状态
 
-### 已完成（全部安全加固 + 核心优化 + v2.0 新功能）
+### 已完成（全部安全加固 + 核心优化 + v2.0 + v3.x 新功能）
 - 验证码, XSS防护, API防重放, 密码策略, 敏感数据脱敏
 - IP黑白名单, v-html DOMPurify, Controller输入校验, 音乐流鉴权
 - Token混淆存储, 登录默认凭据DEV判断
@@ -855,6 +858,16 @@ html.dark {
 - **数据导出系统（双模式：前端导出 + 后端导出）** [详见 §13](#13-数据导出系统)
 - **v2.0 新功能**: 系统健康监控、IP黑白名单管理、站内消息中心、快捷收藏夹、系统公告弹窗、
   代码生成器、批量数据导入、操作日志可视化分析、API调试面板、数据库备份恢复、全局命令搜索Ctrl+K、多主题色切换 [详见 §14](#14-v20-新功能)
+- **v3.x 新功能**: Spring Boot 3.5.15 + MapStruct 规范 + DTO/VO/Convert 全覆盖 + Modular Monolith + EmailService
+- **主题色系统统一**: CSS 变量 → `--rx-primary` 设计令牌，ECharts 运行时读取，5 套预设 + 暗黑模式
+- **Sentry v10 升级**: 移除 @sentry/tracing，使用 browserTracingIntegration
+- **字体自托管**: Google Fonts CDN → @fontsource/* npm 包
+- **sass 去重**: 移除 sass，保留 sass-embedded
+- **Markdown composable**: 抽取 useMarkdownRenderer.js
+- **构建优化**: 8 个 manualChunks + visualizer + analyze 脚本
+- **api/config.js**: 新建 API 模块 8 个导出
+- **cache-manage bug**: ElMessageBox.confirm() rejection 捕获
+- **demo 页面删除**: 移除 ErrorBoundaryDemo.vue
 
 ### 待实现
 - WebSocket 通知

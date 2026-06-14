@@ -1,6 +1,6 @@
 # RX Admin — 开发规范与技能手册 (SKILL.md)
 
-> **版本**: 1.5.0 | **更新日期**: 2026-06-13 | **适用对象**: 所有开发者
+> **版本**: 1.5.1 | **更新日期**: 2026-06-15 | **适用对象**: 所有开发者
 >
 > **v1.5 更新**: Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 强制规范 + 构造器注入 + PageResult API 更新 + EmailService + 前端 composables 补充 + 新增模块开发示例
 
@@ -81,7 +81,7 @@
 | **Axios** | ^1.6.2 | HTTP 请求 |
 | **Element Plus** | ^2.4.3 | UI 组件库 |
 | **Vue I18n** | ^9.14.4 | 国际化 |
-| **SCSS** | ^1.69.5 | CSS 预处理 |
+| **SCSS (sass-embedded)** | ^1.69.5 | CSS 预处理 |
 | **ECharts** | ^6.1.0 | 图表 |
 | **md-editor-v3** | ^6.5.1 | Markdown 编辑器 |
 | **marked** | ^18.0.4 | Markdown 渲染 |
@@ -502,7 +502,8 @@ ui/src/
 │   ├── useMenuI18n.js      # 菜单国际化
 │   ├── usePasswordStrength.js # 密码强度检测
 │   ├── useTableHeight.js   # 表格高度自适应
-│   └── useLayoutSettings.js # 布局设置
+│   ├── useLayoutSettings.js # 布局设置（含 ECharts 主题联动）
+│   └── useMarkdownRenderer.js # Markdown 渲染器（marked + highlight.js）
 ├── i18n/                   # 国际化
 │   ├── index.js
 │   └── lang/
@@ -1084,4 +1085,4 @@ VALUES ('技术博客', '/techblog', 'as400/techblog', 'Document', 9, 'menu', 't
 ---
 
 > **文档维护**: 本文档为 RX Admin 项目开发规范与技能手册，所有开发者必须遵守。
-> **历史版本**: v1.4.0 (2026-06-10) → v1.5.0 (2026-06-13): Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 强制规范 + 构造器注入 + PageResult API 更新 + EmailService + 前端 composables + TechBlog 完整示例
+> **历史版本**: v1.4.0 (2026-06-10) → v1.5.0 (2026-06-13): Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 强制规范 + 构造器注入 + PageResult API 更新 + EmailService + 前端 composables + TechBlog 完整示例 → v1.5.1 (2026-06-15): sass-embedded + useMarkdownRenderer + 构建优化补充

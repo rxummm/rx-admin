@@ -1,8 +1,8 @@
 # RX Admin — 项目搭建与新增模块指南
 
-> **版本**: 1.1.0 | **更新日期**: 2026-06-13 | **适用对象**: 新加入开发者
+> **版本**: 1.2.0 | **更新日期**: 2026-06-15 | **适用对象**: 新加入开发者
 >
-> **v1.1 更新**: 适配 Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 规范 + 构造器注入 + build-helper-maven-plugin + 代码生成器新增模块完整流程
+> **v1.2 更新**: 补充 sass-embedded（非 Dart Sass）+ font self-hosting（@fontsource）+ build 优化（manualChunks）
 
 ---
 
@@ -149,6 +149,9 @@ npm run dev
 
 # 生产构建
 npm run build
+
+# 分析构建产物体积（需先 npm run build）
+npm run analyze
 ```
 
 ### 5.1 Vite 代理配置
@@ -597,7 +600,8 @@ mvn clean                                  # 清理构建产物
 cd ui
 npm install                                # 安装依赖
 npm run dev                                # 启动开发服务器
-npm run build                              # 生产构建
+npm run build                              # 生产构建（含 8 个 manualChunks 分包优化）
+npm run analyze                            # 分析构建产物体积（依赖 rollup-plugin-visualizer）
 npm run preview                            # 预览生产构建
 ```
 
@@ -680,4 +684,4 @@ mysql -u root -p rx_admin < rx_admin_backup.sql
 ---
 
 > **文档维护**: 本文档为 RX Admin 项目搭建与新增模块指南，随项目迭代持续更新。
-> **历史版本**: v1.0.0 (2026-06-10) → v1.1.0 (2026-06-13): 适配 Spring Boot 3.5.15 + MapStruct 规范 + 构造器注入 + build-helper-maven-plugin + 完整新增模块流程
+> **历史版本**: v1.0.0 (2026-06-10) → v1.1.0 (2026-06-13): 适配 Spring Boot 3.5.15 + MapStruct 规范 + 构造器注入 + build-helper-maven-plugin + 完整新增模块流程 → v1.2.0 (2026-06-15): sass-embedded + build 优化 + font self-hosting

@@ -52,7 +52,8 @@ ui/src/
 │   ├── useMenuI18n.js        # 菜单国际化翻译
 │   ├── usePasswordStrength.js # 密码强度检测
 │   ├── useTableHeight.js     # 表格高度自适应
-│   └── useLayoutSettings.js  # 布局设置
+│   ├── useLayoutSettings.js  # 布局设置（含 ECharts 主题联动）
+│   └── useMarkdownRenderer.js # Markdown 渲染器（marked + highlight.js）
 ├── i18n/                    # 国际化
 ├── layout/                  # 布局组件
 ├── components/               # 公共组件

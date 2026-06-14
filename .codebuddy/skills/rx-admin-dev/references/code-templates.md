@@ -271,6 +271,10 @@ public class SysXxxController extends BaseCrudController<SysXxxService, SysXxx> 
 }
 ```
 
+> **框架版本**: Spring Boot 3.5.15 + MapStruct 1.5.5 + Sa-Token 1.37.0 | 所有 Convert 必须加 `unmappedTargetPolicy = ReportingPolicy.IGNORE`
+>
+> **前端构建**: `sass-embedded` 替代 `sass` | 8 个 manualChunks (vendor/echarts/element-plus/flowchart/editor/export/icons/markdown) | `npm run analyze` 查看体积
+
 ## Vue 页面模板
 
 ```vue
@@ -372,7 +376,9 @@ const handleSubmit = async () => {
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm('确认删除？', '提示', { type: 'warning' })
-  } catch { return }
+  } catch {
+    return // ElMessageBox.confirm 取消时 rejection 必须捕获，否则控制台报错
+  }
   await xxxApi.delete([row.id])
   ElMessage.success('删除成功')
   fetchData()
@@ -417,5 +423,10 @@ export function updateXxx(data) {
 
 export function deleteXxx(ids) {
   return request({ url: `/system/xxx/${ids}`, method: 'delete' })
+}
+
+// 定时轮询跳过进度条：传入 { _skipNProgress: true }
+export function pollXxx(params) {
+  return request({ url: '/system/xxx/poll', method: 'get', params, _skipNProgress: true })
 }
 ```

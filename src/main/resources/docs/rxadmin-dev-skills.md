@@ -1,6 +1,8 @@
 # RX Admin 开发规范与技能手册
 
-> **版本**: 1.4.0 | **更新日期**: 2026-06-05 | **适用项目**: 基于 Spring Boot 3 + Vue 3 的后台管理系统
+> **版本**: 1.5.0 | **更新日期**: 2026-06-15 | **适用项目**: 基于 Spring Boot 3 + Vue 3 的后台管理系统
+>
+> **v1.5 更新**: Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 强制规范 + 构造器注入 + PageResult API 更新 + EmailService + 新 composables + 主题色统一 + Sentry 升级 + 字体自托管 + 构建优化
 
 ---
 
@@ -26,7 +28,7 @@
 | 层级 | 技术 | 版本要求 | 说明 |
 |------|------|---------|------|
 | **运行环境** | Java / Node.js | Java 17+ / Node 18+ | LTS 版本 |
-| **后端框架** | Spring Boot | 3.2.x | Jakarta EE 9+ |
+| **后端框架** | Spring Boot | 3.5.x | Jakarta EE 9+ |
 | **ORM** | MyBatis Plus | 3.5.x | 继承 `BaseMapper<T>` + `ServiceImpl<M, T>` |
 | **安全认证** | Sa-Token | 1.37+ | 替代 Spring Security / Shiro |
 | **API 文档** | Knife4j | 4.4+ | OpenAPI 3 规范，`@Tag` / `@Operation` 注解 |
@@ -40,9 +42,17 @@
 | **状态管理** | Pinia | ^2.1 | Composition API 风格 |
 | **HTTP 客户端** | Axios | ^1.6 | 统一拦截器封装 |
 | **UI 组件库** | Element Plus | ^2.4 | 全量引入 + 暗黑模式 |
-| **CSS 预处理** | SCSS (Dart Sass) | ^1.69 | 全局变量注入 |
+| **CSS 预处理** | SCSS (sass-embedded) | ^1.69 | 全局变量注入（替代 sass）|
 | **国际化** | Vue I18n | ^9.14 | Composition API 模式 |
 | **进度条** | NProgress | ^0.2 | 路由切换进度条 |
+| **图表** | ECharts | ^6.1 | 仪表盘/知识图谱/日志分析/健康监控 |
+| **错误监控** | @sentry/vue | ^10.0 | Sentry v10 + browserTracingIntegration |
+| **自托管字体** | @fontsource/dm-sans / ibm-plex-sans / jetbrains-mono | ^5.x | 替代 Google Fonts CDN |
+
+| **对象映射** | MapStruct | 1.5.x | 编译期对象转换，`unmappedTargetPolicy = IGNORE` |
+| **邮件服务** | Spring Boot Mail | — | SMTP 邮件发送 |
+| **Maven 插件** | build-helper-maven-plugin | 3.x | 声明 MapStruct generated-sources 为源码根 |
+| **CSS 预处理** | SCSS (sass-embedded) | ^1.69 | 替代 sass（Dart Sass） |
 
 ### 1.2 禁止引入的技术
 
@@ -68,35 +78,37 @@
 <java.version>17</java.version>
 ```
 
-**包结构**（`com.rx.admin`）：
+**包结构**（`com.rx.admin`，v3 领域化单体）：
 
 ```
 com.rx.admin
-├── RxAdminApplication.java          # 启动类（放在根包）
-├── common/                           # 公共模块
-│   ├── BaseEntity.java              # 实体基类
-│   ├── Result.java                  # 统一响应封装
-│   ├── PageResult.java              # 分页响应封装（of(total,page,size,records)）
-│   ├── GlobalExceptionHandler.java  # 全局异常处理（10种异常类型）
-│   ├── OperateLog.java              # @OperateLog 操作日志注解
-│   └── OperateLogAspect.java        # AOP切面（@Async异步 + 参数脱敏）
-├── config/                           # 配置模块
-│   ├── CorsConfig.java              # CORS 跨域配置
-│   ├── SaTokenConfig.java           # Sa-Token 路由拦截器
-│   ├── StpInterfaceImpl.java        # 权限/角色加载
-│   ├── MybatisPlusConfig.java       # MyBatis Plus 分页 & 自动填充
-│   ├── RateLimiterConfig.java       # Guava RateLimiter 限流配置
-│   ├── AsyncConfig.java             # 异步任务配置（@EnableAsync）
-│   └── DataSourceConfig.java        # 数据源配置（PrimaryDataSourceConfig + SecondDataSourceConfig）
-├── entity/                           # 实体模块
-│   └── {module}/                     # 子模块实体
-├── controller/                       # 控制器模块
-│   └── {module}/                     # 子模块控制器
-├── service/                          # 服务层
-│   ├── impl/                         # 实现类
-│   └── {module}/                     # 子模块服务
-└── mapper/                           # 数据访问层
-    └── {module}/                     # 子模块 Mapper
+├── RxAdminApplication.java           # 启动类（排除 DataSourceAutoConfiguration）
+├── common/                            # 公共模块（按职责拆分子包）
+│   ├── annotation/                    # @OperateLog, @DataScope
+│   ├── result/                        # Result<T>, PageResult<T>
+│   ├── exception/                     # GlobalExceptionHandler（10种异常）
+│   ├── constant/                      # PageConstants
+│   ├── utils/                         # CaptchaUtil, DataMaskUtil
+│   ├── security/                      # IpFilter, NotLoginFilter, ReplayAttackFilter, XssJacksonConfig
+│   ├── base/                          # BaseEntity, BaseCrudController（构造器注入）
+│   ├── aspect/                        # OperateLogAspect（@Async 异步 + 参数脱敏）
+│   └── handler/                       # AesTypeHandler, DataScopeInnerInterceptor, SlowQueryInterceptor
+├── framework/                         # 框架层配置（Spring Boot 自动装配）
+│   ├── datasource/                    # PrimaryDataSourceConfig / SecondDataSourceConfig / @SecondDB
+│   ├── mybatis/                       # MybatisPlusConfig / MetaObjectHandlerConfig
+│   ├── security/                      # SaTokenConfig / StpInterfaceImpl（双源合并权限）
+│   ├── async/                         # AsyncConfig
+│   ├── cache/                         # CacheConfig（Caffeine）
+│   └── web/                           # CorsConfig / RateLimiterConfig
+├── modules/                           # ⭐ 业务模块层（领域化 DTO/VO/Convert）
+│   ├── system/user/ role/ menu/ dept/ config/ dict/ ipRule/ file/ favorite/    # dto/ vo/ convert/
+│   ├── monitor/log/ loginlog/ job/ slowquery/                                   # vo/ convert/
+│   ├── content/notice/ message/                                                  # dto/ vo/ convert/
+│   └── as400/techblog/                                                          # dto/ vo/ convert/
+├── entity/                            # 实体定义（共用）
+├── controller/                        # 控制器（共用，DTO 入参 → VO 出参）
+├── service/                           # 服务层（共用）
+└── mapper/                            # 数据访问层（共用，禁止 XML）
 ```
 
 ### 2.2 实体类规范
@@ -221,7 +233,39 @@ public class SysUserServiceImpl
 5. 条件查询使用 `LambdaQueryWrapper`（类型安全）
 6. 所有写操作使用 `@Transactional` 注解
 
-### 2.5 Controller 层规范
+### 2.5 DTO / VO / Convert 分层规范
+
+#### MapStruct 转换器强制规范
+
+所有 Convert 接口统一使用以下注解配置：
+
+```java
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface XxxConvert {
+    XxxEntity toEntity(XxxCreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(XxxUpdateDTO dto, @MappingTarget XxxEntity entity);
+
+    XxxVO toVO(XxxEntity entity);
+
+    List<XxxVO> toVOList(List<XxxEntity> list);
+}
+```
+
+**强制规则**：
+
+| 规则 | 说明 |
+|------|------|
+| `componentModel = "spring"` | 必须指定，让 MapStruct 生成 Spring Bean |
+| `unmappedTargetPolicy = ReportingPolicy.IGNORE` | **必须添加**，忽略未映射字段编译警告 |
+| `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)` | 更新时 **必须添加**，null 值不覆盖已有字段 |
+| `@MappingTarget` | 更新时 **必须标注**，在原对象上修改 |
+| 禁止 `Mappers.getMapper()` | 统一使用 Spring 注入 |
+| 禁止 `BeanUtils.copyProperties` | 全部通过 MapStruct Convert 转换 |
+| 禁止 Entity 直接暴露 | DTO 入参 + VO 出参，Entity 仅 Service 层可见 |
+
+### 2.6 Controller 层规范
 
 ```java
 @Tag(name = "用户管理")
@@ -524,6 +568,15 @@ public class OperateLogAspect {
 - **必须对敏感参数脱敏**：`password`, `oldPassword`, `newPassword`, `confirmPassword`, `token`, `secret`, `accessKey`, `secretKey`
 - 参数长度 > 2000 字符时截断，返回结果 > 1000 字符时截断，错误信息 > 500 字符时截断
 
+### 2.7 代码生成器规范
+
+使用内置代码生成器（`/api/tool/gen`）可快速生成 Entity/Mapper/Service/Controller/Vue/API。
+
+生成后需手动调整：
+- 添加 `unmappedTargetPolicy = ReportingPolicy.IGNORE` 到 Convert
+- 将 `@Autowired` 字段注入改为构造器注入
+- 调整 DTO 字段名与 Entity 对齐
+
 ---
 
 ## 3. 前端开发规范
@@ -579,7 +632,8 @@ ui/src/
 │   ├── useMenuI18n.js        # 菜单国际化翻译映射
 │   ├── usePasswordStrength.js # 密码强度检测
 │   ├── useTableHeight.js     # classics 页面表格高度自适应
-│   └── useLayoutSettings.js  # 布局设置（主题色/侧边栏样式）
+│   ├── useLayoutSettings.js  # 布局设置（主题色/侧边栏样式，含 ECharts 主题联动）
+│   └── useMarkdownRenderer.js # Markdown 渲染器（marked + highlight.js 封装）
 ├── i18n/                    # 国际化
 │   ├── index.js
 │   └── lang/
@@ -839,6 +893,28 @@ theme.set('dark')
 2. 必须通过 `STORAGE_KEYS` 常量引用，禁止硬编码字符串
 3. 自动处理 JSON 序列化/反序列化
 4. 异常静默处理（localStorage 不可用时降级为内存存储）
+
+#### useMarkdownRenderer Composable（v3.2 新增）
+
+```javascript
+// composables/useMarkdownRenderer.js
+import { marked } from 'marked'
+import hljs from 'highlight.js'
+
+export function useMarkdownRenderer() {
+  // 配置 marked 使用 highlight.js 代码高亮
+  // 返回 renderMarkdown(content) 函数
+
+  const renderMarkdown = (content) => {
+    if (!content) return ''
+    return marked(content, { renderer })
+  }
+
+  return { renderMarkdown }
+}
+```
+
+**用途**: 封装 marked + highlight.js，统一 Markdown 文档渲染，使用时无需重复导入配置。已在 `tool/docs` 和 `tool/standards` 页面中使用。
 
 ### 3.5 useTablePage Composable 规范
 
@@ -1955,3 +2031,4 @@ mysql -u root -p rx_admin < db/features_menu.sql
 ---
 
 > **文档维护**: 本文档基于 RX Admin 项目实践提炼，适用于所有基于 Spring Boot 3 + Vue 3 + Element Plus 的后台管理系统开发。
+> **历史版本**: v1.4.0 (2026-06-05) → v1.5.0 (2026-06-15): MapStruct 规范 + 构造器注入 + 模块化架构 + EmailService + 主题色统一 + Sentry v10 + 字体自托管 + sass-embedded + 构建优化 + useMarkdownRenderer
