@@ -6,14 +6,13 @@ import com.rx.admin.modules.system.dept.vo.DeptVO;
 import com.rx.admin.entity.SysDept;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 /** 部门对象转换器 */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DeptConvert {
-    DeptConvert INSTANCE = Mappers.getMapper(DeptConvert.class);
 
     SysDept toEntity(DeptCreateDTO dto);
     void updateEntity(DeptUpdateDTO dto, @MappingTarget SysDept entity);

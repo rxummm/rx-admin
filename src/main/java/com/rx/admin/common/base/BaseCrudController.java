@@ -2,7 +2,6 @@ package com.rx.admin.common.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rx.admin.common.result.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -15,8 +14,11 @@ import java.util.List;
  */
 public abstract class BaseCrudController<S extends IService<T>, T> {
 
-    @Autowired
-    protected S baseService;
+    protected final S baseService;
+
+    public BaseCrudController(S baseService) {
+        this.baseService = baseService;
+    }
 
     protected Result<T> getById(Long id) {
         return Result.ok(baseService.getById(id));

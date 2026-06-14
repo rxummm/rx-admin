@@ -24,7 +24,7 @@ public class XiyouCharacterService extends ServiceImpl<XiyouCharacterMapper, Xiy
         }
         wrapper.orderByAsc(XiyouCharacter::getId);
         IPage<XiyouCharacter> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /** 按种族筛选人物 */

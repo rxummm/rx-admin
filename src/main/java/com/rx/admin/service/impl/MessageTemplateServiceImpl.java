@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.entity.SysMessageTemplate;
 import com.rx.admin.mapper.SysMessageTemplateMapper;
+import com.rx.admin.modules.content.notify.dto.MessageTemplateCreateDTO;
+import com.rx.admin.modules.content.notify.dto.MessageTemplateUpdateDTO;
 import com.rx.admin.service.MessageTemplateService;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +24,30 @@ public class MessageTemplateServiceImpl extends ServiceImpl<SysMessageTemplateMa
         wrapper.orderByDesc(SysMessageTemplate::getCreateTime);
         Page<SysMessageTemplate> result = page(new Page<>(page, size), wrapper);
         return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+    }
+
+    @Override
+    public void addTemplate(MessageTemplateCreateDTO dto) {
+        SysMessageTemplate template = new SysMessageTemplate();
+        template.setName(dto.getName());
+        template.setCode(dto.getCode());
+        template.setTitleTemplate(dto.getTitleTemplate());
+        template.setContentTemplate(dto.getContentTemplate());
+        template.setChannels(dto.getChannels());
+        template.setStatus(dto.getStatus() != null ? dto.getStatus() : 1);
+        save(template);
+    }
+
+    @Override
+    public void updateTemplate(MessageTemplateUpdateDTO dto) {
+        SysMessageTemplate template = new SysMessageTemplate();
+        template.setId(dto.getId());
+        template.setName(dto.getName());
+        template.setCode(dto.getCode());
+        template.setTitleTemplate(dto.getTitleTemplate());
+        template.setContentTemplate(dto.getContentTemplate());
+        template.setChannels(dto.getChannels());
+        template.setStatus(dto.getStatus());
+        updateById(template);
     }
 }

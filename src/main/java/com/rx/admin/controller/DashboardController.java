@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -27,10 +26,12 @@ import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.http.MediaType;
 
+@Slf4j
 @Tag(name = "仪表盘")
 @RestController
 @RequestMapping("/api/dashboard")
@@ -295,6 +296,7 @@ public class DashboardController {
             data = computeStats();
         } else {
             // 在线人数不能依赖缓存（登录后立即查询时缓存可能过期），必须实时获取
+            @SuppressWarnings("unchecked")
             Map<String, Object> system = (Map<String, Object>) data.get("system");
             if (system != null) {
                 system.put("onlineCount", onlineUserService.getOnlineCount());
@@ -316,7 +318,9 @@ public class DashboardController {
                 emitter.send(SseEmitter.event()
                     .name("stats")
                     .data(Result.ok(data), MediaType.APPLICATION_JSON));
-            } catch (IOException e) {
+            } catch (Exception e) {
+                // 异步线程上的客户端断开异常会被 GlobalExceptionHandler 兜底并降级为 DEBUG
+                log.debug("SSE 推送结束: {}", e.getMessage());
                 emitter.completeWithError(e);
             }
         }, 0, 30, TimeUnit.SECONDS);

@@ -1,8 +1,8 @@
 # AGENT.MD — RX Admin AI 开发参考手册
 
-> **项目**: RX Admin 通用管理系统 | **版本**: 1.0 | **生成日期**: 2026-06-05
+> **项目**: RX Admin 通用管理系统 | **版本**: 1.1 | **生成日期**: 2026-06-05 | **更新日期**: 2026-06-13
 >
-> 本文档整合了 [rxadmin.md](./src/main/resources/docs/rxadmin.md)、[rxadmin-dev-skills.md](./src/main/resources/docs/rxadmin-dev-skills.md)、[rxadmin-optimization.md](./src/main/resources/docs/rxadmin-optimization.md) 三份文档的核心规则，供 AI 辅助开发时作为第一参考。
+> 本文档整合了 [rxadmin.md](./src/main/resources/docs/rxadmin.md)、[SKILL.md](./src/main/resources/docs/SKILL.md)、[rxadmin-setup.md](./src/main/resources/docs/rxadmin-setup.md)、[rxadmin-optimization.md](./src/main/resources/docs/rxadmin-optimization.md) 四份文档的核心规则，供 AI 辅助开发时作为第一参考。
 
 ---
 
@@ -31,8 +31,9 @@
 | 层级 | 技术 | 版本 |
 |------|------|------|
 | Java | JDK | 17+ |
-| 后端框架 | Spring Boot | 3.2.x (Jakarta EE) |
-| ORM | MyBatis Plus | 3.5.x |
+| 后端框架 | Spring Boot | 3.5.x (Jakarta EE) |
+| ORM | MyBatis Plus | 3.5.x + MapStruct 1.5.x |
+| 对象转换 | MapStruct | 1.5.x（`unmappedTargetPolicy = IGNORE`） |
 | 安全认证 | Sa-Token | 1.37+ |
 | API 文档 | Knife4j (OpenAPI 3) | 4.4+ |
 | 前端框架 | Vue 3 Composition API `<script setup>` | ^3.4.0 |
@@ -61,18 +62,36 @@
 
 ```
 src/main/java/com/rx/admin/
-├── RxAdminApplication.java           # 启动类（根包）
-├── common/                            # BaseEntity, Result, PageResult, GlobalExceptionHandler, OperateLog
-├── config/                            # CorsConfig, SaTokenConfig, StpInterfaceImpl, MybatisPlusConfig, RateLimiterConfig, AsyncConfig, DataSourceConfig
+├── RxAdminApplication.java           # 启动类（根包，exclude DataSourceAutoConfiguration）
+├── common/                            # 公共模块
+│   ├── base/                          # BaseEntity, BaseCrudController
+│   ├── result/                        # Result<T>, PageResult<T>
+│   ├── exception/                     # GlobalExceptionHandler（10种异常类型）
+│   ├── annotation/                    # @OperateLog, @DataScope
+│   ├── aspect/                        # OperateLogAspect（AOP异步日志+脱敏）
+│   ├── constant/                      # PageConstants 等
+│   ├── handler/                       # AesTypeHandler, DataScopeInnerInterceptor, SlowQueryInterceptor
+│   ├── security/                      # IpFilter, NotLoginFilter, ReplayAttackFilter, XssJacksonConfig
+│   └── utils/                         # CaptchaUtil, DataMaskUtil
+├── framework/                         # 框架配置模块（Spring Boot 自动装配）
+│   ├── datasource/                    # PrimaryDataSourceConfig / SecondDataSourceConfig（双数据源）
+│   ├── mybatis/                       # MybatisPlusConfig / MetaObjectHandlerConfig（自动填充）
+│   ├── security/                      # SaTokenConfig / StpInterfaceImpl（Sa-Token认证+权限）
+│   ├── async/                         # AsyncConfig（@EnableAsync）
+│   ├── cache/                         # CacheConfig（Caffeine本地缓存）
+│   └── web/                           # CorsConfig / RateLimiterConfig
 ├── entity/                            # 实体类（继承 BaseEntity）
 │   └── {module}/                      # 子模块实体（classics/, as400/）
 ├── controller/                        # @RestController
-│   └── {module}/
 ├── service/                           # IService → ServiceImpl
-│   ├── impl/
-│   └── {module}/
-└── mapper/                            # BaseMapper
-    └── {module}/
+│   └── impl/
+├── mapper/                            # BaseMapper
+├── modules/                           # ⭐ 业务模块化分层（DTO/VO/Convert）
+│   └── {domain}/{entity}/
+│       ├── dto/                       # CreateDTO / UpdateDTO / QueryDTO
+│       ├── vo/                        # 视图对象（响应用）
+│       └── convert/                   # MapStruct 转换器接口
+└── config/                            # 遗留配置（逐步迁移至 framework/）
 
 ui/
 ├── .env.development                   # 开发环境变量（VITE_* 前缀）
@@ -340,7 +359,86 @@ public class SysUserController {
 - 每个接口加 `@SaCheckPermission`
 - 写操作加 `@OperateLog`
 
-### 4.5 安全认证
+### 4.5 DTO / VO / Convert 分层规范 ⭐
+
+**分层职责**:
+
+| 层 | 作用 | 输入/输出 | 目录 |
+|----|------|-----------|------|
+| **DTO** | 接收前端请求数据 | Controller 入参 | `modules/{domain}/{entity}/dto/` |
+| **VO** | 返回给前端的数据 | Controller 出参 | `modules/{domain}/{entity}/vo/` |
+| **Convert** | Entity ↔ DTO ↔ VO 转换 | Service/Controller 调用 | `modules/{domain}/{entity}/convert/` |
+
+**命名规范**:
+- DTO: `{Entity}CreateDTO`, `{Entity}UpdateDTO`, `{Entity}QueryDTO`
+- VO: `{Entity}VO`
+- Convert: `{Entity}Convert`（MapStruct 接口）
+
+**Design Principles**:
+- Entity **绝不暴露**到 Controller 层（用 VO 隔离）
+- 请求参数**绝不直接**用 Entity 接收（用 DTO 隔离）
+- `CreateDTO` 用于新增，`UpdateDTO` 用于修改（可部分更新）
+
+**MapStruct 强制规范**:
+
+```java
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface SysUserConvert {
+
+    SysUser toEntity(UserCreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UserUpdateDTO dto, @MappingTarget SysUser entity);
+
+    UserVO toVO(SysUser entity);
+
+    List<UserVO> toVOList(List<SysUser> list);
+}
+```
+
+| 规则 | 说明 |
+|------|------|
+| `componentModel = "spring"` | 必须，生成 Spring Bean |
+| `unmappedTargetPolicy = ReportingPolicy.IGNORE` | **必须**，忽略未映射字段，避免编译警告 |
+| `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)` | 更新时**必须**，null 值不覆盖已有字段 |
+| `@MappingTarget` | 更新时**必须**，在原对象上修改而非新建 |
+
+**禁止事项**:
+- ❌ 禁止 Entity 直接作为 Controller 参数/返回值
+- ❌ 禁止手动 `BeanUtils.copyProperties` 替代 MapStruct
+- ❌ 禁止在 Convert 接口中使用 `Mappers.getMapper()` 静态方法
+
+**典型 Controller 用法（使用 DTO/VO/Convert）**:
+
+```java
+@RestController
+@RequestMapping("/api/system/user")
+@RequiredArgsConstructor
+public class SysUserController extends BaseCrudController<SysUserService, SysUser> {
+
+    private final SysUserConvert userConvert;
+
+    public SysUserController(SysUserService service, SysUserConvert userConvert) {
+        super(service);
+        this.userConvert = userConvert;
+    }
+
+    @GetMapping("/page")
+    public Result<PageResult<UserVO>> page(UserQueryDTO dto) {
+        PageResult<SysUser> page = service.pageQuery(dto);
+        List<UserVO> voList = userConvert.toVOList(page.getList());
+        return Result.success(PageResult.of(page.getTotal(), page.getPage(), page.getSize(), voList));
+    }
+
+    @PostMapping
+    public Result<?> add(@RequestBody @Valid UserCreateDTO dto) {
+        service.save(userConvert.toEntity(dto));
+        return Result.success();
+    }
+}
+```
+
+### 4.6 安全认证
 
 **权限码格式**: `{模块}:{实体}:{操作}`
 
@@ -363,15 +461,16 @@ public class SysUserController {
 - IP 黑白名单: OncePerRequestFilter + yaml 配置（IpFilter）
 - 踢出机制: StpUtil.kickout + 前端遮罩 + 5 秒倒计时
 
-### 4.6 统一响应格式
+### 4.7 统一响应格式
 
 ```java
 // Result<T>
 Result.success(data)   // code=200
 Result.fail("msg")     // code=非200
 
-// PageResult<T>
-PageResult.of(total, page, pageSize, records)
+// PageResult<T> — 两种构造方式
+PageResult.of(total, page, pageSize, records)  // 方式1: 手动指定
+PageResult.of(IPage)                            // 方式2: 从 MyBatis Plus IPage 自动提取（推荐）
 ```
 
 **全局异常处理**（10 种异常）: 401 未登录、403 无权限、400 参数校验、404 不存在、405 方法不允许、415 媒体类型、数据约束冲突、兜底异常。
@@ -682,6 +781,9 @@ html.dark {
 | 10 | **v-html 必须 DOMPurify** | XSS 防护 |
 | 11 | **后台轮询必须 `_skipNProgress: true`** | 避免进度条频繁闪烁 |
 | 12 | **禁止硬编码魔法数字** | 超时/间隔/尺寸等一律 `.env` 或 `application.yml` 可配置 |
+| 13 | **禁止 Entity 直接暴露到 Controller** | 使用 DTO 接收请求 + VO 返回响应 |
+| 14 | **禁止手动 BeanUtils.copyProperties** | 统一用 MapStruct Convert 接口 |
+| 15 | **Convert 必须设置 unmappedTargetPolicy=IGNORE** | 避免未映射字段编译警告 |
 
 ### 10.2 开发检查清单
 
@@ -689,6 +791,10 @@ html.dark {
 
 - [ ] 实体继承 `BaseEntity` + `@EqualsAndHashCode(callSuper = true)`
 - [ ] 实体字段加 Bean Validation（`@NotBlank` 等）
+- [ ] ⭐ 创建 DTO（Create/Update/Query）+ VO + Convert（MapStruct 接口）
+- [ ] ⭐ Convert 加 `unmappedTargetPolicy = ReportingPolicy.IGNORE`
+- [ ] ⭐ Convert 更新方法加 `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)`
+- [ ] Controller 用 DTO 接收参数，用 VO 返回数据（禁止直接暴露 Entity）
 - [ ] Controller 加 `@SaCheckPermission`
 - [ ] Controller `@RequestBody` 加 `@Valid`
 - [ ] 写操作加 `@Transactional` + `@OperateLog`
@@ -723,6 +829,15 @@ html.dark {
 >
 > **常见故障2**: 如果登录后左侧菜单看不到"IP黑白名单""消息中心""代码生成器"等 v2.0 功能入口，说明 `features_menu.sql` 未执行，`sys_menu` 表中缺少对应菜单记录。执行 `features_menu.sql` + 重启后端 + 清除 localStorage 后重新登录即可。详见 [rxadmin-optimization.md §7.9](./src/main/resources/docs/rxadmin-optimization.md#79-v20-功能介绍以上所有功能均已就绪详见下方列表)。
 
+### 10.4 常见编译 / IDE 问题
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| MapStruct 实现类未生成 `No implementation was created for XxxConvert` | DTO/VO 字段名与 Entity 不一致，或缺少 `@Mapper` 配置 | 对齐字段名 + 添加 `unmappedTargetPolicy = ReportingPolicy.IGNORE` |
+| IDE 报 `The import Xxx cannot be resolved`（红色波浪线）但 `mvn compile` 正常 | MapStruct 生成代码在 `target/generated-sources/`，IDE 未识别为源码目录 | 检查 `pom.xml` 中 `build-helper-maven-plugin` 配置 + 执行 "Clean Java Language Server Workspace" |
+| `@Autowired` 字段警告 | 项目统一使用构造器注入 | 改为 `private final` + `@RequiredArgsConstructor` |
+| `Unmapped target properties` 警告 | MapStruct 检测到未映射字段 | 添加 `unmappedTargetPolicy = ReportingPolicy.IGNORE` 到 Convert 接口 |
+
 ---
 
 ## 11. 当前实现状态
@@ -753,20 +868,25 @@ html.dark {
 ## 12. 新建模块速查
 
 ```
-步骤1  数据库 → 创建表（sys_ 前缀）
-步骤2  后端   → Entity (extends BaseEntity)
-步骤3  后端   → Mapper (extends BaseMapper, @Mapper)
-步骤4  后端   → Service (IService + ServiceImpl + @Transactional)
-步骤5  后端   → Controller (CRUD + @SaCheckPermission + @Valid + @OperateLog)
-步骤6  数据库 → sys_menu 表插入菜单记录
-步骤7  前端   → api/xxx.js（5个标准函数）
-步骤8  前端   → views/xxx/index.vue（defineOptions name + useTablePage + useStorage）
-步骤9  前端   → componentMap.js 追加 1 行
+步骤1  数据库 → 创建表（sys_ 前缀，含 deleted / create_time / update_time）
+步骤2  后端   → Entity (extends BaseEntity + @EqualsAndHashCode + @TableName)
+步骤3  后端   → Mapper (extends BaseMapper, @Mapper, 复杂SQL用@Select注解)
+步骤4  后端   → DTO (CreateDTO / UpdateDTO / QueryDTO)
+步骤5  后端   → VO (视图对象，响应用)
+步骤6  后端   → Convert (MapStruct接口, @Mapper + unmappedTargetPolicy=IGNORE)
+步骤7  后端   → Service (IService + ServiceImpl + @Transactional, 调用Convert)
+步骤8  后端   → Controller (继承BaseCrudController, DTO入参→VO出参, @SaCheckPermission)
+步骤9  数据库 → sys_menu 表插入菜单记录
+步骤10 前端   → api/xxx.js（5个标准函数）
+步骤11 前端   → views/xxx/index.vue（defineOptions name + useTablePage + useStorage）
+步骤12 前端   → componentMap.js 追加 1 行
 ```
+
+> **代码生成器**: 项目内置 `GenController` 可自动生成步骤 2-8 的代码骨架，详见 [rxadmin-setup.md](./src/main/resources/docs/rxadmin-setup.md)。
 
 ---
 
-> **引用文档**: 完整规范详见 [rxadmin-dev-skills.md](./src/main/resources/docs/rxadmin-dev-skills.md)，优化进度详见 [rxadmin-optimization.md](./src/main/resources/docs/rxadmin-optimization.md)，架构详情详见 [rxadmin.md](./src/main/resources/docs/rxadmin.md)。
+> **引用文档**: 开发规范详见 [SKILL.md](./src/main/resources/docs/SKILL.md)，新增模块指南详见 [rxadmin-setup.md](./src/main/resources/docs/rxadmin-setup.md)，架构详情详见 [rxadmin.md](./src/main/resources/docs/rxadmin.md)，优化进度详见 [rxadmin-optimization.md](./src/main/resources/docs/rxadmin-optimization.md)。
 
 ---
 

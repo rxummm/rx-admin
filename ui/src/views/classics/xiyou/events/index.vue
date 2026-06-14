@@ -391,7 +391,7 @@ function nodeColor(level) {
   if (!level) return '#909399'
   if (level >= 8) return 'linear-gradient(135deg, #f56c6c, #e74c3c)'
   if (level >= 6) return 'linear-gradient(135deg, #e6a23c, #f39c12)'
-  if (level >= 4) return 'linear-gradient(135deg, #409eff, #3498db)'
+  if (level >= 4) return 'linear-gradient(135deg, #f59e0b, #d97706)'
   return 'linear-gradient(135deg, #67c23a, #2ecc71)'
 }
 
@@ -856,7 +856,7 @@ function resetForm() {
   left: 50%;
   top: 20px;
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: var(--z-graphic, 100);
 }
 
 .node-icon {

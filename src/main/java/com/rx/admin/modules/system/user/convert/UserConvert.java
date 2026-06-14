@@ -9,7 +9,7 @@ import com.rx.admin.modules.system.user.vo.UserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
@@ -17,10 +17,8 @@ import java.util.List;
  * 用户对象转换器（MapStruct 编译期生成实现）
  * 统一管理 Entity ↔ DTO ↔ VO 的转换逻辑
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserConvert {
-
-    UserConvert INSTANCE = Mappers.getMapper(UserConvert.class);
 
     /** DTO → Entity（创建时） */
     SysUser toEntity(UserCreateDTO dto);

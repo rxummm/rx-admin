@@ -62,6 +62,7 @@ import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { toggleFavoriteApi } from '@/api/favorite'
 import { useFavEvents } from '@/composables/useFavEvents'
+import { useStorage, STORAGE_KEYS, useNamespacedKey } from '@/composables/useStorage'
 
 const { t } = useI18n()
 const { tMenu } = useMenuI18n()
@@ -148,19 +149,45 @@ async function handleCloseAll() {
 }
 
 // 收藏夹切换
-const { triggerRefresh } = useFavEvents()
+const { refreshTick, triggerRefresh } = useFavEvents()
 const favSet = ref(new Set())
-onMounted(() => {
-  // 从 localStorage 恢复已收藏路径
+
+// 从统一命名空间 key 读取已收藏路径
+// 新格式：rx_admin_favorite_star:/path  （由 useNamespacedKey 生成）
+// 兼容旧格式：fav_/path  （逐步淘汰）
+const FAV_PREFIX = `${STORAGE_KEYS.FAVORITE_STAR}:`
+const LEGACY_PREFIX = 'fav_'
+
+const syncFavSet = () => {
+  const set = new Set()
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i)
-    if (k?.startsWith('fav_')) favSet.value.add(k.slice(4))
+    if (!k) continue
+    if (k.startsWith(FAV_PREFIX)) {
+      set.add(k.slice(FAV_PREFIX.length))
+    } else if (k.startsWith(LEGACY_PREFIX)) {
+      // 兼容旧 key：迁移到新格式，然后删除旧 key
+      const path = k.slice(LEGACY_PREFIX.length)
+      const val = localStorage.getItem(k)
+      try {
+        localStorage.setItem(`${FAV_PREFIX}${path}`, val)
+        localStorage.removeItem(k)
+      } catch (e) { /* ignore */ }
+      set.add(path)
+    }
   }
-})
+  favSet.value = set
+}
+syncFavSet()
+// 其他组件取消收藏后，通过 refreshTick 通知 TagsView 同步
+watch(refreshTick, syncFavSet)
+
 const isTagFav = computed(() => favSet.value.has(selectedTag.value.path))
 
 async function handleToggleFavorite() {
   const tag = selectedTag.value
+  const favKey = useNamespacedKey(STORAGE_KEYS.FAVORITE_STAR, tag.path)
+  const favStore = useStorage(favKey)
   try {
     const res = await toggleFavoriteApi({
       name: tag.meta?.title || tag.name,
@@ -169,12 +196,11 @@ async function handleToggleFavorite() {
       menuId: tag.meta?.id || null
     })
     if (res.data?.collected) {
-      localStorage.setItem(`fav_${tag.path}`, res.data?.id || '1')
-      favSet.value.add(tag.path)
+      favStore.set(res.data?.id || '1')
     } else {
-      localStorage.removeItem(`fav_${tag.path}`)
-      favSet.value.delete(tag.path)
+      favStore.remove()
     }
+    syncFavSet()
     triggerRefresh()
   } catch (e) { console.error('[ToggleFavorite]', e) }
   closeContextMenu()
@@ -221,7 +247,6 @@ onUnmounted(() => {
   background: var(--tags-bg);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   user-select: none;
 
   .tags-scrollbar {
@@ -250,10 +275,10 @@ onUnmounted(() => {
     color: var(--tags-item-color);
     background: var(--tags-item-bg);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     white-space: nowrap;
 
     &:hover {
@@ -289,7 +314,7 @@ onUnmounted(() => {
       font-size: 12px;
       border-radius: 50%;
       padding: 1px;
-      transition: background 0.2s;
+      transition: background var(--transition-fast);
 
       &:hover {
         background: var(--tag-close-hover-bg);
@@ -303,11 +328,16 @@ onUnmounted(() => {
 <style lang="scss">
 .tags-context-menu {
   position: fixed;
-  z-index: 3000;
+  // 必须高于 Element Plus 浮层（el-index-popper=2000）才能压住列标题/下拉等
+  // ⚠️ 硬编码兜底 99999 在前：即使 --z-teleport 变量未定义（CSS 回退成 auto）也依然生效。
+  // 不要用 var() 单独一行写，曾经因此被列标题/tab 下划线盖住。
+  z-index: 99999;
+  z-index: var(--z-teleport, 99999);
+  isolation: isolate;  // 创建独立 stacking context，避免被父级 transform 干扰
   min-width: 140px;
   background: var(--context-menu-bg);
-  border-radius: 6px;
-  box-shadow: 0 4px 16px var(--context-menu-shadow);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--context-menu-shadow);
   padding: 4px 0;
   margin: 0;
   list-style: none;
@@ -320,7 +350,7 @@ onUnmounted(() => {
     font-size: 13px;
     color: var(--text-regular);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 
     &:hover {
       background: var(--bg-active);

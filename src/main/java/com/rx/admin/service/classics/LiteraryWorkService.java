@@ -61,7 +61,7 @@ public class LiteraryWorkService extends ServiceImpl<LiteraryWorkMapper, Literar
         // 填充关联名称
         fillAssociations(iPage.getRecords());
 
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /**

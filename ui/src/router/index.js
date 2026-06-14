@@ -43,8 +43,20 @@ const constantRoutes = [
         name: 'TechBlogDetail',
         component: () => import('@/views/as400/techblog/detail.vue'),
         meta: { title: '文章详情', hidden: true }
+      },
+      // 错误页面路由
+      {
+        path: 'error/:code(\\d+)',
+        name: 'ErrorPage',
+        component: () => import('@/views/error/ErrorPage.vue'),
+        meta: { title: '错误页面', hidden: true }
       }
     ]
+  },
+  // 404 页面（必须放在最后）
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/error/404'
   }
 ]
 
@@ -118,6 +130,13 @@ export function resetDynamicRoutes() {
 
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
+  // 动态设置页面标题（支持国际化路径：to.meta.title 可能是 i18n key）
+  const baseTitle = 'rx-admin'
+  if (to.meta?.title) {
+    document.title = `${to.meta.title} - ${baseTitle}`
+  } else {
+    document.title = baseTitle
+  }
   const userStore = useUserStore()
   const token = userStore.token
 
@@ -217,6 +236,21 @@ router.beforeEach(async (to, from, next) => {
 
 router.afterEach(() => {
   NProgress.done()
+})
+
+// ============================================================
+// 全局路由错误处理
+// 防止动态 import 失败时 unhandledrejection 把 keep-alive / 标签页状态弄退化
+// （用户感知：之前打开的标签被关掉、页面回退）
+// ============================================================
+router.onError((err, to, from) => {
+  console.warn('[router.onError]', { from: from?.fullPath, to: to?.fullPath, err })
+  // 动态 import 失败：通常是开发模式下 Vite 临时文件失效，提示用户刷新
+  if (err?.message?.includes('Failed to fetch dynamically imported module')) {
+    // 避免在错误处理里再触发导航（可能死循环），用 location.reload 让用户重新加载整个 SPA
+    // 这里不直接 reload，只打印；用户可手动 F5
+    console.warn('[router] 动态加载失败，建议刷新页面 (F5)')
+  }
 })
 
 export default router

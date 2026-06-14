@@ -23,7 +23,7 @@ public class DynastyService extends ServiceImpl<DynastyMapper, Dynasty> {
         }
         wrapper.orderByAsc(Dynasty::getSortOrder, Dynasty::getId);
         IPage<Dynasty> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     public List<Dynasty> listAll() {

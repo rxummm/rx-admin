@@ -1,19 +1,17 @@
-package com.rx.admin.modules.system.ipRule.convert;
+package com.rx.admin.modules.system.iprule.convert;
 
-import com.rx.admin.modules.system.ipRule.dto.IpRuleCreateDTO;
-import com.rx.admin.modules.system.ipRule.dto.IpRuleUpdateDTO;
-import com.rx.admin.modules.system.ipRule.vo.IpRuleVO;
+import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
+import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
+import com.rx.admin.modules.system.iprule.vo.IpRuleVO;
 import com.rx.admin.entity.SysIpRule;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-/** IP规则对象转换器 */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface IpRuleConvert {
-    IpRuleConvert INSTANCE = Mappers.getMapper(IpRuleConvert.class);
 
     SysIpRule toEntity(IpRuleCreateDTO dto);
     void updateEntity(IpRuleUpdateDTO dto, @MappingTarget SysIpRule entity);

@@ -284,7 +284,7 @@ function formatFileSize(bytes) {
   font-size: 13px;
 }
 .result-stats strong {
-  color: #409eff;
+  color: #f59e0b;
 }
 .pagination-wrap {
   display: flex;

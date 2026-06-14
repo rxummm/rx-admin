@@ -354,16 +354,23 @@ function resetForm() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .honglou-table-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  min-height: 0; // 允许压缩
+}
+
+// 分页器固定在底部
+.honglou-table-wrapper :deep(.page-pagination) {
+  margin-top: auto; // 自动推到最底部
+  padding-top: 8px;
+  flex-shrink: 0; // 禁止压缩
 }
 
 .honglou-table-wrapper :deep(.el-table__body-wrapper) {
-  overflow-y: auto;
+  overflow-y: auto; // 表格内部滚动
 }
 
 .poem-detail .poem-title {

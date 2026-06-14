@@ -66,6 +66,11 @@
               </el-radio-group>
             </el-form-item>
             <el-divider />
+            <!-- ⚠️ 安全要求：改密码时必须先输入旧密码。
+                 防止 token 泄露后被攻击者直接改密码永久接管账号。 -->
+            <el-form-item :label="$t('profile.oldPassword')" prop="oldPassword">
+              <el-input v-model="form.oldPassword" type="password" :placeholder="$t('profile.oldPasswordChangePlaceholder')" show-password />
+            </el-form-item>
             <el-form-item :label="$t('profile.newPassword')" prop="newPassword">
               <el-input v-model="form.newPassword" type="password" :placeholder="$t('common.leaveBlank')" show-password />
             </el-form-item>
@@ -102,6 +107,7 @@ const form = reactive({
   email: '',
   phone: '',
   gender: 0,
+  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
@@ -162,10 +168,21 @@ const validateNewPassword = (_rule, value, callback) => {
   }
 }
 
+// 旧密码校验：仅当用户要改密码时才校验（仅校验"是否填写"，不校验"是否正确"，
+// 因为前端无法知道当前密码哈希；后端会再校验密码匹配）
+const validateOldPassword = (_rule, value, callback) => {
+  if (form.newPassword && !value) {
+    callback(new Error(t('profile.oldPasswordRequired')))
+  } else {
+    callback()
+  }
+}
+
 const rules = {
   nickname: [{ required: true, message: t('common.input') + t('profile.nickname'), trigger: 'blur' }],
   email: [{ validator: validateEmail, trigger: 'blur' }],
   phone: [{ validator: validatePhone, trigger: 'blur' }],
+  oldPassword: [{ validator: validateOldPassword, trigger: 'blur' }],
   newPassword: [{ validator: validateNewPassword, trigger: 'blur' }],
   confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }]
 }
@@ -176,12 +193,14 @@ function loadUserInfo() {
   form.email = info?.email || ''
   form.phone = info?.phone || ''
   form.gender = info?.gender || 0
+  form.oldPassword = ''
   form.newPassword = ''
   form.confirmPassword = ''
 }
 
 function handleReset() {
   loadUserInfo()
+  form.oldPassword = ''
   form.newPassword = ''
   form.confirmPassword = ''
   formRef.value?.resetFields()
@@ -201,11 +220,14 @@ async function handleSave() {
       gender: form.gender
     }
     if (form.newPassword) {
+      // 改密码时同时传递旧密码，后端会先验证旧密码
       data.password = form.newPassword
+      data.oldPassword = form.oldPassword
     }
     await updateProfileApi(data)
     await userStore.fetchUserInfo()
     ElMessage.success(t('profile.updateInfoSuccess'))
+    form.oldPassword = ''
     form.newPassword = ''
     form.confirmPassword = ''
   } catch (e) {

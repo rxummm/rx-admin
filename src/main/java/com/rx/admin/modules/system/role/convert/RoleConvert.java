@@ -6,14 +6,13 @@ import com.rx.admin.modules.system.role.vo.RoleVO;
 import com.rx.admin.entity.SysRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 /** 角色对象转换器（MapStruct编译期生成实现） */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleConvert {
-    RoleConvert INSTANCE = Mappers.getMapper(RoleConvert.class);
 
     SysRole toEntity(RoleCreateDTO dto);
     void updateEntity(RoleUpdateDTO dto, @MappingTarget SysRole entity);

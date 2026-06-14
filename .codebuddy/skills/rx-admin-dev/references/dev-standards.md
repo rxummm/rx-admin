@@ -6,27 +6,36 @@
 
 ```
 com.rx.admin
-├── RxAdminApplication.java          # 启动类
-├── common/                           # 公共模块
-│   ├── BaseEntity.java              # 实体基类 (id, deleted, createTime, updateTime)
-│   ├── Result.java                  # 统一响应封装 {code, msg, data}
-│   ├── PageResult.java              # 分页响应 (list, total, page, pageSize)
-│   ├── GlobalExceptionHandler.java  # 全局异常处理 (10种异常类型)
-│   ├── OperateLog.java              # @OperateLog 操作日志注解
-│   └── OperateLogAspect.java        # AOP 切面 (@Async 异步 + 参数脱敏)
-├── config/                           # 配置模块
-│   ├── CorsConfig.java              # CORS 跨域
-│   ├── SaTokenConfig.java           # Sa-Token 路由拦截
-│   ├── StpInterfaceImpl.java        # 权限/角色加载
-│   ├── MybatisPlusConfig.java       # MyBatis Plus 分页 & 自动填充
-│   ├── RateLimiterConfig.java       # Guava RateLimiter 限流
-│   ├── AsyncConfig.java             # 异步任务 (@EnableAsync)
-│   └── DataSourceConfig.java        # 数据源配置 (主/副)
-├── entity/                           # 实体
-├── controller/                       # 控制器
-├── service/                          # 服务层
-│   └── impl/                         # 实现类
-└── mapper/                           # Mapper
+├── RxAdminApplication.java           # 启动类 (exclude DataSourceAutoConfiguration)
+├── common/                            # 公共模块
+│   ├── base/                          # BaseEntity, BaseCrudController
+│   ├── result/                        # Result<T>, PageResult<T>
+│   ├── exception/                     # GlobalExceptionHandler (10种异常类型)
+│   ├── annotation/                    # @OperateLog, @DataScope
+│   ├── aspect/                        # OperateLogAspect (@Async 异步 + 参数脱敏)
+│   ├── constant/                      # PageConstants 等
+│   ├── handler/                       # AesTypeHandler, DataScopeInnerInterceptor
+│   ├── security/                      # IpFilter, NotLoginFilter, ReplayAttackFilter
+│   └── utils/                         # CaptchaUtil, DataMaskUtil
+├── framework/                         # 框架配置模块 (Spring Boot 自动装配)
+│   ├── datasource/                    # PrimaryDataSourceConfig / SecondDataSourceConfig
+│   ├── mybatis/                       # MybatisPlusConfig / MetaObjectHandlerConfig
+│   ├── security/                      # SaTokenConfig / StpInterfaceImpl
+│   ├── async/                         # AsyncConfig (@EnableAsync)
+│   ├── cache/                         # CacheConfig (Caffeine)
+│   └── web/                           # CorsConfig / RateLimiterConfig
+├── entity/                            # 实体
+│   └── {module}/                      # 子模块 (classics/, as400/)
+├── controller/                        # 控制器
+├── service/                           # 服务层
+│   └── impl/                          # 实现类
+├── mapper/                            # Mapper
+├── modules/                           # ⭐ 业务模块化分层 (DTO/VO/Convert)
+│   └── {domain}/{entity}/
+│       ├── dto/                       # CreateDTO / UpdateDTO / QueryDTO
+│       ├── vo/                        # 视图对象 (响应专用)
+│       └── convert/                   # MapStruct 转换器接口
+└── config/                            # 遗留配置 (逐步迁移至 framework/)
 ```
 
 ## 前端目录结构
@@ -111,6 +120,41 @@ public class BaseEntity implements Serializable {
 6. **权限注解**: 每个接口 `@SaCheckPermission("module:entity:action")`
 7. **API 文档**: `@Tag(name)` + `@Operation(summary)`
 8. **批量删除**: 路径参数 `{ids}` 接收 `List<Long>`
+9. **DTO 入参 + VO 出参**: 禁止 Entity 直接暴露到 Controller，用 DTO 接收请求 + VO 返回响应
+10. **MapStruct 转换**: 所有 Entity ↔ DTO ↔ VO 转换通过 Convert 接口，禁止手动 BeanUtils.copyProperties
+
+### DTO / VO / Convert 分层规范
+
+**分层职责**:
+
+| 层 | 作用 | 位置 | 示例 |
+|----|------|------|------|
+| **DTO** | 接收前端请求 | `modules/{domain}/{entity}/dto/` | `SysUserCreateDTO`, `SysUserQueryDTO` |
+| **VO** | 返回前端响应 | `modules/{domain}/{entity}/vo/` | `SysUserVO` |
+| **Convert** | DTO ↔ Entity ↔ VO 转换 | `modules/{domain}/{entity}/convert/` | `SysUserConvert` |
+
+**MapStruct 强制规范**:
+
+```java
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface SysUserConvert {
+    SysUser toEntity(UserCreateDTO dto);  // 新增转换
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UserUpdateDTO dto, @MappingTarget SysUser entity);  // 更新转换
+
+    UserVO toVO(SysUser entity);  // 实体 → VO
+    List<UserVO> toVOList(List<SysUser> list);  // 批量转换
+}
+```
+
+| 规则 | 必须 | 说明 |
+|------|------|------|
+| `componentModel = "spring"` | ✅ | 生成 Spring Bean |
+| `unmappedTargetPolicy = ReportingPolicy.IGNORE` | ✅ | 忽略未映射字段，消除编译警告 |
+| `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)` | ✅ | 更新时 null 值不覆盖已有字段 |
+| `@MappingTarget` | ✅ | 更新时在原对象上修改 |
+| 禁止 `Mappers.getMapper()` | ✅ | 统一使用 Spring 注入 |
 
 ### 安全认证规范
 

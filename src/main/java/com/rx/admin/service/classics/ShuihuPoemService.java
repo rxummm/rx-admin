@@ -22,6 +22,6 @@ public class ShuihuPoemService extends ServiceImpl<ShuihuPoemMapper, ShuihuPoem>
         }
         wrapper.orderByAsc(ShuihuPoem::getId);
         IPage<ShuihuPoem> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

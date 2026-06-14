@@ -52,17 +52,20 @@ package com.rx.admin.service.system;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rx.admin.common.PageResult;
 import com.rx.admin.entity.system.SysXxx;
-import java.util.List;
+import com.rx.admin.modules.system.xxx.dto.SysXxxCreateDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxQueryDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxUpdateDTO;
+import com.rx.admin.modules.system.xxx.vo.SysXxxVO;
 
 public interface SysXxxService extends IService<SysXxx> {
 
-    PageResult<SysXxx> pageQuery(int page, int size, String keyword);
+    PageResult<SysXxx> pageQuery(SysXxxQueryDTO dto);
 
-    void add(SysXxx entity);
+    boolean add(SysXxxCreateDTO dto);
 
-    void update(SysXxx entity);
+    boolean update(SysXxxUpdateDTO dto);
 
-    void delete(List<Long> ids);
+    boolean delete(List<Long> ids);
 }
 ```
 
@@ -77,6 +80,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rx.admin.common.PageResult;
 import com.rx.admin.entity.system.SysXxx;
 import com.rx.admin.mapper.system.SysXxxMapper;
+import com.rx.admin.modules.system.xxx.convert.SysXxxConvert;
+import com.rx.admin.modules.system.xxx.dto.SysXxxCreateDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxQueryDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxUpdateDTO;
+import com.rx.admin.modules.system.xxx.vo.SysXxxVO;
 import com.rx.admin.service.system.SysXxxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -92,36 +100,99 @@ public class SysXxxServiceImpl
         implements SysXxxService {
 
     private final SysXxxMapper mapper;
+    private final SysXxxConvert convert;
 
     @Override
-    public PageResult<SysXxx> pageQuery(int page, int size, String keyword) {
+    public PageResult<SysXxx> pageQuery(SysXxxQueryDTO dto) {
         LambdaQueryWrapper<SysXxx> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(keyword)) {
-            wrapper.like(SysXxx::getName, keyword);
+        if (StringUtils.hasText(dto.getKeyword())) {
+            wrapper.like(SysXxx::getName, dto.getKeyword());
         }
         wrapper.orderByDesc(SysXxx::getCreateTime);
-
-        Page<SysXxx> pageResult = page(new Page<>(page, size), wrapper);
-        return PageResult.of(pageResult.getTotal(), page, size, pageResult.getRecords());
+        Page<SysXxx> page = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
+        return PageResult.of(page);
     }
 
     @Override
     @Transactional
-    public void add(SysXxx entity) {
-        save(entity);
+    public boolean add(SysXxxCreateDTO dto) {
+        return save(convert.toEntity(dto));
     }
 
     @Override
     @Transactional
-    public void update(SysXxx entity) {
-        updateById(entity);
+    public boolean update(SysXxxUpdateDTO dto) {
+        SysXxx entity = getById(dto.getId());
+        convert.updateEntity(dto, entity);
+        return updateById(entity);
     }
 
     @Override
     @Transactional
-    public void delete(List<Long> ids) {
-        removeBatchByIds(ids);
+    public boolean delete(List<Long> ids) {
+        return removeBatchByIds(ids);
     }
+}
+```
+
+## DTO/VO/Convert 模板 ⭐
+
+```java
+// === DTO — 请求入参 ===
+// 路径: com.rx.admin.modules.system.xxx.dto/
+
+@Data
+public class SysXxxCreateDTO {
+    @NotBlank(message = "名称不能为空")
+    private String name;
+    private String description;
+    private Integer status;
+    private Integer sortOrder;
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class SysXxxQueryDTO extends PageDTO {
+    private String keyword;
+    private Integer status;
+}
+
+@Data
+public class SysXxxUpdateDTO {
+    @NotNull(message = "ID不能为空")
+    private Long id;
+    private String name;
+    private String description;
+    private Integer status;
+    private Integer sortOrder;
+}
+
+// === VO — 响应出参 ===
+// 路径: com.rx.admin.modules.system.xxx.vo/
+
+@Data
+public class SysXxxVO {
+    private Long id;
+    private String name;
+    private String description;
+    private Integer status;
+    private Integer sortOrder;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+}
+
+// === Convert — MapStruct 转换器 ===
+// 路径: com.rx.admin.modules.system.xxx.convert/
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface SysXxxConvert {
+    SysXxx toEntity(SysXxxCreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(SysXxxUpdateDTO dto, @MappingTarget SysXxx entity);
+
+    SysXxxVO toVO(SysXxx entity);
+    List<SysXxxVO> toVOList(List<SysXxx> list);
 }
 ```
 
@@ -131,13 +202,20 @@ public class SysXxxServiceImpl
 package com.rx.admin.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.rx.admin.common.base.BaseCrudController;
 import com.rx.admin.common.PageResult;
 import com.rx.admin.common.Result;
 import com.rx.admin.entity.system.SysXxx;
+import com.rx.admin.modules.system.xxx.convert.SysXxxConvert;
+import com.rx.admin.modules.system.xxx.dto.SysXxxCreateDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxQueryDTO;
+import com.rx.admin.modules.system.xxx.dto.SysXxxUpdateDTO;
+import com.rx.admin.modules.system.xxx.vo.SysXxxVO;
 import com.rx.admin.service.system.SysXxxService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -145,50 +223,50 @@ import java.util.List;
 @Tag(name = "模块名")
 @RestController
 @RequestMapping("/api/system/xxx")
-@RequiredArgsConstructor
-public class SysXxxController {
+public class SysXxxController extends BaseCrudController<SysXxxService, SysXxx> {
 
-    private final SysXxxService service;
+    private final SysXxxConvert convert;
+
+    public SysXxxController(SysXxxService service, SysXxxConvert convert) {
+        super(service);
+        this.convert = convert;
+    }
 
     @Operation(summary = "分页查询")
     @GetMapping("/page")
     @SaCheckPermission("system:xxx:query")
-    public Result<PageResult<SysXxx>> page(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword) {
-        return Result.success(service.pageQuery(page, size, keyword));
+    public Result<PageResult<SysXxxVO>> page(SysXxxQueryDTO dto) {
+        PageResult<SysXxx> page = baseService.pageQuery(dto);
+        return Result.success(PageResult.of(page.getTotal(), page.getPage(), page.getSize(),
+                convert.toVOList(page.getList())));
     }
 
     @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
     @SaCheckPermission("system:xxx:query")
-    public Result<SysXxx> getById(@PathVariable Long id) {
-        return Result.success(service.getById(id));
+    public Result<SysXxxVO> getById(@PathVariable Long id) {
+        return Result.success(convert.toVO(baseService.getById(id)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
     @SaCheckPermission("system:xxx:add")
-    public Result<?> add(@RequestBody SysXxx entity) {
-        service.add(entity);
-        return Result.success();
+    public Result<?> add(@RequestBody @Valid SysXxxCreateDTO dto) {
+        return baseService.add(dto) ? Result.success() : Result.fail();
     }
 
     @Operation(summary = "修改")
     @PutMapping
     @SaCheckPermission("system:xxx:edit")
-    public Result<?> update(@RequestBody SysXxx entity) {
-        service.update(entity);
-        return Result.success();
+    public Result<?> update(@RequestBody @Valid SysXxxUpdateDTO dto) {
+        return baseService.update(dto) ? Result.success() : Result.fail();
     }
 
     @Operation(summary = "批量删除")
     @DeleteMapping("/{ids}")
     @SaCheckPermission("system:xxx:delete")
     public Result<?> delete(@PathVariable List<Long> ids) {
-        service.delete(ids);
-        return Result.success();
+        return baseService.delete(ids) ? Result.success() : Result.fail();
     }
 }
 ```

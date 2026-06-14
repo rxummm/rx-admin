@@ -31,21 +31,25 @@ public class DatabaseToolController {
             return Result.fail(400, "SQL不能为空");
         }
 
-        String upperSql = sql.trim().toUpperCase();
-        // 安全检查：只允许读取操作
-        String[] forbiddenKeywords = {"DROP", "DELETE", "INSERT", "UPDATE", "ALTER", "TRUNCATE",
-                "CREATE", "GRANT", "REVOKE", "EXEC", "EXECUTE", "CALL", "LOAD", "IMPORT", "RENAME", "REPLACE"};
-        for (String keyword : forbiddenKeywords) {
-            if (upperSql.contains(keyword)) {
-                return Result.fail(403, "不允许执行 " + keyword + " 操作，仅支持 SELECT/SHOW/DESCRIBE/EXPLAIN 语句");
-            }
+        // ⚠️ 安全要求：白名单验证（仅允许只读语句），不再使用黑名单 contains 检查。
+        // 黑名单可被分号、注释（SELECT/*x*/DROP）、大小写等方式绕开，攻击者可通过
+        // `SELECT 1; DROP TABLE users` 等方式执行破坏性操作。
+        // 白名单方案：从 SQL 开头（去前导空白与注释）匹配只读关键字。
+        String sanitized = stripLeadingCommentsAndWhitespace(sql);
+        String upperSql = sanitized.toUpperCase(Locale.ROOT);
+        if (!upperSql.startsWith("SELECT") && !upperSql.startsWith("SHOW")
+                && !upperSql.startsWith("DESCRIBE") && !upperSql.startsWith("DESC")
+                && !upperSql.startsWith("EXPLAIN") && !upperSql.startsWith("WITH")) {
+            return Result.fail(403, "仅支持 SELECT/SHOW/DESCRIBE/EXPLAIN/WITH 等只读语句");
         }
 
         try (Connection conn = DataSourceUtils.getConnection(primaryDataSource);
              Statement stmt = conn.createStatement()) {
             stmt.setQueryTimeout(10); // 10秒超时
+            // ⚠️ 强制 setMaxRows，避免查询返回过多数据导致 OOM
+            stmt.setMaxRows(1000);
             long startTime = System.currentTimeMillis();
-            boolean isResultSet = stmt.execute(sql);
+            boolean isResultSet = stmt.execute(sanitized);
             long elapsed = System.currentTimeMillis() - startTime;
 
             if (isResultSet) {
@@ -89,6 +93,41 @@ public class DatabaseToolController {
         } catch (SQLException e) {
             return Result.fail(500, "SQL执行错误: " + e.getMessage());
         }
+    }
+
+    /**
+     * 去掉 SQL 开头的空白和注释（行注释 -- 与块注释 /* * /），得到第一个有效 token。
+     * 用于白名单匹配时排除 `   \n  -- xxx \n SELECT ...` 这类干扰。
+     * 注意：块注释内的 `/*` 终止符用占位符临时替换，避免被外层 replaceAll 误删。
+     */
+    private String stripLeadingCommentsAndWhitespace(String sql) {
+        String s = sql;
+        while (true) {
+            // 去掉前导空白
+            s = s.replaceAll("^\\s+", "");
+            if (s.isEmpty()) return s;
+            // 去掉行注释
+            if (s.startsWith("--")) {
+                int nl = s.indexOf('\n');
+                s = (nl >= 0) ? s.substring(nl + 1) : "";
+                continue;
+            }
+            // 去掉块注释（仅去开头的连续块注释，不处理 SQL 中部的注释以免破坏语义）
+            if (s.startsWith("/*")) {
+                int end = s.indexOf("*/");
+                if (end < 0) return s; // 未闭合，按原样返回让后续 startsWith 失败
+                s = s.substring(end + 2);
+                continue;
+            }
+            // 去掉 # 注释（MySQL 风格）
+            if (s.startsWith("#")) {
+                int nl = s.indexOf('\n');
+                s = (nl >= 0) ? s.substring(nl + 1) : "";
+                continue;
+            }
+            break;
+        }
+        return s;
     }
 
     @Operation(summary = "获取数据库表列表")

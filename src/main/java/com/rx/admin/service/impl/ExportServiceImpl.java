@@ -113,9 +113,6 @@ public class ExportServiceImpl implements ExportService {
             int rowIdx = 0;
             boolean firstPage = true;
 
-            // 表头底部 Y（= 页面高度 - 上边距 - 标题区 - 表头行高）
-            float headerY = pageHeight - margin - rowHeight;
-
             List<String> headerLabels = columns.stream().map(c -> c.get("label")).toList();
 
             while (rowIdx < totalRows) {

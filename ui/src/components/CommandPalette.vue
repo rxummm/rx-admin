@@ -199,6 +199,6 @@ defineExpose({ open, close, visible })
   display: flex; align-items: center; gap: 10px;
   padding: 10px 16px; cursor: pointer; transition: background 0.1s;
 }
-.cp-item:hover, .cp-item.active { background: #ecf5ff; }
+.cp-item:hover, .cp-item.active { background: var(--bg-active); }
 .cp-item .cp-path { margin-left: auto; font-size: 11px; color: #c0c4cc; }
 </style>

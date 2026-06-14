@@ -5,6 +5,8 @@ import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysJob;
+import com.rx.admin.modules.monitor.job.dto.JobCreateDTO;
+import com.rx.admin.modules.monitor.job.dto.JobUpdateDTO;
 import com.rx.admin.service.SysJobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,8 +37,8 @@ public class SysJobController {
     @PostMapping
     @SaCheckPermission("monitor:job:add")
     @OperateLog(module = "定时任务管理", operation = "新增定时任务")
-    public Result<Void> add(@RequestBody @Valid SysJob job) {
-        jobService.save(job);
+    public Result<Void> add(@RequestBody @Valid JobCreateDTO dto) {
+        jobService.addJob(dto);
         return Result.ok();
     }
 
@@ -44,8 +46,8 @@ public class SysJobController {
     @PutMapping
     @SaCheckPermission("monitor:job:edit")
     @OperateLog(module = "定时任务管理", operation = "修改定时任务")
-    public Result<Void> update(@RequestBody @Valid SysJob job) {
-        jobService.updateById(job);
+    public Result<Void> update(@RequestBody @Valid JobUpdateDTO dto) {
+        jobService.updateJob(dto);
         return Result.ok();
     }
 
@@ -63,11 +65,7 @@ public class SysJobController {
     @SaCheckPermission("monitor:job:edit")
     @OperateLog(module = "定时任务管理", operation = "切换状态")
     public Result<Void> toggleStatus(@PathVariable Long id) {
-        SysJob job = jobService.getById(id);
-        if (job != null) {
-            job.setStatus(job.getStatus() != null && job.getStatus() == 1 ? 0 : 1);
-            jobService.updateById(job);
-        }
+        jobService.toggleStatus(id);
         return Result.ok();
     }
 

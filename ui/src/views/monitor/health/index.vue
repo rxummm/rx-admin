@@ -59,6 +59,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
+import { cyberTheme } from '@/utils/echartsTheme'
 import { getSystemHealthApi, getGcStatsApi } from '@/api/health'
 
 const data = ref({})
@@ -98,29 +99,32 @@ function renderGauge() {
     return
   }
   if (!gaugeChartInstance) {
-    gaugeChartInstance = echarts.init(el)
+    gaugeChartInstance = echarts.init(el, cyberTheme)
   } else {
     gaugeChartInstance.resize()
   }
   const d = data.value
+  const cpu = clamp(d.cpu?.usage || 0)
+  const mem = clamp(d.memory?.usage || 0)
+  const disk = clamp(d.disk?.usage || 0)
   gaugeChartInstance.setOption({
     textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' },
     series: [
-      { type: 'gauge', center: ['20%', '55%'], radius: '70%', min: 0, max: 100,
-        progress: { show: true, width: 12, itemStyle: { color: '#409EFF' } },
-        axisLine: { lineStyle: { width: 12 } },
+      { type: 'gauge', center: ['20%', '55%'], radius: '46%', min: 0, max: 100,
+        progress: { show: true, width: 14, itemStyle: { color: '#409EFF' } },
+        axisLine: { lineStyle: { width: 14 } },
         axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
-        detail: { fontSize: 14, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: 'CPU\n{value}%' }, data: [{ value: d.cpu?.usage || 0 }] },
-      { type: 'gauge', center: ['50%', '55%'], radius: '70%', min: 0, max: 100,
-        progress: { show: true, width: 12, itemStyle: { color: '#67C23A' } },
-        axisLine: { lineStyle: { width: 12 } },
+        detail: { fontSize: 13, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: 'CPU\n{value}%' }, data: [{ value: cpu }] },
+      { type: 'gauge', center: ['50%', '55%'], radius: '46%', min: 0, max: 100,
+        progress: { show: true, width: 14, itemStyle: { color: '#67C23A' } },
+        axisLine: { lineStyle: { width: 14 } },
         axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
-        detail: { fontSize: 14, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: '内存\n{value}%' }, data: [{ value: d.memory?.usage || 0 }] },
-      { type: 'gauge', center: ['80%', '55%'], radius: '70%', min: 0, max: 100,
-        progress: { show: true, width: 12, itemStyle: { color: '#F56C6C' } },
-        axisLine: { lineStyle: { width: 12 } },
+        detail: { fontSize: 13, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: '内存\n{value}%' }, data: [{ value: mem }] },
+      { type: 'gauge', center: ['80%', '55%'], radius: '46%', min: 0, max: 100,
+        progress: { show: true, width: 14, itemStyle: { color: '#F56C6C' } },
+        axisLine: { lineStyle: { width: 14 } },
         axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
-        detail: { fontSize: 14, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: '磁盘\n{value}%' }, data: [{ value: d.disk?.usage || 0 }] },
+        detail: { fontSize: 13, fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif', formatter: '磁盘\n{value}%' }, data: [{ value: disk }] },
     ]
   })
 }

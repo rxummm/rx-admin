@@ -6,14 +6,13 @@ import com.rx.admin.modules.system.menu.vo.MenuVO;
 import com.rx.admin.entity.SysMenu;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 /** 菜单对象转换器 */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuConvert {
-    MenuConvert INSTANCE = Mappers.getMapper(MenuConvert.class);
 
     SysMenu toEntity(MenuCreateDTO dto);
     void updateEntity(MenuUpdateDTO dto, @MappingTarget SysMenu entity);

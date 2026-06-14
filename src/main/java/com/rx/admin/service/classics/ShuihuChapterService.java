@@ -22,6 +22,6 @@ public class ShuihuChapterService extends ServiceImpl<ShuihuChapterMapper, Shuih
         }
         wrapper.orderByAsc(ShuihuChapter::getChapterNumber);
         IPage<ShuihuChapter> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

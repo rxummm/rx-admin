@@ -124,7 +124,7 @@ function isOpen() {
 defineExpose({ isOpen, clearSearch })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header-search-box {
   position: relative;
 
@@ -161,7 +161,7 @@ defineExpose({ isOpen, clearSearch })
   padding: 6px 0;
   max-height: 280px;
   overflow-y: auto;
-  z-index: 3001;
+  z-index: var(--z-search, 3000);
 
   li {
     display: flex;
@@ -222,6 +222,6 @@ defineExpose({ isOpen, clearSearch })
   border-radius: 8px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   border: 1px solid var(--el-border-color-lighter, #ebeef5);
-  z-index: 3001;
+  z-index: var(--z-search, 3000);
 }
 </style>

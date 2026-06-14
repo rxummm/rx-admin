@@ -23,7 +23,7 @@ public class GenreService extends ServiceImpl<GenreMapper, Genre> {
         }
         wrapper.orderByAsc(Genre::getSortOrder, Genre::getId);
         IPage<Genre> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     public List<Genre> listAll() {

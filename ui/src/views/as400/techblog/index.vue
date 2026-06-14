@@ -634,7 +634,7 @@ onUnmounted(() => {
 .techblog-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 107px);
+  height: calc(100vh - var(--layout-content-offset, 107px));
   background: var(--el-bg-color);
   border-radius: 12px;
   overflow: hidden;

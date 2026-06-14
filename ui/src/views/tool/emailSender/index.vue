@@ -288,6 +288,10 @@ import {
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { sendEmailApi, uploadEmailAttachmentApi, getEmailConfigApi } from '@/api/commonTools'
+import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
+
+// ── 签名本地存储 ──
+const signatureStore = useStorage(STORAGE_KEYS.EMAIL_SIGNATURE)
 
 // ── wangeditor 编辑器实例 ──
 const editorRef = shallowRef()
@@ -385,12 +389,11 @@ function onSignatureEditorCreated(editor) {
   signatureEditorRef.value = editor
 }
 
-// 从 localStorage 加载签名
+// 从 signatureStore 加载签名
 function loadSignature() {
   try {
-    const saved = localStorage.getItem('email_signature')
-    if (saved) {
-      const data = JSON.parse(saved)
+    const data = signatureStore.get()
+    if (data) {
       signatureEnabled.value = data.enabled || false
       signatureHtml.value = data.html || ''
     }
@@ -401,10 +404,10 @@ function loadSignature() {
 
 function saveSignature() {
   try {
-    localStorage.setItem('email_signature', JSON.stringify({
+    signatureStore.set({
       enabled: signatureEnabled.value,
       html: signatureHtml.value
-    }))
+    })
     ElMessage.success('签名已保存')
     showSignatureDialog.value = false
   } catch (e) {
@@ -742,6 +745,15 @@ function getFileIconColor(name) {
 </script>
 
 <style lang="scss" scoped>
+/*
+ * 邮件编辑器样式说明：
+ * 本文件 !important 较多（~77 处），主要分布在三处：
+ *   1. 暗黑模式覆盖（body.dark 下需覆盖 Element Plus 默认主题）
+ *   2. :deep() 穿透 wangEditor 富文本编辑器（scoped 隔离后必须提升优先级）
+ *   3. :deep() 覆盖 .el-input / .el-card 内部样式（Element Plus 主题色穿透）
+ * 这是 vue scoped 机制 + 第三方组件库的合理用法，不要轻易去掉。
+ * 后续如需重做，请用 :deep() 替代直接 .el-* 选择器。
+ */
 .email-sender-page {
   max-width: 1280px;
   margin: 0 auto;

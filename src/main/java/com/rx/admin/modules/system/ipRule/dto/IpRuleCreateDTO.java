@@ -1,9 +1,8 @@
-package com.rx.admin.modules.system.ipRule.dto;
+package com.rx.admin.modules.system.iprule.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-/** IP规则创建请求 */
 @Data
 public class IpRuleCreateDTO {
     @NotBlank(message = "IP地址不能为空")

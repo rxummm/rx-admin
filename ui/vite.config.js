@@ -21,6 +21,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src')
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // 切换到 modern API，关闭 sass 1.x 的 legacy-js-api 弃用警告
+        // 兼容 Dart Sass 2.0（Vite 5.4+ 支持）
+        api: 'modern-compiler'
+      }
+    }
+  },
   server: {
     port: 3000,
     proxy: {

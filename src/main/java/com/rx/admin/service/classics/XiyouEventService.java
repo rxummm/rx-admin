@@ -24,7 +24,7 @@ public class XiyouEventService extends ServiceImpl<XiyouEventMapper, XiyouEvent>
         }
         wrapper.orderByAsc(XiyouEvent::getDifficultyNum);
         IPage<XiyouEvent> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     public List<XiyouEvent> listAll() {

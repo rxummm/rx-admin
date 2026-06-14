@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rx.admin.entity.SysRole;
 import com.rx.admin.mapper.SysRoleMapper;
 import com.rx.admin.mapper.SysRoleMenuMapper;
+import com.rx.admin.modules.system.role.dto.RoleCreateDTO;
+import com.rx.admin.modules.system.role.dto.RoleUpdateDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -43,12 +45,21 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> {
     }
 
     @Transactional
-    public void addRole(SysRole role, List<Long> menuIds) {
-        long count = count(new LambdaQueryWrapper<SysRole>().eq(SysRole::getRoleCode, role.getRoleCode()));
+    public void addRole(RoleCreateDTO dto) {
+        long count = count(new LambdaQueryWrapper<SysRole>().eq(SysRole::getRoleCode, dto.getRoleCode()));
         if (count > 0) {
             throw new IllegalArgumentException("角色编码已存在");
         }
+        SysRole role = new SysRole();
+        role.setRoleName(dto.getRoleName());
+        role.setRoleCode(dto.getRoleCode());
+        role.setDescription(dto.getDescription());
+        role.setSort(dto.getSort());
+        role.setStatus(dto.getStatus());
+        role.setDataScope(dto.getDataScope());
+        role.setDataDeptIds(dto.getDataDeptIds());
         save(role);
+        List<Long> menuIds = dto.getMenuIds();
         if (menuIds != null && !menuIds.isEmpty()) {
             menuIds.forEach(menuId -> roleMenuMapper.insert(role.getId(), menuId));
         }
@@ -56,10 +67,20 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> {
     }
 
     @Transactional
-    public void updateRole(SysRole role, List<Long> menuIds) {
+    public void updateRole(RoleUpdateDTO dto) {
+        SysRole role = new SysRole();
+        role.setId(dto.getId());
+        role.setRoleName(dto.getRoleName());
+        role.setRoleCode(dto.getRoleCode());
+        role.setDescription(dto.getDescription());
+        role.setSort(dto.getSort());
+        role.setStatus(dto.getStatus());
+        role.setDataScope(dto.getDataScope());
+        role.setDataDeptIds(dto.getDataDeptIds());
         updateById(role);
         // 先删除旧关联，再插入新关联（menuIds 为空则清空该角色的所有权限）
         roleMenuMapper.deleteByRoleId(role.getId());
+        List<Long> menuIds = dto.getMenuIds();
         if (menuIds != null && !menuIds.isEmpty()) {
             menuIds.forEach(menuId -> roleMenuMapper.insert(role.getId(), menuId));
         }

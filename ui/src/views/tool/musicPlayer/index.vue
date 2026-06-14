@@ -599,7 +599,7 @@ watch(showStats, (val) => {
 .music-player-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 107px);
+  height: calc(100vh - var(--layout-content-offset, 107px));
   background: var(--el-bg-color);
   border-radius: 12px;
   overflow: hidden;
@@ -809,7 +809,7 @@ watch(showStats, (val) => {
   justify-content: center;
   box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35), 0 0 80px rgba(118, 75, 162, 0.15);
   position: relative;
-  z-index: 1;
+  z-index: var(--z-decor, 1);
   transition: transform 0.3s;
 }
 .cover-disc::after {
@@ -837,7 +837,7 @@ watch(showStats, (val) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3;
+  z-index: var(--z-audio-control, 3);
   position: relative;
 }
 .cover-letter {
@@ -857,7 +857,7 @@ watch(showStats, (val) => {
   height: 220px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(102,126,234,0.12) 0%, transparent 70%);
-  z-index: 0;
+  z-index: var(--z-base, 0);
   pointer-events: none;
 }
 
@@ -935,7 +935,7 @@ watch(showStats, (val) => {
   background: var(--el-bg-color);
   flex-shrink: 0;
   min-height: 72px;
-  z-index: 10;
+  z-index: var(--z-content, 10);
 }
 
 /* -- 左：当前播放 -- */
@@ -969,7 +969,7 @@ watch(showStats, (val) => {
   font-size: 16px;
   font-weight: 700;
   color: #fff;
-  z-index: 1;
+  z-index: var(--z-decor, 1);
 }
 .footer-song-info {
   min-width: 0;

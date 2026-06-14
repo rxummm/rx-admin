@@ -1,6 +1,7 @@
 package com.rx.admin.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.rx.admin.common.utils.TreeUtils;
 import com.rx.admin.entity.SysMenu;
 import com.rx.admin.mapper.*;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  * 支持 admin 主动管理任意用户的菜单权限（增/删/查）
  *
  * 权限数据存储策略：
- * - 公共权限（仪表盘等）→ 通过 user 角色（role_id=2）控制
+ * - 公共权限（仪表盘等）→ 通过用户角色（role_id=2）控制
  * - 个性化权限 → 通过 sys_user_menu 表直接关联用户和菜单
  * - 查询时合并两部分（角色权限 + 直接授权权限）
  *
@@ -133,7 +134,7 @@ public class SysPermissionManageService {
             // 对目录(type=1)和菜单页面(type=2)才递归删除子孙，按钮(type=3)只删自身
             SysMenu menu = allMenus.stream().filter(m -> m.getId().equals(menuId)).findFirst().orElse(null);
             if (menu == null || menu.getMenuType() == 1 || menu.getMenuType() == 2) {
-                collectDescendantIds(allMenus, menuId, toRemove);
+                toRemove.addAll(TreeUtils.collectDescendantIds(menuId, allMenus, SysMenu::getId, SysMenu::getParentId));
             }
         }
 
@@ -160,19 +161,6 @@ public class SysPermissionManageService {
     }
 
     /**
-     * 递归收集子孙菜单ID
-     */
-    private void collectDescendantIds(List<SysMenu> allMenus, Long parentId, Set<Long> result) {
-        for (SysMenu m : allMenus) {
-            if (m.getParentId().equals(parentId)) {
-                result.add(m.getId());
-                collectDescendantIds(allMenus, m.getId(), result);
-            }
-        }
-    }
-
-
-    /**
      * 获取用户可分配的权限树（包含按钮权限）
      * 排除系统管理、工具、内容管理、监控等管理类菜单
      * 保留已拥有的目录节点（type=1）作为树结构占位，使其下的按钮（type=3）仍可被分配
@@ -190,7 +178,7 @@ public class SysPermissionManageService {
                 .orderByAsc(SysMenu::getSort));
 
         for (Long topId : excludedTopIds) {
-            collectDescendantIds(allMenus, topId, excludedIds);
+            excludedIds.addAll(TreeUtils.collectDescendantIds(topId, allMenus, SysMenu::getId, SysMenu::getParentId));
         }
 
         // 过滤规则：
@@ -205,24 +193,15 @@ public class SysPermissionManageService {
                 .filter(m -> {
                     if (m.getMenuType() == 1) return true; // 目录始终保留
                     if (m.getMenuType() == 3) return true; // 按钮始终保留
-                    return !ownedIds.contains(m.getId());  // 只排除已拥有的菜单页面
+                    return !ownedIds.contains(m.getId()); // 只排除已拥有的菜单页面
                 })
                 .collect(Collectors.toList());
 
-        return buildTree(available, 0L);
-    }
-
-    private List<SysMenu> buildTree(List<SysMenu> menus, Long parentId) {
-        List<SysMenu> tree = new ArrayList<>();
-        for (SysMenu menu : menus) {
-            if (menu.getParentId().equals(parentId)) {
-                List<SysMenu> children = buildTree(menus, menu.getId());
-                if (!children.isEmpty()) {
-                    menu.setChildren(children);
-                }
-                tree.add(menu);
-            }
-        }
-        return tree;
+        return TreeUtils.buildTree(
+                available,
+                SysMenu::getId,
+                SysMenu::getParentId,
+                SysMenu::setChildren
+        );
     }
 }

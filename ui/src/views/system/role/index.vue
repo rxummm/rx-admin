@@ -30,7 +30,11 @@
     </div>
 
     <div class="table-container">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <!-- 骨架屏加载状态（仅在首次加载且无数据时显示） -->
+      <SkeletonLoader v-if="loading && !tableData.length" type="table" :rows="10" :columns="visibleColumns.length + 2" />
+      
+      <!-- 正常表格（有数据后显示，刷新时保留旧数据并显示 loading 遮罩） -->
+      <el-table v-else :data="sortedTableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
         <el-table-column v-if="visibleColumns.includes('roleName')" prop="roleName" :label="$t('system.role.roleName')" width="150" sortable />
@@ -130,6 +134,7 @@ import { getRoleListApi, addRoleApi, updateRoleApi, deleteRoleApi } from '@/api/
 import { getMenuTreeApi } from '@/api/menu'
 import { getDeptTreeApi } from '@/api/dept'
 import ExportButton from '@/components/ExportButton/index.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -277,6 +282,8 @@ async function fetchData() {
   loading.value = true
   try {
     const res = await getRoleListApi()
+    // 确保骨架屏至少显示 300ms，避免闪烁
+    await new Promise(resolve => setTimeout(resolve, 300))
     tableData.value = res.data || []
   } finally {
     loading.value = false

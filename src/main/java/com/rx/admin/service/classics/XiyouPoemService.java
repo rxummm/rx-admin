@@ -22,6 +22,6 @@ public class XiyouPoemService extends ServiceImpl<XiyouPoemMapper, XiyouPoem> {
         }
         wrapper.orderByAsc(XiyouPoem::getId);
         IPage<XiyouPoem> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

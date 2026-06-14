@@ -1,11 +1,15 @@
 package com.rx.admin.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rx.admin.entity.SysConfig;
 import com.rx.admin.mapper.SysConfigMapper;
+import com.rx.admin.modules.system.config.dto.ConfigCreateDTO;
+import com.rx.admin.modules.system.config.dto.ConfigUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +63,41 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> {
             config.setConfigValue(value);
             updateById(config);
         }
+    }
+
+    /**
+     * 新增配置
+     */
+    public void addConfig(ConfigCreateDTO dto) {
+        long count = count(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getConfigKey, dto.getConfigKey()));
+        if (count > 0) {
+            throw new IllegalArgumentException("配置键已存在");
+        }
+        SysConfig config = new SysConfig();
+        config.setConfigKey(dto.getConfigKey());
+        config.setConfigValue(dto.getConfigValue());
+        config.setConfigType(dto.getConfigType());
+        config.setDescription(dto.getDescription());
+        config.setGroupName(dto.getGroupName());
+        config.setSortOrder(dto.getSortOrder());
+        save(config);
+    }
+
+    /**
+     * 更新配置
+     */
+    public void updateConfig(ConfigUpdateDTO dto) {
+        SysConfig config = getById(dto.getId());
+        if (config == null) {
+            throw new IllegalArgumentException("配置不存在");
+        }
+        if (StringUtils.hasText(dto.getConfigKey())) config.setConfigKey(dto.getConfigKey());
+        if (dto.getConfigValue() != null) config.setConfigValue(dto.getConfigValue());
+        if (StringUtils.hasText(dto.getConfigType())) config.setConfigType(dto.getConfigType());
+        if (StringUtils.hasText(dto.getDescription())) config.setDescription(dto.getDescription());
+        if (StringUtils.hasText(dto.getGroupName())) config.setGroupName(dto.getGroupName());
+        if (dto.getSortOrder() != null) config.setSortOrder(dto.getSortOrder());
+        updateById(config);
     }
 
     /**

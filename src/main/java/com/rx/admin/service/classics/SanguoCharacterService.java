@@ -25,7 +25,7 @@ public class SanguoCharacterService extends ServiceImpl<SanguoCharacterMapper, S
         }
         wrapper.orderByAsc(SanguoCharacter::getId);
         IPage<SanguoCharacter> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /** 按国家筛选人物 */

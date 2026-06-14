@@ -10,14 +10,13 @@ import com.rx.admin.entity.SysDictData;
 import com.rx.admin.entity.SysDictType;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 /** 字典对象转换器 */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DictConvert {
-    DictConvert INSTANCE = Mappers.getMapper(DictConvert.class);
 
     // 字典类型
     SysDictType toEntity(DictTypeCreateDTO dto);

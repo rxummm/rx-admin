@@ -4,6 +4,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysConfig;
+import com.rx.admin.modules.system.config.dto.ConfigCreateDTO;
+import com.rx.admin.modules.system.config.dto.ConfigUpdateDTO;
 import com.rx.admin.service.SysConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +47,7 @@ public class SysConfigController {
     @PutMapping("/value/{key}")
     @SaCheckPermission("system:config:edit")
     @OperateLog(module = "系统配置", operation = "更新配置")
-    @CacheEvict(value = "config", allEntries = true)  // 写操作清除全部 config 缓存
+    @CacheEvict(value = "config", allEntries = true)
     public Result<Void> updateValue(@PathVariable String key, @RequestBody Map<String, String> body) {
         configService.updateValue(key, body.get("value"));
         return Result.ok();
@@ -56,8 +58,18 @@ public class SysConfigController {
     @SaCheckPermission("system:config:add")
     @OperateLog(module = "系统配置", operation = "新增配置")
     @CacheEvict(value = "config", allEntries = true)
-    public Result<Void> add(@RequestBody @Valid SysConfig config) {
-        configService.save(config);
+    public Result<Void> add(@RequestBody @Valid ConfigCreateDTO dto) {
+        configService.addConfig(dto);
+        return Result.ok();
+    }
+
+    @Operation(summary = "更新配置")
+    @PutMapping
+    @SaCheckPermission("system:config:edit")
+    @OperateLog(module = "系统配置", operation = "更新配置")
+    @CacheEvict(value = "config", allEntries = true)
+    public Result<Void> update(@RequestBody @Valid ConfigUpdateDTO dto) {
+        configService.updateConfig(dto);
         return Result.ok();
     }
 

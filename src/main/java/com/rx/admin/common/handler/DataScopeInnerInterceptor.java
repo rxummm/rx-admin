@@ -35,6 +35,7 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter,
                             RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         // 只拦截 SELECT 查询

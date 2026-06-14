@@ -11,9 +11,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { toggleFavoriteApi } from '@/api/favorite'
+import { useStorage } from '@/composables/useStorage'
+import { STORAGE_KEYS } from '@/composables/useStorage'
+import { useNamespacedKey } from '@/composables/useStorage'
+import { useFavEvents } from '@/composables/useFavEvents'
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -23,16 +27,23 @@ const props = defineProps({
   showText: { type: Boolean, default: false }
 })
 
+const { triggerRefresh } = useFavEvents()
+
 const isFavorited = ref(false)
 const favoriteId = ref(null)
 
-// 恢复状态
-const key = `fav_${props.path}`
-const saved = localStorage.getItem(key)
-if (saved) {
-  isFavorited.value = true
-  favoriteId.value = saved
-}
+// 统一用命名空间 key 替代散落的 fav_${path}
+const favKey = useNamespacedKey(STORAGE_KEYS.FAVORITE_STAR, props.path)
+const favStore = useStorage(favKey)
+
+// 初始化时从 useStorage 恢复状态
+onMounted(() => {
+  const saved = favStore.get()
+  if (saved) {
+    isFavorited.value = true
+    favoriteId.value = saved
+  }
+})
 
 const toggle = async () => {
   try {
@@ -41,12 +52,13 @@ const toggle = async () => {
     })
     isFavorited.value = res.data?.collected
     if (isFavorited.value) {
-      localStorage.setItem(key, res.data?.id || '1')
+      favStore.set(res.data?.id || '1')
       favoriteId.value = res.data?.id
     } else {
-      localStorage.removeItem(key)
+      favStore.remove()
       favoriteId.value = null
     }
+    triggerRefresh()
   } catch (e) { /* ignore */ }
 }
 </script>

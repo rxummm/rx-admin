@@ -77,7 +77,7 @@
         <el-card class="convert-card" shadow="never">
           <template #header>
             <div class="card-title">
-              <el-icon color="#409eff" size="24"><Document /></el-icon>
+              <el-icon color="#f59e0b" size="24"><Document /></el-icon>
               <span>Word → PDF</span>
             </div>
           </template>

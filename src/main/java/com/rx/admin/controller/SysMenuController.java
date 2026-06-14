@@ -4,6 +4,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysMenu;
+import com.rx.admin.modules.system.menu.dto.MenuCreateDTO;
+import com.rx.admin.modules.system.menu.dto.MenuUpdateDTO;
 import com.rx.admin.service.SysMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,9 +37,9 @@ public class SysMenuController {
     @PostMapping
     @SaCheckPermission("sys:menu:add")
     @OperateLog(module = "菜单管理", operation = "新增菜单")
-    @CacheEvict(value = "menu", allEntries = true)  // 菜单变更清除全部 menu 缓存
-    public Result<?> add(@RequestBody @Valid SysMenu menu) {
-        menuService.save(menu);
+    @CacheEvict(value = "menu", allEntries = true)
+    public Result<?> add(@RequestBody @Valid MenuCreateDTO dto) {
+        menuService.addMenu(dto);
         return Result.ok();
     }
 
@@ -46,8 +48,8 @@ public class SysMenuController {
     @SaCheckPermission("sys:menu:edit")
     @OperateLog(module = "菜单管理", operation = "修改菜单")
     @CacheEvict(value = "menu", allEntries = true)
-    public Result<?> update(@RequestBody @Valid SysMenu menu) {
-        menuService.updateById(menu);
+    public Result<?> update(@RequestBody @Valid MenuUpdateDTO dto) {
+        menuService.updateMenu(dto);
         return Result.ok();
     }
 

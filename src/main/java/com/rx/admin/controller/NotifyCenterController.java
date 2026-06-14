@@ -6,27 +6,28 @@ import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysMessageTemplate;
 import com.rx.admin.entity.SysNotifyRecord;
+import com.rx.admin.modules.content.notify.dto.MessageTemplateCreateDTO;
+import com.rx.admin.modules.content.notify.dto.MessageTemplateUpdateDTO;
+import com.rx.admin.modules.content.notify.dto.NotifySendDTO;
 import com.rx.admin.service.MessageTemplateService;
 import com.rx.admin.service.NotifyRecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "通知中心")
 @RestController
 @RequestMapping("/api/notify-center")
+@RequiredArgsConstructor
 public class NotifyCenterController {
 
     private final MessageTemplateService templateService;
     private final NotifyRecordService recordService;
-
-    public NotifyCenterController(MessageTemplateService templateService, NotifyRecordService recordService) {
-        this.templateService = templateService;
-        this.recordService = recordService;
-    }
 
     // === 消息模板 ===
     @Operation(summary = "模板列表")
@@ -43,8 +44,8 @@ public class NotifyCenterController {
     @PostMapping("/templates")
     @SaCheckRole("admin")
     @OperateLog(module = "通知中心", operation = "新增模板")
-    public Result<?> addTemplate(@RequestBody SysMessageTemplate template) {
-        templateService.save(template);
+    public Result<Void> addTemplate(@RequestBody @Valid MessageTemplateCreateDTO dto) {
+        templateService.addTemplate(dto);
         return Result.ok();
     }
 
@@ -52,8 +53,8 @@ public class NotifyCenterController {
     @PutMapping("/templates")
     @SaCheckRole("admin")
     @OperateLog(module = "通知中心", operation = "更新模板")
-    public Result<?> updateTemplate(@RequestBody SysMessageTemplate template) {
-        templateService.updateById(template);
+    public Result<Void> updateTemplate(@RequestBody @Valid MessageTemplateUpdateDTO dto) {
+        templateService.updateTemplate(dto);
         return Result.ok();
     }
 
@@ -61,7 +62,7 @@ public class NotifyCenterController {
     @DeleteMapping("/templates/{id}")
     @SaCheckRole("admin")
     @OperateLog(module = "通知中心", operation = "删除模板")
-    public Result<?> deleteTemplate(@PathVariable Long id) {
+    public Result<Void> deleteTemplate(@PathVariable Long id) {
         templateService.removeById(id);
         return Result.ok();
     }
@@ -70,25 +71,19 @@ public class NotifyCenterController {
     @PostMapping("/send")
     @SaCheckRole("admin")
     @OperateLog(module = "通知中心", operation = "发送通知")
-    public Result<?> sendNotify(@RequestBody Map<String, Object> body) {
-        Long templateId = body.get("templateId") != null ? ((Number) body.get("templateId")).longValue() : null;
-        String channel = (String) body.getOrDefault("channel", "message");
-        String receiver = (String) body.get("receiver");
-        String title = (String) body.get("title");
-        String content = (String) body.get("content");
-
+    public Result<Void> sendNotify(@RequestBody @Valid NotifySendDTO dto) {
         SysNotifyRecord record = new SysNotifyRecord();
-        record.setTemplateId(templateId);
-        record.setChannel(channel);
-        record.setReceiver(receiver);
-        record.setTitle(title);
-        record.setContent(content);
+        record.setTemplateId(dto.getTemplateId());
+        record.setChannel(dto.getChannel() != null ? dto.getChannel() : "message");
+        record.setReceiver(dto.getReceiver());
+        record.setTitle(dto.getTitle());
+        record.setContent(dto.getContent());
         record.setStatus(1); // 直接标记成功，实际可扩展为异步发送
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         record.setCreateTime(now);
         record.setSendTime(now);
         recordService.save(record);
-        return Result.ok("发送成功", null);
+        return Result.ok();
     }
 
     // === 发送记录 ===
@@ -106,7 +101,7 @@ public class NotifyCenterController {
     @Operation(summary = "删除记录")
     @DeleteMapping("/records/{id}")
     @SaCheckRole("admin")
-    public Result<?> deleteRecord(@PathVariable Long id) {
+    public Result<Void> deleteRecord(@PathVariable Long id) {
         recordService.removeById(id);
         return Result.ok();
     }
@@ -114,7 +109,7 @@ public class NotifyCenterController {
     @Operation(summary = "批量删除记录")
     @DeleteMapping("/records/batch")
     @SaCheckRole("admin")
-    public Result<?> deleteRecords(@RequestBody List<Long> ids) {
+    public Result<Void> deleteRecords(@RequestBody List<Long> ids) {
         recordService.removeByIds(ids);
         return Result.ok();
     }
@@ -123,14 +118,14 @@ public class NotifyCenterController {
     @PostMapping("/records/{id}/retry")
     @SaCheckRole("admin")
     @OperateLog(module = "通知中心", operation = "重发通知")
-    public Result<?> retry(@PathVariable Long id) {
+    public Result<Void> retry(@PathVariable Long id) {
         SysNotifyRecord record = recordService.getById(id);
         if (record == null) return Result.fail(404, "记录不存在");
         record.setStatus(1);
         record.setRetryCount(record.getRetryCount() != null ? record.getRetryCount() + 1 : 1);
-        record.setSendTime(java.time.LocalDateTime.now());
+        record.setSendTime(LocalDateTime.now());
         record.setErrorMsg(null);
         recordService.updateById(record);
-        return Result.ok("重发成功", null);
+        return Result.ok();
     }
 }

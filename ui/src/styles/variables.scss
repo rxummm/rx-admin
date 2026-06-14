@@ -1,240 +1,351 @@
-// ====== 亮色主题（默认） ======
+// ====== 亮色主题（默认）—— 现代极简主义 ======
 :root {
-  // 页面背景
-  --bg-page: #f0f2f5;
-  // 容器/卡片背景
-  --bg-container: #fff;
-  // 悬停背景
-  --bg-hover: #f5f7fa;
-  // 激活/选中背景
-  --bg-active: #ecf5ff;
-  // 未读/强调背景
-  --bg-highlight: #f0f7ff;
-  --bg-highlight-hover: #e6f2ff;
+  // ── 圆角系统（精致柔和） ──
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
 
-  // 主文字色
-  --text-primary: #303133;
-  // 常规文字色
-  --text-regular: #606266;
-  // 次要文字色
-  --text-secondary: #909399;
-  // 占位符色
-  --text-placeholder: #c0c4cc;
+  // ── 过渡速度（流畅自然） ──
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  // 边框色
-  --border-color: #e4e7ed;
-  --border-light: #ebeef5;
-  --border-lighter: #f5f7fa;
+  // ── 页面背景（纯净留白） ──
+  --bg-page: #f8f9fa;
+  --bg-container: #ffffff;
+  --bg-hover: #f1f3f5;
+  --bg-active: #e9ecef;
+  --bg-highlight: #f8f0fc;
+  --bg-highlight-hover: #f3e8f9;
 
-  // 主题色
-  --color-primary: #409eff;
-  --color-primary-light: #66b1ff;
+  // ── 文字色（优雅对比） ──
+  --text-primary: #212529;
+  --text-regular: #495057;
+  --text-secondary: #868e96;
+  --text-placeholder: #adb5bd;
+  --text-disabled: #ced4da;
 
-  // 侧边栏
+  // ── 边框色（微妙分隔） ──
+  --border-color: #dee2e6;
+  --border-light: #e9ecef;
+  --border-lighter: #f1f3f5;
+
+  // ── 主题色（电光蓝 - 科技感） ──
+  --color-primary: #58a6ff;
+  --color-primary-light: #79c0ff;
+  --color-primary-dark: #1f6feb;
+  --color-primary-soft: rgba(88, 166, 255, 0.1);
+  --color-primary-glow: rgba(88, 166, 255, 0.3);
+
+  // ── 功能色（霓虹饱和） ──
+  --color-success: #3fb950;
+  --color-success-soft: rgba(63, 185, 80, 0.1);
+  --color-warning: #d29922;
+  --color-warning-soft: rgba(210, 153, 34, 0.1);
+  --color-danger: #f85149;
+  --color-danger-soft: rgba(248, 81, 73, 0.1);
+  --color-info: #58a6ff;
+  --color-info-soft: rgba(88, 166, 255, 0.1);
+
+  // ── 侧边栏（极简留白） ──
   --sidebar-bg: #ffffff;
-  --sidebar-text: #606266;
-  --sidebar-text-active: #409eff;
-  // 侧边栏 logo 区域
-  --sidebar-logo-color: #303133;
-  --sidebar-logo-border: #ebeef5;
-  // 侧边栏子菜单背景
-  --sidebar-submenu-bg: #fafafa;
-  --sidebar-item-hover-bg: #f5f7fa;
-  --sidebar-item-active-bg: #ecf5ff;
+  --sidebar-text: #495057;
+  --sidebar-text-active: #58a6ff;
+  --sidebar-active-indicator: #58a6ff;
+  --sidebar-logo-color: #212529;
+  --sidebar-logo-border: #e9ecef;
+  --sidebar-logo-bg: transparent;
+  --sidebar-submenu-bg: #f8f9fa;
+  --sidebar-item-hover-bg: #f1f3f5;
+  --sidebar-item-active-bg: #f0f7ff;
+  --sidebar-width: 240px;
+  --sidebar-collapse-width: 64px;
 
-  // 顶栏
-  --header-bg: #fff;
-  --header-shadow: rgba(0, 0, 0, 0.08);
+  // ── 顶栏（玻璃态效果） ──
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-backdrop: blur(10px);
+  --header-height: 56px;
+  --header-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 
-  // 标签栏
-  --tags-bg: #fff;
-  --tags-item-bg: #f0f2f5;
-  --tags-item-color: #606266;
-  --tags-item-active-bg: #409eff;
-  --tags-item-active-color: #fff;
-  --tags-item-hover-bg: #ecf5ff;
-  --tags-item-hover-color: #409eff;
-  --tags-item-hover-border: #d9ecff;
+  // ── 布局尺寸（统一引用，告别硬编码减号） ──
+  --layout-header-height: 56px;
+  --layout-tags-height: 40px;
+  --layout-footer-height: 0px;
+  // 通用偏移量：header + tags + 边距（统一通过 calc 组合）
+  --layout-content-offset: calc(var(--layout-header-height, 56px) + var(--layout-tags-height, 40px) + 11px);
 
-  // 搜索框
-  --search-bg: #f5f7fa;
-  --search-focus-bg: #ecf5ff;
-  --search-focus-shadow: #409eff;
-  --search-dropdown-bg: #fff;
-  --search-dropdown-shadow: rgba(0, 0, 0, 0.12);
+  // ── z-index 体系（统一层级，禁止散落魔法数字） ──
+  // ⚠️ 必须在 :root 顶层定义，不能只放在 html.dark 里！
+  // 否则亮色主题下 var(--z-*) 会回退到 auto，导致 z-index 完全失效。
+  // 0-99    装饰层（背景、噪点、渐变光晕）
+  // 100-199 内容层（文章、卡片堆叠、关系图谱）
+  // 200-299 业务层（特殊交互：音乐播放层级）
+  // 300-399 导航层（标签栏、Search 弹层）
+  // 1000+   Element Plus 浮层（el-index-* 体系）
+  // 9000+   全局层（Loading、FavoritesPanel、message）
+  // 99999   Teleport 全屏层（标签右键菜单 — 必须 > EP popper 2000 避免被列标题/下拉遮挡）
+  --z-base: 0;
+  --z-decor: 1;        // 装饰背景
+  --z-content: 10;     // 内容区
+  --z-article: 100;     // 文章正文
+  --z-graphic: 100;    // 关系图谱/canvas
+  --z-audio: 200;      // 音频可视化层
+  --z-audio-control: 3;
+  --z-header: 1000;    // 顶栏（与 EP 浮层错开，避让 message/tooltip）
+  --z-tags-view: 1001; // 标签栏
+  --z-search: 3000;    // 全局搜索弹层
+  --z-favorites: 9999; // 收藏面板
+  --z-loading: 9999;   // 全局 loading
+  --z-message: 9999;   // 覆盖 EP 默认 2000+，避免被 menu 遮挡
+  --z-teleport: 99999; // Teleport 到 body 的全屏菜单（如标签右键）
 
-  // 通知弹窗
+  // ── 标签栏（精致胶囊） ──
+  --tags-bg: #ffffff;
+  --tags-height: 40px;
+  --tags-item-bg: #f1f3f5;
+  --tags-item-color: #495057;
+  --tags-item-active-bg: #58a6ff;
+  --tags-item-active-color: #ffffff;
+  --tags-item-hover-bg: #e9ecef;
+  --tags-item-hover-color: #212529;
+  --tags-item-hover-border: transparent;
+
+  // ── 搜索框（优雅聚焦） ──
+  --search-bg: #f1f3f5;
+  --search-focus-bg: #ffffff;
+  --search-focus-shadow: rgba(88, 166, 255, 0.2);
+  --search-dropdown-bg: #ffffff;
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  // ── 通知弹窗（柔和提示） ──
   --notice-unread-bg: #f0f7ff;
-  --notice-unread-hover: #e6f2ff;
+  --notice-unread-hover: #dbeafe;
 
-  // 标签栏关闭按钮悬停
-  --tag-close-hover-bg: rgba(0, 0, 0, 0.1);
+  // ── 标签关闭按钮 ──
+  --tag-close-hover-bg: rgba(88, 166, 255, 0.1);
 
-  // 右键菜单
-  --context-menu-bg: #fff;
-  --context-menu-shadow: rgba(0, 0, 0, 0.12);
+  // ── 右键菜单（精致浮层） ──
+  --context-menu-bg: #ffffff;
+  --context-menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-  // 阴影
-  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.15);
-  --shadow-header: 0 1px 4px rgba(0, 0, 0, 0.08);
+  // ── 阴影体系（多层级深度感） ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.14);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.15);
 
-  // 登录页
-  --login-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --login-card-bg: #fff;
+  // ── 登录页（科技渐变背景） ──
+  --login-bg: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  --login-card-bg: #ffffff;
+  --login-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 
-  // 表格容器
-  --table-container-bg: #fff;
-  --search-bar-bg: #fff;
+  // ── 表格容器（清爽卡片风格） ──
+  --table-container-bg: #ffffff;
+  --search-bar-bg: #ffffff;
 
-  // 垂直菜单激活
-  --menu-vertical-active-bg: #ecf5ff;
+  // ── 垂直菜单激活（柔和背景 + 左侧指示条） ──
+  --menu-vertical-active-bg: #f0f7ff;
+  --menu-vertical-active-indicator: 3px solid #58a6ff;
 
-  // 字典当前行
-  --dict-current-row-bg: #ecf5ff;
+  // ── 字典当前行 ──
+  --dict-current-row-bg: #f0f7ff;
 
-  // 徽章边框（用于与header背景色匹配）
-  --badge-border: #fff;
+  // ── 徽章边框 ──
+  --badge-border: #ffffff;
 
-  // 功能色
-  --color-success: #67c23a;
-  --color-warning: #e6a23c;
-  --color-danger: #f56c6c;
-  --color-info: #909399;
-
-  // 页面统一边距
+  // ── 页面统一边距 ──
   --page-padding: 16px;
 
-  // ECharts 调色板（亮色主题）
-  --chart-color-1: #5470c6;
-  --chart-color-2: #91cc75;
-  --chart-color-3: #fac858;
-  --chart-color-4: #ee6666;
-  --chart-color-5: #73c0de;
-  --chart-color-6: #3ba272;
-  --chart-color-7: #fc8452;
-  --chart-color-8: #9a60b4;
-  --chart-color-9: #ea7ccc;
-  --chart-color-10: #e6a23c;
+  // ── 字体（现代几何无衬线，优雅易读） ──
+  --font-family-display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-body: 'Inter', 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  // ── ECharts 调色板（霓虹科技风） ──
+  --chart-color-1: #58a6ff;
+  --chart-color-2: #79c0ff;
+  --chart-color-3: #3fb950;
+  --chart-color-4: #d29922;
+  --chart-color-5: #f85149;
+  --chart-color-6: #56d4dd;
+  --chart-color-7: #db61a2;
+  --chart-color-8: #8b949e;
+  --chart-color-9: #6e7681;
+  --chart-color-10: #212529;
 }
 
-// ====== 暗色主题 ======
+// ====== 暗色主题 —— 暗黑赛博朋克 (Dark Cyberpunk) ======
 html.dark {
-  // 页面背景
-  --bg-page: #141414;
-  // 容器/卡片背景
-  --bg-container: #1d1e1f;
-  // 悬停背景
-  --bg-hover: #262727;
-  // 激活/选中背景
-  --bg-active: #2c2c2d;
-  // 未读/强调背景
-  --bg-highlight: #1a2a3a;
-  --bg-highlight-hover: #223344;
+  // ── 圆角 & 过渡速度（保持一致） ──
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  // 主文字色
-  --text-primary: #e5eaf3;
-  // 常规文字色
-  --text-regular: #a3a6ad;
-  // 次要文字色
-  --text-secondary: #73767a;
-  // 占位符色
-  --text-placeholder: #4c4d4f;
+  // ── 页面背景（GitHub Dark 深蓝黑层级系统） ──
+  --bg-page: #0d1117;              // 最深层
+  --bg-container: #161b22;         // 容器层
+  --bg-hover: #21262d;             // 悬浮层
+  --bg-active: #30363d;            // 激活层
+  --bg-highlight: #161b22;
+  --bg-highlight-hover: #21262d;
 
-  // 边框色
-  --border-color: #4c4d4f;
-  --border-light: #363637;
-  --border-lighter: #262727;
+  // ── 文字色（高对比护眼） ──
+  --text-primary: #e6edf3;         // 高亮白
+  --text-regular: #c9d1d9;         // 次级白
+  --text-secondary: #8b949e;       // 中灰
+  --text-placeholder: #6e7681;     // 浅灰
+  --text-disabled: #484f58;        // 深灰
 
-  // 主题色
-  --color-primary: #409eff;
-  --color-primary-light: #337ecc;
+  // ── 边框色（微妙分隔） ──
+  --border-color: #30363d;
+  --border-light: #21262d;
+  --border-lighter: #161b22;
 
-  // 侧边栏
-  --sidebar-bg: #1d1e1f;
-  --sidebar-text: #a3a6ad;
-  --sidebar-text-active: #409eff;
-  // 侧边栏 logo 区域
-  --sidebar-logo-color: #e5eaf3;
+  // ── 主题色（电光蓝 - GitHub/VS Code 风格） ──
+  --color-primary: #58a6ff;        // 电光蓝
+  --color-primary-light: #79c0ff;  // 亮蓝
+  --color-primary-dark: #1f6feb;   // 深蓝
+  --color-primary-soft: rgba(88, 166, 255, 0.12);
+  --color-primary-glow: rgba(88, 166, 255, 0.3);
+
+  // ── 功能色（霓虹饱和 - VS Code 调色板） ──
+  --color-success: #3fb950;        // 荧光绿
+  --color-success-soft: rgba(63, 185, 80, 0.12);
+  --color-warning: #d29922;        // 琥珀黄
+  --color-warning-soft: rgba(210, 153, 34, 0.12);
+  --color-danger: #f85149;         // 珊瑚红
+  --color-danger-soft: rgba(248, 81, 73, 0.12);
+  --color-info: #58a6ff;           // 青蓝
+  --color-info-soft: rgba(88, 166, 255, 0.12);
+
+  // ── 侧边栏（深邃通透 + 发光效果） ──
+  --sidebar-bg: #0d1117;
+  --sidebar-text: #8b949e;
+  --sidebar-text-active: #58a6ff;
+  --sidebar-active-indicator: #58a6ff;
+  --sidebar-logo-color: #e6edf3;
   --sidebar-logo-border: rgba(255, 255, 255, 0.08);
-  // 侧边栏子菜单背景
-  --sidebar-submenu-bg: #161617;
-  --sidebar-item-hover-bg: #2c2c2d;
-  --sidebar-item-active-bg: #1a2a3a;
+  --sidebar-logo-bg: transparent;
+  --sidebar-submenu-bg: #0d1117;
+  --sidebar-item-hover-bg: #161b22;
+  --sidebar-item-active-bg: #161b22;
+  --sidebar-width: 240px;
+  --sidebar-collapse-width: 64px;
 
-  // 顶栏
-  --header-bg: #1d1e1f;
-  --header-shadow: rgba(0, 0, 0, 0.3);
+  // ── 顶栏（玻璃态效果） ──
+  --header-bg: rgba(13, 17, 23, 0.95);
+  --header-backdrop: blur(10px);
+  --header-height: 56px;
+  --header-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
-  // 标签栏
-  --tags-bg: #1d1e1f;
-  --tags-item-bg: #262727;
-  --tags-item-color: #a3a6ad;
-  --tags-item-active-bg: #409eff;
-  --tags-item-active-color: #fff;
-  --tags-item-hover-bg: #2c2c2d;
-  --tags-item-hover-color: #409eff;
-  --tags-item-hover-border: #4c4d4f;
+  // ── 布局尺寸（继承 :root，主题切换不需覆盖） ──
+  // --layout-header-height: 56px;          // 同 :root
+  // --layout-tags-height: 40px;            // 同 :root
+  // --layout-footer-height: 0px;           // 同 :root
+  // --layout-content-offset: calc(...);    // 同 :root
 
-  // 搜索框
-  --search-bg: #262727;
-  --search-focus-bg: #2c2c2d;
-  --search-focus-shadow: #409eff;
-  --search-dropdown-bg: #1d1e1f;
-  --search-dropdown-shadow: rgba(0, 0, 0, 0.4);
+  // ── z-index 体系（继承 :root，主题切换不需覆盖） ──
+  // --z-base / --z-decor / --z-content / ... 全部在 :root 顶层定义。
+  // 暗色主题下不需要重新声明这些变量，因为它们的值是纯数字，不随主题变化。
+  // （⚠️ 历史踩坑：曾把所有 z-index 变量写在这里，导致亮色主题 var(--z-teleport) 回退成 auto，
+  //    标签右键菜单被表格列标题、tab 下划线等元素盖住。修复方式：移到 :root。）
 
-  // 通知弹窗
-  --notice-unread-bg: #1a2a3a;
-  --notice-unread-hover: #223344;
+  // ── 标签栏（精致胶囊 + 发光） ──
+  --tags-bg: #0d1117;
+  --tags-height: 40px;
+  --tags-item-bg: #161b22;
+  --tags-item-color: #8b949e;
+  --tags-item-active-bg: #58a6ff;
+  --tags-item-active-color: #ffffff;
+  --tags-item-hover-bg: #21262d;
+  --tags-item-hover-color: #e6edf3;
+  --tags-item-hover-border: transparent;
 
-  // 标签栏关闭按钮悬停
-  --tag-close-hover-bg: rgba(255, 255, 255, 0.15);
+  // ── 搜索框（优雅聚焦 + 外发光） ──
+  --search-bg: #161b22;
+  --search-focus-bg: #21262d;
+  --search-focus-shadow: rgba(88, 166, 255, 0.3);
+  --search-dropdown-bg: #161b22;
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 
-  // 右键菜单
-  --context-menu-bg: #1d1e1f;
-  --context-menu-shadow: rgba(0, 0, 0, 0.4);
+  // ── 通知弹窗（柔和提示） ──
+  --notice-unread-bg: #161b22;
+  --notice-unread-hover: #21262d;
 
-  // 阴影
-  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.4);
-  --shadow-header: 0 1px 4px rgba(0, 0, 0, 0.2);
+  // ── 标签关闭按钮 ──
+  --tag-close-hover-bg: rgba(88, 166, 255, 0.15);
 
-  // 登录页
-  --login-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  --login-card-bg: #1d1e1f;
+  // ── 右键菜单（精致浮层） ──
+  --context-menu-bg: #161b22;
+  --context-menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 
-  // 表格容器
-  --table-container-bg: #1d1e1f;
-  --search-bar-bg: #1d1e1f;
+  // ── 阴影体系（多层级深度 + 发光效果） ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.55);
+  --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(88, 166, 255, 0.25);
 
-  // 垂直菜单激活
-  --menu-vertical-active-bg: #2c2c2d;
+  // ── 登录页（赛博朋克渐变） ──
+  --login-bg: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1f6feb 100%);
+  --login-card-bg: #161b22;
+  --login-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(88, 166, 255, 0.15);
 
-  // 字典当前行
-  --dict-current-row-bg: #2c2c2d;
+  // ── 表格容器（清爽卡片） ──
+  --table-container-bg: #161b22;
+  --search-bar-bg: #161b22;
 
-  // 徽章边框
-  --badge-border: #1d1e1f;
+  // ── 垂直菜单激活（左侧发光竖条） ──
+  --menu-vertical-active-bg: #161b22;
+  --menu-vertical-active-indicator: 3px solid #58a6ff;
 
-  // 功能色（暗色下保持一致）
-  --color-success: #67c23a;
-  --color-warning: #e6a23c;
-  --color-danger: #f56c6c;
-  --color-info: #909399;
+  // ── 字典当前行 ──
+  --dict-current-row-bg: #161b22;
 
-  // 页面统一边距
+  // ── 徽章边框 ──
+  --badge-border: #161b22;
+
+  // ── 页面统一边距 ──
   --page-padding: 16px;
 
-  // ECharts 调色板（暗色主题 - 略微提亮）
-  --chart-color-1: #6b8cff;
-  --chart-color-2: #a0e080;
-  --chart-color-3: #ffd666;
-  --chart-color-4: #ff7c7c;
-  --chart-color-5: #80d4f0;
-  --chart-color-6: #4dc88c;
-  --chart-color-7: #ff9a6c;
-  --chart-color-8: #b080d0;
-  --chart-color-9: #f59cc0;
-  --chart-color-10: #f0b84c;
+  // ── 字体（等宽代码美学） ──
+  --font-family-display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-body: 'Inter', 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  // 全局过渡色
+  // ── ECharts 调色板（霓虹科技风 - VS Code 风格） ──
+  --chart-color-1: #58a6ff;        // 电光蓝
+  --chart-color-2: #79c0ff;        // 亮蓝
+  --chart-color-3: #3fb950;        // 荧光绿
+  --chart-color-4: #d29922;        // 琥珀黄
+  --chart-color-5: #f85149;        // 珊瑚红
+  --chart-color-6: #56d4dd;        // 青蓝
+  --chart-color-7: #db61a2;        // 粉红
+  --chart-color-8: #8b949e;        // 中灰
+  --chart-color-9: #6e7681;        // 深灰
+  --chart-color-10: #e6edf3;       // 高亮白
+
   color-scheme: dark;
 }

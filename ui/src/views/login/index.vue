@@ -1,5 +1,8 @@
 ﻿<template>
   <div class="login-page" :class="{ 'login-page--dark': isDark }">
+    <!-- 粒子动画背景 -->
+    <ParticleBackground />
+    
     <div class="login-wrapper">
       <!-- 表单工具栏（暗黑/语言切换） -->
       <div class="form-toolbar">
@@ -87,6 +90,7 @@ import { getCaptchaApi, registerApi } from '@/api/auth'
 import { useTheme } from '@/composables/useTheme'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import PasswordStrength from '@/components/PasswordStrength.vue'
+import ParticleBackground from '@/components/ParticleBackground.vue'
 
 const router = useRouter()
 const { t, locale } = useI18n()
@@ -205,70 +209,70 @@ async function handleRegister() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .login-page {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0c1445 0%, #1e3a8a 25%, #4f46e5 50%, #7c3aed 75%, #a855f7 100%);
-  background-size: 300% 300%;
-  animation: gradientShift 12s ease infinite;
+  background: var(--login-bg, #1a1a1a);
+  position: relative;
+  overflow: hidden;
 }
 
 .login-page--dark {
-  background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e1b4b 50%, #1e0a3c 75%, #0c0818 100%);
-  background-size: 300% 300%;
-  animation: gradientShift 12s ease infinite;
+  background: var(--login-bg, #0a0a0a);
 }
 
 .login-wrapper {
-  width: 420px;
-  padding: 48px 40px 40px;
-  background: var(--bg-container, #fff);
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  padding: 40px 36px;
+  background: var(--login-card-bg, #fff);
+  border-radius: var(--radius-sm, 4px);
+  border: 1px solid var(--border-color);
   position: relative;
+  z-index: var(--z-decor, 1);
 }
 
 .form-toolbar {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .toolbar-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs, 2px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-secondary, #909399);
-  transition: all 0.2s ease;
-}
-.toolbar-btn:hover {
-  background: var(--bg-hover, #f5f7fa);
-  color: var(--text-primary, #303133);
+  color: var(--text-secondary);
+  transition: color var(--transition-fast), background var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .login-title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary, #303133);
-  margin-bottom: 8px;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
 .login-form {
-  max-width: 340px;
+  max-width: 328px;
   margin: 0 auto;
   width: 100%;
 }
@@ -276,7 +280,7 @@ async function handleRegister() {
 .captcha-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .captcha-input {
@@ -286,11 +290,14 @@ async function handleRegister() {
 .captcha-image {
   width: 110px;
   height: 40px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs, 2px);
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid var(--border-color, #e4e7ed);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
+  transition: border-color var(--transition-fast);
+
+  &:hover { border-color: var(--color-primary); }
 }
 
 .captcha-image img {
@@ -305,11 +312,14 @@ async function handleRegister() {
   justify-content: center;
   height: 100%;
   font-size: 12px;
-  color: var(--text-secondary, #909399);
+  color: var(--text-secondary);
 }
 
 .login-btn {
   width: 100%;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .form-footer {
@@ -318,17 +328,29 @@ async function handleRegister() {
 }
 
 .register-link {
-  color: var(--color-primary, #409eff);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 13px;
-}
-.register-link:hover {
-  text-decoration: underline;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary);
+  }
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+// 登录页响应式
+@media (max-width: 768px) {
+  .login-wrapper {
+    width: calc(100vw - 32px);
+    padding: 28px 20px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+}
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 20px 16px;
+  }
 }
 </style>

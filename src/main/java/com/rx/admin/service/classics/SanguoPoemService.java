@@ -22,6 +22,6 @@ public class SanguoPoemService extends ServiceImpl<SanguoPoemMapper, SanguoPoem>
         }
         wrapper.orderByAsc(SanguoPoem::getId);
         IPage<SanguoPoem> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

@@ -126,11 +126,15 @@ public class AuthService {
      * <ul>
      *   <li>邮箱：填写则校验格式 + 唯一性</li>
      *   <li>手机号：填写则校验11位手机号格式</li>
-     *   <li>密码：填写则校验强度（字母开头+含数字+至少6位）</li>
+     *   <li>密码：填写则 <b>必须先通过旧密码校验</b>，再校验强度（字母开头+含数字+至少6位）</li>
      * </ul>
+     *
+     * @param newPassword 新密码（可选，null/空表示不修改）
+     * @param oldPassword 旧密码（修改密码时必填，验证通过才允许改）
      */
-    @Transactional
-    public void updateProfile(String nickname, String email, String phone, Integer gender, String newPassword) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProfile(String nickname, String email, String phone, Integer gender,
+                              String newPassword, String oldPassword) {
         long userId = StpUtil.getLoginIdAsLong();
         SysUser user = userService.getById(userId);
         if (user == null) {
@@ -153,6 +157,14 @@ public class AuthService {
         }
         boolean passwordChanged = newPassword != null && !newPassword.isBlank();
         if (passwordChanged) {
+            // ⚠️ 安全要求：改密码必须先验证旧密码。
+            // 防止 token 泄露后被攻击者直接改密码永久接管账号。
+            if (oldPassword == null || oldPassword.isBlank()) {
+                throw new IllegalArgumentException("修改密码必须提供旧密码");
+            }
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                throw new IllegalArgumentException("旧密码错误");
+            }
             SysUserService.validatePassword(newPassword, user.getUsername(), nickname);
         }
 

@@ -4,10 +4,13 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysDept;
+import com.rx.admin.modules.system.dept.dto.DeptCreateDTO;
+import com.rx.admin.modules.system.dept.dto.DeptUpdateDTO;
 import com.rx.admin.service.SysDeptService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -26,16 +29,16 @@ public class SysDeptController {
     @PostMapping
     @SaCheckPermission("sys:dept:add")
     @OperateLog(module = "部门管理", operation = "新增部门")
-    public Result<Void> add(@RequestBody @Valid SysDept dept) {
-        sysDeptService.addDept(dept);
+    public Result<Void> add(@RequestBody @Valid DeptCreateDTO dto) {
+        sysDeptService.addDept(dto);
         return Result.ok();
     }
 
     @PutMapping
     @SaCheckPermission("sys:dept:edit")
     @OperateLog(module = "部门管理", operation = "修改部门")
-    public Result<Void> update(@RequestBody @Valid SysDept dept) {
-        sysDeptService.updateDept(dept);
+    public Result<Void> update(@RequestBody @Valid DeptUpdateDTO dto) {
+        sysDeptService.updateDept(dto);
         return Result.ok();
     }
 

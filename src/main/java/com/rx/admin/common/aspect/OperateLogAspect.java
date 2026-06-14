@@ -2,6 +2,7 @@ package com.rx.admin.common.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.utils.WebUtils;
 import com.rx.admin.entity.SysLog;
 import com.rx.admin.service.SysLogService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -79,8 +80,8 @@ public class OperateLogAspect {
                 sysLog.setUsername("anonymous");
             }
 
-            // 记录 IP
-            sysLog.setIp(getClientIp(request));
+            // 记录 IP（使用 WebUtils 统一实现）
+            sysLog.setIp(WebUtils.getClientIp(request));
 
             // 执行目标方法
             Object result = point.proceed();
@@ -131,35 +132,10 @@ public class OperateLogAspect {
         for (String field : SENSITIVE_FIELDS) {
             // 匹配 field=任意内容，替换为 field=****
             result = result.replaceAll(
-                    "(?i)" + field + "=([^,)}&\\s]+)",
+                    "(?i)" + field + "=([^,} )&\\s]+)",
                     field + "=****"
             );
         }
         return result;
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 多级代理取第一个
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
-        }
-        // IPv6 本地回环地址规范化
-        if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
-            ip = "127.0.0.1";
-        }
-        return ip;
     }
 }

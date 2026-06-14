@@ -101,7 +101,11 @@ public class GenController {
             "import " + packageName + ".service." + entityName + "Service;\n" +
             "import org.springframework.web.bind.annotation.*;\n\n" +
             "@RestController\n@RequestMapping(\"/api/" + moduleName + "/" + pathName + "\")\n" +
-            "public class " + entityName + "Controller extends BaseCrudController<" + entityName + "Service, " + entityName + "> {}\n";
+            "public class " + entityName + "Controller extends BaseCrudController<" + entityName + "Service, " + entityName + "> {\n" +
+            "    public " + entityName + "Controller(" + entityName + "Service service) {\n" +
+            "        super(service);\n" +
+            "    }\n" +
+            "}\n";
 
         // Vue page (simple crud)
         String vue = "<template>\n" +

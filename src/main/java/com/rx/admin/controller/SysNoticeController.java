@@ -2,36 +2,29 @@ package com.rx.admin.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysNotice;
-import com.rx.admin.entity.SysNoticeRead;
-import com.rx.admin.entity.SysUser;
-import com.rx.admin.mapper.SysNoticeReadMapper;
+import com.rx.admin.modules.content.notice.dto.NoticeCreateDTO;
+import com.rx.admin.modules.content.notice.dto.NoticeUpdateDTO;
 import com.rx.admin.service.SysNoticeService;
-import com.rx.admin.service.SysUserService;
-import com.rx.admin.service.SysMessageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+@Tag(name = "通知公告管理")
 @RestController
 @RequestMapping("/api/content/notice")
 @RequiredArgsConstructor
 public class SysNoticeController {
 
     private final SysNoticeService sysNoticeService;
-    private final SysUserService sysUserService;
-    private final SysMessageService sysMessageService;
-    private final SysNoticeReadMapper noticeReadMapper;
 
     /**
      * 分页查询通知（支持 category 筛选）
@@ -70,26 +63,16 @@ public class SysNoticeController {
     @PostMapping
     @SaCheckPermission("content:notice:add")
     @OperateLog(module = "通知公告", operation = "新增通知")
-    public Result<Void> add(@RequestBody @Valid SysNotice notice) {
-        long userId = StpUtil.getLoginIdAsLong();
-        SysUser user = sysUserService.getById(userId);
-        notice.setCreateBy(userId);
-        notice.setCreateByName(user != null ? user.getNickname() : "");
-        sysNoticeService.save(notice);
-
-        // 发布通知/公告时，同步写入消息中心（广播给所有启用用户）
-        if ("announcement".equals(notice.getCategory()) || "notice".equals(notice.getCategory())) {
-            String type = "announcement".equals(notice.getCategory()) ? "notice" : "notice";
-            sysMessageService.sendToAll(notice.getTitle(), notice.getContent(), type, notice.getLinkPath());
-        }
+    public Result<Void> add(@RequestBody @Valid NoticeCreateDTO dto) {
+        sysNoticeService.addNotice(dto);
         return Result.ok();
     }
 
     @PutMapping
     @SaCheckPermission("content:notice:edit")
     @OperateLog(module = "通知公告", operation = "修改通知")
-    public Result<Void> update(@RequestBody @Valid SysNotice notice) {
-        sysNoticeService.updateById(notice);
+    public Result<Void> update(@RequestBody @Valid NoticeUpdateDTO dto) {
+        sysNoticeService.updateNotice(dto);
         return Result.ok();
     }
 
@@ -111,11 +94,7 @@ public class SysNoticeController {
      */
     @GetMapping("/read-ids")
     public Result<List<Long>> getReadIds() {
-        Long userId = StpUtil.getLoginIdAsLong();
-        List<Long> ids = noticeReadMapper.selectList(
-                new LambdaQueryWrapper<SysNoticeRead>().eq(SysNoticeRead::getUserId, userId)
-        ).stream().map(SysNoticeRead::getNoticeId).collect(Collectors.toList());
-        return Result.ok(ids);
+        return Result.ok(sysNoticeService.getReadIds(StpUtil.getLoginIdAsLong()));
     }
 
     /**
@@ -123,20 +102,7 @@ public class SysNoticeController {
      */
     @PostMapping("/read/{id}")
     public Result<Void> markRead(@PathVariable Long id) {
-        Long userId = StpUtil.getLoginIdAsLong();
-        // 防重复插入：先查是否已有记录
-        Long exists = noticeReadMapper.selectCount(
-                new LambdaQueryWrapper<SysNoticeRead>()
-                        .eq(SysNoticeRead::getNoticeId, id)
-                        .eq(SysNoticeRead::getUserId, userId)
-        );
-        if (exists == 0) {
-            SysNoticeRead read = new SysNoticeRead();
-            read.setNoticeId(id);
-            read.setUserId(userId);
-            read.setReadTime(LocalDateTime.now());
-            noticeReadMapper.insert(read);
-        }
+        sysNoticeService.markRead(StpUtil.getLoginIdAsLong(), id);
         return Result.ok();
     }
 
@@ -145,32 +111,7 @@ public class SysNoticeController {
      */
     @PostMapping("/read-all")
     public Result<Void> markAllRead() {
-        Long userId = StpUtil.getLoginIdAsLong();
-        // 查当前所有通知/公告ID
-        List<Long> allNoticeIds = sysNoticeService.list(
-                new LambdaQueryWrapper<SysNotice>()
-                        .in(SysNotice::getCategory, "notice", "announcement")
-                        .eq(SysNotice::getStatus, 1)
-        ).stream().map(SysNotice::getId).collect(Collectors.toList());
-
-        if (!allNoticeIds.isEmpty()) {
-            // 查已读ID
-            List<Long> alreadyReadIds = noticeReadMapper.selectList(
-                    new LambdaQueryWrapper<SysNoticeRead>()
-                            .eq(SysNoticeRead::getUserId, userId)
-            ).stream().map(SysNoticeRead::getNoticeId).collect(Collectors.toList());
-
-            // 批量插入未读的
-            for (Long noticeId : allNoticeIds) {
-                if (!alreadyReadIds.contains(noticeId)) {
-                    SysNoticeRead read = new SysNoticeRead();
-                    read.setNoticeId(noticeId);
-                    read.setUserId(userId);
-                    read.setReadTime(LocalDateTime.now());
-                    noticeReadMapper.insert(read);
-                }
-            }
-        }
+        sysNoticeService.markAllRead(StpUtil.getLoginIdAsLong());
         return Result.ok();
     }
 }

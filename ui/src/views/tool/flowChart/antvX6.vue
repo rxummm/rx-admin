@@ -291,7 +291,7 @@ function exportImage() {
 .x6-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 107px);
+  height: calc(100vh - var(--layout-content-offset, 107px));
   background: var(--el-bg-color);
   border-radius: 12px;
   overflow: hidden;
@@ -308,7 +308,7 @@ function exportImage() {
   flex-shrink: 0;
   flex-wrap: wrap;
   gap: 8px;
-  z-index: 10;
+  z-index: var(--z-content, 10);
 }
 .toolbar-left {
   display: flex;

@@ -22,6 +22,6 @@ public class HonglouPoemService extends ServiceImpl<HonglouPoemMapper, HonglouPo
         }
         wrapper.orderByAsc(HonglouPoem::getId);
         IPage<HonglouPoem> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

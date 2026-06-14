@@ -3,7 +3,7 @@ package com.rx.admin.controller;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.mapper.SysLoginLogMapper;
 import com.rx.admin.mapper.SysExportLogMapper;
-import com.rx.admin.mapper.SysJobLogMapper;
+
 import com.rx.admin.mapper.SysLogMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,14 +20,12 @@ public class DashboardEnhancedController {
 
     private final SysLoginLogMapper loginLogMapper;
     private final SysExportLogMapper exportLogMapper;
-    private final SysJobLogMapper jobLogMapper;
     private final SysLogMapper sysLogMapper;
 
     public DashboardEnhancedController(SysLoginLogMapper loginLogMapper, SysExportLogMapper exportLogMapper,
-                                        SysJobLogMapper jobLogMapper, SysLogMapper sysLogMapper) {
+                                        SysLogMapper sysLogMapper) {
         this.loginLogMapper = loginLogMapper;
         this.exportLogMapper = exportLogMapper;
-        this.jobLogMapper = jobLogMapper;
         this.sysLogMapper = sysLogMapper;
     }
 

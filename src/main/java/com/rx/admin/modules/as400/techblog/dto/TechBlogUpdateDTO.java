@@ -11,10 +11,12 @@ public class TechBlogUpdateDTO {
     private Long id;
     @NotBlank(message = "标题不能为空")
     private String title;
-    private String content;
-    private String summary;
-    private String category;
-    private String tags;
-    private String coverUrl;
-    private Integer status;
+    private String author;
+    private String source;
+    private String publishDate;
+    private String categories;
+    private String excerptText;
+    private String contentHtml;
+    private String contentText;
+    private String coverImage;
 }

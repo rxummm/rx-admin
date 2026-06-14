@@ -29,6 +29,7 @@ import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getFavoritesApi, toggleFavoriteApi } from '@/api/favorite'
 import { useFavEvents } from '@/composables/useFavEvents'
+import { useStorage, STORAGE_KEYS, useNamespacedKey } from '@/composables/useStorage'
 
 const router = useRouter()
 const favorites = ref([])
@@ -52,10 +53,13 @@ const goTo = (path) => router.push(path)
 // 点击星星取消收藏（乐观更新：先移除UI，API后台确认）
 const toggleFav = async (fav) => {
   favorites.value = favorites.value.filter(f => f.id !== fav.id)
-  localStorage.removeItem(`fav_${fav.path}`)
-  triggerRefresh()
+  // 用统一命名空间 key 删除本地收藏标记
+  const favKey = useNamespacedKey(STORAGE_KEYS.FAVORITE_STAR, fav.path)
+  const favStore = useStorage(favKey)
+  favStore.remove()
   try {
     await toggleFavoriteApi({ name: fav.name, path: fav.path, icon: fav.icon || '', menuId: fav.menuId })
+    triggerRefresh() // API成功后刷新，通知 TagsView 同步状态
   } catch (e) {
     console.error('[FavoritesPanel] toggleFav API失败，重新拉取', e)
     fetchFavorites()
@@ -112,7 +116,7 @@ watch(refreshTick, fetchFavorites)
 
 /* 右键菜单 */
 .context-menu {
-  position: fixed; z-index: 9999;
+  position: fixed; z-index: var(--z-favorites, 9999);
   list-style: none; margin: 0; padding: 4px 0;
   min-width: 120px; border-radius: 6px;
   background: var(--el-bg-color);

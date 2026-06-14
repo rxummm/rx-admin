@@ -1,6 +1,6 @@
 ﻿# RX Admin 优化建议清单
 
-> **版本**: 3.4 | **更新日期**: 2026-06-05 | **类型**: 项目优化规划（含已完成项记录 + 全新审查发现 + v2.0 新功能实施）
+> **版本**: 3.5 | **更新日期**: 2026-06-13 | **类型**: 项目优化规划（含已完成项记录 + 全新审查发现 + v2.0 新功能实施 + 架构重构记录）
 
 ---
 
@@ -786,6 +786,7 @@ public Result<?> add(@RequestBody @Validated SysMenu menu) {
 | 6.7 | 未用导入清理 | P3 | 0.5 天 | 代码质量 | ⚠️ 已验证（monitor页面导入均在使用中，无需清理） |
 | 6.8 | 工具链（ESLint/TS/测试） | P2 | 3-5 天 | 工程化 | ❌ 待优化 |
 | 6.9 | antvX6 FlowChart Bug 修复 | P2 | 0.5 天 | Bug修复 | ✅ 已完成（补齐缺失的Vue导入、修复initGraph括号语法错误、shapes.js注册加try-catch防KeepAlive重复注册） |
+| 6.11 | 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入 | P1 | 3-5 天 | 架构 | ✅ 已完成（2026-06-13，新增 40+ DTO/17+ VO/16+ Convert，framework/ 模块化，构造器注入统一，Spring Boot 3.5.15 升级，文档体系重构） |
 
 ---
 
@@ -805,6 +806,124 @@ public Result<?> add(@RequestBody @Validated SysMenu menu) {
 **涉及文件**:
 - `views/tool/flowChart/antvX6.vue`
 - `views/tool/flowChart/shapes.js`
+
+---
+
+### 6.11 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入（P1）✅ 已完成（2026-06-13）
+
+**背景**: 项目此前存在五大架构层面问题：
+
+| 问题 | 影响 | 严重程度 |
+|------|------|---------|
+| Entity 直接暴露到 Controller | 数据库字段变更影响前端接口 | **高** |
+| 手动 `BeanUtils.copyProperties` | 字段名不一致时静默失败 | **高** |
+| `config/` 平铺式配置 | 配置类 10+ 个混在一起，难以维护 | 中 |
+| `@Autowired` 字段注入 | 不可测试、循环依赖隐蔽 | 中 |
+| MapStruct 未使用 | 编译时无类型检查，运行时才发现转换错误 | 中 |
+
+**重构方案**:
+
+#### 1. DTO/VO/Convert 分层引入
+
+```java
+// 分层职责
+modules/{domain}/{entity}/
+├── dto/       # 请求对象（CreateDTO / UpdateDTO / QueryDTO）
+├── vo/        # 视图对象（响应专用）
+└── convert/   # MapStruct 转换器接口
+```
+
+- **DTO**: 40+ 个（Create/Update/Query 三类），Controller 入参专用
+- **VO**: 17+ 个，Controller 出参专用，隔离 Entity 内部字段
+- **Convert**: 16+ 个 MapStruct 接口，编译时生成类型安全转换代码
+
+**设计原则**:
+- Entity **绝不暴露**到 Controller 层
+- 请求参数**绝不直接**用 Entity 接收
+- 禁止手动 `BeanUtils.copyProperties`
+
+#### 2. MapStruct 引入与规范
+
+所有对象转换统一使用 MapStruct 1.5.x，强制规范：
+
+```java
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface XxxConvert {
+    Entity toEntity(CreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UpdateDTO dto, @MappingTarget Entity entity);
+
+    VO toVO(Entity entity);
+    List<VO> toVOList(List<Entity> list);
+}
+```
+
+| 规则 | 必须 | 说明 |
+|------|------|------|
+| `componentModel = "spring"` | ✅ | 生成 Spring Bean |
+| `unmappedTargetPolicy = ReportingPolicy.IGNORE` | ✅ | 消除所有 Unmapped target properties 警告 |
+| `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)` | ✅ | 更新时 null 值不覆盖已有字段 |
+| 禁止 `Mappers.getMapper()` 静态方法 | ✅ | 统一使用 Spring 注入 |
+
+#### 3. 模块化架构重构（`framework/`）
+
+`config/` 平铺目录重构为 `framework/` 分层架构：
+
+```
+framework/
+├── datasource/    # PrimaryDataSourceConfig / SecondDataSourceConfig（双数据源）
+├── mybatis/       # MybatisPlusConfig / MetaObjectHandlerConfig（自动填充）
+├── security/      # SaTokenConfig / StpInterfaceImpl（Sa-Token + 双源权限合并）
+├── async/         # AsyncConfig（@EnableAsync）
+├── cache/         # CacheConfig（Caffeine 本地缓存）
+└── web/           # CorsConfig / RateLimiterConfig
+```
+
+#### 4. Controller 构造器注入统一
+
+全部 `@Autowired` 字段注入 → `private final` + `@RequiredArgsConstructor` 构造器注入：
+
+```java
+// 重构前
+@RestController
+public class SysUserController {
+    @Autowired
+    private SysUserService sysUserService;
+}
+
+// 重构后
+@RestController
+@RequiredArgsConstructor
+public class SysUserController extends BaseCrudController<SysUserService, SysUser> {
+    private final SysUserConvert userConvert;
+
+    public SysUserController(SysUserService service, SysUserConvert userConvert) {
+        super(service);
+        this.userConvert = userConvert;
+    }
+}
+```
+
+#### 5. Spring Boot 3.5.15 升级
+
+- 适配 Jakarta EE 命名空间
+- 解决 MapStruct 与最新 Spring Boot 的兼容性
+- `pom.xml` 添加 `build-helper-maven-plugin` 解决 IDE 无法识别 MapStruct 生成代码问题
+
+#### 6. 文档体系重构
+
+| 文档 | 版本 | 说明 |
+|------|------|------|
+| `SKILL.md` | 1.5.0 | 开发规范与技能手册（新增 MapStruct 规范、DTO/VO/Convert 模板） |
+| `rxadmin-setup.md` | 1.1.0 | 项目搭建与新增模块指南（新增 12 步完整流程） |
+| `rxadmin.md` | 3.1.0 | 技术架构文档（新增 framework/ 结构、模块化说明） |
+| `AGENT.MD` | 1.1 | AI 开发参考手册（新增 DTO/VO/Convert 规范、常见问题排查） |
+
+**涉及文件**（共 80+ 个）:
+- 新增: 40+ DTO、17+ VO、16+ Convert、framework/ 6 个配置包
+- 修改: 35+ Controller、40+ Service、4 份文档
+- 配置: `pom.xml`（build-helper-maven-plugin）、`application.yml`
 
 ---
 
@@ -1005,6 +1124,7 @@ onMounted(fetchConfig)
 | 6.7 | 未用导入清理 | P3 | 质量 | ⚠️ 已验证 |
 | 6.8 | 工具链（ESLint/TS/测试） | P2 | 质量 | ❌ 待优化 |
 | 6.9 | antvX6 FlowChart Bug 修复 | P2 | Bug修复 | ✅ 已完成 |
+| 6.11 | 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入 | P1 | 架构 | ✅ 已完成 |
 | 7.8 | 数据导出系统（双模式） | P1 | 新增 | ✅ 已完成 |
 | | | | | |
 | 7.1 | 在线用户管理 | P1 | 新增 | ✅ 已实现 |
@@ -1159,4 +1279,3 @@ CREATE TABLE `sys_message` (
 3. 执行前也可手动清理重复记录：`DELETE FROM sys_role_menu WHERE menu_id IN (SELECT id FROM sys_menu WHERE menu_name IN ('IP黑白名单','消息中心','健康监控','日志分析','代码生成','批量导入','API调试','数据备份'));`
 
 > 💡 **提示**: 此错误说明菜单记录实际可能已在数据库中，只是因为部分执行导致角色关联不完整。执行最新版 `INSERT IGNORE` 脚本即可补全。
-

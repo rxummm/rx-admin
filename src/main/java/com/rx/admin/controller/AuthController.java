@@ -1,9 +1,10 @@
 package com.rx.admin.controller;
 
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
-import com.rx.admin.framework.web.RateLimiterConfig;
+import com.rx.admin.common.utils.WebUtils;
 import com.rx.admin.entity.LoginRequest;
 import com.rx.admin.entity.RegisterRequest;
 import com.rx.admin.service.AuthService;
@@ -17,7 +18,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Tag(name = "认证管理")
 @RestController
@@ -26,13 +26,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final LoginAttemptService loginAttemptService;
-    private final ConcurrentHashMap<String, RateLimiter> loginRateLimiters;
+    private final LoadingCache<String, RateLimiter> loginRateLimiters;
     private final CaptchaService captchaService;
     private final LoginLogService loginLogService;
 
     public AuthController(AuthService authService,
                           LoginAttemptService loginAttemptService,
-                          ConcurrentHashMap<String, RateLimiter> loginRateLimiters,
+                          LoadingCache<String, RateLimiter> loginRateLimiters,
                           CaptchaService captchaService,
                           LoginLogService loginLogService) {
         this.authService = authService;
@@ -57,11 +57,9 @@ public class AuthController {
             return Result.fail(429, "账号已被锁定，请 " + (remaining / 60 + 1) + " 分钟后重试");
         }
 
-        // IP 级别限流
-        String clientIp = getClientIp(request);
-        RateLimiter limiter = loginRateLimiters.computeIfAbsent(
-                clientIp, k -> RateLimiter.create(RateLimiterConfig.LOGIN_RATE_PER_SECOND));
-        if (!limiter.tryAcquire()) {
+        // IP 级别限流（Caffeine 自动清理过期 IP）
+        String clientIp = WebUtils.getClientIp(request);
+        if (!loginRateLimiters.get(clientIp).tryAcquire()) {
             return Result.fail(429, "请求过于频繁，请稍后再试");
         }
 
@@ -76,33 +74,19 @@ public class AuthController {
         try {
             Map<String, Object> result = authService.login(username, password);
             loginAttemptService.loginSucceeded(username);
-            loginLogService.recordLogin(username, getClientIp(request),
-                    request.getHeader("User-Agent"), 
+            loginLogService.recordLogin(username, WebUtils.getClientIp(request),
+                    request.getHeader("User-Agent"),
                     "", true, null);
             return Result.ok(result);
         } catch (Exception e) {
             loginAttemptService.loginFailed(username);
             String failReason = e.getMessage();
             if (failReason != null && failReason.length() > 200) failReason = failReason.substring(0, 200);
-            loginLogService.recordLogin(username, getClientIp(request),
+            loginLogService.recordLogin(username, WebUtils.getClientIp(request),
                     request.getHeader("User-Agent"),
                     "", false, failReason);
             throw e;
         }
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
-        }
-        return ip;
     }
 
     @Operation(summary = "用户注册")
@@ -136,7 +120,10 @@ public class AuthController {
         String phone = (String) body.get("phone");
         Integer gender = body.get("gender") != null ? ((Number) body.get("gender")).intValue() : null;
         String newPassword = (String) body.get("password");
-        authService.updateProfile(nickname, email, phone, gender, newPassword);
+        // 安全要求：改密码必须提供旧密码，验证通过才允许改。
+        // 避免 token 泄露后被攻击者直接改密码永久接管账号。
+        String oldPassword = (String) body.get("oldPassword");
+        authService.updateProfile(nickname, email, phone, gender, newPassword, oldPassword);
         return Result.ok();
     }
 

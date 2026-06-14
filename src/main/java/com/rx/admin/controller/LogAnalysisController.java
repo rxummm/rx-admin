@@ -51,7 +51,7 @@ public class LogAnalysisController {
         today.forEach(l -> {
             if (l.getCreateTime() != null) {
                 String h = String.format("%02d", l.getCreateTime().getHour());
-                hourMap.merge(h, 1L, Long::sum);
+                hourMap.merge(h, 1L, (a, b) -> a + b);
             }
         });
         return Result.ok(hourMap.entrySet().stream().<Map<String, Object>>map(

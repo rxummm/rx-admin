@@ -23,7 +23,7 @@ public class ContentCategoryService extends ServiceImpl<ContentCategoryMapper, C
         }
         wrapper.orderByAsc(ContentCategory::getSortOrder, ContentCategory::getId);
         IPage<ContentCategory> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     public List<ContentCategory> listAll() {

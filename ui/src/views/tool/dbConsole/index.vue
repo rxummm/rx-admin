@@ -6,7 +6,7 @@
           <el-input v-model="tableSearch" placeholder="搜索表名" size="small" clearable style="margin-bottom:8px" />
           <div style="max-height:500px;overflow-y:auto">
             <div v-for="t in filteredTables" :key="t.name" 
-              :style="{padding:'6px 8px',cursor:'pointer',borderRadius:'4px',background: selectedTable===t.name? 'var(--bg-active, #ecf5ff)' : '',marginBottom:'2px'}"
+              :style="{padding:'6px 8px',cursor:'pointer',borderRadius:'4px',background: selectedTable===t.name? 'var(--bg-active, #fef9ee)' : '',marginBottom:'2px'}"
               @click="selectTable(t.name)">
               <span style="font-size:13px">{{ t.name }}</span>
               <span v-if="t.comment" style="color:var(--text-secondary,#909399);font-size:11px;margin-left:4px">{{ t.comment }}</span>

@@ -55,4 +55,25 @@ const elLocaleMap = { 'zh-CN': zhCn, 'en-US': en }
 const localeStore = useStorage(STORAGE_KEYS.LOCALE, 'zh-CN')
 app.use(ElementPlus, { locale: elLocaleMap[localeStore.get()] || zhCn })
 
+// 生产环境：初始化 Sentry（如果配置了 DSN）
+if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
+  import('./utils/sentry').then(({ initSentry }) => {
+    initSentry(app, router)
+  })
+}
+
+// 开发环境：启动性能监控
+if (import.meta.env.DEV) {
+  import('./composables/usePerformanceMonitor').then(({ usePerformanceMonitor }) => {
+    const { start } = usePerformanceMonitor()
+    start()
+    console.log('📊 性能监控已启动')
+  })
+}
+
+// 全局错误处理（所有环境）
+import('./utils/globalErrorHandler').then(({ initGlobalErrorHandler }) => {
+  initGlobalErrorHandler()
+})
+
 app.mount('#app')

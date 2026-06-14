@@ -210,8 +210,8 @@ fetchData()
 }
 
 .msg-card.is-unread {
-  border-left: 3px solid #409EFF !important;
-  background: linear-gradient(135deg, #ecf5ff 0%, #ffffff 100%);
+  border-left: 3px solid var(--color-primary) !important;
+  background: linear-gradient(135deg, #fef9ee 0%, #ffffff 100%);
 }
 
 .msg-card:hover {

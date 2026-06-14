@@ -27,7 +27,7 @@ public class AuthorService extends ServiceImpl<AuthorMapper, Author> {
         }
         wrapper.orderByAsc(Author::getSortOrder, Author::getId);
         IPage<Author> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /**

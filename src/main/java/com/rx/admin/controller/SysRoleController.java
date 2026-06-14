@@ -4,6 +4,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysRole;
+import com.rx.admin.modules.system.role.dto.RoleCreateDTO;
+import com.rx.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.rx.admin.service.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,8 +36,8 @@ public class SysRoleController {
     @PostMapping
     @SaCheckPermission("sys:role:add")
     @OperateLog(module = "角色管理", operation = "新增角色")
-    public Result<?> add(@RequestBody @Valid SysRole role, @RequestParam(required = false) List<Long> menuIds) {
-        roleService.addRole(role, menuIds);
+    public Result<?> add(@RequestBody @Valid RoleCreateDTO dto) {
+        roleService.addRole(dto);
         return Result.ok();
     }
 
@@ -43,8 +45,8 @@ public class SysRoleController {
     @PutMapping
     @SaCheckPermission("sys:role:edit")
     @OperateLog(module = "角色管理", operation = "修改角色")
-    public Result<?> update(@RequestBody @Valid SysRole role, @RequestParam(required = false) List<Long> menuIds) {
-        roleService.updateRole(role, menuIds);
+    public Result<?> update(@RequestBody @Valid RoleUpdateDTO dto) {
+        roleService.updateRole(dto);
         return Result.ok();
     }
 

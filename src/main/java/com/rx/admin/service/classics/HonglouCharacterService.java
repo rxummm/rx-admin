@@ -24,7 +24,7 @@ public class HonglouCharacterService extends ServiceImpl<HonglouCharacterMapper,
         }
         wrapper.orderByAsc(HonglouCharacter::getId);
         IPage<HonglouCharacter> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /** 按角色筛选人物（数据库 role 字段：主角/重要配角/一般角色） */

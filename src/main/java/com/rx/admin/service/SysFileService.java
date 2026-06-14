@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,11 +18,13 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class SysFileService extends ServiceImpl<SysFileMapper, SysFile> {
 
-    @Value("")
+    @Value("${app.upload-dir:uploads}")
     private String uploadDir;
 
     public PageResult<SysFile> pageQuery(int page, int size, String category, String keyword) {
@@ -84,8 +85,7 @@ public class SysFileService extends ServiceImpl<SysFileMapper, SysFile> {
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            // 日志记录但不阻断
-            System.err.println("Failed to delete physical file: " + filePath + " - " + e.getMessage());
+            log.error("删除物理文件失败: path={}, error={}", filePath, e.getMessage());
         }
         // 删除数据库记录
         removeById(id);

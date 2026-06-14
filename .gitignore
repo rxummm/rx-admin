@@ -29,3 +29,23 @@ application-local.yml
 node_modules/
 ui/node_modules/
 ui/dist/
+
+# Python
+*.py
+__pycache__/
+
+# 临时/配置文件
+apimy*.yaml
+snap.yaml
+faq400_source.html
+entity_template.txt
+fix_*.txt
+p_docs.py
+p1_password.py
+scan_menus.py
+fix_log_css.py
+fix_simple.py
+
+# 构建产物
+ui/dist/
+backend/target/

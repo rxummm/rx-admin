@@ -1,6 +1,6 @@
 ---
 name: rx-admin-dev
-description: This skill should be used when developing features for the RX Admin project — a Spring Boot 3 + Vue 3 admin management system. It enforces project-specific coding standards, tech stack constraints, and development workflows. Trigger when writing Java backend code (Controller/Service/Mapper/Entity), Vue 3 frontend code (Composition API with Element Plus), SQL migrations, or adding new CRUD modules to this project.
+description: This skill should be used when developing features for the RX Admin project — a Spring Boot 3.5.x + Vue 3 admin management system. It enforces project-specific coding standards, tech stack constraints, and development workflows. Trigger when writing Java backend code (Controller/Service/Mapper/Entity/DTO/VO/Convert), Vue 3 frontend code (Composition API with Element Plus), SQL migrations, or adding new CRUD modules to this project.
 allowed-tools:
 disable: false
 ---
@@ -22,27 +22,34 @@ disable: false
 | 前端 baseURL | `/api` |
 | 数据库 | MySQL 8.0, `rx_admin`, utf8mb4 |
 | 认证框架 | Sa-Token |
-| ORM | MyBatis Plus 3.5.x |
+| ORM | MyBatis Plus 3.5.x + MapStruct 1.5.x |
+| 对象转换 | MapStruct（`unmappedTargetPolicy = IGNORE`） |
 | UI 框架 | Element Plus 2.4+ |
 | API 文档 | Knife4j (OpenAPI 3) |
+| 构建工具 | Maven 3.8+（含 build-helper-maven-plugin） |
 
 完整技术栈参考: `references/tech-stack.md`
 
+> **关联技能**: 前端 UI 设计请同时参考 `../frontend-design/SKILL.md`，该技能提供设计思维、字体选择、色彩搭配、动效与空间构图的方法论，与本技能的开发规范互补使用。
+
 ## 开发工作流 (新模块)
 
-按以下 11 步顺序执行:
+按以下 12 步顺序执行（含 DTO/VO/Convert 分层）:
 
 1. **DDL SQL** → 创建数据库表 (`sys_` 前缀, 含 `deleted`/`create_time`/`update_time`)
 2. **Entity** → `com.rx.admin.entity.{module}/`, 继承 `BaseEntity`, 加 `@EqualsAndHashCode(callSuper = true)` + `@TableName`
 3. **Mapper** → `com.rx.admin.mapper.{module}/`, 继承 `BaseMapper<Entity>`, 加 `@Mapper`, 复杂 SQL 用 `@Select/@Update` 注解, **禁止创建 XML**
-4. **Service 接口** → 继承 `IService<Entity>`, 分页返回 `PageResult<T>`
-5. **ServiceImpl** → 继承 `ServiceImpl<Mapper, Entity>`, 使用构造器注入 (`private final`), **禁止 `@Autowired`**
-6. **Controller** → `@Tag/@Operation` 注解, URL 前缀 `/api/{module}/{entity}`, `@SaCheckPermission`, `Result.success()/error()`
-7. **sys_menu 记录** → 插入菜单数据, `component` 字段与 `componentMap.js` key 一致
-8. **API 模块 (前端)** → `ui/src/api/{module}.js`, 函数命名 `getXxxPage/addXxx/updateXxx/deleteXxx`
-9. **Vue 页面** → `ui/src/views/{module}/index.vue`, `<script setup>`, `defineOptions({ name: 'Xxx' })`, 推荐 `useTablePage` composable
-10. **componentMap** → `ui/src/router/componentMap.js` 追加 1 行映射
-11. **验证** → 启动后端 → 启动前端 → 功能测试
+4. **DTO** → `com.rx.admin.modules.{domain}.{entity}.dto/`, 创建 `CreateDTO` / `UpdateDTO` / `QueryDTO`
+5. **VO** → `com.rx.admin.modules.{domain}.{entity}.vo/`, 创建视图对象（响应用）
+6. **Convert** → `com.rx.admin.modules.{domain}.{entity}.convert/`, MapStruct 接口, `@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)`
+7. **Service 接口** → 继承 `IService<Entity>`, 分页返回 `PageResult<T>`, 方法参数使用 DTO
+8. **ServiceImpl** → 继承 `ServiceImpl<Mapper, Entity>`, 使用构造器注入 (`private final`), **禁止 `@Autowired`**, 通过 Convert 做 DTO→Entity→VO 转换
+9. **Controller** → `@Tag/@Operation` 注解, URL 前缀 `/api/{module}/{entity}`, `@SaCheckPermission`, DTO 入参 → VO 出参, **禁止 Entity 直接暴露**
+10. **sys_menu 记录** → 插入菜单数据, `component` 字段与 `componentMap.js` key 一致
+11. **API 模块 (前端)** → `ui/src/api/{module}.js`, 函数命名 `getXxxPage/addXxx/updateXxx/deleteXxx`
+12. **Vue 页面** → `ui/src/views/{module}/index.vue`, `<script setup>`, `defineOptions({ name: 'Xxx' })`, 推荐 `useTablePage` composable
+13. **componentMap** → `ui/src/router/componentMap.js` 追加 1 行映射
+14. **验证** → 启动后端 → 启动前端 → 功能测试
 
 详细模板参考: `references/code-templates.md`
 
@@ -84,18 +91,77 @@ public class SysXxxServiceImpl extends ServiceImpl<SysXxxMapper, SysXxx> impleme
 @RestController
 @RequestMapping("/api/{module}/{entity}")
 @RequiredArgsConstructor
-public class SysXxxController {
-    private final SysXxxService service;
+public class SysXxxController extends BaseCrudController<SysXxxService, SysXxx> {
+    private final SysXxxConvert convert;
+
+    public SysXxxController(SysXxxService service, SysXxxConvert convert) {
+        super(service);
+        this.convert = convert;
+    }
 
     @Operation(summary = "分页查询")
     @GetMapping("/page")
     @SaCheckPermission("module:entity:query")
-    public Result<PageResult<SysXxx>> page(@RequestParam(defaultValue = "1") int page,
-                                           @RequestParam(defaultValue = "10") int size) {
-        return Result.success(service.pageQuery(page, size));
+    public Result<PageResult<SysXxxVO>> page(SysXxxQueryDTO dto) {
+        IPage<SysXxx> page = service.pageQuery(dto);
+        return Result.success(PageResult.of(page, convert::toVO));
+    }
+
+    @Operation(summary = "新增")
+    @PostMapping
+    @SaCheckPermission("module:entity:add")
+    public Result<?> add(@RequestBody @Valid SysXxxCreateDTO dto) {
+        return service.save(convert.toEntity(dto)) ? Result.success() : Result.fail();
     }
 }
 ```
+
+### DTO / VO / Convert (强制)
+
+**禁止 Entity 直接暴露到 Controller 层**。必须使用 DTO 接收请求 + VO 返回响应 + MapStruct Convert 做转换。
+
+```java
+// DTO — 请求入参
+// 模块路径: com.rx.admin.modules.{domain}.{entity}.dto/
+@Data
+public class SysXxxCreateDTO {
+    @NotBlank private String name;
+    private Integer status;
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class SysXxxQueryDTO extends PageDTO {
+    private String keyword;
+}
+
+// VO — 响应出参
+@Data
+public class SysXxxVO {
+    private Long id;
+    private String name;
+    private Integer status;
+    private LocalDateTime createTime;
+}
+
+// Convert — MapStruct 转换器
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface SysXxxConvert {
+    SysXxx toEntity(SysXxxCreateDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(SysXxxUpdateDTO dto, @MappingTarget SysXxx entity);
+
+    SysXxxVO toVO(SysXxx entity);
+    List<SysXxxVO> toVOList(List<SysXxx> list);
+}
+```
+
+| 规则 | 必须 | 说明 |
+|------|------|------|
+| `unmappedTargetPolicy = IGNORE` | ✅ | 消除未映射字段编译警告 |
+| `@BeanMapping(nullValuePropertyMappingStrategy = IGNORE)` | ✅ | 更新时 null 不覆盖已有字段 |
+| 禁止 `Mappers.getMapper()` | ✅ | 统一使用 Spring 注入 |
 
 ## 前端强制约定
 

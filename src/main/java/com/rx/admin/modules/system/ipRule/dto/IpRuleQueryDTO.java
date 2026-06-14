@@ -1,8 +1,7 @@
-package com.rx.admin.modules.system.ipRule.dto;
+package com.rx.admin.modules.system.iprule.dto;
 
 import lombok.Data;
 
-/** IP规则查询参数 */
 @Data
 public class IpRuleQueryDTO {
     private String ipAddress;

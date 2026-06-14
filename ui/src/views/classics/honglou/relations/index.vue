@@ -607,7 +607,7 @@ onUnmounted(() => {
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--layout-content-offset, 107px));
 }
 
 .graph-toolbar {
@@ -709,7 +709,7 @@ onUnmounted(() => {
   border-radius: 6px;
   font-size: 13px;
   max-width: 200px;
-  z-index: 100;
+  z-index: var(--z-graphic, 100);
 }
 
 .graph-tooltip strong {

@@ -301,7 +301,7 @@ watch(() => route.query.id, (newId) => {
 .techblog-detail {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 107px);
+  height: calc(100vh - var(--layout-content-offset, 107px));
   background: var(--el-bg-color);
   border-radius: 12px;
   overflow: auto;
@@ -316,7 +316,7 @@ watch(() => route.query.id, (newId) => {
   position: sticky;
   top: 0;
   background: var(--el-bg-color);
-  z-index: 10;
+  z-index: var(--z-content, 10);
 }
 
 .article-container {

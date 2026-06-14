@@ -13,6 +13,17 @@ const STORAGE_KEYS = {
   LOCALE: 'rx_admin_locale',
   THEME: 'rx_admin_theme',
   READ_NOTICE_IDS: 'rx_admin_readNoticeIds',
+  // 业务 key：之前散落在各组件里直接用 localStorage.xxx 调用，无命名空间、易冲突。
+  // 集中到 STORAGE_KEYS 后统一带 rx_admin_ 前缀、可观测、可清理。
+  ANNOUNCEMENT_DISMISSED: 'rx_admin_announcement_dismissed',
+  FAVORITES: 'rx_admin_favorites',
+  FAVORITE_STAR: 'rx_admin_favorite_star',  // 旧 key fav_${path} 的标准化替代
+  SEARCH_HISTORY: 'rx_admin_searchHistory',
+  TAGS_VIEW: 'rx_admin_tagsView',
+  EMAIL_DRAFT: 'rx_admin_emailDraft',
+  EMAIL_SIGNATURE: 'rx_admin_email_signature',
+  EMOJI_RECENT: 'rx_admin_emoji_recent',
+  APP_ERRORS: 'rx_admin_app_errors',
 }
 
 /** Token 存储时使用的异或密钥（仅防明文泄露，非加密） */
@@ -111,6 +122,21 @@ export function useStorage(key, defaultValue = null) {
   }
 
   return { get, set, remove }
+}
+
+/**
+ * 命名空间 key 工厂：在基 key 上拼接动态后缀（如 path/userId），统一带命名空间。
+ * 用于"每个 path 单独存一个值"这类场景，替代散落的 `fav_${path}` 拼接。
+ *
+ * @example
+ * const favKey = useNamespacedKey(STORAGE_KEYS.FAVORITE_STAR, props.path)
+ * const store = useStorage(favKey)
+ * store.get(); store.set(id); store.remove()
+ */
+export function useNamespacedKey(baseKey, suffix) {
+  // 过滤后缀里可能带的前缀 rx_admin_ / 特殊字符，确保最终 key 形态一致
+  const safeSuffix = String(suffix).replace(/[^a-zA-Z0-9_\-:./]/g, '_')
+  return `${baseKey}:${safeSuffix}`
 }
 
 export { STORAGE_KEYS }

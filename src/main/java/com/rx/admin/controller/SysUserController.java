@@ -5,13 +5,14 @@ import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysUser;
+import com.rx.admin.modules.system.user.dto.UserCreateDTO;
+import com.rx.admin.modules.system.user.dto.UserUpdateDTO;
 import com.rx.admin.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Tag(name = "用户管理")
 @RestController
@@ -38,8 +39,8 @@ public class SysUserController {
     @PostMapping
     @SaCheckPermission("sys:user:add")
     @OperateLog(module = "用户管理", operation = "新增用户")
-    public Result<?> add(@RequestBody @Valid SysUser user, @RequestParam(required = false) List<Long> roleIds) {
-        userService.addUser(user, roleIds);
+    public Result<?> add(@RequestBody @Valid UserCreateDTO dto) {
+        userService.addUser(dto);
         return Result.ok();
     }
 
@@ -47,8 +48,8 @@ public class SysUserController {
     @PutMapping
     @SaCheckPermission("sys:user:edit")
     @OperateLog(module = "用户管理", operation = "修改用户")
-    public Result<?> update(@RequestBody SysUser user, @RequestParam(required = false) List<Long> roleIds) {
-        userService.updateUser(user, roleIds);
+    public Result<?> update(@RequestBody @Valid UserUpdateDTO dto) {
+        userService.updateUser(dto);
         return Result.ok();
     }
 

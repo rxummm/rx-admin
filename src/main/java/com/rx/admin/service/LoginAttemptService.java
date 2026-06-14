@@ -30,7 +30,7 @@ public class LoginAttemptService {
      * 登录失败时调用
      */
     public void loginFailed(String username) {
-        int count = attempts.merge(username, 1, Integer::sum);
+        int count = attempts.merge(username, 1, (a, b) -> a + b);
         if (count >= MAX_ATTEMPTS) {
             lockTimes.put(username, Instant.now().toEpochMilli());
             log.warn("用户 {} 连续登录失败 {} 次，已锁定 {} 分钟", username, count, LOCK_DURATION_MINUTES);

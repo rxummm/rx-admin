@@ -17,7 +17,7 @@
           <el-input v-model="tableSearch" placeholder="搜索表名" size="small" clearable style="margin-bottom:8px;" />
           <div style="max-height: 400px; overflow-y: auto;">
             <div v-for="t in filteredTables" :key="t.tableName"
-              :style="{ padding: '8px 12px', cursor: 'pointer', borderRadius: '4px', background: selectedTable?.tableName === t.tableName ? '#ecf5ff' : '' }"
+              :style="{ padding: '8px 12px', cursor: 'pointer', borderRadius: '4px', background: selectedTable?.tableName === t.tableName ? 'var(--bg-active, #fef9ee)' : '' }"
               @click="selectTable(t)">
               <div style="font-weight:500; font-size:13px;">{{ t.tableName }}</div>
               <div style="color:var(--text-secondary,#909399);font-size:12px;">{{ t.tableComment || '无注释' }}</div>

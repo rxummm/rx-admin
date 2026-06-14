@@ -1,6 +1,6 @@
 package com.rx.admin.common.result;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class PageResult<T> {
         return result;
     }
 
-    public static <T> PageResult<T> of(Page<T> page) {
+    public static <T> PageResult<T> of(IPage<T> page) {
         PageResult<T> result = new PageResult<>();
         result.total = page.getTotal();
         result.page = page.getCurrent();

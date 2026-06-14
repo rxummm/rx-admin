@@ -1,7 +1,7 @@
 package com.rx.admin.service;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.rx.admin.entity.SysDept;
+
 import com.rx.admin.entity.SysRole;
 import com.rx.admin.entity.SysUser;
 import com.rx.admin.mapper.SysUserMapper;

@@ -9,6 +9,7 @@
 export const componentMap = {
   // 仪表盘 & 个人
   'dashboard/index':         { component: () => import('@/views/dashboard/index.vue'),           name: 'Dashboard' },
+  'dashboard/knowledgeGraph/index': { component: () => import('@/views/dashboard/knowledgeGraph/index.vue'), name: 'DashboardKnowledgeGraph' },
   'profile/index':           { component: () => import('@/views/profile/index.vue'),             name: 'Profile' },
 
   // 系统管理

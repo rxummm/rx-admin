@@ -5,6 +5,11 @@ import router from '@/router'
 import { formatResponseData } from './index'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import { getActivePinia } from 'pinia'
+import {
+  performanceRequestInterceptor,
+  performanceResponseSuccessInterceptor,
+  performanceResponseErrorInterceptor
+} from './performanceInterceptor'
 
 const tokenStore = useStorage(STORAGE_KEYS.TOKEN)
 const userInfoStore = useStorage(STORAGE_KEYS.USER_INFO)
@@ -20,6 +25,9 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   config => {
+    // 性能监控：记录请求开始时间
+    performanceRequestInterceptor(config)
+    
     if (!config._skipNProgress) {
       NProgress.start()
     }
@@ -131,6 +139,9 @@ function showKickOutOverlay() {
 // 响应拦截器
 request.interceptors.response.use(
   response => {
+    // 性能监控：记录成功响应
+    performanceResponseSuccessInterceptor(response)
+    
     NProgress.done()
     // blob 类型响应（文件下载、导出等）直接透传，不做 JSON 校验
     if (response.config.responseType === 'blob' || response.config.responseType === 'arraybuffer') {
@@ -155,6 +166,9 @@ request.interceptors.response.use(
     return formatResponseData(res)
   },
   error => {
+    // 性能监控：记录失败响应
+    performanceResponseErrorInterceptor(error)
+    
     NProgress.done()
     const status = error.response?.status
     const data = error.response?.data

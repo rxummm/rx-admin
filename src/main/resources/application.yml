@@ -37,9 +37,11 @@ mybatis-plus:
   type-aliases-package: com.rx.admin.entity
   configuration:
     map-underscore-to-camel-case: true
-    # SQL 日志：开发环境使用 StdOutImpl（控制台输出），生产环境改为 Slf4jImpl 或 none
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 日志：生产环境使用 SLF4J，不直接输出 SQL 到控制台
+    # 本地开发环境在 application-local.yml 中覆盖为 StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
+    banner: false
     db-config:
       id-type: auto
       logic-delete-field: deleted
@@ -51,7 +53,7 @@ sa-token:
   token-name: Authorization
   timeout: 86400
   active-timeout: 1800
-  is-concurrent: true
+  is-concurrent: false
   is-share: false
   token-style: uuid
   is-log: false
@@ -156,7 +158,7 @@ management:
         include: health,prometheus
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: when_authorized
       probes:
         enabled: true
   metrics:
@@ -166,31 +168,9 @@ management:
     tags:
       application: ${spring.application.name}
 
-# 日志
+# 日志（由 logback-spring.xml 管理，此处仅保留日志级别配置）
 logging:
-  charset:
-    console: UTF-8
-    file: UTF-8
-  file:
-    path: D:/vueprojects/RX
-    name: D:/vueprojects/RX/backend.log
   level:
-    com.rx.admin: debug
-
-# ============================================
-# 系统增强配置
-# ============================================
-enhancement:
-  # 登录安全
-  login:
-    max-fail-count: 5
-    lock-duration-minutes: 30
-  # 通知中心
-  notify:
-    channels:
-      email-enabled: false
-      wecom-webhook:
-      dingtalk-webhook:
-      feishu-webhook:
-
-
+    com.rx.admin: INFO
+    org.springframework: INFO
+    org.mybatis: INFO

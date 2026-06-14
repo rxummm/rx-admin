@@ -5,6 +5,8 @@ import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysDictType;
+import com.rx.admin.modules.system.dict.dto.DictTypeCreateDTO;
+import com.rx.admin.modules.system.dict.dto.DictTypeUpdateDTO;
 import com.rx.admin.service.SysDictTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +37,16 @@ public class SysDictTypeController {
     @PostMapping
     @SaCheckPermission("sys:dict:add")
     @OperateLog(module = "字典管理", operation = "新增字典类型")
-    public Result<Void> add(@RequestBody @Valid SysDictType dictType) {
-        sysDictTypeService.save(dictType);
+    public Result<Void> add(@RequestBody @Valid DictTypeCreateDTO dto) {
+        sysDictTypeService.addDictType(dto);
         return Result.ok();
     }
 
     @PutMapping
     @SaCheckPermission("sys:dict:edit")
     @OperateLog(module = "字典管理", operation = "修改字典类型")
-    public Result<Void> update(@RequestBody @Valid SysDictType dictType) {
-        sysDictTypeService.updateById(dictType);
+    public Result<Void> update(@RequestBody @Valid DictTypeUpdateDTO dto) {
+        sysDictTypeService.updateDictType(dto);
         return Result.ok();
     }
 

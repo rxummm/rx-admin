@@ -3,12 +3,15 @@ package com.rx.admin.service;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rx.admin.common.utils.TreeUtils;
 import com.rx.admin.entity.SysMenu;
 import com.rx.admin.mapper.SysMenuMapper;
+import com.rx.admin.modules.system.menu.dto.MenuCreateDTO;
+import com.rx.admin.modules.system.menu.dto.MenuUpdateDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +62,12 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
                     .filter(m -> !m.getId().equals(excludedPermissionMenuId))
                     .collect(Collectors.toList());
         }
-        return buildTree(menus, 0L);
+        return TreeUtils.buildTree(
+                menus,
+                SysMenu::getId,
+                SysMenu::getParentId,
+                SysMenu::setChildren
+        );
     }
 
     /**
@@ -69,7 +77,12 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
     public List<SysMenu> getAllMenuTree() {
         List<SysMenu> menus = list(new LambdaQueryWrapper<SysMenu>()
                 .orderByAsc(SysMenu::getSort));
-        return buildTree(menus, 0L);
+        return TreeUtils.buildTree(
+                menus,
+                SysMenu::getId,
+                SysMenu::getParentId,
+                SysMenu::setChildren
+        );
     }
 
     /**
@@ -90,7 +103,7 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
         // 收集所有被排除的菜单ID（管理类顶级菜单及其子孙）
         Set<Long> excludedIds = new HashSet<>();
         for (Long topId : getExcludedTopIds()) {
-            collectDescendantIds(allMenus, topId, excludedIds);
+            excludedIds.addAll(TreeUtils.collectDescendantIds(topId, allMenus, SysMenu::getId, SysMenu::getParentId));
         }
 
         // 收集用户已有权限：只排除已拥有的按钮（type=3），
@@ -113,32 +126,50 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
                 .filter(m -> m.getMenuType() == 1 || m.getMenuType() == 2 || m.getMenuType() == 3)
                 .collect(Collectors.toList());
 
-        return buildTree(requestable, 0L);
+        return TreeUtils.buildTree(
+                requestable,
+                SysMenu::getId,
+                SysMenu::getParentId,
+                SysMenu::setChildren
+        );
     }
 
     /**
-     * 递归收集指定菜单ID的所有子孙ID
+     * 新增菜单
      */
-    private void collectDescendantIds(List<SysMenu> menus, Long parentId, Set<Long> result) {
-        result.add(parentId);
-        for (SysMenu m : menus) {
-            if (m.getParentId().equals(parentId)) {
-                collectDescendantIds(menus, m.getId(), result);
-            }
-        }
+    public void addMenu(MenuCreateDTO dto) {
+        SysMenu menu = new SysMenu();
+        menu.setParentId(dto.getParentId());
+        menu.setMenuName(dto.getMenuName());
+        menu.setMenuType(dto.getMenuType());
+        menu.setPath(dto.getPath());
+        menu.setComponent(dto.getComponent());
+        menu.setPerms(dto.getPerms());
+        menu.setIcon(dto.getIcon());
+        menu.setSort(dto.getSort());
+        menu.setVisible(dto.getVisible());
+        menu.setStatus(dto.getStatus());
+        save(menu);
     }
 
-    private List<SysMenu> buildTree(List<SysMenu> menus, Long parentId) {
-        List<SysMenu> tree = new ArrayList<>();
-        for (SysMenu menu : menus) {
-            if (menu.getParentId().equals(parentId)) {
-                List<SysMenu> children = buildTree(menus, menu.getId());
-                if (!children.isEmpty()) {
-                    menu.setChildren(children);
-                }
-                tree.add(menu);
-            }
+    /**
+     * 更新菜单
+     */
+    public void updateMenu(MenuUpdateDTO dto) {
+        SysMenu menu = getById(dto.getId());
+        if (menu == null) {
+            throw new IllegalArgumentException("菜单不存在");
         }
-        return tree;
+        if (dto.getParentId() != null) menu.setParentId(dto.getParentId());
+        if (StringUtils.hasText(dto.getMenuName())) menu.setMenuName(dto.getMenuName());
+        if (dto.getMenuType() != null) menu.setMenuType(dto.getMenuType());
+        if (StringUtils.hasText(dto.getPath())) menu.setPath(dto.getPath());
+        if (StringUtils.hasText(dto.getComponent())) menu.setComponent(dto.getComponent());
+        if (StringUtils.hasText(dto.getPerms())) menu.setPerms(dto.getPerms());
+        if (StringUtils.hasText(dto.getIcon())) menu.setIcon(dto.getIcon());
+        if (dto.getSort() != null) menu.setSort(dto.getSort());
+        if (dto.getVisible() != null) menu.setVisible(dto.getVisible());
+        if (dto.getStatus() != null) menu.setStatus(dto.getStatus());
+        updateById(menu);
     }
 }

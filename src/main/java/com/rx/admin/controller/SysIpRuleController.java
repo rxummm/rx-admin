@@ -4,10 +4,13 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.entity.SysIpRule;
+import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
+import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
 import com.rx.admin.service.SysConfigService;
 import com.rx.admin.service.SysIpRuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,15 +42,15 @@ public class SysIpRuleController {
 
     @PostMapping
     @SaCheckPermission("system:ip-rule:add")
-    public Result<Void> add(@RequestBody SysIpRule rule) {
-        ipRuleService.save(rule);
+    public Result<Void> add(@RequestBody @Valid IpRuleCreateDTO dto) {
+        ipRuleService.addIpRule(dto);
         return Result.ok();
     }
 
     @PutMapping
     @SaCheckPermission("system:ip-rule:edit")
-    public Result<Void> update(@RequestBody SysIpRule rule) {
-        ipRuleService.updateById(rule);
+    public Result<Void> update(@RequestBody @Valid IpRuleUpdateDTO dto) {
+        ipRuleService.updateIpRule(dto);
         return Result.ok();
     }
 

@@ -582,7 +582,7 @@
           <div class="color-values">
             <div class="color-field">
               <span class="color-label">HEX：</span>
-              <el-input v-model="colorHex" placeholder="#409eff" style="width:160px;font-family:monospace" @input="onHexInput" />
+              <el-input v-model="colorHex" placeholder="#f59e0b" style="width:160px;font-family:monospace" @input="onHexInput" />
               <el-button size="small" @click="copyColor('hex')" :disabled="!colorHex">复制</el-button>
             </div>
             <div class="color-field">
@@ -814,6 +814,7 @@ import { ref, nextTick, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { RefreshRight, Switch, Tickets, Timer, BrushFilled, Lock, Link, Document, Picture, Plus } from '@element-plus/icons-vue'
+import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 
 const { t } = useI18n()
 
@@ -999,7 +1000,7 @@ const regexTemplateGroups = [
       { label: '中文', pattern: '[\\u4e00-\\u9fa5]+', text: 'Hello 世界！你好 World 中文测试' },
       { label: '空白行', pattern: '^\\s*$', text: 'hello\n\nworld\n  \ntest\n' },
       { label: 'HTML标签', pattern: '<[^>]+>', text: '<div><p>Hello</p>World<br/>end</div>' },
-      { label: 'Hex颜色', pattern: '#[0-9A-Fa-f]{3,8}\\b', text: '主色#409eff 背景#fff 边框#e4e7ed 错误#F56C6C' },
+      { label: 'Hex颜色', pattern: '#[0-9A-Fa-f]{3,8}\\b', text: '主色#f59e0b 背景#fff 边框#e4e7ed 错误#F56C6C' },
       { label: 'URL链接', pattern: 'https?://[\\w./?=&#@%+~-]+', text: '访问 https://www.example.com/path?q=1 获取信息' },
     ]
   },
@@ -1198,7 +1199,7 @@ function renderJsonTree(obj, depth = 0) {
   const indent = '&nbsp;'.repeat(depth * 3)
   if (obj === null) return `<span style="color:#909399">null</span>`
   if (typeof obj !== 'object') {
-    const c = typeof obj === 'string' ? '#67c23a' : typeof obj === 'number' ? '#409eff' : '#e6a23c'
+    const c = typeof obj === 'string' ? '#10b981' : typeof obj === 'number' ? '#f59e0b' : '#e6a23c'
     return `<span style="color:${c}">${JSON.stringify(obj)}</span>`
   }
   if (Array.isArray(obj)) {
@@ -1997,9 +1998,10 @@ function downloadIconDesign() {
 }
 
 // ===== Emoji选择器 =====
+const emojiStore = useStorage(STORAGE_KEYS.EMOJI_RECENT)
 const emojiSearch = ref('')
 const emojiCat = ref('all')
-const emojiRecent = ref(JSON.parse(localStorage.getItem('emoji_recent') || '[]').slice(0, 18))
+const emojiRecent = ref((() => { const d = emojiStore.get(); return Array.isArray(d) ? d.slice(0, 18) : [] })())
 
 const emojiCategories = [
   { key: 'all', label: '全部' },
@@ -2138,7 +2140,7 @@ function copyEmoji(emoji) {
     let recent = [...new Set([emoji, ...emojiRecent.value])]
     if (recent.length > 18) recent = recent.slice(0, 18)
     emojiRecent.value = recent
-    localStorage.setItem('emoji_recent', JSON.stringify(recent))
+    emojiStore.set(recent)
   }).catch(() => {
     // Fallback for older browsers
     const textarea = document.createElement('textarea')
@@ -2247,7 +2249,7 @@ function copyEmoji(emoji) {
 /* 文本统计 */
 .text-stats-result { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 16px; }
 .stat-card { text-align: center; padding: 14px 8px; background: var(--bg-hover, #f5f7fa); border-radius: 8px; border: 1px solid var(--border-lighter, #ebeef5); }
-.stat-val { display: block; font-size: 24px; font-weight: 700; color: #409eff; }
+.stat-val { display: block; font-size: 24px; font-weight: 700; color: var(--color-primary); }
 .stat-lbl { display: block; font-size: 12px; color: var(--text-secondary, #909399); margin-top: 4px; }
 
 /* 时间戳 */
@@ -2312,7 +2314,7 @@ function copyEmoji(emoji) {
 .cron-label { font-size: 13px; color: var(--text-regular, #606266); width: 36px; text-align: right; }
 .cron-preview { padding: 12px 16px; background: var(--bg-hover, #f5f7fa); border-radius: 8px; }
 .cron-expr-box { display: flex; align-items: center; gap: 8px; }
-.cron-run-item { font-family: monospace; font-size: 12px; color: var(--text-primary, #303133); padding: 2px 0; padding-left: 12px; border-left: 2px solid #409eff; margin: 4px 0; }
+.cron-run-item { font-family: monospace; font-size: 12px; color: var(--text-primary, #303133); padding: 2px 0; padding-left: 12px; border-left: 2px solid var(--color-primary); margin: 4px 0; }
 
 /* CSS渐变生成器 */
 .cssgrad-layout { display: flex; gap: 24px; }
@@ -2362,11 +2364,11 @@ function copyEmoji(emoji) {
 .emoji-cats { display: flex; gap: 4px; flex-wrap: wrap; }
 .emoji-cat-chip { font-size: 12px; padding: 3px 10px; border-radius: 12px; background: var(--bg-hover, #f0f2f5); color: var(--text-regular, #606266); cursor: pointer; user-select: none; transition: all .2s; }
 .emoji-cat-chip:hover { background: var(--bg-active, #e8eaed); }
-.emoji-cat-chip.active { background: #409eff; color: #fff; }
+.emoji-cat-chip.active { background: var(--color-primary); color: #fff; }
 .emoji-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin-bottom: 16px; }
 .emoji-grid-small { grid-template-columns: repeat(18, 1fr); }
 .emoji-item { font-size: 24px; text-align: center; padding: 4px 2px; cursor: pointer; user-select: none; border-radius: 4px; transition: background .15s; }
-.emoji-item:hover { background: #ecf5ff; transform: scale(1.2); }
+.emoji-item:hover { background: var(--bg-active); transform: scale(1.2); }
 .emoji-empty { padding: 32px 0; text-align: center; color: #c0c4cc; font-size: 13px; }
 .emoji-recent { padding-top: 12px; border-top: 1px solid var(--border-lighter, #ebeef5); }
 .emoji-recent-title { font-size: 13px; color: var(--text-secondary, #909399); margin-bottom: 8px; }

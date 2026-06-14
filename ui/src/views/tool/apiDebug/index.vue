@@ -9,7 +9,7 @@
         <el-input v-model="searchKeyword" placeholder="搜索API路径" size="small" clearable style="margin-bottom: 8px;" />
         <div style="flex: 1; overflow-y: auto; border: 1px solid var(--border-light, #ebeef5); border-radius: 4px;">
           <div v-for="item in filteredEndpoints" :key="item.paths?.[0] + item.methods?.[0]"
-            :style="{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-light, #ebeef5)', background: selected?.paths?.[0] === item.paths?.[0] && selected?.methods?.[0] === item.methods?.[0] ? 'var(--bg-active, #ecf5ff)' : '' }"
+            :style="{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-light, #ebeef5)', background: selected?.paths?.[0] === item.paths?.[0] && selected?.methods?.[0] === item.methods?.[0] ? 'var(--bg-active, #fef9ee)' : '' }"
             @click="selectEndpoint(item)">
             <div style="display: flex; align-items: center; gap: 6px;">
               <el-tag :type="methodColor(item.methods?.[0])" size="small" style="min-width:48px;text-align:center;">{{ item.methods?.[0] }}</el-tag>
