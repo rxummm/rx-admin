@@ -262,6 +262,7 @@ html, body, #app {
 .table-container {
   background: var(--table-container-bg);
   border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm);
   padding: 16px;
 
   .table-header {
@@ -519,7 +520,9 @@ html, body, #app {
       padding: 6px 2px;
       border-radius: var(--radius-sm);
       border-radius: var(--radius-sm);
+      border-radius: var(--radius-sm);
       cursor: pointer;
+      transition: all var(--transition-fast);
       transition: all var(--transition-fast);
       transition: all var(--transition-fast);
       border: 1px solid transparent;

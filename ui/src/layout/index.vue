@@ -2,6 +2,7 @@
   <el-container class="layout-container">
     <!-- 侧边栏 -->
     <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
+    <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
       <div class="logo-container" @click="goHome">
         <img src="@/assets/logo.svg" class="logo-img" />
         <span v-show="!isCollapse" class="logo-title">RX Admin</span>
@@ -112,6 +113,9 @@
           <keep-alive :include="tagsStore.cachedViews">
             <component :is="Component" :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
           </keep-alive>
+          <keep-alive :include="tagsStore.cachedViews">
+            <component :is="Component" :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
+          </keep-alive>
         </router-view>
       </el-main>
     </el-container>
@@ -217,6 +221,8 @@ function handleMenuSelect(index) {
 
 const sidebarBgColor = computed(() => isDark.value ? '#1d1e1f' : '#ffffff')
 const sidebarTextColor = computed(() => isDark.value ? '#a3a6ad' : '#606266')
+const sidebarBgColor = computed(() => isDark.value ? '#1d1e1f' : '#ffffff')
+const sidebarTextColor = computed(() => isDark.value ? '#a3a6ad' : '#606266')
 const sidebarActiveColor = computed(() => '#409eff')
 
 onMounted(() => {
@@ -286,6 +292,7 @@ async function handleLogout() {
     background-color: var(--sidebar-bg);
     overflow: hidden;
     transition: width 0.3s;
+    transition: width 0.3s;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -314,6 +321,7 @@ async function handleLogout() {
       .logo-title {
         margin-left: 10px;
         color: var(--sidebar-logo-color);
+        font-size: 18px;
         font-size: 18px;
         font-weight: 700;
         white-space: nowrap;
@@ -370,6 +378,9 @@ async function handleLogout() {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: var(--shadow-header);
+    padding: 0 20px;
+    height: 50px;
     box-shadow: var(--shadow-header);
     padding: 0 20px;
     height: 50px;
