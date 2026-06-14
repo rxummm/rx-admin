@@ -205,30 +205,48 @@ async function handleRegister() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .login-page {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0c1445 0%, #1e3a8a 25%, #4f46e5 50%, #7c3aed 75%, #a855f7 100%);
+  background-color: #667eea;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-size: 300% 300%;
-  animation: gradientShift 12s ease infinite;
+  animation: gradientShift 14s ease infinite;
+  position: relative;
+  overflow: hidden;
+
+  // 装饰光斑
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255,255,255,0.14), transparent),
+      radial-gradient(ellipse 50% 30% at 75% 15%, rgba(255,255,255,0.10), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 .login-page--dark {
-  background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e1b4b 50%, #1e0a3c 75%, #0c0818 100%);
+  background-color: #0d1117;
+  background-image: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
   background-size: 300% 300%;
-  animation: gradientShift 12s ease infinite;
+  animation: gradientShift 14s ease infinite;
 }
 
 .login-wrapper {
   width: 420px;
   padding: 48px 40px 40px;
-  background: var(--bg-container, #fff);
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: var(--login-card-bg, #fff);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-xl, 0 16px 48px rgba(0,0,0,0.12));
   position: relative;
+  z-index: 1;
+  transition: transform var(--transition-base);
 }
 
 .form-toolbar {
@@ -242,17 +260,18 @@ async function handleRegister() {
 .toolbar-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm, 6px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-secondary, #909399);
-  transition: all 0.2s ease;
-}
-.toolbar-btn:hover {
-  background: var(--bg-hover, #f5f7fa);
-  color: var(--text-primary, #303133);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-hover);
+    color: var(--color-primary);
+  }
 }
 
 .login-header {
@@ -263,7 +282,7 @@ async function handleRegister() {
 .login-title {
   font-size: 24px;
   font-weight: 600;
-  color: var(--text-primary, #303133);
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -286,11 +305,14 @@ async function handleRegister() {
 .captcha-image {
   width: 110px;
   height: 40px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid var(--border-color, #e4e7ed);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
+  transition: border-color var(--transition-fast);
+
+  &:hover { border-color: var(--color-primary); }
 }
 
 .captcha-image img {
@@ -305,11 +327,15 @@ async function handleRegister() {
   justify-content: center;
   height: 100%;
   font-size: 12px;
-  color: var(--text-secondary, #909399);
+  color: var(--text-secondary);
 }
 
 .login-btn {
   width: 100%;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: all var(--transition-fast);
 }
 
 .form-footer {
@@ -318,12 +344,15 @@ async function handleRegister() {
 }
 
 .register-link {
-  color: var(--color-primary, #409eff);
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 13px;
-}
-.register-link:hover {
-  text-decoration: underline;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
 }
 
 @keyframes gradientShift {

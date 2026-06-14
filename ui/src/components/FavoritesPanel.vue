@@ -53,9 +53,9 @@ const goTo = (path) => router.push(path)
 const toggleFav = async (fav) => {
   favorites.value = favorites.value.filter(f => f.id !== fav.id)
   localStorage.removeItem(`fav_${fav.path}`)
-  triggerRefresh()
   try {
     await toggleFavoriteApi({ name: fav.name, path: fav.path, icon: fav.icon || '', menuId: fav.menuId })
+    triggerRefresh() // API成功后刷新，通知 TagsView 同步状态
   } catch (e) {
     console.error('[FavoritesPanel] toggleFav API失败，重新拉取', e)
     fetchFavorites()

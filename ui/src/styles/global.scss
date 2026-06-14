@@ -7,18 +7,137 @@
 html, body, #app {
   height: 100%;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-#nprogress .bar {
-  background: var(--color-primary) !important;
-  height: 3px !important;
+// ====== 自定义滚动条（全局） ======
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-placeholder);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--text-secondary);
+  }
+}
+// Firefox 滚动条
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-placeholder) transparent;
 }
 
-// 侧边栏菜单样式优化
+// ====== NProgress 进度条 ======
+#nprogress {
+  .bar {
+    background: var(--color-primary) !important;
+    height: 2.5px !important;
+    box-shadow: 0 1px 4px var(--color-primary-light) !important;
+  }
+  .peg {
+    box-shadow: 0 0 8px var(--color-primary), 0 0 4px var(--color-primary) !important;
+    height: 2.5px !important;
+  }
+}
+
+// ====== 页面切换动画 ======
+.layout-main {
+  & > .fade-transform-enter-active,
+  & > .fade-transform-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  & > .fade-transform-enter-from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  & > .fade-transform-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+// ====== Element Plus Card 悬浮效果 ======
+.el-card {
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border-light) !important;
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-card-hover) !important;
+  }
+}
+
+// ====== 侧边栏菜单样式优化 ======
 .el-menu--vertical {
   .el-menu-item.is-active {
     background-color: var(--menu-vertical-active-bg);
   }
+}
+.el-menu {
+  border-right: none !important;
+
+  // 菜单项过渡
+  .el-menu-item,
+  .el-sub-menu__title {
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast) !important;
+    margin: 2px 8px;
+    border-radius: var(--radius-sm);
+    min-width: auto;
+
+    &:hover {
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  // 激活项左侧色条
+  .el-menu-item.is-active {
+    border-radius: var(--radius-sm);
+    color: var(--sidebar-text-active) !important;
+  }
+
+  // 子菜单折叠展开动画
+  .el-sub-menu .el-menu {
+    transition: height var(--transition-slow) !important;
+  }
+}
+
+// ====== 表格行悬浮 ======
+.el-table__body tr {
+  transition: background var(--transition-fast);
+
+  &:hover > td {
+    background-color: var(--bg-highlight-hover) !important;
+  }
+}
+
+// 斑马纹
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: var(--bg-highlight);
+}
+.el-table--striped .el-table__body tr.el-table__row--striped:hover > td {
+  background-color: var(--bg-highlight-hover) !important;
+}
+
+// 表格header
+.el-table th.el-table__cell {
+  background-color: var(--bg-hover) !important;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-regular);
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+// 表格边框圆角
+.el-table {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
 // ====== 表格类页面统一布局（flex column，撑满高度） ======
@@ -40,7 +159,7 @@ html, body, #app {
   padding: 6px 10px;
   margin-bottom: 6px;
   background: var(--search-bar-bg);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 
   .el-input, .el-select {
     width: 200px;
@@ -69,7 +188,7 @@ html, body, #app {
   flex-direction: column;
   min-height: 0;
   background: var(--table-container-bg);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 16px;
 
   .table-header {
@@ -85,7 +204,6 @@ html, body, #app {
     }
   }
 
-  // 表格body区域可滚动
   .el-table__body-wrapper {
     overflow-y: auto;
   }
@@ -105,29 +223,128 @@ html, body, #app {
   gap: 8px;
 }
 
-// 登录页样式
+// ====== Element Plus 全局微调 ======
+.el-button {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+.el-button:active {
+  transform: scale(0.97);
+}
+.el-button--primary {
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.25);
+}
+.el-button--primary:hover {
+  box-shadow: 0 4px 14px rgba(64, 158, 255, 0.35);
+}
+
+.el-input .el-input__wrapper {
+  border-radius: var(--radius-sm) !important;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+.el-input.is-focus .el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--color-primary) inset, 0 0 0 3px rgba(64, 158, 255, 0.1) !important;
+}
+.el-select .el-input__wrapper {
+  border-radius: var(--radius-sm) !important;
+}
+.el-textarea__inner {
+  border-radius: var(--radius-sm) !important;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--color-primary) inset, 0 0 0 3px rgba(64, 158, 255, 0.1) !important;
+}
+
+.el-dialog {
+  border-radius: var(--radius-md) !important;
+  animation: dialog-enter var(--transition-base) ease;
+}
+@keyframes dialog-enter {
+  from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.el-message-box {
+  border-radius: var(--radius-md) !important;
+}
+.el-dropdown-menu {
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1px solid var(--border-light) !important;
+  padding: 4px 0 !important;
+}
+.el-dropdown-menu__item {
+  border-radius: var(--radius-sm) !important;
+  margin: 0 4px;
+  padding: 8px 12px !important;
+}
+.el-popper {
+  border-radius: var(--radius-sm) !important;
+}
+.el-tag {
+  border-radius: var(--radius-xs) !important;
+}
+.el-pagination button,
+.el-pagination li {
+  border-radius: var(--radius-xs) !important;
+}
+
+// 表单标签
+.el-form-item__label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+// 卡片header段落标题样式统一
+.el-card__header {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+// ====== 登录页样式 ======
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background: var(--login-bg);
+  position: relative;
+  overflow: hidden;
 
-  .login-card {
-    width: 420px;
-    padding: 40px;
-    background: var(--login-card-bg);
-    border-radius: 12px;
-    box-shadow: var(--shadow-card);
+  // 登录页装饰背景动画
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 80%, rgba(102, 126, 234, 0.15), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(118, 75, 162, 0.12), transparent);
+    animation: login-bg-pulse 8s ease-in-out infinite alternate;
+  }
+}
+@keyframes login-bg-pulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
 
-    .login-title {
-      text-align: center;
-      margin-bottom: 32px;
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: 2px;
-    }
+.login-card {
+  width: 420px;
+  padding: 40px;
+  background: var(--login-card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  z-index: 1;
+
+  .login-title {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 2px;
   }
 }
 
@@ -161,9 +378,9 @@ html, body, #app {
       justify-content: center;
       gap: 2px;
       padding: 6px 2px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all var(--transition-fast);
       border: 1px solid transparent;
 
       &:hover {

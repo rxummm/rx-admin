@@ -10,9 +10,9 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="3" v-for="item in systemStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="$router.push(item.link)">
+          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
             <div class="stat-icon" :style="{ background: item.bgColor }">
-              <el-icon :size="22" :color="item.color">
+              <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
               </el-icon>
             </div>
@@ -37,7 +37,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }">
             <div class="stat-icon" :style="{ background: green.bgColor }">
-              <el-icon :size="22" color="#67c23a"><Select /></el-icon>
+              <el-icon :size="24" color="#67c23a"><CircleCheck /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ loginStats.todayLogins }}</span>
@@ -48,7 +48,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }">
             <div class="stat-icon" :style="{ background: red.bgColor }">
-              <el-icon :size="22" color="#f56c6c"><CloseBold /></el-icon>
+              <el-icon :size="24" color="#f56c6c"><CircleClose /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ loginStats.todayFailLogins }}</span>
@@ -59,18 +59,18 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }">
             <div class="stat-icon" :style="{ background: orange.bgColor }">
-              <el-icon :size="22" color="#e6a23c"><Download /></el-icon>
+              <el-icon :size="24" color="#e6a23c"><Promotion /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ exportStats.todayExports }}</span>
-              <span class="stat-label">今日导出次数</span>
+              <span class="label">今日导出次数</span>
             </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#909399', background: gray.cardBgColor }">
             <div class="stat-icon" :style="{ background: gray.bgColor }">
-              <el-icon :size="22" color="#909399"><Document /></el-icon>
+              <el-icon :size="24" color="#909399"><Tickets /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ exportStats.todayExcelExports + exportStats.todayPdfExports }}</span>
@@ -117,9 +117,9 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#409eff', background: blue.cardBgColor }" @click="$router.push('/content/notice')">
+          <div class="stat-item" :style="{ borderLeftColor: '#409eff', background: blue.cardBgColor }" @click="safeNavigate('/content/notice')">
             <div class="stat-icon" :style="{ background: blue.bgColor }">
-              <el-icon :size="22" color="#409eff"><Notification /></el-icon>
+              <el-icon :size="24" color="#409eff"><Notification /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ noticeStats.noticeCount }}</span>
@@ -128,9 +128,9 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }" @click="$router.push('/content/notice')">
+          <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }" @click="safeNavigate('/content/notice')">
             <div class="stat-icon" :style="{ background: green.bgColor }">
-              <el-icon :size="22" color="#67c23a"><Reading /></el-icon>
+              <el-icon :size="24" color="#67c23a"><Reading /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ noticeStats.announcementCount }}</span>
@@ -139,9 +139,9 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }" @click="$router.push('/content/notice')">
+          <div class="stat-item" :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }" @click="safeNavigate('/content/notice')">
             <div class="stat-icon" :style="{ background: orange.bgColor }">
-              <el-icon :size="22" color="#e6a23c"><Clock /></el-icon>
+              <el-icon :size="24" color="#e6a23c"><Clock /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ noticeStats.todoCount }}</span>
@@ -150,9 +150,9 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }" @click="$router.push('/content/message')">
+          <div class="stat-item" :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }" @click="safeNavigate('/content/message')">
             <div class="stat-icon" :style="{ background: red.bgColor }">
-              <el-icon :size="22" color="#f56c6c"><Message /></el-icon>
+              <el-icon :size="24" color="#f56c6c"><Message /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ messageUnread }}</span>
@@ -175,7 +175,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#409eff', background: blue.cardBgColor }">
             <div class="stat-icon" :style="{ background: blue.bgColor }">
-              <el-icon :size="22" color="#409eff"><Odometer /></el-icon>
+              <el-icon :size="24" color="#409eff"><Odometer /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ healthStats.jvmUsed }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.jvmMax }}MB</small></span>
@@ -186,7 +186,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }">
             <div class="stat-icon" :style="{ background: orange.bgColor }">
-              <el-icon :size="22" color="#e6a23c"><Cpu /></el-icon>
+              <el-icon :size="24" color="#e6a23c"><Cpu /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ healthStats.cpuUsage }}<small style="font-size:16px;font-weight:400">%</small></span>
@@ -197,7 +197,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }">
             <div class="stat-icon" :style="{ background: green.bgColor }">
-              <el-icon :size="22" color="#67c23a"><Coin /></el-icon>
+              <el-icon :size="24" color="#67c23a"><Coin /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ healthStats.diskUsed }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.diskTotal }}GB</small></span>
@@ -208,7 +208,7 @@
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }">
             <div class="stat-icon" :style="{ background: red.bgColor }">
-              <el-icon :size="22" color="#f56c6c"><Delete /></el-icon>
+              <el-icon :size="24" color="#f56c6c"><Delete /></el-icon>
             </div>
             <div class="stat-meta">
               <span class="stat-value">{{ healthStats.gcCount }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.gcTime }}s</small></span>
@@ -229,9 +229,9 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="4" v-for="item in literatureStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="$router.push(item.link)">
+          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
             <div class="stat-icon" :style="{ background: item.bgColor }">
-              <el-icon :size="22" :color="item.color">
+              <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
               </el-icon>
             </div>
@@ -395,7 +395,7 @@
               <span class="classic-stat-value">{{ stat.value }}</span>
             </div>
           </div>
-          <div class="classic-footer" @click="$router.push(book.link)">
+          <div class="classic-footer" @click="safeNavigate(book.link)">
             <span>查看详情</span>
             <el-icon><ArrowRight /></el-icon>
           </div>
@@ -413,9 +413,9 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6" v-for="item in techblogStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="$router.push(item.link)">
+          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
             <div class="stat-icon" :style="{ background: item.bgColor }">
-              <el-icon :size="22" :color="item.color">
+              <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
               </el-icon>
             </div>
@@ -438,9 +438,9 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6" v-for="item in musicStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="$router.push(item.link)">
+          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
             <div class="stat-icon" :style="{ background: item.bgColor }">
-              <el-icon :size="22" :color="item.color">
+              <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
               </el-icon>
             </div>
@@ -457,6 +457,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
+import { useRouter } from "vue-router"
 import { getDashboardStatsApi, getLoginStatsApi, getExportStatsApi, getOperationTop10Api } from "@/api/dashboard"
 import { getNoticeSummaryApi } from "@/api/notice"
 import { getUnreadCountApi } from "@/api/message"
@@ -465,12 +466,30 @@ import * as echarts from "echarts"
 import {
   Setting, Reading, Histogram, PieChart, TrendCharts, View,
   DataAnalysis, Sort, DataBoard, ArrowRight, Headset,
-  Avatar, Collection, EditPen, MagicStick,
+  UserFilled, Collection, EditPen, MagicStick,
   User, Select, CloseBold, Download, Document,
-  Bell, Notification, Clock, Message, Monitor, Odometer, Cpu, Coin, Delete
+  Bell, Notification, Clock, Message, Monitor, Odometer, Cpu, Coin, Delete,
+  Lock, Grid, OfficeBuilding, Tickets, Compass, Promotion, Stamp,
+  CircleCheck, CircleClose
 } from "@element-plus/icons-vue"
 
 const loading = ref(true)
+const router = useRouter()
+
+// 安全导航：路由存在才跳转，避免 No match 警告
+function safeNavigate(link) {
+  if (!link) return
+  if (typeof link === 'object' && link.name) {
+    // 命名路由：检查是否已注册
+    if (router.hasRoute(link.name)) {
+      router.push(link)
+    }
+    return
+  }
+  // 路径字符串：直接 push，由路由守卫兜底处理
+  router.push(link)
+}
+
 const statsData = ref({})
 const loginStats = ref({ todayLogins: 0, todayFailLogins: 0, trend: {} })
 const exportStats = ref({ todayExports: 0, todayExcelExports: 0, todayPdfExports: 0 })
@@ -496,19 +515,34 @@ let loginTrendChart = null, operationTopChart = null
 const isDark = ref(document.documentElement.classList.contains("dark"))
 
 function statCardColors(colorKey) {
+  // 图标背景改为极淡的半透明色，让彩色图标清晰可见
+  const iconBgLight = {
+    blue: "rgba(64,158,255,0.08)",
+    green: "rgba(103,194,58,0.08)",
+    orange: "rgba(230,162,60,0.08)",
+    red: "rgba(245,108,108,0.08)",
+    gray: "rgba(144,147,153,0.06)"
+  }
+  const iconBgDark = {
+    blue: "rgba(64,158,255,0.12)",
+    green: "rgba(103,194,58,0.12)",
+    orange: "rgba(230,162,60,0.12)",
+    red: "rgba(245,108,108,0.12)",
+    gray: "rgba(144,147,153,0.08)"
+  }
   const lightMap = {
-    blue: { bgColor: "#ecf5ff", cardBgColor: "#eef6ff" },
-    green: { bgColor: "#f0f9eb", cardBgColor: "#f2f9ee" },
-    orange: { bgColor: "#fdf6ec", cardBgColor: "#fef9eb" },
-    red: { bgColor: "#fef0f0", cardBgColor: "#fef3f3" },
-    gray: { bgColor: "#f4f4f5", cardBgColor: "#f7f7f8" }
+    blue: { bgColor: iconBgLight.blue, cardBgColor: "#eef6ff" },
+    green: { bgColor: iconBgLight.green, cardBgColor: "#f2f9ee" },
+    orange: { bgColor: iconBgLight.orange, cardBgColor: "#fef9eb" },
+    red: { bgColor: iconBgLight.red, cardBgColor: "#fef3f3" },
+    gray: { bgColor: iconBgLight.gray, cardBgColor: "#f7f7f8" }
   }
   const darkMap = {
-    blue: { bgColor: "rgba(64,158,255,0.15)", cardBgColor: "rgba(64,158,255,0.08)" },
-    green: { bgColor: "rgba(103,194,58,0.15)", cardBgColor: "rgba(103,194,58,0.08)" },
-    orange: { bgColor: "rgba(230,162,60,0.15)", cardBgColor: "rgba(230,162,60,0.08)" },
-    red: { bgColor: "rgba(245,108,108,0.15)", cardBgColor: "rgba(245,108,108,0.08)" },
-    gray: { bgColor: "rgba(144,147,153,0.15)", cardBgColor: "rgba(144,147,153,0.08)" }
+    blue: { bgColor: iconBgDark.blue, cardBgColor: "rgba(64,158,255,0.06)" },
+    green: { bgColor: iconBgDark.green, cardBgColor: "rgba(103,194,58,0.06)" },
+    orange: { bgColor: iconBgDark.orange, cardBgColor: "rgba(230,162,60,0.06)" },
+    red: { bgColor: iconBgDark.red, cardBgColor: "rgba(245,108,108,0.06)" },
+    gray: { bgColor: iconBgDark.gray, cardBgColor: "rgba(144,147,153,0.04)" }
   }
   return isDark.value ? darkMap[colorKey] : lightMap[colorKey]
 }
@@ -522,14 +556,14 @@ const gray = statCardColors("gray")
 const systemStats = computed(() => {
   const d = statsData.value.system || {}
   return [
-    { key: "user", label: "\u7528\u6237", value: d.userCount || 0, icon: Avatar, color: "#409eff", ...blue, borderColor: "#409eff", link: "/system/user" },
-    { key: "role", label: "\u89d2\u8272", value: d.roleCount || 0, icon: Avatar, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/system/role" },
-    { key: "menu", label: "\u83dc\u5355", value: d.menuCount || 0, icon: Setting, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/system/menu" },
-    { key: "dept", label: "\u90e8\u95e8", value: d.deptCount || 0, icon: Collection, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/system/dept" },
+    { key: "user", label: "\u7528\u6237", value: d.userCount || 0, icon: UserFilled, color: "#409eff", ...blue, borderColor: "#409eff", link: "/system/user" },
+    { key: "role", label: "\u89d2\u8272", value: d.roleCount || 0, icon: Lock, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/system/role" },
+    { key: "menu", label: "\u83dc\u5355", value: d.menuCount || 0, icon: Grid, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/system/menu" },
+    { key: "dept", label: "\u90e8\u95e8", value: d.deptCount || 0, icon: OfficeBuilding, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/system/dept" },
     { key: "dict", label: "\u5b57\u5178", value: d.dictTypeCount || 0, icon: EditPen, color: "#909399", ...gray, borderColor: "#909399", link: "/tool/dict" },
     { key: "notice", label: "\u516c\u544a", value: d.noticeCount || 0, icon: Reading, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/content/notice" },
     { key: "log", label: "\u65e5\u5fd7", value: d.logCount || 0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: "/monitor/log" },
-    { key: "online", label: "\u5728\u7ebf", value: d.onlineCount || 0, icon: Avatar, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/monitor/online" }
+    { key: "online", label: "\u5728\u7ebf", value: d.onlineCount || 0, icon: Monitor, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/monitor/online" }
   ]
 })
 
@@ -537,7 +571,7 @@ const literatureStats = computed(() => {
   const d = statsData.value.literature || {}
   return [
     { key: "work", label: "\u6587\u5b66\u4f5c\u54c1", value: d.workCount || 0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: "/classics/literature" },
-    { key: "author", label: "\u4f5c\u8005", value: d.authorCount || 0, icon: Avatar, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/classics/literature" },
+    { key: "author", label: "\u4f5c\u8005", value: d.authorCount || 0, icon: EditPen, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/classics/literature" },
     { key: "dynasty", label: "\u671d\u4ee3", value: d.dynastyCount || 0, icon: Collection, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/classics/literature" },
     { key: "genre", label: "\u4f53\u88c1", value: d.genreCount || 0, icon: EditPen, color: "#909399", ...gray, borderColor: "#909399", link: "/classics/literature" },
     { key: "category", label: "\u5206\u7c7b", value: d.categoryCount || 0, icon: Collection, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/classics/literature" }
@@ -605,18 +639,18 @@ const distributionData = computed(() => {
 const techblogStats = computed(() => {
   const d = statsData.value.techblog || {}
   return [
-    { key: "articles", label: "\u603b\u6587\u7ae0\u6570", value: d.totalArticles||0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: "/as400/techblog/list" },
-    { key: "views", label: "\u603b\u6d4f\u89c8\u91cf", value: d.totalViews||0, icon: View, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/as400/techblog/list" }
+    { key: "articles", label: "\u603b\u6587\u7ae0\u6570", value: d.totalArticles||0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: {name: "TechBlogIndex"} },
+    { key: "views", label: "\u603b\u6d4f\u89c8\u91cf", value: d.totalViews||0, icon: View, color: "#67c23a", ...green, borderColor: "#67c23a", link: {name: "TechBlogIndex"} }
   ]
 })
 
 const musicStats = computed(() => {
   const d = statsData.value.music || {}
   return [
-    { key: "songs", label: "\u6b4c\u66f2\u6570", value: d.totalSongs||0, icon: Headset, color: "#409eff", ...blue, borderColor: "#409eff", link: "/musicPlayer" },
-    { key: "albums", label: "\u4e13\u8f91\u6570", value: d.totalAlbums||0, icon: Collection, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/musicPlayer" },
-    { key: "plays", label: "\u603b\u64ad\u653e\u6b21\u6570", value: d.totalPlays||0, icon: MagicStick, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/musicPlayer" },
-    { key: "artists", label: "\u827a\u672f\u5bb6\u6570", value: d.totalArtists||0, icon: Avatar, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/musicPlayer" }
+    { key: "songs", label: "\u6b4c\u66f2\u6570", value: d.totalSongs||0, icon: Headset, color: "#409eff", ...blue, borderColor: "#409eff", link: {name: "ToolMusicPlayer"} },
+    { key: "albums", label: "\u4e13\u8f91\u6570", value: d.totalAlbums||0, icon: Collection, color: "#67c23a", ...green, borderColor: "#67c23a", link: {name: "ToolMusicPlayer"} },
+    { key: "plays", label: "\u603b\u64ad\u653e\u6b21\u6570", value: d.totalPlays||0, icon: MagicStick, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: {name: "ToolMusicPlayer"} },
+    { key: "artists", label: "\u827a\u672f\u5bb6\u6570", value: d.totalArtists||0, icon: UserFilled, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: {name: "ToolMusicPlayer"} }
   ]
 })
 
@@ -931,7 +965,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .page-container {
   padding: 20px 24px;
   background: var(--bg-page);
@@ -973,9 +1007,24 @@ html.dark .section-card {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
+  position: relative;
+  padding-left: 14px;
+
+  // 左侧色条
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    border-radius: var(--radius-xs);
+    background: var(--color-primary);
+  }
 }
 
 .section-card :deep(.el-col) {
@@ -996,27 +1045,54 @@ html.dark .section-card {
   align-items: center;
   gap: 14px;
   padding: 18px 20px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all var(--transition-base);
   border-left: 3px solid transparent;
   border-right: 3px solid transparent;
-  background: var(--bg-hover);
+  background: linear-gradient(135deg, var(--bg-container) 0%, var(--bg-hover) 100%);
+  animation: card-entry 0.5s ease both;
+  overflow: hidden;
+  position: relative;
 }
 
+// 卡片入场交错动画
+.stat-item:nth-child(1) { animation-delay: 0.04s; }
+.stat-item:nth-child(2) { animation-delay: 0.08s; }
+.stat-item:nth-child(3) { animation-delay: 0.12s; }
+.stat-item:nth-child(4) { animation-delay: 0.16s; }
+.stat-item:nth-child(5) { animation-delay: 0.2s; }
+.stat-item:nth-child(6) { animation-delay: 0.24s; }
+.stat-item:nth-child(7) { animation-delay: 0.28s; }
+.stat-item:nth-child(8) { animation-delay: 0.32s; }
+
 .stat-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+
+  :deep(.el-icon) {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    // 强制清晰渲染
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+.stat-item:hover .stat-icon {
+  transform: scale(1.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .stat-meta {
@@ -1203,5 +1279,16 @@ html.dark .classic-card {
   height: 100%;
   border-radius: 5px;
   transition: width 0.8s ease;
+}
+
+@keyframes card-entry {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

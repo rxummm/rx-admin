@@ -176,9 +176,11 @@ INSERT INTO sys_role (role_name, role_code, description, sort) VALUES
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, perms, icon, sort) VALUES
 -- 仪表盘
 (12, 0, '仪表盘', 2, '/dashboard', 'dashboard/index', 'dashboard', 'DataAnalysis', 0),
+-- 知识图谱
+(2000, 0, '知识图谱', 2, '/dashboard/knowledgeGraph', 'dashboard/knowledgeGraph/index', '', 'Connection', 1),
 
 -- 系统管理
-(1, 0, '系统管理', 1, '/system', '', '', 'Setting', 1),
+(1, 0, '系统管理', 1, '/system', '', '', 'Setting', 2),
 (2, 1, '用户管理', 2, '/system/user', 'system/user/index', 'sys:user:list', 'User', 1),
 (3, 2, '用户查询', 3, '', '', 'sys:user:query', '', 1),
 (4, 2, '用户新增', 3, '', '', 'sys:user:add', '', 2),

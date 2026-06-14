@@ -148,15 +148,21 @@ async function handleCloseAll() {
 }
 
 // 收藏夹切换
-const { triggerRefresh } = useFavEvents()
+const { refreshTick, triggerRefresh } = useFavEvents()
 const favSet = ref(new Set())
-onMounted(() => {
-  // 从 localStorage 恢复已收藏路径
+
+// 从 localStorage 读取已收藏路径
+const syncFavSet = () => {
+  favSet.value = new Set()
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i)
     if (k?.startsWith('fav_')) favSet.value.add(k.slice(4))
   }
-})
+}
+syncFavSet()
+// 其他组件取消收藏后，通过 refreshTick 通知 TagsView 同步
+watch(refreshTick, syncFavSet)
+
 const isTagFav = computed(() => favSet.value.has(selectedTag.value.path))
 
 async function handleToggleFavorite() {
@@ -221,7 +227,6 @@ onUnmounted(() => {
   background: var(--tags-bg);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   user-select: none;
 
   .tags-scrollbar {
@@ -250,10 +255,10 @@ onUnmounted(() => {
     color: var(--tags-item-color);
     background: var(--tags-item-bg);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     white-space: nowrap;
 
     &:hover {
@@ -289,7 +294,7 @@ onUnmounted(() => {
       font-size: 12px;
       border-radius: 50%;
       padding: 1px;
-      transition: background 0.2s;
+      transition: background var(--transition-fast);
 
       &:hover {
         background: var(--tag-close-hover-bg);
@@ -306,8 +311,8 @@ onUnmounted(() => {
   z-index: 3000;
   min-width: 140px;
   background: var(--context-menu-bg);
-  border-radius: 6px;
-  box-shadow: 0 4px 16px var(--context-menu-shadow);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--context-menu-shadow);
   padding: 4px 0;
   margin: 0;
   list-style: none;
@@ -320,7 +325,7 @@ onUnmounted(() => {
     font-size: 13px;
     color: var(--text-regular);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 
     &:hover {
       background: var(--bg-active);

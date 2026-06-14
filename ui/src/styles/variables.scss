@@ -1,6 +1,18 @@
 // ====== 亮色主题（默认） ======
 :root {
-  // 页面背景
+  // ── 圆角系统 ──
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  // ── 过渡速度 ──
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ── 页面背景 ──
   --bg-page: #f0f2f5;
   // 容器/卡片背景
   --bg-container: #fff;
@@ -12,42 +24,53 @@
   --bg-highlight: #f0f7ff;
   --bg-highlight-hover: #e6f2ff;
 
-  // 主文字色
-  --text-primary: #303133;
-  // 常规文字色
+  // ── 文字色 ──
+  --text-primary: #1d1e24;
   --text-regular: #606266;
-  // 次要文字色
   --text-secondary: #909399;
-  // 占位符色
   --text-placeholder: #c0c4cc;
 
-  // 边框色
+  // ── 边框色 ──
   --border-color: #e4e7ed;
   --border-light: #ebeef5;
   --border-lighter: #f5f7fa;
 
-  // 主题色
+  // ── 主题色 ──
   --color-primary: #409eff;
   --color-primary-light: #66b1ff;
 
-  // 侧边栏
+  // ── 功能色 ──
+  --color-success: #67c23a;
+  --color-warning: #e6a23c;
+  --color-danger: #f56c6c;
+  --color-info: #909399;
+
+  // ── 侧边栏 ──
   --sidebar-bg: #ffffff;
   --sidebar-text: #606266;
   --sidebar-text-active: #409eff;
-  // 侧边栏 logo 区域
+  --sidebar-active-indicator: #409eff;
+  // logo 区域
   --sidebar-logo-color: #303133;
   --sidebar-logo-border: #ebeef5;
-  // 侧边栏子菜单背景
+  --sidebar-logo-bg: transparent;
+  // 子菜单背景
   --sidebar-submenu-bg: #fafafa;
   --sidebar-item-hover-bg: #f5f7fa;
   --sidebar-item-active-bg: #ecf5ff;
+  // 宽度
+  --sidebar-width: 220px;
+  --sidebar-collapse-width: 64px;
 
-  // 顶栏
-  --header-bg: #fff;
-  --header-shadow: rgba(0, 0, 0, 0.08);
+  // ── 顶栏 ──
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-backdrop: blur(10px);
+  --header-height: 50px;
+  --header-shadow: 0 1px 0 var(--border-color), 0 2px 8px rgba(0, 0, 0, 0.04);
 
-  // 标签栏
+  // ── 标签栏 ──
   --tags-bg: #fff;
+  --tags-height: 37px;
   --tags-item-bg: #f0f2f5;
   --tags-item-color: #606266;
   --tags-item-active-bg: #409eff;
@@ -56,55 +79,55 @@
   --tags-item-hover-color: #409eff;
   --tags-item-hover-border: #d9ecff;
 
-  // 搜索框
+  // ── 搜索框 ──
   --search-bg: #f5f7fa;
   --search-focus-bg: #ecf5ff;
   --search-focus-shadow: #409eff;
   --search-dropdown-bg: #fff;
-  --search-dropdown-shadow: rgba(0, 0, 0, 0.12);
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 
-  // 通知弹窗
+  // ── 通知弹窗 ──
   --notice-unread-bg: #f0f7ff;
   --notice-unread-hover: #e6f2ff;
 
-  // 标签栏关闭按钮悬停
+  // ── 标签关闭按钮 ──
   --tag-close-hover-bg: rgba(0, 0, 0, 0.1);
 
-  // 右键菜单
+  // ── 右键菜单 ──
   --context-menu-bg: #fff;
-  --context-menu-shadow: rgba(0, 0, 0, 0.12);
+  --context-menu-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 
-  // 阴影
-  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.15);
-  --shadow-header: 0 1px 4px rgba(0, 0, 0, 0.08);
+  // ── 阴影体系（多层级） ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+  --shadow-header: 0 1px 0 var(--border-color), 0 2px 8px rgba(0, 0, 0, 0.04);
 
-  // 登录页
+  // ── 登录页 ──
   --login-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --login-card-bg: #fff;
 
-  // 表格容器
+  // ── 表格容器 ──
   --table-container-bg: #fff;
   --search-bar-bg: #fff;
 
-  // 垂直菜单激活
+  // ── 垂直菜单激活 ──
   --menu-vertical-active-bg: #ecf5ff;
 
-  // 字典当前行
+  // ── 字典当前行 ──
   --dict-current-row-bg: #ecf5ff;
 
-  // 徽章边框（用于与header背景色匹配）
+  // ── 徽章边框 ──
   --badge-border: #fff;
 
-  // 功能色
-  --color-success: #67c23a;
-  --color-warning: #e6a23c;
-  --color-danger: #f56c6c;
-  --color-info: #909399;
-
-  // 页面统一边距
+  // ── 页面统一边距 ──
   --page-padding: 16px;
 
-  // ECharts 调色板（亮色主题）
+  // ── ECharts 调色板（亮色主题） ──
   --chart-color-1: #5470c6;
   --chart-color-2: #91cc75;
   --chart-color-3: #fac858;
@@ -119,111 +142,127 @@
 
 // ====== 暗色主题 ======
 html.dark {
-  // 页面背景
-  --bg-page: #141414;
-  // 容器/卡片背景
-  --bg-container: #1d1e1f;
-  // 悬停背景
-  --bg-hover: #262727;
-  // 激活/选中背景
-  --bg-active: #2c2c2d;
-  // 未读/强调背景
+  // ── 圆角 & 过渡速度（暗色保持一致） ──
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ── 页面背景 ──
+  --bg-page: #0f0f11;
+  --bg-container: #1a1b1e;
+  --bg-hover: #262728;
+  --bg-active: #2c2d30;
   --bg-highlight: #1a2a3a;
   --bg-highlight-hover: #223344;
 
-  // 主文字色
-  --text-primary: #e5eaf3;
-  // 常规文字色
-  --text-regular: #a3a6ad;
-  // 次要文字色
-  --text-secondary: #73767a;
-  // 占位符色
-  --text-placeholder: #4c4d4f;
+  // ── 文字色 ──
+  --text-primary: #e4e6ec;
+  --text-regular: #a6aab0;
+  --text-secondary: #727580;
+  --text-placeholder: #4c4d50;
 
-  // 边框色
-  --border-color: #4c4d4f;
-  --border-light: #363637;
-  --border-lighter: #262727;
+  // ── 边框色 ──
+  --border-color: #3a3b3e;
+  --border-light: #2e2f32;
+  --border-lighter: #242526;
 
-  // 主题色
+  // ── 主题色 ──
   --color-primary: #409eff;
   --color-primary-light: #337ecc;
 
-  // 侧边栏
-  --sidebar-bg: #1d1e1f;
-  --sidebar-text: #a3a6ad;
-  --sidebar-text-active: #409eff;
-  // 侧边栏 logo 区域
-  --sidebar-logo-color: #e5eaf3;
-  --sidebar-logo-border: rgba(255, 255, 255, 0.08);
-  // 侧边栏子菜单背景
-  --sidebar-submenu-bg: #161617;
-  --sidebar-item-hover-bg: #2c2c2d;
-  --sidebar-item-active-bg: #1a2a3a;
-
-  // 顶栏
-  --header-bg: #1d1e1f;
-  --header-shadow: rgba(0, 0, 0, 0.3);
-
-  // 标签栏
-  --tags-bg: #1d1e1f;
-  --tags-item-bg: #262727;
-  --tags-item-color: #a3a6ad;
-  --tags-item-active-bg: #409eff;
-  --tags-item-active-color: #fff;
-  --tags-item-hover-bg: #2c2c2d;
-  --tags-item-hover-color: #409eff;
-  --tags-item-hover-border: #4c4d4f;
-
-  // 搜索框
-  --search-bg: #262727;
-  --search-focus-bg: #2c2c2d;
-  --search-focus-shadow: #409eff;
-  --search-dropdown-bg: #1d1e1f;
-  --search-dropdown-shadow: rgba(0, 0, 0, 0.4);
-
-  // 通知弹窗
-  --notice-unread-bg: #1a2a3a;
-  --notice-unread-hover: #223344;
-
-  // 标签栏关闭按钮悬停
-  --tag-close-hover-bg: rgba(255, 255, 255, 0.15);
-
-  // 右键菜单
-  --context-menu-bg: #1d1e1f;
-  --context-menu-shadow: rgba(0, 0, 0, 0.4);
-
-  // 阴影
-  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.4);
-  --shadow-header: 0 1px 4px rgba(0, 0, 0, 0.2);
-
-  // 登录页
-  --login-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  --login-card-bg: #1d1e1f;
-
-  // 表格容器
-  --table-container-bg: #1d1e1f;
-  --search-bar-bg: #1d1e1f;
-
-  // 垂直菜单激活
-  --menu-vertical-active-bg: #2c2c2d;
-
-  // 字典当前行
-  --dict-current-row-bg: #2c2c2d;
-
-  // 徽章边框
-  --badge-border: #1d1e1f;
-
-  // 功能色（暗色下保持一致）
+  // ── 功能色 ──
   --color-success: #67c23a;
   --color-warning: #e6a23c;
   --color-danger: #f56c6c;
   --color-info: #909399;
 
-  // 页面统一边距
+  // ── 侧边栏 ──
+  --sidebar-bg: #1a1b1e;
+  --sidebar-text: #a6aab0;
+  --sidebar-text-active: #409eff;
+  --sidebar-active-indicator: #409eff;
+  // logo 区域
+  --sidebar-logo-color: #e4e6ec;
+  --sidebar-logo-border: rgba(255, 255, 255, 0.06);
+  --sidebar-logo-bg: transparent;
+  // 子菜单背景
+  --sidebar-submenu-bg: #131416;
+  --sidebar-item-hover-bg: #2c2d30;
+  --sidebar-item-active-bg: #1a2a3a;
+  // 宽度
+  --sidebar-width: 220px;
+  --sidebar-collapse-width: 64px;
+
+  // ── 顶栏 ──
+  --header-bg: rgba(26, 27, 30, 0.85);
+  --header-backdrop: blur(10px);
+  --header-height: 50px;
+  --header-shadow: 0 1px 0 var(--border-color), 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  // ── 标签栏 ──
+  --tags-bg: #1a1b1e;
+  --tags-height: 37px;
+  --tags-item-bg: #262728;
+  --tags-item-color: #a6aab0;
+  --tags-item-active-bg: #409eff;
+  --tags-item-active-color: #fff;
+  --tags-item-hover-bg: #2c2d30;
+  --tags-item-hover-color: #409eff;
+  --tags-item-hover-border: #3a3b3e;
+
+  // ── 搜索框 ──
+  --search-bg: #262728;
+  --search-focus-bg: #2c2d30;
+  --search-focus-shadow: #409eff;
+  --search-dropdown-bg: #1a1b1e;
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  // ── 通知弹窗 ──
+  --notice-unread-bg: #1a2a3a;
+  --notice-unread-hover: #223344;
+
+  // ── 标签关闭按钮 ──
+  --tag-close-hover-bg: rgba(255, 255, 255, 0.15);
+
+  // ── 右键菜单 ──
+  --context-menu-bg: #1a1b1e;
+  --context-menu-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  // ── 阴影体系 ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  // ── 登录页 ──
+  --login-bg: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  --login-card-bg: #1a1b1e;
+
+  // ── 表格容器 ──
+  --table-container-bg: #1a1b1e;
+  --search-bar-bg: #1a1b1e;
+
+  // ── 垂直菜单激活 ──
+  --menu-vertical-active-bg: #2c2d30;
+
+  // ── 字典当前行 ──
+  --dict-current-row-bg: #2c2d30;
+
+  // ── 徽章边框 ──
+  --badge-border: #1a1b1e;
+
+  // ── 页面统一边距 ──
   --page-padding: 16px;
 
-  // ECharts 调色板（暗色主题 - 略微提亮）
+  // ── ECharts 调色板（暗色） ──
   --chart-color-1: #6b8cff;
   --chart-color-2: #a0e080;
   --chart-color-3: #ffd666;
@@ -235,6 +274,5 @@ html.dark {
   --chart-color-9: #f59cc0;
   --chart-color-10: #f0b84c;
 
-  // 全局过渡色
   color-scheme: dark;
 }
