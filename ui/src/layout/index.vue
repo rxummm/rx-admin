@@ -218,12 +218,6 @@ function handleMenuSelect(index) {
     })
 }
 
-const sidebarBgColor = computed(() => isDark.value ? '#1d1e1f' : '#ffffff')
-const sidebarTextColor = computed(() => isDark.value ? '#a3a6ad' : '#606266')
-const sidebarBgColor = computed(() => isDark.value ? '#1d1e1f' : '#ffffff')
-const sidebarTextColor = computed(() => isDark.value ? '#a3a6ad' : '#606266')
-const sidebarActiveColor = computed(() => '#409eff')
-
 onMounted(() => {
   tagsStore.addView({
     path: '/dashboard',
