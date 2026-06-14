@@ -1,7 +1,7 @@
 ﻿<template>
   <el-container class="layout-container">
     <!-- 侧边栏 -->
-    <el-aside :width="isCollapse ? '64px' : '240px'" class="layout-aside" :style="{ '--sidebar-current-width': isCollapse ? '64px' : '240px' }">
+    <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
       <div class="logo-container" @click="goHome">
         <img src="@/assets/logo.svg" class="logo-img" />
         <span v-show="!isCollapse" class="logo-title">RX Admin</span>
@@ -109,18 +109,9 @@
       <!-- 主内容 -->
       <el-main class="layout-main">
         <router-view v-slot="{ Component, route: compRoute }">
-          <transition name="fade-transform" mode="out-in">
-            <keep-alive :include="tagsStore.cachedViews">
-              <component
-                :is="Component"
-                v-if="Component"
-                :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
-              <div v-else class="route-loading-fallback">
-                <el-icon class="is-loading"><Loading /></el-icon>
-                <span>页面加载中...</span>
-              </div>
-            </keep-alive>
-          </transition>
+          <keep-alive :include="tagsStore.cachedViews">
+            <component :is="Component" :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
+          </keep-alive>
         </router-view>
       </el-main>
     </el-container>
@@ -224,9 +215,9 @@ function handleMenuSelect(index) {
     })
 }
 
-const sidebarBgColor = computed(() => isDark.value ? '#0d1117' : '#ffffff')
-const sidebarTextColor = computed(() => isDark.value ? '#8b949e' : '#495057')
-const sidebarActiveColor = computed(() => isDark.value ? '#58a6ff' : '#58a6ff')
+const sidebarBgColor = computed(() => isDark.value ? '#1d1e1f' : '#ffffff')
+const sidebarTextColor = computed(() => isDark.value ? '#a3a6ad' : '#606266')
+const sidebarActiveColor = computed(() => '#409eff')
 
 onMounted(() => {
   tagsStore.addView({
@@ -292,9 +283,8 @@ async function handleLogout() {
   // ====== 侧边栏 ======
   .layout-aside {
     background-color: var(--sidebar-bg);
-    overflow-x: hidden; // 禁止水平溢出
-    overflow-y: auto; // 允许垂直滚动
-    transition: width var(--transition-slow);
+    overflow: hidden;
+    transition: width 0.3s;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border-light);
@@ -322,11 +312,10 @@ async function handleLogout() {
       .logo-title {
         margin-left: 10px;
         color: var(--sidebar-logo-color);
-        font-size: 15px;
+        font-size: 18px;
         font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
-        letter-spacing: -0.3px;
       }
     }
 
@@ -379,11 +368,9 @@ async function handleLogout() {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: var(--header-shadow);
-    padding: 0 16px;
-    height: var(--header-height);
-    position: relative;
-    z-index: var(--z-content, 10);
+    box-shadow: var(--shadow-header);
+    padding: 0 20px;
+    height: 50px;
 
     .header-left {
       display: flex;
@@ -527,12 +514,8 @@ async function handleLogout() {
       radial-gradient(circle, var(--border-light) 1px, transparent 1px);
     background-size: 24px 24px;
     padding: 10px;
-    overflow: hidden; // 禁止容器级别滚动，由子组件自行管理
-    height: calc(100vh - var(--header-height) - var(--tags-height));
-    width: 100%; // 强制宽度为100%
-    box-sizing: border-box; // 确保padding不导致溢出
-    display: flex; // 使用flex布局
-    flex-direction: column; // 垂直排列
+    overflow-y: auto;
+    height: calc(100vh - 50px - 37px);
   }
 }
 

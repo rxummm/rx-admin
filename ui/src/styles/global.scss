@@ -266,6 +266,7 @@ html, body, #app {
   min-height: 0; // 允许压缩
   background: var(--table-container-bg);
   border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm);
   padding: 16px;
   overflow: hidden; // 禁止溢出
 
@@ -527,7 +528,9 @@ html, body, #app {
       gap: 2px;
       padding: 6px 2px;
       border-radius: var(--radius-sm);
+      border-radius: var(--radius-sm);
       cursor: pointer;
+      transition: all var(--transition-fast);
       transition: all var(--transition-fast);
       border: 1px solid transparent;
 

@@ -294,7 +294,11 @@ async function handleRegister() {
   overflow: hidden;
   cursor: pointer;
   border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
+  transition: border-color var(--transition-fast);
+
+  &:hover { border-color: var(--color-primary); }
   transition: border-color var(--transition-fast);
 
   &:hover { border-color: var(--color-primary); }
@@ -312,6 +316,7 @@ async function handleRegister() {
   justify-content: center;
   height: 100%;
   font-size: 12px;
+  color: var(--text-secondary);
   color: var(--text-secondary);
 }
 
