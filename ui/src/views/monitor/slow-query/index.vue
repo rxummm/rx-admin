@@ -120,7 +120,9 @@ onMounted(() => { fetchData() })
 <style scoped>
 /* 页面特有样式 - .page-container/.search-bar 在 global.scss 中统一定义 */
 
-.virtual-table-wrapper { border: 1px solid var(--border-light); border-radius: 4px; margin-bottom: 12px; }
+.virtual-table-wrapper {
+  min-height: 0;
+  flex: 1; border: 1px solid var(--border-light); border-radius: 4px; margin-bottom: 12px; }
 .vtable-header { display: flex; align-items: center; background: var(--el-fill-color-light); font-weight: 600; font-size: 13px; color: var(--text-regular); border-bottom: 1px solid var(--border-light); }
 .vscroller { height: 500px; }
 .vrow { display: flex; align-items: center; font-size: 13px; border-bottom: 1px solid var(--border-lighter); }

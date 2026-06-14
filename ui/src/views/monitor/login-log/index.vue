@@ -82,3 +82,10 @@ async function handleBatchDelete() {
 }
 onMounted(fetchData)
 </script>
+
+
+<style scoped>
+.pagination-wrap {
+  margin-top: 12px;
+}
+</style>

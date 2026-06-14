@@ -57,3 +57,10 @@ function handleSearch() { pagination.page = 1; fetchData() }
 function handleReset() { searchForm.username = ''; searchForm.exportType = null; searchForm.timeRange = null; handleSearch() }
 onMounted(fetchData)
 </script>
+
+
+<style scoped>
+.pagination-wrap {
+  margin-top: 12px;
+}
+</style>

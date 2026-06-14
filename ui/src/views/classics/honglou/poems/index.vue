@@ -359,18 +359,16 @@ function resetForm() {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; // 允许压缩
+  min-height: 0;
 }
 
-// 分页器固定在底部
 .honglou-table-wrapper :deep(.page-pagination) {
-  margin-top: auto; // 自动推到最底部
-  padding-top: 8px;
-  flex-shrink: 0; // 禁止压缩
+  margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .honglou-table-wrapper :deep(.el-table__body-wrapper) {
-  overflow-y: auto; // 表格内部滚动
+  overflow-y: auto;
 }
 
 .poem-detail .poem-title {

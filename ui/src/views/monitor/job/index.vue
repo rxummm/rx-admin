@@ -51,6 +51,7 @@
 
     <!-- 分页 -->
     <el-pagination
+      class="page-pagination"
       v-model:page="queryParams.page"
       v-model:limit="queryParams.size"
       :total="total"
@@ -234,5 +235,7 @@ onMounted(() => { fetchData() })
 </script>
 
 <style scoped>
-/* 页面特有样式 - .page-container/.search-bar/.table-container 在 global.scss 中统一定义 */
+.page-pagination {
+  margin-top: 12px;
+}
 </style>

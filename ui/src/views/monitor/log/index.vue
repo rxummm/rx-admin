@@ -242,9 +242,15 @@ async function handleBatchDelete() {
 </script>
 
 <style scoped>
+.page-pagination {
+  margin-top: 12px;
+}
+
 /* 页面特有样式 - .page-container/.search-bar 在 global.scss 中统一定义 */
 
 .log-table-wrapper {
+  min-height: 0;
+  flex: 1;
   border: 1px solid var(--border-light);
   border-radius: 4px;
   overflow: hidden;

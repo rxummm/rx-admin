@@ -233,7 +233,7 @@ const selectedIds = ref([])
 
 // 表格高度
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
-const { tableMaxHeight, calcTableMaxHeight } = useTableHeight('.table-wrapper', 12)
+const { tableMaxHeight, calcTableMaxHeight } = useTableHeight('.table-wrapper')
 
 function handleSelectionChange(rows) {
   selectedIds.value = rows.map(r => r.id)
@@ -411,6 +411,11 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+.table-wrapper :deep(.page-pagination) {
+  margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .table-wrapper :deep(.el-table__body-wrapper) {

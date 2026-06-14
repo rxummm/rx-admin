@@ -139,3 +139,9 @@ async function retry(id) { await retryNotifyApi(id); ElMessage.success('重发�
 
 onMounted(() => { fetchTemplates(); fetchRecords() })
 </script>
+
+<style scoped>
+.pagination-wrap {
+  margin-top: 12px;
+}
+</style>

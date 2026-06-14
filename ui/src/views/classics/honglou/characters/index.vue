@@ -398,6 +398,11 @@ async function viewRelation(characterId) {
   min-height: 0;
 }
 
+.honglou-table-wrapper :deep(.page-pagination) {
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+
 .honglou-table-wrapper :deep(.el-table__body-wrapper) {
   overflow-y: auto;
 }

@@ -175,15 +175,15 @@ function handleSelectionChange(rows) {
   selectedIds.value = rows.map(r => r.id)
 }
 
-// 动态计算表格最大高度：约16行数据 + 表头
-// el-table 行高约 44px，16行 + 表头约40px = 744px
+// 动态计算表格最大高度：约20行数据 + 表头
+// el-table 行高约 44px，20行 + 表头约40px = 920px
 const TABLE_ROW_HEIGHT = 44
 const TABLE_HEADER_HEIGHT = 40
-const MAX_VISIBLE_ROWS = 16
+const MAX_VISIBLE_ROWS = 20
 const tableMaxHeight = ref(0)
 
 function calcTableMaxHeight() {
-  // 16行数据 + 表头
+  // 20行数据 + 表头
   const contentHeight = MAX_VISIBLE_ROWS * TABLE_ROW_HEIGHT + TABLE_HEADER_HEIGHT
   const wrapper = document.querySelector('.notice-table-wrapper')
   if (wrapper) {

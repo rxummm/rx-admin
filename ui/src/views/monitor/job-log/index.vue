@@ -62,3 +62,10 @@ async function handleDelete(id) { await ElMessageBox.confirm('确认删除？','
 async function handleBatchDelete() { await ElMessageBox.confirm(`确认删除${selectedIds.value.length}条？`,'提示',{type:'warning'}); await deleteJobLogBatchApi(selectedIds.value); ElMessage.success('删除成功'); fetchData() }
 onMounted(fetchData)
 </script>
+
+
+<style scoped>
+.pagination-wrap {
+  margin-top: 12px;
+}
+</style>

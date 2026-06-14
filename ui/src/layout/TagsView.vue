@@ -244,6 +244,7 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .tags-view-container {
+  flex-shrink: 0;
   background: var(--tags-bg);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
@@ -276,8 +277,10 @@ onUnmounted(() => {
     background: var(--tags-item-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     text-decoration: none;
+    transition: all var(--transition-fast);
     transition: all var(--transition-fast);
     white-space: nowrap;
 
@@ -315,6 +318,7 @@ onUnmounted(() => {
       border-radius: 50%;
       padding: 1px;
       transition: background var(--transition-fast);
+      transition: background var(--transition-fast);
 
       &:hover {
         background: var(--tag-close-hover-bg);
@@ -338,6 +342,8 @@ onUnmounted(() => {
   background: var(--context-menu-bg);
   border-radius: var(--radius-sm);
   box-shadow: var(--context-menu-shadow);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--context-menu-shadow);
   padding: 4px 0;
   margin: 0;
   list-style: none;
@@ -350,6 +356,7 @@ onUnmounted(() => {
     font-size: 13px;
     color: var(--text-regular);
     cursor: pointer;
+    transition: all var(--transition-fast);
     transition: all var(--transition-fast);
 
     &:hover {

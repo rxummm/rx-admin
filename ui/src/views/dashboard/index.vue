@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="page-container" v-loading="loading">
     <!-- ==================== 系统管理统计 ==================== -->
     <el-card shadow="hover" class="section-card">
@@ -977,9 +977,9 @@ onMounted(() => {
 .page-container {
   padding: 20px 24px;
   background: var(--bg-page);
-  min-height: 100%;
-  overflow: auto !important;
-  margin: 0 !important;
+  width: 100%;
+  overflow: visible;
+  margin: 0;
 }
 
 .section-card {
@@ -1018,6 +1018,21 @@ html.dark .section-card {
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
+  position: relative;
+  padding-left: 14px;
+
+  // 左侧色条
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    border-radius: var(--radius-xs);
+    background: var(--color-primary);
+  }
   position: relative;
   padding-left: 14px;
 
@@ -1074,6 +1089,16 @@ html.dark .section-card {
 .stat-item:nth-child(7) { animation-delay: 0.28s; }
 .stat-item:nth-child(8) { animation-delay: 0.32s; }
 
+// 卡片入场交错动画
+.stat-item:nth-child(1) { animation-delay: 0.04s; }
+.stat-item:nth-child(2) { animation-delay: 0.08s; }
+.stat-item:nth-child(3) { animation-delay: 0.12s; }
+.stat-item:nth-child(4) { animation-delay: 0.16s; }
+.stat-item:nth-child(5) { animation-delay: 0.2s; }
+.stat-item:nth-child(6) { animation-delay: 0.24s; }
+.stat-item:nth-child(7) { animation-delay: 0.28s; }
+.stat-item:nth-child(8) { animation-delay: 0.32s; }
+
 .stat-item:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
@@ -1087,6 +1112,20 @@ html.dark .section-card {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+
+  :deep(.el-icon) {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    // 强制清晰渲染
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+.stat-item:hover .stat-icon {
+  transform: scale(1.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 
   :deep(.el-icon) {
@@ -1287,6 +1326,17 @@ html.dark .classic-card {
   height: 100%;
   border-radius: 5px;
   transition: width 0.8s ease;
+}
+
+@keyframes card-entry {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes card-entry {

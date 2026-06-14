@@ -131,3 +131,10 @@ function formatSize(bytes) {
 
 onMounted(() => fetchData())
 </script>
+
+
+<style scoped>
+.page-pagination {
+  margin-top: 12px;
+}
+</style>

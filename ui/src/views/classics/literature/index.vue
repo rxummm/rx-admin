@@ -317,7 +317,7 @@ const selectedIds = ref([])
 // 表格高度
 const TABLE_ROW_HEIGHT = 44
 const TABLE_HEADER_HEIGHT = 40
-const MAX_VISIBLE_ROWS = 14
+const MAX_VISIBLE_ROWS = 20
 const tableMaxHeight = ref(0)
 
 function calcTableMaxHeight() {
@@ -505,6 +505,11 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+.table-wrapper :deep(.page-pagination) {
+  margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .table-wrapper :deep(.el-table__body-wrapper) {

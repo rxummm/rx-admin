@@ -674,3 +674,10 @@ function resetForm() {
   selectedRoleIds.value = []
 }
 </script>
+
+
+<style scoped>
+.page-pagination {
+  margin-top: 12px;
+}
+</style>

@@ -356,6 +356,10 @@ function resetForm() {
   flex-direction: column;
   min-height: 0;
 }
+.classics-table-wrapper :deep(.page-pagination) {
+  margin-top: 12px;
+  flex-shrink: 0;
+}
 .classics-table-wrapper :deep(.el-table__body-wrapper) {
   overflow-y: auto;
 }
