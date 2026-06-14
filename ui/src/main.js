@@ -8,6 +8,16 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
 import 'nprogress/nprogress.css'
 
+// 字体自托管（替代 Google Fonts CDN）
+import '@fontsource/dm-sans/500.css'
+import '@fontsource/dm-sans/600.css'
+import '@fontsource/dm-sans/700.css'
+import '@fontsource/ibm-plex-sans/400.css'
+import '@fontsource/ibm-plex-sans/500.css'
+import '@fontsource/ibm-plex-sans/600.css'
+import '@fontsource/jetbrains-mono/400.css'
+import '@fontsource/jetbrains-mono/500.css'
+
 // Element Plus 图标全局注册（按需导入配置下，确保所有图标可用）
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -29,8 +39,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册 Font Awesome 图标
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList } from '@fortawesome/free-solid-svg-icons'
-library.add(faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList)
+import { faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette } from '@fortawesome/free-solid-svg-icons'
+library.add(faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 
 // Pinia 必须在 router 之前注册，因为 userStore 在 router 守卫中被使用

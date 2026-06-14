@@ -41,7 +41,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
-import { cyberTheme } from '@/utils/echartsTheme'
+import { getCyberTheme } from '@/utils/echartsTheme'
 import { getLogSummaryApi, getLogHourlyApi, getLogTypeDistributionApi, getLogTrendApi } from '@/api/logAnalysis'
 
 const summary = ref({})
@@ -61,7 +61,7 @@ function renderCharts() {
   // 时段分布柱状图
   const hDom = hourlyChart.value
   if (hDom && hDom.clientWidth > 0 && hDom.clientHeight > 0) {
-    const chart = echarts.init(hDom, cyberTheme)
+    const chart = echarts.init(hDom, getCyberTheme())
     chart.setOption({
       tooltip: { trigger: 'axis' },
       textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' },
@@ -75,7 +75,7 @@ function renderCharts() {
     // 类型分布饼图
   const pDom = pieChart.value
   if (pDom && pDom.clientWidth > 0 && pDom.clientHeight > 0) {
-    const chart = echarts.init(pDom, cyberTheme)
+    const chart = echarts.init(pDom, getCyberTheme())
     chart.setOption({
       tooltip: { trigger: 'item' },
       legend: { bottom: 0, textStyle: { fontSize: 11 } },
@@ -91,7 +91,7 @@ function renderCharts() {
   // 趋势折线图
   const tDom = trendChart.value
   if (tDom && tDom.clientWidth > 0 && tDom.clientHeight > 0) {
-    const chart = echarts.init(tDom, cyberTheme)
+    const chart = echarts.init(tDom, getCyberTheme())
     chart.setOption({
       tooltip: { trigger: 'axis' },
       legend: { data: ['操作总数', '异常数'] },

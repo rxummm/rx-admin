@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // ====== 水浒诗词 ======
 
 export function getShuihuPoemPageApi(params) {
-  return request({ url: '/classics/shuihu/poem/page', method: 'get', params })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.PAGE, method: 'get', params })
 }
 
 /**
@@ -11,29 +12,29 @@ export function getShuihuPoemPageApi(params) {
  * @reserved 预留接口，当前详情在弹窗中直接展示
  */
 export function getShuihuPoemDetailApi(id) {
-  return request({ url: `/classics/shuihu/poem/${id}`, method: 'get' })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.BY_ID(id), method: 'get' })
 }
 
 export function addShuihuPoemApi(data) {
-  return request({ url: '/classics/shuihu/poem', method: 'post', data })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.CRUD, method: 'post', data })
 }
 
 export function updateShuihuPoemApi(data) {
-  return request({ url: '/classics/shuihu/poem', method: 'put', data })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.CRUD, method: 'put', data })
 }
 
 export function deleteShuihuPoemApi(id) {
-  return request({ url: `/classics/shuihu/poem/${id}`, method: 'delete' })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.BY_ID(id), method: 'delete' })
 }
 
 export function batchDeleteShuihuPoemApi(ids) {
-  return request({ url: '/classics/shuihu/poem/batch', method: 'delete', data: ids })
+  return request({ url: API.CLASSICS.SHUIHU.POEM.BATCH, method: 'delete', data: ids })
 }
 
 // ====== 水浒章节 ======
 
 export function getShuihuChapterPageApi(params) {
-  return request({ url: '/classics/shuihu/chapter/page', method: 'get', params })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.PAGE, method: 'get', params })
 }
 
 /**
@@ -41,21 +42,21 @@ export function getShuihuChapterPageApi(params) {
  * @reserved 预留接口，当前详情在弹窗中直接展示
  */
 export function getShuihuChapterDetailApi(id) {
-  return request({ url: `/classics/shuihu/chapter/${id}`, method: 'get' })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.BY_ID(id), method: 'get' })
 }
 
 export function addShuihuChapterApi(data) {
-  return request({ url: '/classics/shuihu/chapter', method: 'post', data })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.CRUD, method: 'post', data })
 }
 
 export function updateShuihuChapterApi(data) {
-  return request({ url: '/classics/shuihu/chapter', method: 'put', data })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.CRUD, method: 'put', data })
 }
 
 export function deleteShuihuChapterApi(id) {
-  return request({ url: `/classics/shuihu/chapter/${id}`, method: 'delete' })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.BY_ID(id), method: 'delete' })
 }
 
 export function batchDeleteShuihuChapterApi(ids) {
-  return request({ url: '/classics/shuihu/chapter/batch', method: 'delete', data: ids })
+  return request({ url: API.CLASSICS.SHUIHU.CHAPTER.BATCH, method: 'delete', data: ids })
 }

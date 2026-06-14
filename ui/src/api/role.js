@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // 角色列表
 export function getRoleListApi() {
   return request({
-    url: '/sys/role/list',
+    url: API.SYS.ROLE.LIST,
     method: 'get'
   })
 }
@@ -11,7 +12,7 @@ export function getRoleListApi() {
 // 新增角色
 export function addRoleApi(data, menuIds) {
   return request({
-    url: '/sys/role',
+    url: API.SYS.ROLE.CRUD,
     method: 'post',
     data,
     params: { menuIds: menuIds?.join(',') }
@@ -21,7 +22,7 @@ export function addRoleApi(data, menuIds) {
 // 修改角色
 export function updateRoleApi(data, menuIds) {
   return request({
-    url: '/sys/role',
+    url: API.SYS.ROLE.CRUD,
     method: 'put',
     data,
     params: { menuIds: menuIds?.join(',') }
@@ -31,7 +32,7 @@ export function updateRoleApi(data, menuIds) {
 // 删除角色
 export function deleteRoleApi(id) {
   return request({
-    url: `/sys/role/${id}`,
+    url: API.SYS.ROLE.BY_ID(id),
     method: 'delete'
   })
 }

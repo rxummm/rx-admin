@@ -3,20 +3,19 @@ package com.rx.admin.modules.monitor.log.vo;
 import lombok.Data;
 import java.time.LocalDateTime;
 
-/** 操作日志视图对象 */
 @Data
 public class OperateLogVO {
     private Long id;
+    private Long userId;
+    private String username;
     private String module;
-    private String action;
+    private String operation;
     private String method;
-    private String requestUrl;
-    private String requestMethod;
-    private String requestParams;
-    private String operatorName;
+    private String params;
+    private String result;
     private String ip;
-    private Long costTime;
     private Integer status;
     private String errorMsg;
+    private Long costTime;
     private LocalDateTime createTime;
 }

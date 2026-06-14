@@ -34,11 +34,11 @@ async function fetchCaches() {
   catch { ElMessage.error('获取缓存信息失败') } finally { loading.value = false }
 }
 async function clearCache(name) {
-  await ElMessageBox.confirm(`确认清除缓存 "${name}"？`,'提示',{type:'warning'})
+  try { await ElMessageBox.confirm(`确认清除缓存 "${name}"？`,'提示',{type:'warning'}) } catch { return }
   await clearCacheApi(name); ElMessage.success(`缓存 ${name} 已清除`); fetchCaches()
 }
 async function handleClearAll() {
-  await ElMessageBox.confirm('确认清除所有缓存？','警告',{type:'warning',confirmButtonClass:'el-button--danger'})
+  try { await ElMessageBox.confirm('确认清除所有缓存？','警告',{type:'warning',confirmButtonClass:'el-button--danger'}) } catch { return }
   await clearAllCacheApi(); ElMessage.success('所有缓存已清除'); fetchCaches()
 }
 onMounted(fetchCaches)

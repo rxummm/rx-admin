@@ -1,6 +1,7 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
-export const getBackupListApi = () => request.get('/tool/backup/list')
-export const createBackupApi = () => request.post('/tool/backup/create')
-export const deleteBackupApi = (filename) => request.delete(`/tool/backup/${filename}`)
-export const downloadBackupApi = (filename) => request.get(`/tool/backup/download/${filename}`, { responseType: 'blob' })
+export const getBackupListApi = () => request.get(API.TOOL.BACKUP.LIST)
+export const createBackupApi = () => request.post(API.TOOL.BACKUP.CREATE)
+export const deleteBackupApi = (filename) => request.delete(API.TOOL.BACKUP.BY_NAME(filename))
+export const downloadBackupApi = (filename) => request.get(API.TOOL.BACKUP.DOWNLOAD(filename), { responseType: 'blob' })

@@ -3,8 +3,8 @@ package com.rx.admin.common.aspect;
 import cn.dev33.satoken.stp.StpUtil;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.utils.WebUtils;
-import com.rx.admin.entity.SysLog;
-import com.rx.admin.service.SysLogService;
+import com.rx.admin.modules.monitor.log.entity.SysLog;
+import com.rx.admin.modules.monitor.log.service.SysLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

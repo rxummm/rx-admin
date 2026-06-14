@@ -1,7 +1,7 @@
 package com.rx.admin.modules.monitor.slowquery.convert;
 
 import com.rx.admin.modules.monitor.slowquery.vo.SlowQueryVO;
-import com.rx.admin.entity.SysSlowQuery;
+import com.rx.admin.modules.monitor.slowquery.entity.SysSlowQuery;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

@@ -134,7 +134,7 @@ fetchData()
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f5f7fa;
+  background: var(--bg-page);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -145,8 +145,8 @@ fetchData()
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: #fff;
-  border-bottom: 1px solid #ebeef5;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--border-lighter);
   flex-shrink: 0;
 }
 
@@ -159,11 +159,11 @@ fetchData()
 .title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .unread-label {
-  color: #909399;
+  color: var(--text-secondary);
   font-size: 12px;
   cursor: default;
 }
@@ -184,11 +184,11 @@ fetchData()
   background: transparent;
 }
 .msg-body::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
+  background: var(--text-placeholder);
   border-radius: 3px;
 }
 .msg-body::-webkit-scrollbar-thumb:hover {
-  background: #909399;
+  background: var(--text-secondary);
 }
 
 .msg-timeline {
@@ -198,7 +198,7 @@ fetchData()
 /* 时间线时间戳 */
 .msg-timeline :deep(.el-timeline-item__timestamp) {
   font-size: 13px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 /* ========== 消息卡片 ========== */
@@ -211,7 +211,7 @@ fetchData()
 
 .msg-card.is-unread {
   border-left: 3px solid var(--color-primary) !important;
-  background: linear-gradient(135deg, #fef9ee 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #fef9ee 0%, var(--color-white) 100%);
 }
 
 .msg-card:hover {
@@ -240,13 +240,13 @@ fetchData()
 .card-title {
   font-size: 14.5px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   line-height: 1.4;
   word-break: break-word;
 }
 
 .is-unread .card-title {
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 .card-actions {
@@ -263,7 +263,7 @@ fetchData()
 }
 
 .card-body {
-  color: #606266;
+  color: var(--text-regular);
   font-size: 13px;
   margin-top: 8px;
   line-height: 1.7;
@@ -275,8 +275,8 @@ fetchData()
 /* ========== 分页器（固定底部）========== */
 .msg-footer {
   padding: 12px 20px;
-  background: #fff;
-  border-top: 1px solid #ebeef5;
+  background: var(--color-white);
+  border-top: 1px solid var(--border-lighter);
   display: flex;
   justify-content: center;
   flex-shrink: 0;

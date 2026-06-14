@@ -19,11 +19,11 @@ import javax.sql.DataSource;
  * 只扫描带 @SecondDB 注解的 Mapper 接口
  */
 @Configuration
-@MapperScan(
-    basePackages = "com.rx.admin.mapper.classics",
-    sqlSessionFactoryRef = "secondSqlSessionFactory",
-    annotationClass = SecondDB.class
-)
+    @MapperScan(
+        basePackages = "com.rx.admin.modules",
+        sqlSessionFactoryRef = "secondSqlSessionFactory",
+        annotationClass = SecondDB.class
+    )
 public class SecondDataSourceConfig {
 
     @Bean(name = "secondDataSource")
@@ -45,7 +45,7 @@ public class SecondDataSourceConfig {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setPlugins(mybatisPlusInterceptor);
-        factoryBean.setTypeAliasesPackage("com.rx.admin.entity.classics");
+        factoryBean.setTypeAliasesPackage("com.rx.admin.modules.**.entity");
         
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setMapUnderscoreToCamelCase(true);

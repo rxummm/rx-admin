@@ -3,7 +3,7 @@ package com.rx.admin.modules.system.role.convert;
 import com.rx.admin.modules.system.role.dto.RoleCreateDTO;
 import com.rx.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.rx.admin.modules.system.role.vo.RoleVO;
-import com.rx.admin.entity.SysRole;
+import com.rx.admin.modules.system.role.entity.SysRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;

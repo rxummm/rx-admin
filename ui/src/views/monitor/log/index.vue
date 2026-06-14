@@ -1,4 +1,4 @@
-﻿<template>
+﻿﻿<template>
   <div class="page-container">
     <div class="search-bar">
       <el-input v-model="keyword" :placeholder="$t('monitor.log.operator') + '/' + $t('monitor.log.action') + '/' + $t('monitor.log.module')" clearable style="width: 200px" @keyup.enter="fetchData" />
@@ -68,15 +68,14 @@
           </div>
         </RecycleScroller>
         <el-empty v-if="!loading && sortedTableData.length === 0" :description="$t('common.noData')" />
+      </div>
+      <el-pagination
+        v-model:current-page="page" v-model:page-size="size" :total="total"
+        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        class="page-pagination"
+        @size-change="fetchData" @current-change="fetchData"
+      />
     </div>
-    </div>
-
-    <el-pagination
-      v-model:current-page="page" v-model:page-size="size" :total="total"
-      :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
-      class="page-pagination"
-      @size-change="fetchData" @current-change="fetchData"
-    />
     <!-- 详情弹窗 -->
     <el-dialog v-model="detailVisible" :title="$t('monitor.log.title') + $t('common.detail')" width="600px">
       <el-descriptions :column="1" border>
@@ -244,6 +243,7 @@ async function handleBatchDelete() {
 <style scoped>
 .page-pagination {
   margin-top: 12px;
+  flex-shrink: 0;
 }
 
 /* 页面特有样式 - .page-container/.search-bar 在 global.scss 中统一定义 */
@@ -251,6 +251,8 @@ async function handleBatchDelete() {
 .log-table-wrapper {
   min-height: 0;
   flex: 1;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border-light);
   border-radius: 4px;
   overflow: hidden;
@@ -265,12 +267,15 @@ async function handleBatchDelete() {
   color: var(--text-regular);
   border-bottom: 1px solid var(--border-light);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .vscroller-wrapper {
   position: relative;
-  min-height: 200px;
+  flex: 1;
+  min-height: 0;
   width: 100%;
+  overflow-y: auto;
 }
 
 .vscroller {

@@ -289,6 +289,9 @@ import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { sendEmailApi, uploadEmailAttachmentApi, getEmailConfigApi } from '@/api/commonTools'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
+import { FONT_FAMILIES, FONT_SIZES, SIGNATURE_FONT_SIZES } from '@/config/font'
+import { EMAIL_TEMPLATES } from '@/config/emailTemplates'
+import { getFileIconColor } from '@/config/fileIcons'
 
 // ── 签名本地存储 ──
 const signatureStore = useStorage(STORAGE_KEYS.EMAIL_SIGNATURE)
@@ -298,16 +301,7 @@ const editorRef = shallowRef()
 const signatureEditorRef = shallowRef()
 
 // ── 字体列表 ──
-const fontFamilies = [
-  { name: '宋体', value: 'SimSun' },
-  { name: '黑体', value: 'SimHei' },
-  { name: '微软雅黑', value: 'Microsoft YaHei' },
-  { name: '楷体', value: 'KaiTi' },
-  { name: '仿宋', value: 'FangSong' },
-  { name: 'Arial', value: 'Arial' },
-  { name: 'Times New Roman', value: 'Times New Roman' },
-  { name: 'Verdana', value: 'Verdana' },
-]
+const fontFamilies = FONT_FAMILIES
 
 // ── 主编辑器工具栏 ──
 const toolbarConfig = {
@@ -326,18 +320,7 @@ const editorConfig = {
   MENU_CONF: {
     fontFamily: { fontFamilyList: fontFamilies },
     fontSize: {
-      fontSizeList: [
-        { name: '10px', value: '10px' },
-        { name: '12px', value: '12px' },
-        { name: '14px', value: '14px' },
-        { name: '16px', value: '16px' },
-        { name: '18px', value: '18px' },
-        { name: '20px', value: '20px' },
-        { name: '24px', value: '24px' },
-        { name: '28px', value: '28px' },
-        { name: '36px', value: '36px' },
-        { name: '48px', value: '48px' },
-      ]
+      fontSizeList: FONT_SIZES
     }
   }
 }
@@ -373,14 +356,7 @@ const signatureEditorConfig = {
   MENU_CONF: {
     fontFamily: { fontFamilyList: fontFamilies },
     fontSize: {
-      fontSizeList: [
-        { name: '10px', value: '10px' },
-        { name: '12px', value: '12px' },
-        { name: '14px', value: '14px' },
-        { name: '16px', value: '16px' },
-        { name: '18px', value: '18px' },
-        { name: '20px', value: '20px' },
-      ]
+      fontSizeList: SIGNATURE_FONT_SIZES
     }
   }
 }
@@ -559,10 +535,7 @@ function insertTemplate(type) {
 }
 
 function insertTemplateContent(type) {
-  const templates = {
-    greeting: `<p>您好，</p><p><br></p><p></p><p><br></p><p>此致</p><p>敬礼</p>`,
-    notification: `<p>各位同事：</p><p><br></p><p>通知如下：</p><ul><li><br></li><li><br></li><li><br></li></ul><p><br></p><p>请相互转告，谢谢！</p>`
-  }
+  const templates = EMAIL_TEMPLATES
   const html = templates[type] || ''
   const editor = editorRef.value
   if (html && editor) {
@@ -728,19 +701,6 @@ function formatFileSize(bytes) {
     i++
   }
   return size.toFixed(i > 0 ? 1 : 0) + ' ' + units[i]
-}
-
-function getFileIconColor(name) {
-  if (!name) return '#909399'
-  const ext = name.split('.').pop()?.toLowerCase()
-  const colors = {
-    pdf: '#F56C6C', doc: '#409EFF', docx: '#409EFF',
-    xls: '#67C23A', xlsx: '#67C23A', ppt: '#E6A23C', pptx: '#E6A23C',
-    zip: '#909399', rar: '#909399', '7z': '#909399',
-    jpg: '#67C23A', jpeg: '#67C23A', png: '#67C23A', gif: '#67C23A',
-    txt: '#909399', csv: '#67C23A'
-  }
-  return colors[ext] || '#909399'
 }
 </script>
 

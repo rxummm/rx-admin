@@ -152,7 +152,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import * as echarts from 'echarts'
-import { cyberTheme } from '@/utils/echartsTheme'
+import { getCyberTheme } from '@/utils/echartsTheme'
 import {
   Connection, PieChart, Grid, Link, Collection, Compass, Search
 } from '@element-plus/icons-vue'
@@ -255,7 +255,7 @@ function renderLangChart() {
     langCount[lang] = (langCount[lang] || 0) + 1
   })
   const data = Object.entries(langCount).map(([k, v]) => ({ name: k, value: v }))
-  if (!langChart) langChart = echarts.init(langChartRef.value, cyberTheme)
+  if (!langChart) langChart = echarts.init(langChartRef.value, getCyberTheme())
   langChart.setOption({
     tooltip: { trigger: 'item' },
     series: [{
@@ -270,7 +270,7 @@ function renderLayerChart() {
   if (!layerChartRef.value || !graph.value || !graph.value.layers) return
   const names = graph.value.layers.map(l => l.name)
   const counts = graph.value.layers.map(l => l.nodeIds.length)
-  if (!layerChart) layerChart = echarts.init(layerChartRef.value, cyberTheme)
+  if (!layerChart) layerChart = echarts.init(layerChartRef.value, getCyberTheme())
   layerChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
@@ -290,7 +290,7 @@ function renderEdgeChart() {
   const edgeTypes = {}
   graph.value.edges.forEach(e => { edgeTypes[e.type] = (edgeTypes[e.type] || 0) + 1 })
   const data = Object.entries(edgeTypes).sort((a, b) => b[1] - a[1])
-  if (!edgeChart) edgeChart = echarts.init(edgeChartRef.value, cyberTheme)
+  if (!edgeChart) edgeChart = echarts.init(edgeChartRef.value, getCyberTheme())
   edgeChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },

@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // Excel解析 - 上传并解析
 export function parseExcelApi(formData) {
   return request({
-    url: '/common-tools/excel/parse',
+    url: API.TOOL.COMMON.EXCEL_PARSE,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -13,7 +14,7 @@ export function parseExcelApi(formData) {
 // 文档上传
 export function uploadDocumentApi(formData) {
   return request({
-    url: '/common-tools/document/upload',
+    url: API.TOOL.COMMON.DOCUMENT_UPLOAD,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -22,23 +23,23 @@ export function uploadDocumentApi(formData) {
 
 // 文档列表
 export function getDocumentListApi(params) {
-  return request({ url: '/common-tools/document/list', method: 'get', params })
+  return request({ url: API.TOOL.COMMON.DOCUMENT_LIST, method: 'get', params })
 }
 
 // 删除文档
 export function deleteDocumentApi(id) {
-  return request({ url: `/common-tools/document/${id}`, method: 'delete' })
+  return request({ url: API.TOOL.COMMON.DOCUMENT_BY_ID(id), method: 'delete' })
 }
 
 // 获取默认存储路径
 export function getDefaultDirApi() {
-  return request({ url: '/common-tools/document/default-dir', method: 'get' })
+  return request({ url: API.TOOL.COMMON.DOCUMENT_DEFAULT_DIR, method: 'get' })
 }
 
 // PDF转Word
 export function convertPdfToWordApi(formData) {
   return request({
-    url: '/common-tools/convert/pdf-to-word',
+    url: API.TOOL.COMMON.PDF_TO_WORD,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -48,7 +49,7 @@ export function convertPdfToWordApi(formData) {
 // Word转PDF
 export function convertWordToPdfApi(formData) {
   return request({
-    url: '/common-tools/convert/word-to-pdf',
+    url: API.TOOL.COMMON.WORD_TO_PDF,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -66,7 +67,7 @@ export function sendEmailApi(data) {
   formData.append('isHtml', data.isHtml || false)
   if (data.attachmentPaths) formData.append('attachmentPaths', data.attachmentPaths)
   return request({
-    url: '/common-tools/email/send',
+    url: API.TOOL.COMMON.EMAIL_SEND,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -76,7 +77,7 @@ export function sendEmailApi(data) {
 // 上传邮件附件
 export function uploadEmailAttachmentApi(formData) {
   return request({
-    url: '/common-tools/email/upload-attachment',
+    url: API.TOOL.COMMON.EMAIL_UPLOAD,
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -85,5 +86,5 @@ export function uploadEmailAttachmentApi(formData) {
 
 // 获取邮件配置（发件人等）
 export function getEmailConfigApi() {
-  return request({ url: '/common-tools/email/config', method: 'get' })
+  return request({ url: API.TOOL.COMMON.EMAIL_CONFIG, method: 'get' })
 }

@@ -26,89 +26,14 @@
 
 <script setup>
 defineOptions({ name: 'ToolStandards' })
-import { ref, onMounted, nextTick } from 'vue'
-import { marked } from 'marked'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/github.css'
-import 'github-markdown-css/github-markdown.css'
-import { sanitizeHtml } from '@/utils/sanitize'
-import 'github-markdown-css/github-markdown.css'
+import { onMounted } from 'vue'
+import { useMarkdownRenderer } from '@/composables/useMarkdownRenderer'
 
-const contentRef = ref(null)
-const tocItems = ref([])
-const activeTocId = ref('')
+const {
+  contentRef, tocItems, activeTocId, renderedHtml,
+  loadDocument, scrollToHeading, sanitizeHtml
+} = useMarkdownRenderer()
 
-// 配置 marked
-marked.setOptions({
-  breaks: true,
-  gfm: true
-})
-
-// 代码高亮
-const renderer = new marked.Renderer()
-renderer.code = function ({ text, lang }) {
-  const validLang = lang && hljs.getLanguage(lang) ? lang : 'plaintext'
-  const highlighted = hljs.highlight(text, { language: validLang }).value
-  return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`
-}
-
-// 自定义标题渲染，添加 id 便于目录导航
-let headingIndex = 0
-renderer.heading = function ({ text, depth }) {
-  headingIndex++
-  const id = `heading-${headingIndex}`
-  return `<h${depth} id="${id}">${text}</h${depth}>`
-}
-
-marked.use({ renderer })
-
-const renderedHtml = ref('')
-
-// 从 public 目录加载 markdown 文档
-async function loadDocument() {
-  try {
-    const response = await fetch('/docs/rxadmin-dev-skills.md')
-    const text = await response.text()
-    renderedHtml.value = marked.parse(text)
-    await nextTick()
-    extractToc()
-    setupHeadingLinks()
-  } catch (err) {
-    console.error('加载文档失败:', err)
-    renderedHtml.value = '<p style="color:red;text-align:center;padding:40px;">文档加载失败，请检查文件是否存在</p>'
-  }
-}
-
-// 提取目录
-function extractToc() {
-  if (!contentRef.value) return
-  const headings = contentRef.value.querySelectorAll('h1, h2, h3')
-  tocItems.value = Array.from(headings).map(h => ({
-    id: h.id,
-    text: h.textContent,
-    level: parseInt(h.tagName.charAt(1))
-  }))
-}
-
-// 设置标题点击跳转
-function setupHeadingLinks() {
-  if (!contentRef.value) return
-  const headings = contentRef.value.querySelectorAll('h1, h2, h3')
-  headings.forEach(h => {
-    h.style.cursor = 'pointer'
-  })
-}
-
-// 点击目录项滚动
-function scrollToHeading(id) {
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    activeTocId.value = id
-  }
-}
-
-// 监听滚动高亮当前标题
 function handleScroll() {
   if (!contentRef.value) return
   const headings = contentRef.value.querySelectorAll('h1, h2, h3')
@@ -125,7 +50,7 @@ function handleScroll() {
 }
 
 onMounted(() => {
-  loadDocument()
+  loadDocument('/docs/rxadmin-dev-skills.md')
   window.addEventListener('scroll', handleScroll, { passive: true })
 })
 </script>

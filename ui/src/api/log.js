@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // 日志列表
 export function getLogPageApi(params) {
   return request({
-    url: '/monitor/log/page',
+    url: API.MONITOR.LOG.PAGE,
     method: 'get',
     params
   })
@@ -12,7 +13,7 @@ export function getLogPageApi(params) {
 // 删除单条日志
 export function deleteLogApi(id) {
   return request({
-    url: `/monitor/log/${id}`,
+    url: API.MONITOR.LOG.BY_ID(id),
     method: 'delete'
   })
 }
@@ -20,7 +21,7 @@ export function deleteLogApi(id) {
 // 批量删除日志
 export function deleteLogBatchApi(ids) {
   return request({
-    url: '/monitor/log/batch',
+    url: API.MONITOR.LOG.BATCH,
     method: 'delete',
     data: ids
   })

@@ -1,8 +1,9 @@
 package com.rx.admin.framework.security;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.rx.admin.mapper.SysUserMapper;
-import com.rx.admin.mapper.SysUserMenuMapper;
+import com.rx.admin.modules.system.user.mapper.SysUserMapper;
+import com.rx.admin.modules.system.user.mapper.SysUserMenuMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Set;
  * 权限来源 = 角色权限（sys_role_menu） ∪ 直接授权权限（sys_user_menu）
  * 角色来源 = 用户角色（sys_user_role）
  */
+@Slf4j
 @Component
 public class StpInterfaceImpl implements StpInterface {
 
@@ -38,7 +40,9 @@ public class StpInterfaceImpl implements StpInterface {
             if (roles != null && roles.contains("admin")) {
                 return userMapper.selectAllValidPerms();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            log.warn("获取角色列表失败: {}", e.getMessage());
+        }
 
         // 角色权限（通过 sys_role_menu）
         List<String> rolePerms = userMapper.selectPermsByUserId(userId);

@@ -86,10 +86,11 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getTableListApi, getTableColumnsApi, previewCodeApi, generateCodeApi } from '@/api/gen'
+import { DEFAULT_GENERATOR_CONFIG, TABLE_PREFIX_REGEX } from '@/config/generator'
 
 const step = ref(0); const tables = ref([]); const tableSearch = ref('')
 const selectedTable = ref(null); const selectedColumns = ref([])
-const config = ref({ packageName: 'com.rx.admin', moduleName: '', author: '', menuParentId: null })
+const config = ref({ ...DEFAULT_GENERATOR_CONFIG })
 const previewFiles = ref([]); const previewTab = ref(''); const generating = ref(false)
 
 const filteredTables = computed(() => {
@@ -99,7 +100,7 @@ const filteredTables = computed(() => {
 
 const entityName = computed(() => {
   if (!selectedTable.value) return ''
-  const name = selectedTable.value.tableName.replace(/^sys_/, '')
+  const name = selectedTable.value.tableName.replace(TABLE_PREFIX_REGEX, '')
   return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toUpperCase())
 })
 

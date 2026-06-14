@@ -1,9 +1,10 @@
 ﻿import request from '@/utils/request'
+import { API } from './routes'
 
 // 定时任务分页列表
 export function getJobPageApi(params) {
   return request({
-    url: '/monitor/job/page',
+    url: API.MONITOR.JOB.PAGE,
     method: 'get',
     params
   })
@@ -12,7 +13,7 @@ export function getJobPageApi(params) {
 // 新增定时任务
 export function addJobApi(data) {
   return request({
-    url: '/monitor/job',
+    url: API.MONITOR.JOB.CRUD,
     method: 'post',
     data
   })
@@ -21,7 +22,7 @@ export function addJobApi(data) {
 // 修改定时任务
 export function updateJobApi(data) {
   return request({
-    url: '/monitor/job',
+    url: API.MONITOR.JOB.CRUD,
     method: 'put',
     data
   })
@@ -30,7 +31,7 @@ export function updateJobApi(data) {
 // 删除定时任务
 export function deleteJobApi(id) {
   return request({
-    url: `/monitor/job/${id}`,
+    url: API.MONITOR.JOB.BY_ID(id),
     method: 'delete'
   })
 }
@@ -38,7 +39,7 @@ export function deleteJobApi(id) {
 // 切换状态
 export function toggleJobStatusApi(id) {
   return request({
-    url: `/monitor/job/status/${id}`,
+    url: API.MONITOR.JOB.TOGGLE_STATUS(id),
     method: 'put'
   })
 }
@@ -46,7 +47,7 @@ export function toggleJobStatusApi(id) {
 // 执行一次
 export function runOnceApi(id) {
   return request({
-    url: `/monitor/job/run/${id}`,
+    url: API.MONITOR.JOB.RUN_ONCE(id),
     method: "put"
   })
 }

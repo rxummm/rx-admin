@@ -59,7 +59,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
-import { cyberTheme } from '@/utils/echartsTheme'
+import { getCyberTheme } from '@/utils/echartsTheme'
 import { getSystemHealthApi, getGcStatsApi } from '@/api/health'
 
 const data = ref({})
@@ -99,7 +99,7 @@ function renderGauge() {
     return
   }
   if (!gaugeChartInstance) {
-    gaugeChartInstance = echarts.init(el, cyberTheme)
+    gaugeChartInstance = echarts.init(el, getCyberTheme())
   } else {
     gaugeChartInstance.resize()
   }

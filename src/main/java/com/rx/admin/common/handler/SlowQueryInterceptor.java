@@ -1,6 +1,6 @@
 package com.rx.admin.common.handler;
 
-import com.rx.admin.service.SysSlowQueryService;
+import com.rx.admin.modules.monitor.slowquery.service.SysSlowQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -62,7 +62,9 @@ public class SlowQueryInterceptor implements Interceptor {
             if (ms instanceof MappedStatement) {
                 return ((MappedStatement) ms).getId();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            log.warn("提取 Mapper 方法名失败: {}", e.getMessage());
+        }
         return "";
     }
 

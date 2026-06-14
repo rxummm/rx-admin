@@ -11,23 +11,26 @@
       <el-button type="primary" @click="handleSearch" style="margin-left:8px">搜索</el-button>
       <el-button @click="handleReset">重置</el-button>
     </div>
-    <el-table :data="tableData" v-loading="loading" stripe border>
-      <el-table-column prop="id" label="ID" width="70" />
-      <el-table-column prop="username" label="用户名" width="120" />
-      <el-table-column prop="exportType" label="导出类型" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.exportType==='excel'?'success':'warning'" size="small">{{ row.exportType?.toUpperCase() }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="exportTitle" label="导出标题" min-width="160" />
-      <el-table-column prop="recordCount" label="记录数" width="80" />
-      <el-table-column prop="fileName" label="文件名" min-width="200" show-overflow-tooltip />
-      <el-table-column prop="ip" label="IP" width="140" />
-      <el-table-column prop="createTime" label="导出时间" width="170" />
-    </el-table>
-    <div class="pagination-wrap">
-      <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.size"
-        :page-sizes="[10,20,50,100]" :total="pagination.total" layout="total,sizes,prev,pager,next" @change="fetchData" />
+    <div class="export-log-table-wrapper">
+      <el-table :data="tableData" :max-height="tableMaxHeight" v-loading="loading" stripe border style="width: 100%">
+        <el-table-column prop="id" label="ID" width="70" />
+        <el-table-column prop="username" label="用户名" width="120" />
+        <el-table-column prop="exportType" label="导出类型" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.exportType==='excel'?'success':'warning'" size="small">{{ row.exportType?.toUpperCase() }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="exportTitle" label="导出标题" min-width="160" />
+        <el-table-column prop="recordCount" label="记录数" width="80" />
+        <el-table-column prop="fileName" label="文件名" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="ip" label="IP" width="140" />
+        <el-table-column prop="createTime" label="导出时间" width="170" />
+      </el-table>
+      <el-pagination
+        class="page-pagination"
+        v-model:current-page="pagination.page" v-model:page-size="pagination.size"
+        :page-sizes="[10, 20, 50, 100]" :total="pagination.total" layout="total, sizes, prev, pager, next, jumper"
+        @size-change="fetchData" @current-change="fetchData" />
     </div>
   </div>
 </template>
@@ -36,11 +39,13 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getExportLogPageApi } from '@/api/exportLog'
+import { useTableHeight } from '@/composables/useTableHeight'
 
 const loading = ref(false)
 const tableData = ref([])
 const searchForm = reactive({ username: '', exportType: null, timeRange: null })
 const pagination = reactive({ page: 1, size: 10, total: 0 })
+const { tableMaxHeight, calcTableMaxHeight } = useTableHeight('.export-log-table-wrapper')
 
 function buildParams() {
   const p = { page: pagination.page, size: pagination.size, username: searchForm.username || undefined, exportType: searchForm.exportType }
@@ -55,12 +60,19 @@ async function fetchData() {
 }
 function handleSearch() { pagination.page = 1; fetchData() }
 function handleReset() { searchForm.username = ''; searchForm.exportType = null; searchForm.timeRange = null; handleSearch() }
-onMounted(fetchData)
+onMounted(() => { fetchData(); calcTableMaxHeight() })
 </script>
 
 
 <style scoped>
-.pagination-wrap {
+.export-log-table-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.export-log-table-wrapper :deep(.page-pagination) {
   margin-top: 12px;
+  flex-shrink: 0;
 }
 </style>

@@ -1,11 +1,12 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 /**
  * 分页查询行政区划
  */
 export function getRegionPageApi(params) {
   return request({
-    url: '/tool/region/page',
+    url: API.TOOL.REGION.PAGE,
     method: 'get',
     params
   })
@@ -16,7 +17,7 @@ export function getRegionPageApi(params) {
  */
 export function getRegionChildrenApi(parentCode) {
   return request({
-    url: '/tool/region/children',
+    url: API.TOOL.REGION.CHILDREN,
     method: 'get',
     params: { parentCode }
   })
@@ -27,7 +28,7 @@ export function getRegionChildrenApi(parentCode) {
  */
 export function searchRegionApi(params) {
   return request({
-    url: '/tool/region/search',
+    url: API.TOOL.REGION.SEARCH,
     method: 'get',
     params
   })
@@ -39,7 +40,7 @@ export function searchRegionApi(params) {
  */
 export function getRegionByIdApi(id) {
   return request({
-    url: `/tool/region/${id}`,
+    url: API.TOOL.REGION.BY_ID(id),
     method: 'get'
   })
 }
@@ -49,7 +50,7 @@ export function getRegionByIdApi(id) {
  */
 export function addRegionApi(data) {
   return request({
-    url: '/tool/region',
+    url: API.TOOL.REGION.CRUD,
     method: 'post',
     data
   })
@@ -60,7 +61,7 @@ export function addRegionApi(data) {
  */
 export function updateRegionApi(data) {
   return request({
-    url: '/tool/region',
+    url: API.TOOL.REGION.CRUD,
     method: 'put',
     data
   })
@@ -71,7 +72,7 @@ export function updateRegionApi(data) {
  */
 export function deleteRegionApi(id) {
   return request({
-    url: `/tool/region/${id}`,
+    url: API.TOOL.REGION.BY_ID(id),
     method: 'delete'
   })
 }

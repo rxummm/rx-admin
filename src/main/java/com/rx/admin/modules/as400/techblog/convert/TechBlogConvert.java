@@ -3,7 +3,7 @@ package com.rx.admin.modules.as400.techblog.convert;
 import com.rx.admin.modules.as400.techblog.dto.TechBlogCreateDTO;
 import com.rx.admin.modules.as400.techblog.dto.TechBlogUpdateDTO;
 import com.rx.admin.modules.as400.techblog.vo.TechBlogVO;
-import com.rx.admin.entity.TechBlogArticle;
+import com.rx.admin.modules.as400.techblog.entity.TechBlogArticle;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

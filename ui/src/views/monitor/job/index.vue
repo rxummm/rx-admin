@@ -20,8 +20,8 @@
       </el-button>
     </div>
 
-    <div class="table-container">
-      <el-table :data="tableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+    <div class="job-table-wrapper">
+      <el-table :data="tableData" :max-height="tableMaxHeight" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="45" />
         <el-table-column prop="id" label="ID" width="70" />
         <el-table-column prop="jobName" :label="$t('job.jobName')" min-width="150" />
@@ -47,19 +47,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        class="page-pagination"
+        v-model:current-page="queryParams.page"
+        v-model:page-size="queryParams.size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="fetchData"
+        @current-change="fetchData"
+      />
     </div>
-
-    <!-- 分页 -->
-    <el-pagination
-      class="page-pagination"
-      v-model:page="queryParams.page"
-      v-model:limit="queryParams.size"
-      :total="total"
-      :page-sizes="[10, 20, 50]"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="fetchData"
-      @current-change="fetchData"
-    />
 
     <!-- 新增/编辑对话框 -->
     <el-dialog :title="isEdit ? $t('common.edit') : $t('common.add')" v-model="dialogVisible" :width="520">
@@ -90,8 +88,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getJobPageApi, addJobApi, updateJobApi, deleteJobApi, runOnceApi, toggleJobStatusApi } from '@/api/job'
+import { useTableHeight } from '@/composables/useTableHeight'
 
 const { t } = useI18n()
+
+const { tableMaxHeight, calcTableMaxHeight } = useTableHeight('.job-table-wrapper')
 
 // 查询参数
 const queryParams = reactive({
@@ -231,11 +232,18 @@ async function handleBatchDelete() {
 // 模板引用
 const formRef = ref(null)
 
-onMounted(() => { fetchData() })
+onMounted(() => { fetchData(); calcTableMaxHeight() })
 </script>
 
 <style scoped>
-.page-pagination {
+.job-table-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.job-table-wrapper :deep(.page-pagination) {
   margin-top: 12px;
+  flex-shrink: 0;
 }
 </style>

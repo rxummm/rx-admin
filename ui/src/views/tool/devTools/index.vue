@@ -815,6 +815,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { RefreshRight, Switch, Tickets, Timer, BrushFilled, Lock, Link, Document, Picture, Plus } from '@element-plus/icons-vue'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
+import { COLORS } from '@/config/colors'
 
 const { t } = useI18n()
 
@@ -1197,20 +1198,20 @@ function jsonEditValidate() {
 function jsonEditOnInput() { try { const o = JSON.parse(jsonEditInput.value); jsonEditValid.value = true; renderJsonTree(o) } catch(e) { jsonEditValid.value = null; jsonEditTree.value = '' } }
 function renderJsonTree(obj, depth = 0) {
   const indent = '&nbsp;'.repeat(depth * 3)
-  if (obj === null) return `<span style="color:#909399">null</span>`
+  if (obj === null) return `<span style="color:${COLORS.TEXT_SECONDARY}">null</span>`
   if (typeof obj !== 'object') {
-    const c = typeof obj === 'string' ? '#10b981' : typeof obj === 'number' ? '#f59e0b' : '#e6a23c'
+    const c = typeof obj === 'string' ? COLORS.SUCCESS : typeof obj === 'number' ? COLORS.WARNING : COLORS.STATUS.WARNING
     return `<span style="color:${c}">${JSON.stringify(obj)}</span>`
   }
   if (Array.isArray(obj)) {
-    let html = `<span style="color:#909399">[</span><br>`
-    obj.forEach((v, i) => { html += `${indent}&nbsp;&nbsp;<span style="color:#909399">${i}:</span> ${renderJsonTree(v, depth+1)}<br>` })
-    html += `${indent}<span style="color:#909399">]</span>`
+    let html = `<span style="color:${COLORS.TEXT_SECONDARY}">[</span><br>`
+    obj.forEach((v, i) => { html += `${indent}&nbsp;&nbsp;<span style="color:${COLORS.TEXT_SECONDARY}">${i}:</span> ${renderJsonTree(v, depth+1)}<br>` })
+    html += `${indent}<span style="color:${COLORS.TEXT_SECONDARY}">]</span>`
     return html
   }
-  let html = `<span style="color:#909399">{</span><br>`
-  Object.entries(obj).forEach(([k, v]) => { html += `${indent}&nbsp;&nbsp;<span style="color:#303133">"${k}":</span> ${renderJsonTree(v, depth+1)}<br>` })
-  html += `${indent}<span style="color:#909399">}</span>`
+  let html = `<span style="color:${COLORS.TEXT_SECONDARY}">{</span><br>`
+  Object.entries(obj).forEach(([k, v]) => { html += `${indent}&nbsp;&nbsp;<span style="color:${COLORS.TEXT_PRIMARY}">"${k}":</span> ${renderJsonTree(v, depth+1)}<br>` })
+  html += `${indent}<span style="color:${COLORS.TEXT_SECONDARY}">}</span>`
   return html
 }
 
@@ -1571,7 +1572,7 @@ function formatSQL(code) {
 
 // ===== CSS渐变生成器 =====
 const gradType = ref('linear'); const gradAngle = ref(90)
-const gradColor1 = ref('#409EFF'); const gradColor2 = ref('#67C23A')
+const gradColor1 = ref(COLORS.PRIMARY.toUpperCase()); const gradColor2 = ref(COLORS.SUCCESS.toUpperCase())
 const gradCss = ref('')
 function updateCssGradient() {
   if (gradType.value === 'linear') {
@@ -1731,7 +1732,7 @@ const wmResult = ref('')
 const wmText = ref('水印文字')
 const wmPosition = ref('bottomRight')
 const wmFontSize = ref(36)
-const wmColor = ref('#ffffff')
+const wmColor = ref(COLORS.BG_WHITE)
 const wmOpacity = ref(0.4)
 
 function onWmUpload(file) {
@@ -1939,7 +1940,7 @@ function decodeB64Image() {
 // ----- 图标设计器 -----
 const iconDesignCanvas = ref(null)
 const iconDesignShape = ref('circle')
-const iconDesignBg = ref('#409EFF')
+const iconDesignBg = ref(COLORS.PRIMARY)
 const iconDesignFg = ref('#FFFFFF')
 const iconDesignText = ref('A')
 const iconDesignFontSize = ref(80)

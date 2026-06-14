@@ -1,6 +1,7 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
-export const getLogSummaryApi = () => request.get('/monitor/log-analysis/summary', { _skipNProgress: true })
-export const getLogHourlyApi = () => request.get('/monitor/log-analysis/hourly')
-export const getLogTypeDistributionApi = () => request.get('/monitor/log-analysis/type-distribution')
-export const getLogTrendApi = (days = 7) => request.get('/monitor/log-analysis/trend', { params: { days } })
+export const getLogSummaryApi = () => request.get(API.MONITOR.LOG_ANALYSIS.SUMMARY, { _skipNProgress: true })
+export const getLogHourlyApi = () => request.get(API.MONITOR.LOG_ANALYSIS.HOURLY)
+export const getLogTypeDistributionApi = () => request.get(API.MONITOR.LOG_ANALYSIS.TYPE_DISTRIBUTION)
+export const getLogTrendApi = (days = 7) => request.get(API.MONITOR.LOG_ANALYSIS.TREND, { params: { days } })

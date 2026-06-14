@@ -1,7 +1,7 @@
 package com.rx.admin.task;
 
-import com.rx.admin.entity.SysJobLog;
-import com.rx.admin.service.JobLogService;
+import com.rx.admin.modules.monitor.joblog.entity.SysJobLog;
+import com.rx.admin.modules.monitor.joblog.service.JobLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

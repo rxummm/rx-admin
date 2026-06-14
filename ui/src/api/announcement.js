@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
-export const getPopupAnnouncementsApi = () => request.get('/content/announcement/popup')
-export const markAnnouncementReadApi = (noticeId) => request.post(`/content/announcement/read/${noticeId}`)
+export const getPopupAnnouncementsApi = () => request.get(API.CONTENT.ANNOUNCEMENT.POPUP)
+export const markAnnouncementReadApi = (noticeId) => request.post(API.CONTENT.ANNOUNCEMENT.READ(noticeId))

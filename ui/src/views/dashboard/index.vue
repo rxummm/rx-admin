@@ -463,7 +463,8 @@ import { getNoticeSummaryApi } from "@/api/notice"
 import { getUnreadCountApi } from "@/api/message"
 import { getSystemHealthApi, getGcStatsApi } from "@/api/health"
 import * as echarts from "echarts"
-import { cyberTheme } from '@/utils/echartsTheme'
+import { getCyberTheme } from '@/utils/echartsTheme'
+import { COLORS } from '@/config/colors'
 import {
   Setting, Reading, Histogram, PieChart, TrendCharts, View,
   DataAnalysis, Sort, DataBoard, ArrowRight, Headset,
@@ -561,25 +562,25 @@ const gray = statCardColors("gray")
 const systemStats = computed(() => {
   const d = statsData.value.system || {}
   return [
-    { key: "user", label: "\u7528\u6237", value: d.userCount || 0, icon: UserFilled, color: "#409eff", ...blue, borderColor: "#409eff", link: "/system/user" },
-    { key: "role", label: "\u89d2\u8272", value: d.roleCount || 0, icon: Lock, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/system/role" },
-    { key: "menu", label: "\u83dc\u5355", value: d.menuCount || 0, icon: Grid, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/system/menu" },
-    { key: "dept", label: "\u90e8\u95e8", value: d.deptCount || 0, icon: OfficeBuilding, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/system/dept" },
-    { key: "dict", label: "\u5b57\u5178", value: d.dictTypeCount || 0, icon: EditPen, color: "#909399", ...gray, borderColor: "#909399", link: "/tool/dict" },
-    { key: "notice", label: "\u516c\u544a", value: d.noticeCount || 0, icon: Reading, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/content/notice" },
-    { key: "log", label: "\u65e5\u5fd7", value: d.logCount || 0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: "/monitor/log" },
-    { key: "online", label: "\u5728\u7ebf", value: d.onlineCount || 0, icon: Monitor, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/monitor/online" }
+    { key: "user", label: "\u7528\u6237", value: d.userCount || 0, icon: UserFilled, ...COLORS.STAT_CARD.user, ...blue, link: "/system/user" },
+    { key: "role", label: "\u89d2\u8272", value: d.roleCount || 0, icon: Lock, ...COLORS.STAT_CARD.role, ...green, link: "/system/role" },
+    { key: "menu", label: "\u83dc\u5355", value: d.menuCount || 0, icon: Grid, ...COLORS.STAT_CARD.menu, ...orange, link: "/system/menu" },
+    { key: "dept", label: "\u90e8\u95e8", value: d.deptCount || 0, icon: OfficeBuilding, ...COLORS.STAT_CARD.dept, ...red, link: "/system/dept" },
+    { key: "dict", label: "\u5b57\u5178", value: d.dictTypeCount || 0, icon: EditPen, ...COLORS.STAT_CARD.dict, ...gray, link: "/tool/dict" },
+    { key: "notice", label: "\u516c\u544a", value: d.noticeCount || 0, icon: Reading, ...COLORS.STAT_CARD.notice, ...red, link: "/content/notice" },
+    { key: "log", label: "\u65e5\u5fd7", value: d.logCount || 0, icon: Reading, ...COLORS.STAT_CARD.log, ...blue, link: "/monitor/log" },
+    { key: "online", label: "\u5728\u7ebf", value: d.onlineCount || 0, icon: Monitor, ...COLORS.STAT_CARD.online, ...green, link: "/monitor/online" }
   ]
 })
 
 const literatureStats = computed(() => {
   const d = statsData.value.literature || {}
   return [
-    { key: "work", label: "\u6587\u5b66\u4f5c\u54c1", value: d.workCount || 0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: "/classics/literature" },
-    { key: "author", label: "\u4f5c\u8005", value: d.authorCount || 0, icon: EditPen, color: "#67c23a", ...green, borderColor: "#67c23a", link: "/classics/literature" },
-    { key: "dynasty", label: "\u671d\u4ee3", value: d.dynastyCount || 0, icon: Collection, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: "/classics/literature" },
-    { key: "genre", label: "\u4f53\u88c1", value: d.genreCount || 0, icon: EditPen, color: "#909399", ...gray, borderColor: "#909399", link: "/classics/literature" },
-    { key: "category", label: "\u5206\u7c7b", value: d.categoryCount || 0, icon: Collection, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: "/classics/literature" }
+    { key: "work", label: "\u6587\u5b66\u4f5c\u54c1", value: d.workCount || 0, icon: Reading, ...COLORS.STAT_CARD.user, ...blue, link: "/classics/literature" },
+    { key: "author", label: "\u4f5c\u8005", value: d.authorCount || 0, icon: EditPen, ...COLORS.STAT_CARD.role, ...green, link: "/classics/literature" },
+    { key: "dynasty", label: "\u671d\u4ee3", value: d.dynastyCount || 0, icon: Collection, ...COLORS.STAT_CARD.menu, ...orange, link: "/classics/literature" },
+    { key: "genre", label: "\u4f53\u88c1", value: d.genreCount || 0, icon: EditPen, ...COLORS.STAT_CARD.dict, ...gray, link: "/classics/literature" },
+    { key: "category", label: "\u5206\u7c7b", value: d.categoryCount || 0, icon: Collection, ...COLORS.STAT_CARD.dept, ...red, link: "/classics/literature" }
   ]
 })
 
@@ -634,32 +635,32 @@ const summaryData = computed(() => {
 const distributionData = computed(() => {
   const total = summaryData.value.totalSystemItems + summaryData.value.totalLiteratureItems + summaryData.value.totalPoems + summaryData.value.totalClassicChars || 1
   return [
-    { name: "\u7cfb\u7edf\u7ba1\u7406", count: summaryData.value.totalSystemItems, color: "#409eff", percent: Math.round(summaryData.value.totalSystemItems/total*100) },
-    { name: "\u7ecf\u5178\u6587\u5b66", count: summaryData.value.totalLiteratureItems, color: "#e6a23c", percent: Math.round(summaryData.value.totalLiteratureItems/total*100) },
-    { name: "\u540d\u8457\u8bd7\u8bcd", count: summaryData.value.totalPoems, color: "#67c23a", percent: Math.round(summaryData.value.totalPoems/total*100) },
-    { name: "\u540d\u8457\u4eba\u7269", count: summaryData.value.totalClassicChars, color: "#f56c6c", percent: Math.round(summaryData.value.totalClassicChars/total*100) }
+    { name: "\u7cfb\u7edf\u7ba1\u7406", count: summaryData.value.totalSystemItems, color: COLORS.STATUS.PRIMARY, percent: Math.round(summaryData.value.totalSystemItems/total*100) },
+    { name: "\u7ecf\u5178\u6587\u5b66", count: summaryData.value.totalLiteratureItems, color: COLORS.STATUS.WARNING, percent: Math.round(summaryData.value.totalLiteratureItems/total*100) },
+    { name: "\u540d\u8457\u8bd7\u8bcd", count: summaryData.value.totalPoems, color: COLORS.STATUS.SUCCESS, percent: Math.round(summaryData.value.totalPoems/total*100) },
+    { name: "\u540d\u8457\u4eba\u7269", count: summaryData.value.totalClassicChars, color: COLORS.STATUS.DANGER, percent: Math.round(summaryData.value.totalClassicChars/total*100) }
   ]
 })
 
 const techblogStats = computed(() => {
   const d = statsData.value.techblog || {}
   return [
-    { key: "articles", label: "\u603b\u6587\u7ae0\u6570", value: d.totalArticles||0, icon: Reading, color: "#409eff", ...blue, borderColor: "#409eff", link: {name: "TechBlogIndex"} },
-    { key: "views", label: "\u603b\u6d4f\u89c8\u91cf", value: d.totalViews||0, icon: View, color: "#67c23a", ...green, borderColor: "#67c23a", link: {name: "TechBlogIndex"} }
+    { key: "articles", label: "\u603b\u6587\u7ae0\u6570", value: d.totalArticles||0, icon: Reading, ...COLORS.STAT_CARD.log, ...blue, link: {name: "TechBlogIndex"} },
+    { key: "views", label: "\u603b\u6d4f\u89c8\u91cf", value: d.totalViews||0, icon: View, ...COLORS.STAT_CARD.online, ...green, link: {name: "TechBlogIndex"} }
   ]
 })
 
 const musicStats = computed(() => {
   const d = statsData.value.music || {}
   return [
-    { key: "songs", label: "\u6b4c\u66f2\u6570", value: d.totalSongs||0, icon: Headset, color: "#409eff", ...blue, borderColor: "#409eff", link: {name: "ToolMusicPlayer"} },
-    { key: "albums", label: "\u4e13\u8f91\u6570", value: d.totalAlbums||0, icon: Collection, color: "#67c23a", ...green, borderColor: "#67c23a", link: {name: "ToolMusicPlayer"} },
-    { key: "plays", label: "\u603b\u64ad\u653e\u6b21\u6570", value: d.totalPlays||0, icon: MagicStick, color: "#f56c6c", ...red, borderColor: "#f56c6c", link: {name: "ToolMusicPlayer"} },
-    { key: "artists", label: "\u827a\u672f\u5bb6\u6570", value: d.totalArtists||0, icon: UserFilled, color: "#e6a23c", ...orange, borderColor: "#e6a23c", link: {name: "ToolMusicPlayer"} }
+    { key: "songs", label: "\u6b4c\u66f2\u6570", value: d.totalSongs||0, icon: Headset, ...COLORS.STAT_CARD.user, ...blue, link: {name: "ToolMusicPlayer"} },
+    { key: "albums", label: "\u4e13\u8f91\u6570", value: d.totalAlbums||0, icon: Collection, ...COLORS.STAT_CARD.role, ...green, link: {name: "ToolMusicPlayer"} },
+    { key: "plays", label: "\u603b\u64ad\u653e\u6b21\u6570", value: d.totalPlays||0, icon: MagicStick, ...COLORS.STAT_CARD.dept, ...red, link: {name: "ToolMusicPlayer"} },
+    { key: "artists", label: "\u827a\u672f\u5bb6\u6570", value: d.totalArtists||0, icon: UserFilled, ...COLORS.STAT_CARD.menu, ...orange, link: {name: "ToolMusicPlayer"} }
   ]
 })
 
-const colorPalette = ["#f59e0b","#f97316","#eab308","#ef4444","#6b7280","#10b981","#8b5cf6","#ec4899","#22d3ee","#f43f5e"]
+const colorPalette = COLORS.CHART
 
 function darkEchartStyle() {
   if (!isDark.value) return {}
@@ -671,7 +672,7 @@ function darkEchartStyle() {
 }
 
 function pieBorderColor() {
-  return isDark.value ? "#1d1e1f" : "#fff"
+  return isDark.value ? '#1d1e1f' : COLORS.BG_WHITE
 }
 
 function initOrUpdateChart(refEl, getOption) {
@@ -679,7 +680,7 @@ function initOrUpdateChart(refEl, getOption) {
   let chart = echarts.getInstanceByDom(refEl)
   if (!chart) {
     // 使用赛博朋克主题初始化
-    chart = echarts.init(refEl, cyberTheme)
+    chart = echarts.init(refEl, getCyberTheme())
   }
   chart.setOption({ textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' }, ...getOption() }, { notMerge: true })
   return chart
@@ -775,7 +776,7 @@ function renderViewRankChart() {
     yAxis: { type: "category", data: list.map(i => i.title).reverse(), axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) }, inverse: true, ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {}) },
     series: [{
       type: "bar", data: list.map(i => i.viewCount).reverse(),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: "#f56c6c" }, { offset: 1, color: isDark.value ? "#5a2a2a" : "#fab6b6" }]) },
+      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: COLORS.CHART_GRADIENTS.DANGER.from }, { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.DANGER.toDark : COLORS.CHART_GRADIENTS.DANGER.to }]) },
       barMaxWidth: 24, label: { show: true, position: "right", fontSize: 10 }
     }]
   }))
@@ -784,10 +785,10 @@ function renderViewRankChart() {
 function renderClassicsChart() {
   const cls = statsData.value.classics || {}
   const books = [
-    { key: "honglou", name: "红楼梦", color: "#f56c6c", data: cls.honglou || {} },
-    { key: "xiyou", name: "西游记", color: "#e6a23c", data: cls.xiyou || {} },
-    { key: "sanguo", name: "三国演义", color: "#409eff", data: cls.sanguo || {} },
-    { key: "shuihu", name: "水浒传", color: "#67c23a", data: cls.shuihu || {} }
+    { key: "honglou", name: "红楼梦", color: COLORS.CLASSIC_BOOKS.honglou, data: cls.honglou || {} },
+    { key: "xiyou", name: "西游记", color: COLORS.CLASSIC_BOOKS.xiyou, data: cls.xiyou || {} },
+    { key: "sanguo", name: "三国演义", color: COLORS.CLASSIC_BOOKS.sanguo, data: cls.sanguo || {} },
+    { key: "shuihu", name: "水浒传", color: COLORS.CLASSIC_BOOKS.shuihu, data: cls.shuihu || {} }
   ]
   const categories = ["诗词数", "人物数", "关系数", "事件数", "章节数"]
   const catKeyMap = { "诗词数": "poemCount", "人物数": "characterCount", "关系数": "relationCount", "事件数": "eventCount", "章节数": "chapterCount" }
@@ -820,7 +821,7 @@ function renderAuthorRankChart() {
     yAxis: { type: "category", data: list.map(i => i.authorName).reverse(), axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) }, inverse: true, ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {}) },
     series: [{
       type: "bar", data: list.map(i => i.workCount).reverse(),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: "#f59e0b" }, { offset: 1, color: isDark.value ? "#4a3000" : "#fde68a" }]) },
+      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: COLORS.CHART_GRADIENTS.AMBER.from }, { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.AMBER.toDark : COLORS.CHART_GRADIENTS.AMBER.to }]) },
       barMaxWidth: 24, label: { show: true, position: "right", fontSize: 10 }
     }]
   }))
@@ -842,11 +843,11 @@ function renderLoginTrendChart() {
       name: "登录次数", type: "line",
       data: values,
       smooth: true,
-      lineStyle: { color: "#409eff", width: 2 },
-      itemStyle: { color: "#409eff" },
+      lineStyle: { color: COLORS.PRIMARY, width: 2 },
+      itemStyle: { color: COLORS.PRIMARY },
       areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "rgba(64,158,255,0.3)" }, { offset: 1, color: "rgba(64,158,255,0.02)" }]) },
       symbol: "circle", symbolSize: 6,
-      label: { show: true, position: "top", fontSize: 11, color: "#409eff" }
+      label: { show: true, position: "top", fontSize: 11, color: COLORS.PRIMARY }
     }]
   }))
 }
@@ -1182,10 +1183,10 @@ html.dark .section-card {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.classic-card:nth-child(1) { border-top-color: #f56c6c; }
-.classic-card:nth-child(2) { border-top-color: #e6a23c; }
-.classic-card:nth-child(3) { border-top-color: #409eff; }
-.classic-card:nth-child(4) { border-top-color: #67c23a; }
+.classic-card:nth-child(1) { border-top-color: var(--el-color-danger); }
+.classic-card:nth-child(2) { border-top-color: var(--el-color-warning); }
+.classic-card:nth-child(3) { border-top-color: var(--el-color-primary); }
+.classic-card:nth-child(4) { border-top-color: var(--el-color-success); }
 
 .classic-card :deep(.el-card__header) {
   padding: 16px 20px;
@@ -1286,13 +1287,13 @@ html.dark .classic-card {
   justify-content: center;
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-white);
 }
 
-.overview-circle.primary { background: linear-gradient(135deg, #409eff, #66b1ff); }
-.overview-circle.warning { background: linear-gradient(135deg, #e6a23c, #ebb563); }
-.overview-circle.danger  { background: linear-gradient(135deg, #f56c6c, #f78989); }
-.overview-circle.success { background: linear-gradient(135deg, #67c23a, #85ce61); }
+.overview-circle.primary { background: linear-gradient(135deg, var(--el-color-primary), var(--el-color-primary-light-3)); }
+.overview-circle.warning { background: linear-gradient(135deg, var(--el-color-warning), var(--rx-primary-light)); }
+.overview-circle.danger  { background: linear-gradient(135deg, var(--el-color-danger), var(--rx-primary-light)); }
+.overview-circle.success { background: linear-gradient(135deg, var(--el-color-success), var(--rx-primary-light)); }
 
 .distribution-list {
   display: flex;

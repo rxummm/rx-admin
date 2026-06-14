@@ -5,6 +5,7 @@ import router from '@/router'
 import { formatResponseData } from './index'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import { getActivePinia } from 'pinia'
+import { API } from '@/api/routes'
 import {
   performanceRequestInterceptor,
   performanceResponseSuccessInterceptor,
@@ -208,7 +209,7 @@ function startHeartbeat() {
     if (!token) {
       return
     }
-    request({ url: '/auth/ping', method: 'get', _skipNProgress: true, timeout }).catch(() => {})
+    request({ url: API.AUTH.PING, method: 'get', _skipNProgress: true, timeout }).catch(() => {})
   }, interval)
 }
 

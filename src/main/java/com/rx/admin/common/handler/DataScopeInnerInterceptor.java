@@ -3,7 +3,7 @@ package com.rx.admin.common.handler;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.rx.admin.common.annotation.DataScope;
-import com.rx.admin.service.DataScopeService;
+import com.rx.admin.modules.system.permission.service.DataScopeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -107,7 +107,8 @@ public class DataScopeInnerInterceptor implements InnerInterceptor {
                     return method.getAnnotation(DataScope.class);
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.warn("获取 @DataScope 注解失败: {}", e.getMessage());
         }
         return null;
     }

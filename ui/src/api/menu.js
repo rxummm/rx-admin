@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // 菜单树
 export function getMenuTreeApi() {
   return request({
-    url: '/sys/menu/tree',
+    url: API.SYS.MENU.TREE,
     method: 'get'
   })
 }
@@ -11,7 +12,7 @@ export function getMenuTreeApi() {
 // 新增菜单
 export function addMenuApi(data) {
   return request({
-    url: '/sys/menu',
+    url: API.SYS.MENU.CRUD,
     method: 'post',
     data
   })
@@ -20,7 +21,7 @@ export function addMenuApi(data) {
 // 修改菜单
 export function updateMenuApi(data) {
   return request({
-    url: '/sys/menu',
+    url: API.SYS.MENU.CRUD,
     method: 'put',
     data
   })
@@ -29,7 +30,7 @@ export function updateMenuApi(data) {
 // 删除菜单
 export function deleteMenuApi(id) {
   return request({
-    url: `/sys/menu/${id}`,
+    url: API.SYS.MENU.BY_ID(id),
     method: 'delete'
   })
 }

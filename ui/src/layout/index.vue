@@ -11,9 +11,6 @@
           :default-active="activeMenu"
           :collapse="isCollapse"
           :collapse-transition="false"
-          :background-color="sidebarBgColor"
-          :text-color="sidebarTextColor"
-          :active-text-color="sidebarActiveColor"
           @select="handleMenuSelect"
         >
           <SubMenu v-for="menu in userStore.menus" :key="menu.id" :menu="menu" />
@@ -78,6 +75,23 @@
               <el-icon><Monitor /></el-icon>
             </div>
           </el-tooltip>
+          <!-- 主题色切换 -->
+          <el-tooltip content="主题色切换" placement="bottom">
+            <el-dropdown trigger="click" @command="handleThemeChange">
+              <div class="header-action-btn">
+                <FontAwesomeIcon icon="palette" />
+              </div>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-for="opt in themeOptions" :key="opt.name" :command="opt.name">
+                    <span class="theme-color-dot" :style="{ background: opt.color }"></span>
+                    <span :class="{ 'theme-active': currentTheme === opt.name }">{{ opt.label }}</span>
+                    <el-icon v-if="currentTheme === opt.name" class="theme-checked"><Check /></el-icon>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-tooltip>
           <el-dropdown trigger="click">
             <div class="user-info">
               <el-avatar :size="32" :src="userStore.userInfo?.avatar">
@@ -112,9 +126,6 @@
           <keep-alive :include="tagsStore.cachedViews">
             <component :is="Component" :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
           </keep-alive>
-          <keep-alive :include="tagsStore.cachedViews">
-            <component :is="Component" :key="compRoute.name + '-' + (tagsStore.refreshKeys[compRoute.name] || 0)" />
-          </keep-alive>
         </router-view>
       </el-main>
     </el-container>
@@ -142,6 +153,7 @@ import { useMenuI18n } from '@/composables/useMenuI18n'
 import { useKeyboardShortcuts, showShortcutsHelp } from '@/composables/useKeyboardShortcuts'
 import { logoutApi } from '@/api/auth'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
+import { useLayoutSettings } from '@/composables/useLayoutSettings'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import TagsView from './TagsView.vue'
 import SubMenu from './SubMenu.vue'
@@ -152,13 +164,15 @@ import AnnouncementPopup from '@/components/AnnouncementPopup.vue'
 import FavoritesPanel from '@/components/FavoritesPanel.vue'
 import ShortcutsHelp from '@/components/ShortcutsHelp.vue'
 import PerformancePanel from '@/components/PerformancePanel.vue'
-import { QuestionFilled, Monitor, Loading } from '@element-plus/icons-vue'
+import { QuestionFilled, Monitor, Loading, Check } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const tagsStore = useTagsStore()
 const { isDark, toggleTheme } = useTheme()
+const { currentTheme, setTheme, themeOptions } = useLayoutSettings()
+
 const { tMenu } = useMenuI18n()
 const { locale, t } = useI18n()
 const localeStore = useStorage(STORAGE_KEYS.LOCALE, 'zh-CN')
@@ -185,6 +199,10 @@ const activeMenu = computed(() => route.path)
 
 // 防止快速点击菜单导致重复导航
 let navigating = false
+
+function handleThemeChange(name) {
+  setTheme(name)
+}
 
 function handleToggleLocale() {
   const newLocale = locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'
@@ -328,7 +346,12 @@ async function handleLogout() {
       overflow: hidden;
     }
 
-    // 菜单项悬停与选中
+    // 使用 CSS 变量覆盖 el-menu 内部色值，替代废弃的 background-color/text-color 属性
+    :deep(.el-menu) {
+      --el-menu-bg-color: var(--sidebar-bg);
+      --el-menu-text-color: var(--sidebar-text);
+      --el-menu-active-color: var(--sidebar-text-active);
+    }
     :deep(.el-sub-menu .el-menu) {
       background-color: var(--sidebar-submenu-bg) !important;
     }
@@ -636,5 +659,26 @@ async function handleLogout() {
       }
     }
   }
+}
+
+// ====== 主题色切换下拉 ======
+.theme-color-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+  border: 1px solid var(--border-color);
+}
+
+.theme-active {
+  font-weight: 600;
+}
+
+.theme-checked {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--color-primary);
 }
 </style>

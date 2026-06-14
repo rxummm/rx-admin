@@ -1,21 +1,23 @@
 ﻿import request from '@/utils/request'
+import { API } from './routes'
+
 
 export function getFilePageApi(params) {
-  return request({ url: '/sys/file/page', method: 'get', params })
+  return request({ url: API.SYS.FILE.PAGE, method: 'get', params })
 }
 
 export function uploadFileApi(formData) {
-  return request({ url: '/sys/file/upload', method: 'post', data: formData, headers: { 'Content-Type': 'multipart/form-data' } })
+  return request({ url: API.SYS.FILE.UPLOAD, method: 'post', data: formData, headers: { 'Content-Type': 'multipart/form-data' } })
 }
 
 export function deleteFileApi(id) {
-  return request({ url: `/sys/file/${id}`, method: 'delete' })
+  return request({ url: API.SYS.FILE.BY_ID(id), method: 'delete' })
 }
 
 export function deleteFileBatchApi(ids) {
-  return request({ url: '/sys/file/batch', method: 'delete', data: ids })
+  return request({ url: API.SYS.FILE.BATCH, method: 'delete', data: ids })
 }
 
 export function getFileDownloadUrlApi(id) {
-  return `/api/sys/file/download/${id}`
+  return API.SYS.FILE.DOWNLOAD(id)
 }

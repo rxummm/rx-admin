@@ -101,6 +101,7 @@ defineOptions({ name: 'ClassicsHonglouRelations' })
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getAllHonglouCharactersApi, getAllHonglouRelationsApi } from '@/api/honglou'
+import { COLORS } from '@/config/colors'
 
 // ---- 数据 ----
 const loading = ref(false)
@@ -179,8 +180,8 @@ const relatedCharacters = computed(() => {
 
 // ---- 工具函数 ----
 function getRoleColor(role) {
-  const map = { '主角': '#e74c3c', '重要配角': '#f39c12', '一般角色': '#3498db' }
-  return map[role] || '#95a5a6'
+  const map = { '主角': COLORS.DANGER, '重要配角': COLORS.WARNING, '一般角色': COLORS.PRIMARY }
+  return map[role] || COLORS.TEXT_SECONDARY
 }
 
 function getRoleTagType(role) {

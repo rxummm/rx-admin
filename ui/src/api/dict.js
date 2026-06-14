@@ -1,20 +1,21 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // 字典类型
 export function getDictTypePageApi(params) {
-  return request({ url: '/sys/dict/type/page', method: 'get', params })
+  return request({ url: API.SYS.DICT.TYPE.PAGE, method: 'get', params })
 }
 
 export function addDictTypeApi(data) {
-  return request({ url: '/sys/dict/type', method: 'post', data })
+  return request({ url: API.SYS.DICT.TYPE.CRUD, method: 'post', data })
 }
 
 export function updateDictTypeApi(data) {
-  return request({ url: '/sys/dict/type', method: 'put', data })
+  return request({ url: API.SYS.DICT.TYPE.CRUD, method: 'put', data })
 }
 
 export function deleteDictTypeApi(id) {
-  return request({ url: `/sys/dict/type/${id}`, method: 'delete' })
+  return request({ url: API.SYS.DICT.TYPE.BY_ID(id), method: 'delete' })
 }
 
 /**
@@ -22,22 +23,22 @@ export function deleteDictTypeApi(id) {
  * @reserved 预留接口
  */
 export function getDictTypeByIdApi(id) {
-  return request({ url: `/sys/dict/type/${id}`, method: 'get' })
+  return request({ url: API.SYS.DICT.TYPE.BY_ID(id), method: 'get' })
 }
 
 // 字典数据
 export function getDictDataByTypeApi(typeId) {
-  return request({ url: `/sys/dict/data/list/${typeId}`, method: 'get' })
+  return request({ url: API.SYS.DICT.DATA.LIST_BY_TYPE(typeId), method: 'get' })
 }
 
 export function addDictDataApi(data) {
-  return request({ url: '/sys/dict/data', method: 'post', data })
+  return request({ url: API.SYS.DICT.DATA.CRUD, method: 'post', data })
 }
 
 export function updateDictDataApi(data) {
-  return request({ url: '/sys/dict/data', method: 'put', data })
+  return request({ url: API.SYS.DICT.DATA.CRUD, method: 'put', data })
 }
 
 export function deleteDictDataApi(id) {
-  return request({ url: `/sys/dict/data/${id}`, method: 'delete' })
+  return request({ url: API.SYS.DICT.DATA.BY_ID(id), method: 'delete' })
 }

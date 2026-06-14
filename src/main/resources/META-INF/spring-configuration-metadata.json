@@ -1,0 +1,216 @@
+{
+  "groups": [
+    {
+      "name": "spring.datasource.primary",
+      "type": "javax.sql.DataSource",
+      "description": "主数据源配置（rx_admin）"
+    },
+    {
+      "name": "spring.datasource.second",
+      "type": "javax.sql.DataSource",
+      "description": "第二数据源配置（rxusysadmin）"
+    },
+    {
+      "name": "app",
+      "type": "com.rx.admin.common.config.AppProperties",
+      "description": "应用自定义配置"
+    },
+    {
+      "name": "as400",
+      "type": "com.rx.admin.modules.as400.config.As400Properties",
+      "description": "AS400 连接配置"
+    },
+    {
+      "name": "common-tools",
+      "type": "com.rx.admin.modules.tool.commonTools.config.CommonToolsProperties",
+      "description": "常用工具配置"
+    },
+    {
+      "name": "music",
+      "type": "com.rx.admin.modules.tool.music.config.MusicProperties",
+      "description": "音乐播放器配置"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.datasource.primary.jdbc-url",
+      "type": "java.lang.String",
+      "description": "主数据源 JDBC URL"
+    },
+    {
+      "name": "spring.datasource.primary.driver-class-name",
+      "type": "java.lang.String",
+      "description": "主数据源驱动类"
+    },
+    {
+      "name": "spring.datasource.primary.username",
+      "type": "java.lang.String",
+      "description": "主数据源用户名"
+    },
+    {
+      "name": "spring.datasource.primary.password",
+      "type": "java.lang.String",
+      "description": "主数据源密码"
+    },
+    {
+      "name": "spring.datasource.second.jdbc-url",
+      "type": "java.lang.String",
+      "description": "第二数据源 JDBC URL"
+    },
+    {
+      "name": "spring.datasource.second.driver-class-name",
+      "type": "java.lang.String",
+      "description": "第二数据源驱动类"
+    },
+    {
+      "name": "spring.datasource.second.username",
+      "type": "java.lang.String",
+      "description": "第二数据源用户名"
+    },
+    {
+      "name": "spring.datasource.second.password",
+      "type": "java.lang.String",
+      "description": "第二数据源密码"
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "允许的跨域来源，多个逗号分隔"
+    },
+    {
+      "name": "app.cache.config-ttl-seconds",
+      "type": "java.lang.Long",
+      "description": "系统配置缓存过期时间（秒）"
+    },
+    {
+      "name": "app.cache.menu-ttl-seconds",
+      "type": "java.lang.Long",
+      "description": "菜单树缓存过期时间（秒）"
+    },
+    {
+      "name": "app.cache.dashboard-refresh-ms",
+      "type": "java.lang.Long",
+      "description": "仪表盘统计缓存刷新间隔（毫秒）"
+    },
+    {
+      "name": "app.menu.excluded-top-ids",
+      "type": "java.lang.String",
+      "description": "不可申请的顶级菜单ID列表"
+    },
+    {
+      "name": "app.menu.excluded-permission-menu-id",
+      "type": "java.lang.Integer",
+      "description": "排除的权限申请菜单ID"
+    },
+    {
+      "name": "app.slow-query.threshold-ms",
+      "type": "java.lang.Long",
+      "description": "慢查询阈值（毫秒）"
+    },
+    {
+      "name": "app.captcha.expire-ms",
+      "type": "java.lang.Long",
+      "description": "验证码过期时间（毫秒）"
+    },
+    {
+      "name": "app.captcha.cleanup-interval-ms",
+      "type": "java.lang.Long",
+      "description": "过期验证码清理间隔（毫秒）"
+    },
+    {
+      "name": "app.replay.time-window-ms",
+      "type": "java.lang.Long",
+      "description": "防重放时间窗口（毫秒）"
+    },
+    {
+      "name": "app.replay.max-nonce-cache",
+      "type": "java.lang.Integer",
+      "description": "nonce 缓存最大条目数"
+    },
+    {
+      "name": "app.techblog.request-delay-ms",
+      "type": "java.lang.Long",
+      "description": "技术博客批量抓取页间请求延迟（毫秒）"
+    },
+    {
+      "name": "app.techblog.page-timeout-ms",
+      "type": "java.lang.Long",
+      "description": "技术博客列表页抓取超时（毫秒）"
+    },
+    {
+      "name": "app.techblog.article-timeout-ms",
+      "type": "java.lang.Long",
+      "description": "技术博客文章详情抓取超时（毫秒）"
+    },
+    {
+      "name": "app.mail.from",
+      "type": "java.lang.String",
+      "description": "邮件发件人地址"
+    },
+    {
+      "name": "app.mail.host",
+      "type": "java.lang.String",
+      "description": "SMTP 服务器"
+    },
+    {
+      "name": "app.mail.port",
+      "type": "java.lang.Integer",
+      "description": "SMTP 端口"
+    },
+    {
+      "name": "app.mail.username",
+      "type": "java.lang.String",
+      "description": "SMTP 认证用户名"
+    },
+    {
+      "name": "app.mail.password",
+      "type": "java.lang.String",
+      "description": "SMTP 认证密码"
+    },
+    {
+      "name": "app.ip-filter.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 IP 黑白名单"
+    },
+    {
+      "name": "app.ip-filter.mode",
+      "type": "java.lang.String",
+      "description": "IP 过滤模式：blacklist 或 whitelist"
+    },
+    {
+      "name": "app.ip-filter.ips",
+      "type": "java.lang.String",
+      "description": "IP 列表，逗号分隔"
+    },
+    {
+      "name": "as400.host",
+      "type": "java.lang.String",
+      "description": "AS400 主机地址"
+    },
+    {
+      "name": "as400.username",
+      "type": "java.lang.String",
+      "description": "AS400 用户名"
+    },
+    {
+      "name": "as400.password",
+      "type": "java.lang.String",
+      "description": "AS400 密码"
+    },
+    {
+      "name": "as400.default-libraries",
+      "type": "java.lang.String",
+      "description": "AS400 默认库列表"
+    },
+    {
+      "name": "common-tools.upload.dir",
+      "type": "java.lang.String",
+      "description": "上传文件目录"
+    },
+    {
+      "name": "music.folder",
+      "type": "java.lang.String",
+      "description": "音乐文件目录"
+    }
+  ]
+}

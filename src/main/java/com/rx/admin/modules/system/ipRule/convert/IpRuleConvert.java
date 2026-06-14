@@ -3,7 +3,7 @@ package com.rx.admin.modules.system.iprule.convert;
 import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
 import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
 import com.rx.admin.modules.system.iprule.vo.IpRuleVO;
-import com.rx.admin.entity.SysIpRule;
+import com.rx.admin.modules.system.iprule.entity.SysIpRule;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;

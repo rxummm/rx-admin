@@ -1,11 +1,12 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 /**
  * 查询指定页面是否启用导出
  * @param {string} path 菜单路径，如 /system/user
  */
 export function getExportConfigApi(path) {
-  return request({ url: '/export/config', method: 'get', params: { path } })
+  return request({ url: API.EXPORT.CONFIG, method: 'get', params: { path } })
 }
 
 /**
@@ -14,7 +15,7 @@ export function getExportConfigApi(path) {
  */
 export function exportExcelApi(payload) {
   return request({
-    url: '/export/excel',
+    url: API.EXPORT.EXCEL,
     method: 'post',
     data: payload,
     responseType: 'blob',
@@ -28,7 +29,7 @@ export function exportExcelApi(payload) {
  */
 export function exportPdfApi(payload) {
   return request({
-    url: '/export/pdf',
+    url: API.EXPORT.PDF,
     method: 'post',
     data: payload,
     responseType: 'blob',

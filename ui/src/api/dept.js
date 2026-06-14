@@ -1,19 +1,23 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 export function getDeptTreeApi() {
-  return request({ url: '/sys/dept/tree', method: 'get' })
+  return request({     url: API.SYS.DEPT.TREE, method: 'get' })
 }
 
 export function addDeptApi(data) {
-  return request({ url: '/sys/dept', method: 'post', data })
+  return request({     url: API.SYS.DEPT.CRUD,
+    method: 'post', data })
 }
 
 export function updateDeptApi(data) {
-  return request({ url: '/sys/dept', method: 'put', data })
+  return request({     url: API.SYS.DEPT.CRUD,
+    method: 'put', data })
 }
 
 export function deleteDeptApi(id) {
-  return request({ url: `/sys/dept/${id}`, method: 'delete' })
+  return request({     url: API.SYS.DEPT.BY_ID(id),
+    method: 'delete' })
 }
 
 /**
@@ -21,5 +25,6 @@ export function deleteDeptApi(id) {
  * @reserved 预留接口
  */
 export function getDeptByIdApi(id) {
-  return request({ url: `/sys/dept/${id}`, method: 'get' })
+  return request({     url: API.SYS.DEPT.BY_ID(id),
+    method: 'get' })
 }

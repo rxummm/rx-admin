@@ -1,8 +1,8 @@
 # RX Admin 通用管理系统 — 项目技术架构文档
 
-> **版本**: 3.1.0 | **更新日期**: 2026-06-13 | **文档类型**: 技术架构说明书
+> **版本**: 3.2.0 | **更新日期**: 2026-06-15 | **文档类型**: 技术架构说明书
 >
-> **v3.1 更新**: Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy 规范 + EmailService + 前端新模块（邮件发送/数据库SQL控制台/开发工具/知识图谱/导出审计等）+ 文档模块补齐
+> **v3.2 更新**: 主题色系统统一（CSS 变量 → design tokens）+ ECharts 主题运行时读取 CSS 变量 + Sentry v10 升级 + 字体自托管（Google Fonts → @fontsource）+ sass 去重 + useMarkdownRenderer 抽取 + 构建优化（8 manualChunks + visualizer）+ api/config.js 新建 + cache-manage bug 修复
 
 ---
 
@@ -109,6 +109,9 @@
 | **站内消息中心** | 用户间私信、系统通知，未读计数，el-timeline 时间轴展示 |
 | **快捷收藏夹** | 侧边栏收藏面板 + 页面星标组件，toggle 切换，localStorage 缓存 |
 | **系统公告弹窗** | 登录后自动弹窗公告，一次一条，localStorage 去重 |
+| **字体自托管** | Google Fonts CDN 替换为 @fontsource/dm-sans/ibm-plex-sans/jetbrains-mono，无外部 CDN 依赖 |
+| **构建优化** | 8 个 manualChunks（vendor/echarts/element-plus/flowchart/editor/export/icons/markdown）+ rollup-plugin-visualizer |
+| **Sentry 错误监控** | @sentry/vue v10 + browserTracingIntegration，移除已废弃 @sentry/tracing |
 | **代码生成器** | 三步向导（选表→配置→预览），生成 Entity/Mapper/Service/Controller/Vue/API |
 | **批量数据导入** | Excel/CSV 上传→预览→执行，三步向导，含校验与错误报告 |
 | **日志可视化分析** | 4 统计卡片 + ECharts 柱状图/饼图/折线图，按小时/类型/趋势分析 |
@@ -154,12 +157,15 @@
 | **图标库** | @element-plus/icons-vue | ^2.3.1 |
 | **图标库** | @fortawesome/vue-fontawesome | ^3.0.0-5 |
 | **国际化** | Vue I18n | ^9.14.4 |
-| **CSS 预处理** | SCSS (Dart Sass) | ^1.69.5 |
+| **CSS 预处理** | SCSS (sass-embedded) | ^1.69.5 |
 | **流程图引擎** | @vue-flow/core / @logicflow/core / @antv/x6 | ^1.48.2 / ^2.2.3 / ^3.1.7 |
 | **Markdown 编辑器** | md-editor-v3 | ^6.5.1 |
 | **进度条** | NProgress | ^0.2.0 |
 | **Markdown 渲染** | marked + highlight.js | ^18.0.4 / ^11.11.1 |
 | **Markdown 样式** | github-markdown-css | ^5.9.0 |
+| **错误监控** | @sentry/vue | ^10.0.0 |
+| **自托管字体** | @fontsource/dm-sans / ibm-plex-sans / jetbrains-mono | ^5.x |
+| **体积分析** | rollup-plugin-visualizer | ^5.x |
 | **Excel 导出** | exceljs + jspdf + html2canvas | 前端导出引擎 |
 
 ---
@@ -1031,4 +1037,4 @@ Vue I18n + el-config-provider 无刷新切换，300+ 条目。
 ---
 
 > **文档维护**: 本文档为 RX Admin 项目技术架构说明书，随项目迭代持续更新。
-> **历史版本**: v3.0.0 (2026-06-10) → v3.1.0 (2026-06-13): Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy + EmailService + 前端新模块补齐
+> **历史版本**: v3.0.0 (2026-06-10) → v3.1.0 (2026-06-13): Spring Boot 3.5.15 + MapStruct unmappedTargetPolicy + EmailService + 前端新模块补齐 → v3.2.0 (2026-06-15): 主题色统一 + Sentry v10 + 字体自托管 + sass 去重 + 构建优化 + useMarkdownRenderer

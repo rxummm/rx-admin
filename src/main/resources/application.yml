@@ -33,8 +33,7 @@ spring:
       password: ${MYSQL_PASSWORD:root}
 
 mybatis-plus:
-  mapper-locations: classpath*:mapper/**/*.xml
-  type-aliases-package: com.rx.admin.entity
+  type-aliases-package: com.rx.admin.modules.**.entity
   configuration:
     map-underscore-to-camel-case: true
     # 日志：生产环境使用 SLF4J，不直接输出 SQL 到控制台
@@ -72,6 +71,9 @@ knife4j:
 
 # 应用自定义配置
 app:
+  cors:
+    # 允许的跨域来源，多个逗号分隔，生产环境请指定具体域名，开发环境 Vite 代理不受此影响
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:*}
   cache:
     # 系统配置缓存过期时间（秒），默认 10 分钟
     config-ttl-seconds: 600
@@ -161,16 +163,17 @@ management:
       show-details: when_authorized
       probes:
         enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       application: ${spring.application.name}
 
 # 日志（由 logback-spring.xml 管理，此处仅保留日志级别配置）
 logging:
   level:
-    com.rx.admin: INFO
-    org.springframework: INFO
-    org.mybatis: INFO
+    "[com.rx.admin]": INFO
+    "[org.springframework]": INFO
+    "[org.mybatis]": INFO

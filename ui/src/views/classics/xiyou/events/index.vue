@@ -301,6 +301,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useTableHeight } from '@/composables/useTableHeight'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { COLORS } from '@/config/colors'
 import {
   getXiyouEventAllApi,
   getXiyouEventPageApi,
@@ -388,11 +389,11 @@ const avgDifficulty = computed(() => {
 
 // 节点颜色
 function nodeColor(level) {
-  if (!level) return '#909399'
-  if (level >= 8) return 'linear-gradient(135deg, #f56c6c, #e74c3c)'
-  if (level >= 6) return 'linear-gradient(135deg, #e6a23c, #f39c12)'
-  if (level >= 4) return 'linear-gradient(135deg, #f59e0b, #d97706)'
-  return 'linear-gradient(135deg, #67c23a, #2ecc71)'
+  if (!level) return COLORS.TEXT_SECONDARY
+  if (level >= 8) return `linear-gradient(135deg, ${COLORS.DANGER}, #e74c3c)`
+  if (level >= 6) return `linear-gradient(135deg, ${COLORS.WARNING}, #f39c12)`
+  if (level >= 4) return `linear-gradient(135deg, #f59e0b, #d97706)`
+  return `linear-gradient(135deg, ${COLORS.SUCCESS}, #2ecc71)`
 }
 
 // 事件类型颜色

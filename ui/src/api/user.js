@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 // 用户列表
 export function getUserPageApi(params) {
   return request({
-    url: '/sys/user/page',
+    url: API.SYS.USER.PAGE,
     method: 'get',
     params
   })
@@ -12,7 +13,7 @@ export function getUserPageApi(params) {
 // 新增用户
 export function addUserApi(data, roleIds) {
   return request({
-    url: '/sys/user',
+    url: API.SYS.USER.CRUD,
     method: 'post',
     data,
     params: { roleIds: roleIds?.join(',') }
@@ -22,7 +23,7 @@ export function addUserApi(data, roleIds) {
 // 修改用户
 export function updateUserApi(data, roleIds) {
   return request({
-    url: '/sys/user',
+    url: API.SYS.USER.CRUD,
     method: 'put',
     data,
     params: { roleIds: roleIds?.join(',') }
@@ -32,7 +33,7 @@ export function updateUserApi(data, roleIds) {
 // 删除用户
 export function deleteUserApi(id) {
   return request({
-    url: `/sys/user/${id}`,
+    url: API.SYS.USER.BY_ID(id),
     method: 'delete'
   })
 }
@@ -43,7 +44,7 @@ export function deleteUserApi(id) {
  */
 export function getUserByIdApi(id) {
   return request({
-    url: `/sys/user/${id}`,
+    url: API.SYS.USER.BY_ID(id),
     method: 'get'
   })
 }

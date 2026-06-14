@@ -8,6 +8,7 @@ import ExcelJS from 'exceljs'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import html2canvas from 'html2canvas'
+import { COLORS } from '@/config/colors'
 
 // ──────────────────── 通用工具 ────────────────────
 
@@ -61,7 +62,7 @@ export async function exportExcelClient({ title, columns, data }) {
   headerRow.height = 22
   headerRow.eachCell(cell => {
     cell.font = { bold: true, size: 10, color: { argb: 'FFFFFFFF' } }
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF409EFF' } }
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + COLORS.PRIMARY.replace('#', '') } }
     cell.alignment = { horizontal: 'center', vertical: 'middle' }
     cell.border = {
       top: { style: 'thin' }, bottom: { style: 'thin' },
@@ -82,7 +83,7 @@ export async function exportExcelClient({ title, columns, data }) {
     })
     if (i % 2 === 1) {
       dataRow.eachCell(cell => {
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF5F7FA' } }
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + COLORS.BG_PAGE.replace('#', '') } }
       })
     }
   })
@@ -120,7 +121,7 @@ export async function exportPdfClient({ title, columns, data }) {
   const container = document.createElement('div')
   container.style.cssText = `
     position: fixed; left: -9999px; top: 0; z-index: -1;
-    background: #fff; padding: 20px 24px; font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
+    background: ${COLORS.BG_WHITE}; padding: 20px 24px; font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
   `
   document.body.appendChild(container)
 
@@ -136,7 +137,7 @@ export async function exportPdfClient({ title, columns, data }) {
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: COLORS.BG_WHITE,
       logging: false
     })
 
@@ -179,19 +180,19 @@ export async function exportPdfClient({ title, columns, data }) {
 function buildTableHtml(title, columns, data) {
   const headerCells = columns.map(c => `<th>${escHtml(c.label)}</th>`).join('')
   const dataRows = data.map((row, i) => {
-    const bg = i % 2 === 0 ? '#ffffff' : '#f5f7fa'
+    const bg = i % 2 === 0 ? COLORS.BG_WHITE : COLORS.BG_PAGE
     const cells = columns.map(c => `<td>${escHtml(cellText(row, c.field))}</td>`).join('')
     return `<tr style="background:${bg}">${cells}</tr>`
   }).join('')
 
   return `
     <style>
-      table { border-collapse: collapse; width: 100%; font-size: 12px; color: #303133; }
-      th { background: #409EFF; color: #fff; font-weight: bold; padding: 7px 10px;
-           border: 1px solid #337ECC; text-align: center; }
-      td { padding: 6px 10px; border: 1px solid #DCDFE6; }
-      .title { font-size: 16px; font-weight: bold; color: #303133; margin-bottom: 10px; }
-      .subtitle { font-size: 11px; color: #909399; margin-bottom: 12px; }
+      table { border-collapse: collapse; width: 100%; font-size: 12px; color: ${COLORS.TEXT_PRIMARY}; }
+      th { background: ${COLORS.PRIMARY}; color: ${COLORS.BG_WHITE}; font-weight: bold; padding: 7px 10px;
+           border: 1px solid ${COLORS.PRIMARY_DARK}; text-align: center; }
+      td { padding: 6px 10px; border: 1px solid ${COLORS.BORDER_BASE}; }
+      .title { font-size: 16px; font-weight: bold; color: ${COLORS.TEXT_PRIMARY}; margin-bottom: 10px; }
+      .subtitle { font-size: 11px; color: ${COLORS.TEXT_SECONDARY}; margin-bottom: 12px; }
     </style>
     <div class="title">${escHtml(title)}</div>
     <div class="subtitle">导出时间: ${new Date().toLocaleString()}</div>

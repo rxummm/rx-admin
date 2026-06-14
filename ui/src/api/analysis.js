@@ -1,10 +1,11 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 /**
  * 获取所有可分析的菜单列表
  */
 export function getAnalysisMenusApi() {
-  return request({ url: '/tool/analysis/menus', method: 'get' })
+  return request({ url: API.TOOL.ANALYSIS.MENUS, method: 'get' })
 }
 
 /**
@@ -12,7 +13,7 @@ export function getAnalysisMenusApi() {
  * @param {string} menuName - 菜单名称，如"红楼人物"
  */
 export function analyzeMenuApi(menuName) {
-  return request({ url: '/tool/analysis/analyze', method: 'get', params: { menuName } })
+  return request({ url: API.TOOL.ANALYSIS.ANALYZE, method: 'get', params: { menuName } })
 }
 
 /**
@@ -20,5 +21,5 @@ export function analyzeMenuApi(menuName) {
  * @param {string} keyword - 搜索关键词
  */
 export function searchMenuApi(keyword) {
-  return request({ url: '/tool/analysis/search', method: 'get', params: { keyword } })
+  return request({ url: API.TOOL.ANALYSIS.SEARCH, method: 'get', params: { keyword } })
 }

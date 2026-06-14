@@ -3,7 +3,7 @@ package com.rx.admin.framework.mybatis;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.rx.admin.common.handler.DataScopeInnerInterceptor;
-import com.rx.admin.service.DataScopeService;
+import com.rx.admin.modules.system.permission.service.DataScopeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

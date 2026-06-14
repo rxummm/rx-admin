@@ -48,8 +48,10 @@
       </RecycleScroller>
     </div>
 
-    <el-pagination v-model:page="queryParams.page" v-model:limit="queryParams.size" :total="total"
-      :page-sizes="[10,20,50,100]" layout="total,sizes,prev,pager,next,jumper"
+    <el-pagination
+      class="page-pagination"
+      v-model:current-page="queryParams.page" v-model:page-size="queryParams.size" :total="total"
+      :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
       @size-change="fetchData" @current-change="fetchData" />
   </div>
 </template>
@@ -64,7 +66,7 @@ import { getSlowQueryPageApi, deleteSlowQueryApi, batchDeleteSlowQueryApi, clear
 
 const { t } = useI18n()
 
-const queryParams = reactive({ page: 1, size: 20 })
+const queryParams = reactive({ page: 1, size: 10 })
 const keyword = ref("")
 const queryTypeFilter = ref("")
 const total = ref(0)
@@ -137,4 +139,8 @@ onMounted(() => { fetchData() })
 .vc-method { width: 220px; }
 .vc-time { width: 160px; }
 .vc-op { width: 60px; text-align: center; }
+
+.page-pagination {
+  margin-top: 12px;
+}
 </style>

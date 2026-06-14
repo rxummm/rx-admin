@@ -4,6 +4,7 @@
  */
 
 import { ref, computed } from 'vue'
+import { COLORS } from '@/config/colors'
 
 // ==================== FPS 监控 ====================
 
@@ -276,10 +277,10 @@ export function calculatePerformanceScore() {
 export function getPerformanceLevel() {
   const score = calculatePerformanceScore()
   
-  if (score >= 90) return { level: '优秀', color: '#3fb950', emoji: '🚀' }
-  if (score >= 70) return { level: '良好', color: '#58a6ff', emoji: '✨' }
-  if (score >= 50) return { level: '一般', color: '#d29922', emoji: '⚠️' }
-  return { level: '较差', color: '#f85149', emoji: '❌' }
+  if (score >= 90) return { level: '优秀', color: COLORS.STATUS.SUCCESS, emoji: '🚀' }
+  if (score >= 70) return { level: '良好', color: COLORS.STATUS.PRIMARY, emoji: '✨' }
+  if (score >= 50) return { level: '一般', color: COLORS.STATUS.WARNING, emoji: '⚠️' }
+  return { level: '较差', color: COLORS.STATUS.DANGER, emoji: '❌' }
 }
 
 // ==================== Vue Composition API ====================

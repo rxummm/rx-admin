@@ -1,5 +1,7 @@
 import { ref, watch } from 'vue'
 import { useStorage } from './useStorage'
+import { COLORS } from '@/config/colors'
+import { invalidateCyberTheme } from '@/utils/echartsTheme'
 
 const theme = useStorage('layout_theme', 'default')
 const sidebarStyle = useStorage('layout_sidebar_style', 'default')
@@ -7,6 +9,7 @@ const sidebarStyle = useStorage('layout_sidebar_style', 'default')
 // 应用主题
 function applyTheme(themeName) {
   document.documentElement.setAttribute('data-theme', themeName === 'default' ? '' : themeName)
+  invalidateCyberTheme()
 }
 
 // 初始化
@@ -27,13 +30,7 @@ export function useLayoutSettings() {
     sidebarStyle.value = style
   }
 
-  const themeOptions = [
-    { name: 'default', label: '默认蓝', color: '#409EFF' },
-    { name: 'green', label: '翡翠绿', color: '#67C23A' },
-    { name: 'purple', label: '深紫', color: '#9C27B0' },
-    { name: 'orange', label: '暖橙', color: '#E6A23C' },
-    { name: 'cyan', label: '青色', color: '#00BCD4' },
-  ]
+  const themeOptions = COLORS.THEME_OPTIONS
 
   return {
     currentTheme, setTheme, themeOptions,
