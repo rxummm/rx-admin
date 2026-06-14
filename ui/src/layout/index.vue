@@ -2,6 +2,7 @@
   <el-container class="layout-container">
     <!-- 侧边栏 -->
     <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
+    <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
       <div class="logo-container" @click="goHome">
         <img src="@/assets/logo.svg" class="logo-img" />
         <span v-show="!isCollapse" class="logo-title">RX Admin</span>
