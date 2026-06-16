@@ -149,6 +149,88 @@ Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
 git remote set-url rx-admin git@github.com:rxummm/rx-admin.git
 ```
 
+### 4.2 连接超时处理
+
+**问题：** `Failed to connect to github.com port 443 after 21033 ms`
+
+**解决方案：**
+
+```powershell
+# 增加超时时间到 600 秒
+git config --global http.timeout 600
+
+# 设置最低速度限制为 0（不限制）
+git config --global http.lowSpeedLimit 0
+
+# 设置上传缓冲区大小
+git config --global http.postBuffer 524288000
+
+# 重试推送
+git push
+```
+
+**验证网络连接：**
+
+```powershell
+# 测试 GitHub 连接
+Test-NetConnection github.com -Port 443
+
+# 测试 DNS 解析
+Resolve-DnsName github.com
+
+# 测试 Git 连接
+git ls-remote https://github.com/rxummm/rx-admin.git
+```
+
+### 4.3 强制推送（覆盖远程分支）
+
+**场景：** 需要完全覆盖远程分支，像第一次提交一样。
+
+```powershell
+# 确认本地状态
+git status
+git log --oneline -5
+
+# 强制推送（⚠️ 会覆盖远程历史，不可恢复）
+git push --force rx-admin main
+```
+
+### 4.4 修改 Commit 时间戳
+
+**问题：** 推送成功后，GitHub 显示的时间还是上一次的，不是最新的。
+
+**原因：** GitHub 显示的是 commit 的创建时间，而不是推送时间。
+
+**解决方案：**
+
+```powershell
+# 修改最后一次 commit 的时间为当前时间
+git commit --amend --no-edit --date="$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+
+# 强制推送到远程
+git push --force rx-admin main
+```
+
+**修改多个 commit 的时间：**
+
+```powershell
+# 修改最近 2 个 commit 的时间
+git rebase -i HEAD~2
+```
+
+在编辑器中，将要修改的 commit 前面的 `pick` 改为 `edit` 或 `e`，保存后执行：
+
+```powershell
+# 修改当前 commit 的时间
+git commit --amend --no-edit --date="$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+
+# 继续修改下一个
+git rebase --continue
+
+# 强制推送
+git push --force rx-admin main
+```
+
 ---
 
 ## 5. 完整工作流示例
