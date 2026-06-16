@@ -1,0 +1,179 @@
+server:
+  port: 8088
+  tomcat:
+    max-swallow-size: 100MB
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+  application:
+    name: rx-admin
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+  cache:
+    type: caffeine
+  datasource:
+    # 主数据源：rx_admin（系统管理）
+    primary:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/rx_admin?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:root}
+    # 第二数据源：rxusysadmin（四大名著）
+    second:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/rxusysadmin?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:root}
+
+mybatis-plus:
+  type-aliases-package: com.rx.admin.modules.**.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    # 日志：生产环境使用 SLF4J，不直接输出 SQL 到控制台
+    # 本地开发环境在 application-local.yml 中覆盖为 StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# Sa-Token 配置（内存模式，不依赖Redis）
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  active-timeout: 1800
+  is-concurrent: false
+  is-share: false
+  token-style: uuid
+  is-log: false
+
+# Knife4j 配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+# 应用自定义配置
+app:
+  cors:
+    # 允许的跨域来源，多个逗号分隔，生产环境请指定具体域名，开发环境 Vite 代理不受此影响
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:*}
+  cache:
+    # 系统配置缓存过期时间（秒），默认 10 分钟
+    config-ttl-seconds: 600
+    # 菜单树缓存过期时间（秒），默认 1 小时
+    menu-ttl-seconds: 3600
+    # 仪表盘统计缓存刷新间隔（毫秒），默认 30 秒
+    dashboard-refresh-ms: 30000
+  menu:
+    # 不可申请的顶级菜单ID（系统管理1、系统工具24、内容管理30、系统监控36）
+    excluded-top-ids: 1,24,30,36
+    # 排除的权限申请菜单ID
+    excluded-permission-menu-id: 300
+  slow-query:
+    # 慢查询阈值（毫秒）
+    threshold-ms: 2000
+  # 验证码配置
+  captcha:
+    # 验证码过期时间（毫秒），默认 5 分钟
+    expire-ms: 300000
+    # 过期验证码清理间隔（毫秒），默认 60 秒
+    cleanup-interval-ms: 60000
+  # 防重放配置
+  replay:
+    # 时间窗口（毫秒），超过此偏差拒绝请求，默认 5 分钟
+    time-window-ms: 300000
+    # nonce 缓存最大条目数
+    max-nonce-cache: 10000
+  # 技术博客抓取配置
+  techblog:
+    # 批量抓取页间请求延迟（毫秒），避免被反爬
+    request-delay-ms: 1000
+    # 列表页抓取超时（毫秒）
+    page-timeout-ms: 15000
+    # 单篇文章详情抓取超时（毫秒）
+    article-timeout-ms: 30000
+  # 邮件发送配置（SMTP）
+  mail:
+    # 发件人地址（与认证用户一致）
+    from: ${MAIL_FROM:xubingzhen83@163.com}
+    # SMTP 服务器
+    host: ${MAIL_HOST:smtp.163.com}
+    # SMTP 端口（465=SSL, 587=STARTTLS）
+    port: ${MAIL_PORT:465}
+    # 认证用户名（通常与发件人地址相同）
+    username: ${MAIL_USERNAME:}
+    # 认证密码（163邮箱为授权码，非登录密码）
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
+          ssl:
+            enable: ${MAIL_SMTP_SSL:true}
+  # IP 黑白名单配置
+  ip-filter:
+    enabled: false              # 默认关闭，生产环境按需开启
+    mode: blacklist             # blacklist（黑名单模式）或 whitelist（白名单模式）
+    ips:                        # IP 列表，逗号分隔，如: 192.168.1.100,10.0.0.5
+
+# AS400 连接配置（密码通过环境变量注入，不硬编码在配置文件中）
+as400:
+  host: ${AS400_HOST:pub400.com}
+  username: ${AS400_USERNAME:}
+  password: ${AS400_PASSWORD:}
+  # 默认库列表
+  default-libraries: A7RXUZZ1,A7RXUZZ2,A7RXUZZB
+
+# 常用工具配置
+common-tools:
+  upload:
+    dir: D:/vueprojects/RX/ui/public/shareddocs
+
+# 音乐播放器配置
+music:
+  folder: C:/Users/admin/Downloads/music
+
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+# 日志（由 logback-spring.xml 管理，此处仅保留日志级别配置）
+logging:
+  level:
+    "[com.rx.admin]": INFO
+    "[org.springframework]": INFO
+    "[org.mybatis]": INFO

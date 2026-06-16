@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RX Admin - 知识图谱</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; height: 100vh; display: flex; flex-direction: column; }
+/* Top bar */
+.topbar { background: #1e293b; padding: 10px 20px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #334155; flex-shrink: 0; }
+.topbar h1 { font-size: 18px; color: #38bdf8; white-space: nowrap; }
+.topbar .meta { font-size: 11px; color: #94a3b8; }
+.topbar input { flex: 1; max-width: 360px; padding: 6px 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 13px; outline: none; }
+.topbar input:focus { border-color: #38bdf8; }
+/* Main layout */
+.main { flex: 1; display: flex; overflow: hidden; }
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-left: 20px; }
+.tab { padding: 6px 14px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: #94a3b8; cursor: pointer; font-size: 13px; transition: all .2s; }
+.tab:hover { color: #e2e8f0; background: #334155; }
+.tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+/* Sidebar */
+.sidebar { width: 320px; background: #1e293b; border-right: 1px solid #334155; overflow-y: auto; flex-shrink: 0; }
+.sidebar h3 { padding: 12px 16px 6px; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+/* Content */
+.content { flex: 1; overflow-y: auto; padding: 20px; }
+/* Layer cards */
+.layer-list { padding: 0 12px 12px; }
+.layer-item { padding: 8px 12px; margin: 2px 0; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; align-items: center; transition: background .15s; }
+.layer-item:hover { background: #334155; }
+.layer-item.active { background: #2563eb; }
+.layer-item .count { font-size: 11px; color: #94a3b8; background: #0f172a; padding: 2px 8px; border-radius: 10px; }
+/* Node list */
+.node-list { max-height: 55vh; overflow-y: auto; padding: 0 12px; }
+.node-item { padding: 7px 12px; margin: 2px 0; border-radius: 5px; cursor: pointer; font-size: 12px; transition: background .15s; display: flex; align-items: center; gap: 8px; }
+.node-item:hover { background: #334155; }
+.node-item.selected { background: #1d4ed8; }
+.node-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.node-item .dot.java { background: #f97316; }
+.node-item .dot.vue { background: #22c55e; }
+.node-item .dot.js { background: #eab308; }
+.node-item .dot.scss { background: #ec4899; }
+.node-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.node-item .lines { font-size: 10px; color: #64748b; }
+/* Detail panel */
+.detail { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.detail h2 { font-size: 16px; margin-bottom: 4px; }
+.detail .path { font-size: 11px; color: #64748b; margin-bottom: 10px; word-break: break-all; }
+.detail .summary { font-size: 13px; color: #cbd5e1; margin-bottom: 10px; }
+.detail .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.detail .tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #334155; color: #94a3b8; }
+.detail .tag.complexity-simple { background: #064e3b; color: #34d399; }
+.detail .tag.complexity-moderate { background: #431407; color: #fdba74; }
+.detail .tag.complexity-complex { background: #450a0a; color: #f87171; }
+/* Relations */
+.relations { margin-top: 12px; }
+.relations h4 { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+.relation-item { padding: 4px 8px; font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; border-radius: 4px; }
+.relation-item:hover { background: #334155; }
+.relation-item .arrow { color: #64748b; }
+.relation-item .rtype { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: #1e40af; color: #93c5fd; flex-shrink: 0; }
+/* Tour */
+.tour-step { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: border-color .2s; }
+.tour-step:hover { border-color: #38bdf8; }
+.tour-step .step-order { font-size: 11px; color: #38bdf8; margin-bottom: 4px; }
+.tour-step h3 { font-size: 15px; margin-bottom: 6px; }
+.tour-step p { font-size: 12px; color: #94a3b8; }
+.tour-step .step-files { margin-top: 8px; }
+.tour-step .step-file { font-size: 11px; color: #38bdf8; cursor: pointer; margin-right: 8px; }
+/* Stats grid */
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px; text-align: center; }
+.stat-card .stat-num { font-size: 28px; font-weight: bold; color: #38bdf8; }
+.stat-card .stat-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+/* Empty state */
+.empty { text-align: center; padding: 40px 20px; color: #64748b; }
+.empty .icon { font-size: 40px; margin-bottom: 10px; }
+/* Graph colors */
+.dot.java { background: #f97316; }
+.dot.vue { background: #22c55e; }
+.dot.javascript { background: #eab308; }
+.dot.scss { background: #ec4899; }
+.dot.html { background: #8b5cf6; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🧠 RX Admin 知识图谱</h1>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">概览</button>
+    <button class="tab" data-view="layers">架构层</button>
+    <button class="tab" data-view="tour">导览</button>
+    <button class="tab" data-view="files">文件</button>
+  </div>
+  <input type="text" id="search" placeholder="搜索文件、类、函数..." />
+  <span class="meta" id="meta-info"></span>
+</div>
+<div class="main">
+  <div class="sidebar" id="sidebar">
+    <div id="sidebar-content"></div>
+  </div>
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+// --- Load data ---
+let graph = null;
+
+async function loadGraph() {
+  try {
+    const res = await fetch('knowledge-graph.json');
+    graph = await res.json();
+    init();
+  } catch(e) {
+    document.getElementById('content').innerHTML = `<div class="empty"><div class="icon">❌</div>无法加载 knowledge-graph.json<br>请确保通过 http 访问此页面</div>`;
+  }
+}
+
+// --- Init ---
+let currentView = 'overview';
+let selectedLayer = null;
+let selectedNodeId = null;
+
+function init() {
+  document.getElementById('meta-info').textContent =
+    `v${graph.version} | ${graph.project.analyzedAt?.slice(0,10)} | ${graph.nodes.length} 节点 | ${graph.edges.length} 边`;
+
+  // Tab clicks
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      currentView = t.dataset.view;
+      selectedLayer = null;
+      selectedNodeId = null;
+      render();
+    });
+  });
+
+  // Search
+  document.getElementById('search').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (q.length > 2) { searchFiles(q); }
+    else if (q.length === 0 && currentView === 'files') { render(); }
+  });
+
+  render();
+}
+
+// --- Build indexes ---
+function fileNodes() { return graph.nodes.filter(n => n.type === 'file'); }
+function classNodes() { return graph.nodes.filter(n => n.type === 'class'); }
+function getNode(id) { return graph.nodes.find(n => n.id === id); }
+function edgesForNode(id) {
+  return graph.edges.filter(e => e.source === id || e.target === id);
+}
+
+// --- Render ---
+function render() {
+  switch(currentView) {
+    case 'overview': renderOverview(); break;
+    case 'layers': renderLayers(); break;
+    case 'tour': renderTour(); break;
+    case 'files': renderFiles(); break;
+  }
+}
+
+// --- Overview ---
+function renderOverview() {
+  const proj = graph.project;
+  const files = fileNodes();
+  const byLang = {};
+  const byComplexity = { simple: 0, moderate: 0, complex: 0 };
+  const edgeTypes = {};
+  files.forEach(f => {
+    const lang = graph.project.languages.find(l => f.filePath.endsWith('.' + l)) || 'other';
+    byLang[lang] = (byLang[lang] || 0) + 1;
+    byComplexity[f.complexity || 'simple'] = (byComplexity[f.complexity || 'simple'] || 0) + 1;
+  });
+  graph.edges.forEach(e => { edgeTypes[e.type] = (edgeTypes[e.type] || 0) + 1; });
+
+  let html = `
+    <div class="detail" style="border-left: 3px solid #38bdf8;">
+      <h2>${proj.name}</h2>
+      <div class="summary">${proj.description}</div>
+      <div class="tags">
+        ${proj.frameworks.map(f => `<span class="tag">${f}</span>`).join('')}
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num">${files.length}</div><div class="stat-label">源文件</div></div>
+      <div class="stat-card"><div class="stat-num">${graph.nodes.length}</div><div class="stat-label">图谱节点</div></div>
+      <div class="stat-card"><div class="stat-num">${graph.edges.length}</div><div class="stat-label">关系边</div></div>
+      <div class="stat-card"><div class="stat-num">${graph.layers ? graph.layers.length : 0}</div><div class="stat-label">架构层</div></div>
+      <div class="stat-card"><div class="stat-num">${graph.tour ? graph.tour.length : 0}</div><div class="stat-label">导览步骤</div></div>
+      <div class="stat-card"><div class="stat-num">${proj.languages.length}</div><div class="stat-label">编程语言</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="detail">
+        <h3 style="font-size:13px;color:#64748b;margin-bottom:8px;">按语言分布</h3>
+        ${Object.entries(byLang).sort((a,b)=>b[1]-a[1]).map(([l,c]) =>
+          `<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px;">
+            <span class="dot ${l}" style="width:10px;height:10px;"></span>
+            <span style="flex:1">${l}</span><span style="color:#64748b">${c} 文件</span>
+          </div>`
+        ).join('')}
+      </div>
+      <div class="detail">
+        <h3 style="font-size:13px;color:#64748b;margin-bottom:8px;">关系统计</h3>
+        ${Object.entries(edgeTypes).sort((a,b)=>b[1]-a[1]).map(([t,c]) =>
+          `<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px;">
+            <span style="padding:1px 8px;border-radius:8px;background:#1e40af;color:#93c5fd;font-size:10px;">${t}</span>
+            <span style="flex:1"></span><span style="color:#64748b">${c} 条</span>
+          </div>`
+        ).join('')}
+      </div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = html;
+  document.getElementById('sidebar-content').innerHTML =
+    `<h3>快速导航</h3>
+    <div class="layer-list">
+      <div class="layer-item" onclick="document.getElementById('search').focus()">
+        <span>🔍 搜索文件</span><span class="count">${files.length}</span>
+      </div>
+      <div class="layer-item" onclick="switchView('layers')">
+        <span>🏗️ 架构层</span><span class="count">${graph.layers ? graph.layers.length : 0}</span>
+      </div>
+      <div class="layer-item" onclick="switchView('tour')">
+        <span>🗺️ 导览</span><span class="count">${graph.tour ? graph.tour.length : 0}</span>
+      </div>
+    </div>`;
+}
+
+// --- Layers ---
+function renderLayers() {
+  if (!graph.layers || graph.layers.length === 0) {
+    document.getElementById('content').innerHTML = '<div class="empty"><div class="icon">📦</div>暂无架构层数据</div>';
+    return;
+  }
+
+  let sidebarHtml = '<h3>架构层</h3><div class="layer-list">';
+  graph.layers.forEach((layer, i) => {
+    const active = selectedLayer === i ? ' active' : '';
+    sidebarHtml += `<div class="layer-item${active}" data-layer="${i}">
+      <span>${layer.name}</span><span class="count">${layer.nodeIds.length}</span>
+    </div>`;
+  });
+  sidebarHtml += '</div>';
+  document.getElementById('sidebar-content').innerHTML = sidebarHtml;
+
+  // Bind clicks
+  document.querySelectorAll('.layer-item[data-layer]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.layer-item').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      selectedLayer = parseInt(el.dataset.layer);
+      renderLayerDetail(selectedLayer);
+    });
+  });
+
+  if (selectedLayer !== null) {
+    renderLayerDetail(selectedLayer);
+  } else {
+    document.getElementById('content').innerHTML =
+      '<div class="empty"><div class="icon">👆</div>从左侧选择一个架构层查看详情</div>';
+  }
+}
+
+function renderLayerDetail(idx) {
+  const layer = graph.layers[idx];
+  const nodes = layer.nodeIds.map(id => getNode(id)).filter(Boolean);
+  let html = `
+    <div class="detail" style="border-left: 3px solid #38bdf8;">
+      <h2>${layer.name}</h2>
+      <div class="summary">${layer.description || ''}</div>
+      <div class="tags"><span class="tag">${nodes.length} 个文件</span></div>
+    </div>
+    <div class="node-list" style="max-height:none;">`;
+  nodes.forEach(n => {
+    const lang = fileLang(n);
+    html += `
+    <div class="node-item" onclick="selectNode('${n.id}')">
+      <span class="dot ${lang}"></span>
+      <span class="name">${n.name}</span>
+      <span style="font-size:11px;color:#64748b;">${n.summary || ''}</span>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+// --- Tour ---
+function renderTour() {
+  if (!graph.tour || graph.tour.length === 0) {
+    document.getElementById('content').innerHTML = '<div class="empty"><div class="icon">🗺️</div>暂无导览数据</div>';
+    return;
+  }
+
+  let sidebarHtml = '<h3>导览步骤</h3><div class="layer-list">';
+  graph.tour.forEach((step, i) => {
+    sidebarHtml += `<div class="layer-item" data-step="${i}">
+      <span>${i+1}. ${step.title}</span><span class="count">${step.nodeIds.length}</span>
+    </div>`;
+  });
+  sidebarHtml += '</div>';
+  document.getElementById('sidebar-content').innerHTML = sidebarHtml;
+
+  let html = '';
+  graph.tour.forEach((step, i) => {
+    const nodes = step.nodeIds.map(id => getNode(id)).filter(Boolean);
+    html += `
+    <div class="tour-step" onclick="scrollToTour(${i})">
+      <div class="step-order">步骤 ${step.order || i+1}</div>
+      <h3>${step.title}</h3>
+      <p>${step.description || ''}</p>
+      <div class="step-files">
+        ${nodes.map(n => `<span class="step-file" onclick="event.stopPropagation();selectNode('${n.id}')">📄 ${n.name}</span>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+// --- Files ---
+function renderFiles() {
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  let files = fileNodes();
+  if (query.length > 2) {
+    files = files.filter(f =>
+      f.name.toLowerCase().includes(query) ||
+      f.filePath.toLowerCase().includes(query) ||
+      (f.summary && f.summary.toLowerCase().includes(query)) ||
+      (f.tags && f.tags.some(t => t.includes(query)))
+    );
+  }
+
+  let sidebarHtml = '<h3>文件列表</h3>';
+  sidebarHtml += `<div style="padding:4px 12px;font-size:11px;color:#64748b;">${files.length} 个文件</div>`;
+  sidebarHtml += '<div class="node-list">';
+  files.slice(0, 200).forEach(f => {
+    const lang = fileLang(f);
+    sidebarHtml += `
+    <div class="node-item" data-id="${f.id}" onclick="selectNode('${f.id}')">
+      <span class="dot ${lang}"></span>
+      <span class="name">${f.name}</span>
+    </div>`;
+  });
+  sidebarHtml += '</div>';
+  if (files.length > 200) {
+    sidebarHtml += `<div style="padding:8px 12px;font-size:11px;color:#64748b;">显示前 200 个（共 ${files.length} 个），请使用搜索</div>`;
+  }
+  document.getElementById('sidebar-content').innerHTML = sidebarHtml;
+
+  if (selectedNodeId) {
+    renderNodeDetail(selectedNodeId);
+  } else {
+    document.getElementById('content').innerHTML =
+      '<div class="empty"><div class="icon">📂</div>从左侧选择一个文件查看详情</div>';
+  }
+}
+
+// --- Select node ---
+function selectNode(id) {
+  selectedNodeId = id;
+  renderNodeDetail(id);
+}
+
+function renderNodeDetail(id) {
+  const node = getNode(id);
+  if (!node) { document.getElementById('content').innerHTML = `<div class="empty">节点未找到</div>`; return; }
+
+  const edges = edgesForNode(id);
+  const imports = edges.filter(e => e.type === 'imports');
+  const deps = edges.filter(e => e.type === 'depends_on');
+  const contains = edges.filter(e => e.type === 'contains');
+  const exports = edges.filter(e => e.type === 'exports');
+  const inherits = edges.filter(e => e.type === 'inherits' || e.type === 'implements');
+
+  const lang = fileLang(node);
+
+  let html = `
+    <div class="detail" style="border-left: 3px solid var(--lang-color, #38bdf8);">
+      <h2 style="display:flex;align-items:center;gap:8px;">
+        <span class="dot ${lang}" style="width:12px;height:12px;"></span>${node.name}
+      </h2>
+      <div class="path">${node.filePath}</div>
+      <div class="summary">${node.summary || '无摘要'}</div>
+      <div class="tags">
+        ${(node.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}
+        <span class="tag complexity-${node.complexity || 'simple'}">${node.complexity || 'simple'}</span>
+      </div>
+    </div>`;
+
+  // Import relations
+  function renderEdgeList(title, edgeList, direction) {
+    const filtered = edgeList.filter(e => {
+      const targetId = direction === 'out' ? e.target : e.source;
+      return getNode(targetId);
+    });
+    if (filtered.length === 0) return '';
+    let h = `<div class="relations"><h4>${title} (${filtered.length})</h4>`;
+    filtered.forEach(e => {
+      const targetId = direction === 'out' ? e.target : e.source;
+      const tn = getNode(targetId);
+      const tl = fileLang(tn);
+      h += `
+      <div class="relation-item" onclick="selectNode('${targetId}')">
+        <span class="dot ${tl}"></span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tn.name}</span>
+        <span class="rtype">${e.type}</span>
+      </div>`;
+    });
+    h += '</div>';
+    return h;
+  }
+
+  html += renderEdgeList('引入 (imports)', imports.filter(e => e.source === id), 'out');
+  html += renderEdgeList('依赖 (depends_on)', deps.filter(e => e.source === id), 'out');
+  html += renderEdgeList('包含 (contains)', contains.filter(e => e.source === id), 'out');
+  html += renderEdgeList('继承/实现', inherits, 'out');
+  html += renderEdgeList('被引入', imports.filter(e => e.target === id), 'in');
+  html += renderEdgeList('被依赖', deps.filter(e => e.target === id), 'in');
+
+  document.getElementById('content').innerHTML = html;
+}
+
+// --- Helpers ---
+function fileLang(node) {
+  if (!node || !node.filePath) return '';
+  if (node.filePath.endsWith('.java')) return 'java';
+  if (node.filePath.endsWith('.vue')) return 'vue';
+  if (node.filePath.endsWith('.js')) return 'javascript';
+  if (node.filePath.endsWith('.scss') || node.filePath.endsWith('.css')) return 'scss';
+  if (node.filePath.endsWith('.html')) return 'html';
+  return '';
+}
+
+function searchFiles(q) {
+  // Switch to files view and search
+  if (currentView !== 'files') {
+    switchView('files');
+  } else {
+    render();
+  }
+}
+
+function switchView(view) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(`.tab[data-view="${view}"]`);
+  if (tab) tab.classList.add('active');
+  currentView = view;
+  selectedLayer = null;
+  selectedNodeId = null;
+  render();
+}
+
+// --- Boot ---
+loadGraph();
+</script>
+</body>
+</html>

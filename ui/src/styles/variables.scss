@@ -1,0 +1,357 @@
+// ====== 亮色主题（默认）—— 现代极简主义 ======
+:root {
+  // ── 圆角系统（精致柔和） ──
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  // ── 过渡速度（流畅自然） ──
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // ── 通用白色（统一引用，避免散落 #fff/#ffffff） ──
+  --color-white: #ffffff;
+
+  // ── 页面背景（纯净留白） ──
+  --bg-page: #f8f9fa;
+  --bg-container: #ffffff;
+  --bg-hover: #f1f3f5;
+  --bg-active: #e9ecef;
+  --bg-highlight: #f8f0fc;
+  --bg-highlight-hover: #f3e8f9;
+
+  // ── 文字色（优雅对比） ──
+  --text-primary: #212529;
+  --text-regular: #495057;
+  --text-secondary: #868e96;
+  --text-placeholder: #adb5bd;
+  --text-disabled: #ced4da;
+
+  // ── 边框色（微妙分隔） ──
+  --border-color: #dee2e6;
+  --border-light: #e9ecef;
+  --border-lighter: #f1f3f5;
+
+  // ── 主题色（随 --rx-primary 动态变化） ──
+  --color-primary: var(--rx-primary, #58a6ff);
+  --color-primary-light: var(--rx-primary-light, #79c0ff);
+  --color-primary-dark: var(--rx-primary-dark, #1f6feb);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-primary-glow: color-mix(in srgb, var(--color-primary) 30%, transparent);
+
+  // ── 功能色（霓虹饱和） ──
+  --color-success: #3fb950;
+  --color-success-soft: rgba(63, 185, 80, 0.1);
+  --color-warning: #d29922;
+  --color-warning-soft: rgba(210, 153, 34, 0.1);
+  --color-danger: #f85149;
+  --color-danger-soft: rgba(248, 81, 73, 0.1);
+  --color-info: var(--color-primary);
+  --color-info-soft: var(--color-primary-soft);
+
+  // ── 侧边栏（极简留白） ──
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #495057;
+  --sidebar-text-active: var(--color-primary);
+  --sidebar-active-indicator: var(--color-primary);
+  --sidebar-logo-color: #212529;
+  --sidebar-logo-border: #e9ecef;
+  --sidebar-logo-bg: transparent;
+  --sidebar-submenu-bg: #f8f9fa;
+  --sidebar-item-hover-bg: #f1f3f5;
+  --sidebar-item-active-bg: #f0f7ff;
+  --sidebar-width: 240px;
+  --sidebar-collapse-width: 64px;
+
+  // ── 顶栏（玻璃态效果） ──
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-backdrop: blur(10px);
+  --header-height: 56px;
+  --header-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  // ── 布局尺寸（统一引用，告别硬编码减号） ──
+  --layout-header-height: 56px;
+  --layout-tags-height: 40px;
+  --layout-footer-height: 0px;
+  // 通用偏移量：header + tags + 边距（统一通过 calc 组合）
+  --layout-content-offset: calc(var(--layout-header-height, 56px) + var(--layout-tags-height, 40px) + 11px);
+
+  // ── z-index 体系（统一层级，禁止散落魔法数字） ──
+  // ⚠️ 必须在 :root 顶层定义，不能只放在 html.dark 里！
+  // 否则亮色主题下 var(--z-*) 会回退到 auto，导致 z-index 完全失效。
+  // 0-99    装饰层（背景、噪点、渐变光晕）
+  // 100-199 内容层（文章、卡片堆叠、关系图谱）
+  // 200-299 业务层（特殊交互：音乐播放层级）
+  // 300-399 导航层（标签栏、Search 弹层）
+  // 1000+   Element Plus 浮层（el-index-* 体系）
+  // 9000+   全局层（Loading、FavoritesPanel、message）
+  // 99999   Teleport 全屏层（标签右键菜单 — 必须 > EP popper 2000 避免被列标题/下拉遮挡）
+  --z-base: 0;
+  --z-decor: 1;        // 装饰背景
+  --z-content: 10;     // 内容区
+  --z-article: 100;     // 文章正文
+  --z-graphic: 100;    // 关系图谱/canvas
+  --z-audio: 200;      // 音频可视化层
+  --z-audio-control: 3;
+  --z-header: 1000;    // 顶栏（与 EP 浮层错开，避让 message/tooltip）
+  --z-tags-view: 1001; // 标签栏
+  --z-search: 3000;    // 全局搜索弹层
+  --z-favorites: 9999; // 收藏面板
+  --z-loading: 9999;   // 全局 loading
+  --z-message: 9999;   // 覆盖 EP 默认 2000+，避免被 menu 遮挡
+  --z-teleport: 99999; // Teleport 到 body 的全屏菜单（如标签右键）
+
+  // ── 标签栏（精致胶囊） ──
+  --tags-bg: #ffffff;
+  --tags-height: 40px;
+  --tags-item-bg: #f1f3f5;
+  --tags-item-color: #495057;
+  --tags-item-active-bg: var(--color-primary);
+  --tags-item-active-color: #ffffff;
+  --tags-item-hover-bg: #e9ecef;
+  --tags-item-hover-color: #212529;
+  --tags-item-hover-border: transparent;
+
+  // ── 搜索框（优雅聚焦） ──
+  --search-bg: #f1f3f5;
+  --search-focus-bg: #ffffff;
+  --search-focus-shadow: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --search-dropdown-bg: #ffffff;
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  // ── 通知弹窗（柔和提示） ──
+  --notice-unread-bg: color-mix(in srgb, var(--color-primary) 6%, var(--bg-container));
+  --notice-unread-hover: #dbeafe;
+
+  // ── 标签关闭按钮 ──
+  --tag-close-hover-bg: var(--color-primary-soft);
+
+  // ── 右键菜单（精致浮层） ──
+  --context-menu-bg: #ffffff;
+  --context-menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  // ── 阴影体系（多层级深度感） ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.14);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 20px color-mix(in srgb, var(--color-primary) 15%, transparent);
+
+  // ── ── 登录页（科技渐变背景） ── ──
+  --login-bg: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  --login-card-bg: #ffffff;
+  --login-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+  // ── ── 表格容器（清爽卡片风格） ── ──
+  --table-container-bg: #ffffff;
+  --search-bar-bg: #ffffff;
+
+  // ── ── 垂直菜单激活（柔和背景 + 左侧指示条） ── ──
+  --menu-vertical-active-bg: color-mix(in srgb, var(--color-primary) 6%, var(--bg-container));
+  --menu-vertical-active-indicator: 3px solid var(--color-primary);
+
+  // ── 字典当前行 ──
+  --dict-current-row-bg: var(--menu-vertical-active-bg);
+
+  // ── 徽章边框 ──
+  --badge-border: #ffffff;
+
+  // ── 页面统一边距 ──
+  --page-padding: 16px;
+
+  // ── 字体（现代几何无衬线，优雅易读） ──
+  --font-family-display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-body: 'Inter', 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  // ── ECharts 调色板（霓虹科技风） ──
+  --chart-color-1: var(--color-primary);
+  --chart-color-2: var(--color-primary-light);
+  --chart-color-3: #3fb950;
+  --chart-color-4: #d29922;
+  --chart-color-5: #f85149;
+  --chart-color-6: #56d4dd;
+  --chart-color-7: #db61a2;
+  --chart-color-8: #8b949e;
+  --chart-color-9: #6e7681;
+  --chart-color-10: #212529;
+}
+
+// ====== 暗色主题 —— 暗黑赛博朋克 (Dark Cyberpunk) ======
+html.dark {
+  // ── 通用白色（暗色主题下不变） ──
+  --color-white: #ffffff;
+
+  // ── 圆角 & 过渡速度（保持一致） ──
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // ── 页面背景（GitHub Dark 深蓝黑层级系统） ──
+  --bg-page: #0d1117;              // 最深层
+  --bg-container: #161b22;         // 容器层
+  --bg-hover: #21262d;             // 悬浮层
+  --bg-active: #30363d;            // 激活层
+  --bg-highlight: #161b22;
+  --bg-highlight-hover: #21262d;
+
+  // ── 文字色（高对比护眼） ──
+  --text-primary: #e6edf3;         // 高亮白
+  --text-regular: #c9d1d9;         // 次级白
+  --text-secondary: #8b949e;       // 中灰
+  --text-placeholder: #6e7681;     // 浅灰
+  --text-disabled: #484f58;        // 深灰
+
+  // ── 边框色（微妙分隔） ──
+  --border-color: #30363d;
+  --border-light: #21262d;
+  --border-lighter: #161b22;
+
+  // ── 主题色（随 --rx-primary 动态变化） ──
+  --color-primary: var(--rx-primary, #58a6ff);
+  --color-primary-light: var(--rx-primary-light, #79c0ff);
+  --color-primary-dark: var(--rx-primary-dark, #1f6feb);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --color-primary-glow: color-mix(in srgb, var(--color-primary) 30%, transparent);
+
+  // ── 功能色（霓虹饱和 - VS Code 调色板） ──
+  --color-success: #3fb950;        // 荧光绿
+  --color-success-soft: rgba(63, 185, 80, 0.12);
+  --color-warning: #d29922;        // 琥珀黄
+  --color-warning-soft: rgba(210, 153, 34, 0.12);
+  --color-danger: #f85149;         // 珊瑚红
+  --color-danger-soft: rgba(248, 81, 73, 0.12);
+  --color-info: var(--color-primary);
+  --color-info-soft: var(--color-primary-soft);
+
+  // ── 侧边栏（深邃通透 + 发光效果） ──
+  --sidebar-bg: #0d1117;
+  --sidebar-text: #8b949e;
+  --sidebar-text-active: var(--color-primary);
+  --sidebar-active-indicator: var(--color-primary);
+  --sidebar-logo-color: #e6edf3;
+  --sidebar-logo-border: rgba(255, 255, 255, 0.08);
+  --sidebar-logo-bg: transparent;
+  --sidebar-submenu-bg: #0d1117;
+  --sidebar-item-hover-bg: #161b22;
+  --sidebar-item-active-bg: #161b22;
+  --sidebar-width: 240px;
+  --sidebar-collapse-width: 64px;
+
+  // ── 顶栏（玻璃态效果） ──
+  --header-bg: rgba(13, 17, 23, 0.95);
+  --header-backdrop: blur(10px);
+  --header-height: 56px;
+  --header-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+  // ── 布局尺寸（继承 :root，主题切换不需覆盖） ──
+  // --layout-header-height: 56px;          // 同 :root
+  // --layout-tags-height: 40px;            // 同 :root
+  // --layout-footer-height: 0px;           // 同 :root
+  // --layout-content-offset: calc(...);    // 同 :root
+
+  // ── z-index 体系（继承 :root，主题切换不需覆盖） ──
+  // --z-base / --z-decor / --z-content / ... 全部在 :root 顶层定义。
+  // 暗色主题下不需要重新声明这些变量，因为它们的值是纯数字，不随主题变化。
+  // （⚠️ 历史踩坑：曾把所有 z-index 变量写在这里，导致亮色主题 var(--z-teleport) 回退成 auto，
+  //    标签右键菜单被表格列标题、tab 下划线等元素盖住。修复方式：移到 :root。）
+
+  // ── 标签栏（精致胶囊 + 发光） ──
+  --tags-bg: #0d1117;
+  --tags-height: 40px;
+  --tags-item-bg: #161b22;
+  --tags-item-color: #8b949e;
+  --tags-item-active-bg: var(--color-primary);
+  --tags-item-active-color: #ffffff;
+  --tags-item-hover-bg: #21262d;
+  --tags-item-hover-color: #e6edf3;
+  --tags-item-hover-border: transparent;
+
+  // ── 搜索框（优雅聚焦 + 外发光） ──
+  --search-bg: #161b22;
+  --search-focus-bg: #21262d;
+  --search-focus-shadow: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  --search-dropdown-bg: #161b22;
+  --search-dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  // ── 通知弹窗（柔和提示） ──
+  --notice-unread-bg: #161b22;
+  --notice-unread-hover: #21262d;
+
+  // ── 标签关闭按钮 ──
+  --tag-close-hover-bg: color-mix(in srgb, var(--color-primary) 15%, transparent);
+
+  // ── 右键菜单（精致浮层） ──
+  --context-menu-bg: #161b22;
+  --context-menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  // ── 阴影体系（多层级深度 + 发光效果） ──
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.55);
+  --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px color-mix(in srgb, var(--color-primary) 25%, transparent);
+
+  // ── 登录页（赛博朋克渐变） ──
+  --login-bg: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1f6feb 100%);
+  --login-card-bg: #161b22;
+  --login-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px color-mix(in srgb, var(--color-primary) 15%, transparent);
+
+  // ── 表格容器（清爽卡片） ──
+  --table-container-bg: #161b22;
+  --search-bar-bg: #161b22;
+
+  // ── 垂直菜单激活（左侧发光竖条） ──
+  --menu-vertical-active-bg: color-mix(in srgb, var(--color-primary) 6%, var(--bg-container));
+  --menu-vertical-active-indicator: 3px solid var(--color-primary);
+
+  // ── 字典当前行 ──
+  --dict-current-row-bg: var(--menu-vertical-active-bg);
+
+  // ── 徽章边框 ──
+  --badge-border: #161b22;
+
+  // ── 页面统一边距 ──
+  --page-padding: 16px;
+
+  // ── 字体（等宽代码美学） ──
+  --font-family-display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-body: 'Inter', 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  // ── ECharts 调色板（霓虹科技风 - VS Code 风格） ──
+  --chart-color-1: var(--color-primary);
+  --chart-color-2: var(--color-primary-light);
+  --chart-color-3: #3fb950;        // 荧光绿
+  --chart-color-4: #d29922;        // 琥珀黄
+  --chart-color-5: #f85149;        // 珊瑚红
+  --chart-color-6: #56d4dd;        // 青蓝
+  --chart-color-7: #db61a2;        // 粉红
+  --chart-color-8: #8b949e;        // 中灰
+  --chart-color-9: #6e7681;        // 深灰
+  --chart-color-10: #e6edf3;       // 高亮白
+
+  color-scheme: dark;
+}
