@@ -195,3 +195,61 @@ chore: 升级 element-plus 到 2.7.0
 - **强制推送**（`git push --force`）会覆盖远端历史，**仅在自己独有的分支上使用**，禁止在 `main`/`master` 使用。
 - 推送前确认 `target/` 和 `ui/node_modules/` 等大目录已在 `.gitignore` 中，避免仓库体积膨胀。
 - 若使用 IDE（VS Code / IntelliJ）内置 Git 推送，建议仍熟悉命令行操作，便于排查问题。
+
+---
+
+## 8. 最近优化记录
+
+### 8.1 2026-06-16 代码质量优化
+
+**优化内容：**
+
+1. **权限注解硬编码（高优先级）**
+   - 将所有 Controller 中的 `@SaCheckPermission` 注解硬编码字符串替换为 `PermissionConstants` 常量
+   - 涉及 15+ 个 Controller 文件
+
+2. **Service 层接口缺失（中优先级）**
+   - 创建 9 个 Service 接口，并修改实现类实现接口
+   - 修改所有相关 Controller 和 Service，使其依赖接口而非实现类
+
+3. **Controller 中硬编码错误码（低优先级）**
+   - 在 `ErrorCode` 枚举中新增 `BLOG_NOT_FOUND(70002, "文章不存在")`
+   - 将 10+ 个 Controller 中的硬编码错误码替换为 `ErrorCode` 枚举
+
+4. **配置项硬编码（低优先级）**
+   - 优化 `AppConfig`，新增 `CorsConfig`、`CaptchaConfig`、`TechBlogConfig`、`IpFilterConfig` 配置类
+
+5. **消息常量提取**
+   - 创建 `MessageConstants` 常量类，统一管理所有消息字符串
+   - 替换 `SysUserService` 中的硬编码消息
+
+**新增文件：**
+- `ISysUserService.java`、`ISysRoleService.java`、`ISysDeptService.java`
+- `ISysDictTypeService.java`、`ISysDictDataService.java`、`ISysConfigService.java`
+- `ISysNoticeService.java`、`ISysMessageService.java`、`ITechBlogArticleService.java`
+- `MessageConstants.java`
+
+**修改文件：**
+- 所有相关 Service 实现类
+- 所有相关 Controller
+- `AppConfig.java`
+- `ErrorCode.java`
+
+**提交信息：**
+```
+refactor: 优化代码质量 - 消除硬编码并引入Service接口层
+
+- 权限注解使用PermissionConstants常量
+- 创建9个Service接口并实现依赖倒置
+- Controller错误码使用ErrorCode枚举
+- 优化AppConfig配置结构
+- 提取MessageConstants统一管理消息
+```
+
+---
+
+## 9. 相关文档
+
+- [RX Admin 优化指南](./rxadmin-optimization-guide.md)
+- [RX Admin 开发技能](./rxadmin-dev-skills.md)
+- [Git 提交信息规范](../../.trae/rules/git-commit-message.md)

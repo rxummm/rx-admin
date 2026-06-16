@@ -14,6 +14,7 @@ import com.rx.admin.modules.system.user.mapper.SysUserRoleMapper;
 import com.rx.admin.modules.system.user.dto.UserCreateDTO;
 import com.rx.admin.modules.system.user.dto.UserUpdateDTO;
 import com.rx.admin.modules.content.message.service.SysMessageService;
+import com.rx.admin.common.constant.MessageConstants;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
         // 检查用户名是否存在
         long count = count(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
         if (count > 0) {
-            throw new IllegalArgumentException("用户名已存在");
+            throw new IllegalArgumentException(MessageConstants.User.USERNAME_EXISTS);
         }
         // 密码策略校验
         validatePassword(dto.getPassword(), dto.getUsername(), dto.getNickname());
@@ -98,7 +99,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
             }
             sysMessageService.sendSystemMessage("欢迎加入系统", content, user.getId());
         } catch (Exception e) {
-            log.warn("发送欢迎消息失败: userId={}, error={}", user.getId(), e.getMessage());
+            log.warn(MessageConstants.User.SEND_WELCOME_MESSAGE_FAILED + ": userId={}, error={}", user.getId(), e.getMessage());
         }
     }
 
@@ -282,15 +283,15 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
         Set<Long> removed = new HashSet<>(oldSet);
         removed.removeAll(newSet);
 
-        StringBuilder sb = new StringBuilder("您的角色已被管理员更新。");
+        StringBuilder sb = new StringBuilder(MessageConstants.User.ROLE_CHANGED_PREFIX);
         if (!added.isEmpty()) {
-            sb.append(" 新增：").append(getRoleNames(new ArrayList<>(added)));
+            sb.append(MessageConstants.User.ROLE_ADDED_PREFIX).append(getRoleNames(new ArrayList<>(added)));
         }
         if (!removed.isEmpty()) {
-            sb.append(" 移除：").append(getRoleNames(new ArrayList<>(removed)));
+            sb.append(MessageConstants.User.ROLE_REMOVED_PREFIX).append(getRoleNames(new ArrayList<>(removed)));
         }
         String newNames = getRoleNames(newRoleIds);
-        sb.append(" 当前角色：").append(newNames.isEmpty() ? "无" : newNames);
+        sb.append(MessageConstants.User.ROLE_CURRENT_PREFIX).append(newNames.isEmpty() ? MessageConstants.User.ROLE_NONE : newNames);
         return sb.toString();
     }
 
