@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
+@SuppressWarnings("null")
 public class SseSessionManager {
 
     private final Map<Long, List<SseEmitter>> userEmitters = new ConcurrentHashMap<>();
@@ -36,11 +37,11 @@ public class SseSessionManager {
             } catch (IOException ex) {
                 log.debug("SSE send failed to userId={}, removing: {}", userId, ex.getMessage());
                 remove(userId, e);
-                try { e.completeWithError(ex); } catch (Exception ignored) {}
+                try { e.completeWithError(ex); } catch (Exception inner) { log.debug("SSE completeWithError failed", inner); }
             } catch (Exception ex) {
                 log.debug("SSE send error to userId={}, removing: {}", userId, ex.getMessage());
                 remove(userId, e);
-                try { e.completeWithError(ex); } catch (Exception ignored) {}
+                try { e.completeWithError(ex); } catch (Exception inner) { log.debug("SSE completeWithError failed", inner); }
             }
         });
     }
@@ -67,7 +68,7 @@ public class SseSessionManager {
     public void shutdown() {
         userEmitters.forEach((userId, emitters) ->
             emitters.forEach(e -> {
-                try { e.complete(); } catch (Exception ignored) {}
+                try { e.complete(); } catch (Exception inner) { log.debug("SSE complete failed during shutdown", inner); }
             })
         );
         userEmitters.clear();

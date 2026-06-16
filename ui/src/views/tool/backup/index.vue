@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolBackup' })
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { FolderOpened } from '@element-plus/icons-vue'
@@ -50,9 +51,18 @@ const doBackup = async () => {
   catch (e) { ElMessage.error('备份失败'); } finally { backingUp.value = false }
 }
 
-const doDownload = (filename) => {
-  const baseURL = import.meta.env.VITE_API_BASE_URL || '/api'
-  window.open(`${baseURL}/tool/backup/download/${filename}`, '_blank')
+const doDownload = async (filename) => {
+  try {
+    const blob = await downloadBackupApi(filename)
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  } catch {
+    ElMessage.error('下载失败')
+  }
 }
 
 const doDelete = async (filename) => {

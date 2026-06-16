@@ -13,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@SuppressWarnings("null")
 public interface SanguoPoemConvert {
 
     SanguoPoem toEntity(SanguoPoemCreateDTO dto);

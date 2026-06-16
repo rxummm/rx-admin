@@ -1,7 +1,8 @@
 package com.rx.admin.modules.tool.backup.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.rx.admin.common.constant.PermissionConstants;
+import com.rx.admin.common.annotation.ApiVersion;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +19,8 @@ import java.util.*;
 @Slf4j
 @Tag(name = "数据库备份与恢复")
 @RestController
-@RequestMapping("/api/tool/backup")
+@ApiVersion(1)
+@RequestMapping("/tool/backup")
 public class BackupController {
 
     @Value("${spring.datasource.primary.url:}")
@@ -32,7 +34,7 @@ public class BackupController {
 
     @Operation(summary = "查询备份文件列表")
     @GetMapping("/list")
-    @SaCheckPermission(PermissionConstants.Backup.LIST)
+    @SaCheckPermission("tool:backup:query")
     public Result<List<Map<String, Object>>> list() {
         File dir = new File(BACKUP_DIR);
         List<Map<String, Object>> files = new ArrayList<>();
@@ -54,7 +56,8 @@ public class BackupController {
 
     @Operation(summary = "创建数据库备份")
     @PostMapping("/create")
-    @SaCheckPermission(PermissionConstants.Backup.LIST)
+    @SaCheckPermission("tool:backup:create")
+    @OperateLog(module = "数据库备份", operation = "创建备份")
     public Result<Map<String, String>> create() {
         try {
             new File(BACKUP_DIR).mkdirs();
@@ -88,7 +91,8 @@ public class BackupController {
 
     @Operation(summary = "删除备份文件")
     @DeleteMapping("/{filename}")
-    @SaCheckPermission(PermissionConstants.Backup.LIST)
+    @SaCheckPermission("tool:backup:delete")
+    @OperateLog(module = "数据库备份", operation = "删除备份")
     public Result<Void> delete(@PathVariable String filename) {
         try {
             Files.deleteIfExists(Path.of(BACKUP_DIR, filename));

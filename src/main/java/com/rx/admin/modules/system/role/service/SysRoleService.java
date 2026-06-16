@@ -7,18 +7,17 @@ import com.rx.admin.modules.system.role.mapper.SysRoleMapper;
 import com.rx.admin.modules.system.role.mapper.SysRoleMenuMapper;
 import com.rx.admin.modules.system.role.dto.RoleCreateDTO;
 import com.rx.admin.modules.system.role.dto.RoleUpdateDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
-
-    private static final Logger log = LoggerFactory.getLogger(SysRoleService.class);
 
     private final SysRoleMenuMapper roleMenuMapper;
     private final CacheManager cacheManager;

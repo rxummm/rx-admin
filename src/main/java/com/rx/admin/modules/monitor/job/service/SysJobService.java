@@ -12,6 +12,7 @@ import com.rx.admin.modules.monitor.job.dto.JobUpdateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class SysJobService extends ServiceImpl<SysJobMapper, SysJob> {
 
     public PageResult<SysJob> pageQuery(int page, int size, String keyword, Integer status) {

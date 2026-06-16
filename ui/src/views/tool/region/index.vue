@@ -2,18 +2,30 @@
   <div class="region-page">
     <!-- 搜索栏 -->
     <div class="search-bar">
-      <el-input v-model="queryParams.keyword" placeholder="搜索名称" clearable style="width: 200px;" @keyup.enter="handleSearch" />
-      <el-select v-model="queryParams.level" placeholder="层级筛选" clearable style="width: 120px;">
-        <el-option label="省级" :value="1" />
-        <el-option label="市级" :value="2" />
-        <el-option label="区县级" :value="3" />
+      <el-input
+        v-model="queryParams.keyword"
+        placeholder="搜索名称"
+        clearable
+        style="width: 200px"
+        @keyup.enter="handleSearch"
+      />
+      <el-select v-model="queryParams.level" placeholder="层级筛选" clearable style="width: 120px">
+        <el-option :label="$t('tool.region.levelOptions.province')" :value="1" />
+        <el-option :label="$t('tool.region.levelOptions.city')" :value="2" />
+        <el-option :label="$t('tool.region.levelOptions.district')" :value="3" />
       </el-select>
-      <el-input v-model="queryParams.parentCode" placeholder="上级代码" clearable style="width: 140px;" @keyup.enter="handleSearch" />
-      <el-button type="primary" @click="handleSearch">搜索</el-button>
-      <el-button @click="handleReset">重置</el-button>
+      <el-input
+        v-model="queryParams.parentCode"
+        placeholder="上级代码"
+        clearable
+        style="width: 140px"
+        @keyup.enter="handleSearch"
+      />
+      <el-button type="primary" @click="handleSearch">{{ $t('common.search') }}</el-button>
+      <el-button @click="handleReset">{{ $t('common.reset') }}</el-button>
       <div style="flex: 1" />
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('tool:region:add')">
-        <el-icon><Plus /></el-icon> 新增
+        <el-icon><Plus /></el-icon> {{ $t('common.add') }}
       </el-button>
     </div>
 
@@ -32,30 +44,44 @@
         lazy
         style="width: 100%"
       >
-        <el-table-column prop="name" label="名称" min-width="150" show-overflow-tooltip />
-        <el-table-column prop="code" label="行政区划代码" width="130" />
-        <el-table-column prop="level" label="层级" width="80" align="center">
+        <el-table-column prop="name" :label="$t('tool.region.name')" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="code" :label="$t('tool.region.code')" width="130" />
+        <el-table-column prop="level" :label="$t('tool.region.level')" width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="levelTagType(row.level)" size="small">
               {{ levelLabel(row.level) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="parentCode" label="上级代码" width="130" />
-        <el-table-column prop="abbreviation" label="简称" width="80" align="center" />
-        <el-table-column prop="pinyin" label="拼音" min-width="120" show-overflow-tooltip />
-        <el-table-column prop="sort" label="排序" width="70" align="center" />
-        <el-table-column prop="status" label="状态" width="80" align="center">
+        <el-table-column prop="parentCode" :label="$t('tool.region.parentCode')" width="130" />
+        <el-table-column prop="abbreviation" :label="$t('tool.region.shortName')" width="80" align="center" />
+        <el-table-column prop="pinyin" :label="$t('tool.region.pinyin')" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="sort" :label="$t('common.sort')" width="70" align="center" />
+        <el-table-column prop="status" :label="$t('common.status')" width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
-              {{ row.status === 1 ? '启用' : '禁用' }}
+              {{ row.status === 1 ? $t('common.enable') : $t('common.disable') }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" fixed="right">
+        <el-table-column :label="$t('common.operation')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('tool:region:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('tool:region:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('tool:region:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('tool:region:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +102,7 @@
     <!-- 新增/编辑弹窗 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="560px" :close-on-click-modal="false">
       <el-form ref="formRef" :model="form" :rules="formRules" label-width="110px">
-        <el-form-item label="上级行政区划" prop="parentCode" v-if="form.level !== 1">
+        <el-form-item :label="$t('tool.region.parentCode')" prop="parentCode" v-if="form.level !== 1">
           <el-cascader
             v-model="parentCascader"
             :options="cascaderOptions"
@@ -84,39 +110,39 @@
             placeholder="请选择上级行政区划（可搜索）"
             filterable
             clearable
-            style="width: 100%;"
+            style="width: 100%"
             @change="handleParentChange"
           />
         </el-form-item>
-        <el-form-item label="层级" prop="level">
+        <el-form-item :label="$t('tool.region.level')" prop="level">
           <el-radio-group v-model="form.level" @change="handleLevelChange">
-            <el-radio :value="1">省级</el-radio>
-            <el-radio :value="2">市级</el-radio>
-            <el-radio :value="3">区县级</el-radio>
+            <el-radio :value="1">{{ $t('tool.region.levelOptions.province') }}</el-radio>
+            <el-radio :value="2">{{ $t('tool.region.levelOptions.city') }}</el-radio>
+            <el-radio :value="3">{{ $t('tool.region.levelOptions.district') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="代码" prop="code">
+        <el-form-item :label="$t('tool.region.code')" prop="code">
           <el-input v-model="form.code" placeholder="如 440300" :disabled="isEdit" />
         </el-form-item>
-        <el-form-item label="名称" prop="name">
+        <el-form-item :label="$t('tool.region.name')" prop="name">
           <el-input v-model="form.name" placeholder="如 深圳市" />
         </el-form-item>
-        <el-form-item label="拼音">
+        <el-form-item :label="$t('tool.region.pinyin')">
           <el-input v-model="form.pinyin" placeholder="如 ShenZhen Shi" />
         </el-form-item>
-        <el-form-item label="简称">
+        <el-form-item :label="$t('tool.region.shortName')">
           <el-input v-model="form.abbreviation" placeholder="如 深" />
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item :label="$t('common.sort')">
           <el-input-number v-model="form.sort" :min="0" :max="9999" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="$t('common.status')">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -125,11 +151,18 @@
 <script setup>
 defineOptions({ name: 'ToolRegion' })
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+
+const { t } = useI18n()
 import {
-  getRegionPageApi, getRegionChildrenApi, getRegionByIdApi,
-  addRegionApi, updateRegionApi, deleteRegionApi
+  getRegionPageApi,
+  getRegionChildrenApi,
+  getRegionByIdApi,
+  addRegionApi,
+  updateRegionApi,
+  deleteRegionApi
 } from '@/api/region'
 
 const userStore = useUserStore()
@@ -194,8 +227,15 @@ const isEdit = ref(false)
 const submitLoading = ref(false)
 const formRef = ref(null)
 const form = reactive({
-  id: null, code: '', name: '', level: 1, parentCode: '', pinyin: '',
-  abbreviation: '', sort: 0, status: 1
+  id: null,
+  code: '',
+  name: '',
+  level: 1,
+  parentCode: '',
+  pinyin: '',
+  abbreviation: '',
+  sort: 0,
+  status: 1
 })
 const parentCascader = ref([])
 
@@ -233,7 +273,7 @@ async function fetchRootData() {
         parentCode: queryParams.parentCode || undefined
       }
       const res = await getRegionPageApi(params)
-      tableData.value = (res.data.records || []).map(item => ({
+      tableData.value = (res.data.records || []).map((item) => ({
         ...item,
         hasChildren: item.level < 3,
         children: undefined
@@ -248,7 +288,7 @@ async function fetchRootData() {
       const start = (queryParams.page - 1) * queryParams.size
       const end = start + queryParams.size
       total.value = allRoot.length
-      tableData.value = allRoot.slice(start, end).map(item => ({
+      tableData.value = allRoot.slice(start, end).map((item) => ({
         ...item,
         hasChildren: item.level < 3,
         children: undefined
@@ -269,7 +309,7 @@ async function loadChildren(row, treeNode, resolve) {
   }
   try {
     const res = await getRegionChildrenApi(row.code)
-    const children = (res.data || []).map(item => ({
+    const children = (res.data || []).map((item) => ({
       ...item,
       hasChildren: item.level < 3,
       children: undefined
@@ -341,19 +381,27 @@ async function cascaderLazyLoad(node, resolve) {
   if (level === 0) {
     try {
       const res = await getRegionChildrenApi()
-      resolve((res.data || []).map(item => ({ ...item, leaf: item.level >= 3 })))
-    } catch { resolve([]) }
+      resolve((res.data || []).map((item) => ({ ...item, leaf: item.level >= 3 })))
+    } catch {
+      resolve([])
+    }
   } else {
     try {
       const res = await getRegionChildrenApi(data.code)
-      resolve((res.data || []).map(item => ({ ...item, leaf: item.level >= 3 })))
-    } catch { resolve([]) }
+      resolve((res.data || []).map((item) => ({ ...item, leaf: item.level >= 3 })))
+    } catch {
+      resolve([])
+    }
   }
 }
 
 // 层级标签
 function levelLabel(level) {
-  const map = { 1: '省级', 2: '市级', 3: '区县级' }
+  const map = {
+    1: t('tool.region.levelOptions.province'),
+    2: t('tool.region.levelOptions.city'),
+    3: t('tool.region.levelOptions.district')
+  }
   return map[level] || ''
 }
 
@@ -380,8 +428,15 @@ function handleAdd() {
   isEdit.value = false
   dialogTitle.value = '新增行政区划'
   Object.assign(form, {
-    id: null, code: '', name: '', level: 1, parentCode: '',
-    pinyin: '', abbreviation: '', sort: 0, status: 1
+    id: null,
+    code: '',
+    name: '',
+    level: 1,
+    parentCode: '',
+    pinyin: '',
+    abbreviation: '',
+    sort: 0,
+    status: 1
   })
   parentCascader.value = []
   dialogVisible.value = true
@@ -395,17 +450,29 @@ async function handleEdit(row) {
     const res = await getRegionByIdApi(row.id)
     const data = res.data
     Object.assign(form, {
-      id: data.id, code: data.code, name: data.name, level: data.level,
-      parentCode: data.parentCode || '', pinyin: data.pinyin || '',
-      abbreviation: data.abbreviation || '', sort: data.sort || 0, status: data.status
+      id: data.id,
+      code: data.code,
+      name: data.name,
+      level: data.level,
+      parentCode: data.parentCode || '',
+      pinyin: data.pinyin || '',
+      abbreviation: data.abbreviation || '',
+      sort: data.sort || 0,
+      status: data.status
     })
     parentCascader.value = data.parentCode ? [data.parentCode] : []
     dialogVisible.value = true
   } catch {
     Object.assign(form, {
-      id: row.id, code: row.code, name: row.name, level: row.level,
-      parentCode: row.parentCode || '', pinyin: row.pinyin || '',
-      abbreviation: row.abbreviation || '', sort: row.sort || 0, status: row.status
+      id: row.id,
+      code: row.code,
+      name: row.name,
+      level: row.level,
+      parentCode: row.parentCode || '',
+      pinyin: row.pinyin || '',
+      abbreviation: row.abbreviation || '',
+      sort: row.sort || 0,
+      status: row.status
     })
     parentCascader.value = row.parentCode ? [row.parentCode] : []
     dialogVisible.value = true
@@ -415,19 +482,17 @@ async function handleEdit(row) {
 // 删除
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(
-      `确认删除 "${row.name}" (${row.code}) 吗？如有下级数据将无法删除。`,
-      '提示',
-      { type: 'warning' }
-    )
+    await ElMessageBox.confirm(t('common.deleteConfirm'), t('common.tip'), { type: 'warning' })
     await deleteRegionApi(row.id)
-    ElMessage.success('删除成功')
+    ElMessage.success(t('common.deleteSuccess'))
     // 如果已加载子节点，清除缓存
     if (loadedNodeIds.value.has(row.id)) {
       loadedNodeIds.value.delete(row.id)
     }
     fetchRootData()
-  } catch { /* 取消 */ }
+  } catch {
+    /* 取消 */
+  }
 }
 
 // 提交
@@ -438,10 +503,10 @@ async function handleSubmit() {
   try {
     if (isEdit.value) {
       await updateRegionApi({ ...form })
-      ElMessage.success('修改成功')
+      ElMessage.success(t('common.updateSuccess'))
     } else {
       await addRegionApi({ ...form })
-      ElMessage.success('新增成功')
+      ElMessage.success(t('common.addSuccess'))
     }
     dialogVisible.value = false
     // 增改后重新加载根数据，清除已加载缓存

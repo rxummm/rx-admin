@@ -1,9 +1,13 @@
 package com.rx.admin.modules.tool.gen.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,36 +16,46 @@ import java.util.stream.Collectors;
 
 @Tag(name = "代码生成器")
 @RestController
-@RequestMapping("/api/tool/gen")
+@ApiVersion(1)
+@RequestMapping("/tool/gen")
 @RequiredArgsConstructor
 public class GenController {
 
     private final JdbcTemplate jdbcTemplate;
 
+    @Value("${gen.table-schema:rx_admin}")
+    private String tableSchema;
+
     @Operation(summary = "查询数据库表列表")
+    @SaCheckPermission("tool:gen:list")
     @GetMapping("/tables")
     public Result<List<Map<String, Object>>> tables() {
         return Result.ok(jdbcTemplate.queryForList(
             "SELECT TABLE_NAME tableName, TABLE_COMMENT tableComment, CREATE_TIME createTime " +
-            "FROM information_schema.TABLES WHERE TABLE_SCHEMA='rx_admin' ORDER BY CREATE_TIME DESC"));
+            "FROM information_schema.TABLES WHERE TABLE_SCHEMA='" + tableSchema + "' ORDER BY CREATE_TIME DESC"));
     }
 
     @Operation(summary = "查询表字段列表")
+    @SaCheckPermission("tool:gen:list")
     @GetMapping("/columns")
     public Result<List<Map<String, Object>>> columns(@RequestParam String table) {
         return Result.ok(jdbcTemplate.queryForList(
             "SELECT COLUMN_NAME columnName, DATA_TYPE dataType, COLUMN_COMMENT columnComment, " +
             "IS_NULLABLE isNullable, COLUMN_KEY columnKey, CHARACTER_MAXIMUM_LENGTH maxLen " +
-            "FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='rx_admin' AND TABLE_NAME=? ORDER BY ORDINAL_POSITION", table));
+            "FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='" + tableSchema + "' AND TABLE_NAME=? ORDER BY ORDINAL_POSITION", table));
     }
 
+    @OperateLog(module = "代码生成", operation = "预览代码")
     @Operation(summary = "预览生成的代码")
+    @SaCheckPermission("tool:gen:code")
     @PostMapping("/preview")
     public Result<Map<String, Object>> preview(@RequestBody Map<String, Object> params) {
         return generateCode(params, false);
     }
 
+    @OperateLog(module = "代码生成", operation = "生成代码")
     @Operation(summary = "生成代码并写入文件")
+    @SaCheckPermission("tool:gen:code")
     @PostMapping("/generate")
     public Result<Map<String, Object>> generate(@RequestBody Map<String, Object> params) {
         return generateCode(params, true);
@@ -56,7 +70,7 @@ public class GenController {
         List<Map<String, Object>> columns = jdbcTemplate.queryForList(
             "SELECT COLUMN_NAME columnName, DATA_TYPE dataType, COLUMN_COMMENT columnComment, " +
             "IS_NULLABLE isNullable, COLUMN_KEY columnKey FROM information_schema.COLUMNS " +
-            "WHERE TABLE_SCHEMA='rx_admin' AND TABLE_NAME=? ORDER BY ORDINAL_POSITION", tableName);
+            "WHERE TABLE_SCHEMA='" + tableSchema + "' AND TABLE_NAME=? ORDER BY ORDINAL_POSITION", tableName);
 
         String entityName = toCamel(tableName, true);
         String pathName = toPathName(tableName);

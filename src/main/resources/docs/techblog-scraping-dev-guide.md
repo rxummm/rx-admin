@@ -1,6 +1,6 @@
 # 技术博客抓取模块开发文档
 
-> **版本**: 2.1.0 | **更新日期**: 2026-06-04 | **适用项目**: RX Admin 技术博客模块
+> **版本**: 2.2.0 | **更新日期**: 2026-07-02 | **适用项目**: RX Admin 技术博客模块
 
 ---
 
@@ -14,10 +14,11 @@
 6. [规划中：blog.faq400.com 博客接入](#6-规划中blogfaq400com-博客接入)
 7. [规划中：rpgpgm.com 博客接入](#7-规划中rpgpgmcom-博客接入)
 8. [规划中：as400andsqltricks.com 博客接入](#8-规划中as400andsqltrickscom-博客接入)
-9. [五个来源对比总览](#9-五个来源对比总览)
-10. [前后端变动对比](#10-前后端变动对比)
-11. [多源并发抓取方案](#11-多源并发抓取方案)
-12. [开发排期建议](#12-开发排期建议)
+9. [六个来源对比总览](#9-六个来源对比总览)
+10. [已实现：Think400.dk 静态站点抓取](#10-已实现think400dk-静态站点抓取)
+11. [前后端变动对比](#11-前后端变动对比)
+12. [多源并发抓取方案](#12-多源并发抓取方案)
+13. [开发排期建议](#13-开发排期建议)
 
 ---
 
@@ -32,10 +33,11 @@
 | 来源 | source 标识 | 状态 | 爬虫方式 | 文章数 |
 |------|------------|------|---------|--------|
 | `https://www.nicklitten.com/blog/` | `nicklitten` | ✅ 已实现 | Jsoup 纯 HTTP | ~760 篇 |
-| `https://apimymymy.wordpress.com/blog/` | `apimy` | 📋 规划中 | Playwright 浏览器 | ~320 篇 |
-| `https://blog.faq400.com/en/` | `faq400` | 📋 规划中 | Jsoup 纯 HTTP | ~168 篇 |
-| `https://www.rpgpgm.com/p/list-of-all-posts.html` | `rpgpgm` | 📋 规划中 | Jsoup 纯 HTTP | ~1100 篇 |
-| `https://www.as400andsqltricks.com/` | `as400sql` | 📋 规划中 | Jsoup 纯 HTTP | 待探测 |
+| `https://apimymymy.wordpress.com/blog/` | `apimy` | ✅ 已实现 | WordPress REST API | ~320 篇 |
+| `https://blog.faq400.com/en/` | `faq400` | ✅ 已实现 | WordPress RSS Feed | ~168 篇 |
+| `https://www.rpgpgm.com/p/list-of-all-posts.html` | `rpgpgm` | ✅ 已实现 | Jsoup 纯 HTTP | ~1100 篇 |
+| `https://www.as400andsqltricks.com/` | `as400sql` | ✅ 已实现 | Blogger Feed API | ~500 篇 |
+| `https://www.think400.dk/` | `think400` | ✅ 已实现 | Jsoup 静态HTML解析 | ~150 篇 |
 
 ### 1.3 涉及文件清单
 
@@ -714,48 +716,170 @@ try (Playwright playwright = Playwright.create()) {
 
 ---
 
-## 9. 五个来源对比总览
+## 9. 六个来源对比总览
 
 ### 9.1 快速对比
 
-| 维度 | NickLitten | Apimy WP | faq400 | rpgpgm | as400sql |
-|------|-----------|----------|--------|--------|----------|
-| **平台** | 独立站 | WordPress.com | 自建 WordPress | Blogger | Blogger |
-| **source 标识** | `nicklitten` | `apimy` | `faq400` | `rpgpgm` | `as400sql` |
-| **反爬** | ❌ 无 | ⚠️ JS 验证 | ❌ 无 | ❌ 无 | ❌ 无 |
-| **抓取工具** | Jsoup | **Playwright** | Jsoup | Jsoup | Jsoup |
-| **分页方式** | `/blog/page/N/` | `/blog/page/N/` | `/en/page/N/` | 单页全列表 | 年月归档 |
-| **总页数** | ~76 | ~32 | 21 | 1（列表页） | N/A |
-| **文章总数** | ~760 | ~320 | ~168 | ~1104 | 待探测 |
-| **预计耗时** | ~12min | 取决于浏览器 | ~3.5min | ~18min | 取决于方式 |
+| 维度 | NickLitten | Apimy WP | faq400 | rpgpgm | as400sql | Think400 |
+|------|-----------|----------|--------|--------|----------|----------|
+| **平台** | 独立站 | WordPress.com | 自建 WordPress | Blogger | Blogger | **静态HTML** |
+| **source 标识** | `nicklitten` | `apimy` | `faq400` | `rpgpgm` | `as400sql` | `think400` |
+| **反爬** | ❌ 无 | ⚠️ JS 验证 | ❌ 无 | ❌ 无 | ❌ 无 | ❌ 无 |
+| **抓取工具** | Jsoup | WordPress REST API | Jsoup | Jsoup | Jsoup | Jsoup |
+| **分页方式** | `/blog/page/N/` | REST API 分页 | `/en/page/N/` | 单页全列表 | 年月归档 | 多页面列举 |
+| **总页数** | ~76 | ~32 | 21 | 1（列表页） | N/A | 17（8 Tips + 9 API） |
+| **文章总数** | ~760 | ~320 | ~168 | ~1104 | ~500 | ~150 |
+| **预计耗时** | ~12min | ~3min | ~3.5min | ~18min | ~8min | ~30s |
 
 ### 9.2 抓取方式总结
 
 ```
 Jsoup（纯 HTTP）可直接抓取：
-  ├── nicklitten.com   ✅
-  ├── blog.faq400.com  ✅
-  ├── rpgpgm.com       ✅
-  └── as400andsqltricks.com ✅
+  ├── nicklitten.com        ✅
+  ├── blog.faq400.com       ✅
+  ├── rpgpgm.com            ✅
+  ├── as400andsqltricks.com ✅
+  └── think400.dk           ✅ 静态 HTML 页面拆分
 
-需要 Playwright（浏览器）：
-  └── apimymymy.wordpress.com ⚠️ 有 Cloudflare JS 验证
+WordPress REST API：
+  └── apimymymy.wordpress.com ✅ 无需浏览器
 ```
 
 ### 9.3 实现优先级建议
 
 | 优先级 | 来源 | 理由 |
 |--------|------|------|
-| 1 | `faq400` | Jsoup 可直接用，文章量小(168)，分页标准，最容易实现 |
-| 2 | `rpgpgm` | Jsoup 可直接用，列表页一次性获取，文章最多但结构简单 |
-| 3 | `as400sql` | Jsoup 可直接用，Feed API 最稳定，文章量待确认 |
-| 4 | `apimy` | 需要 Playwright 浏览器，复杂度最高 |
+| 1 (已实现) | `faq400` | 原计划 Jsoup，最终使用 WordPress RSS Feed |
+| 2 (已实现) | `rpgpgm` | 列表页一次性获取，文章最多但结构简单 |
+| 3 (已实现) | `as400sql` | Blogger Feed API 最稳定 |
+| 4 (已实现) | `apimy` | 发现 WordPress REST API，无需 Playwright |
+| 5 (已实现) | `think400` | 纯静态 HTML，解析 `<a name=eksXXXX>` 锚点拆分文章 |
 
 ---
 
-## 10. 前后端变动对比
+## 10. 已实现：Think400.dk 静态站点抓取
 
-### 10.1 数据库变动
+### 10.1 目标网站分析
+
+| 属性 | 值 |
+|------|-----|
+| URL | `https://www.think400.dk/` |
+| 站长 | **Leif Guldbrand**（丹麦 IT 顾问，所有文章作者） |
+| 平台 | **纯静态 HTML**（手写 HTML 页面，无 CMS） |
+| 语言 | 英语（Tips & Tricks） + 丹麦语（`adhoc_dk.htm`） |
+| 编码 | **ISO-8859-1**（拉丁字符集，包含丹麦字母 æøå） |
+| 文章量 | **~150 篇**（8 个 Tips 页面 + 9 个 API 页面） |
+| **反爬机制** | ❌ **无**（静态页面，Jsoup 可直接抓取） |
+| 页面结构 | 每个页面多个 `<a name=eksXXXX>` 锚点分隔的文章段落 |
+
+### 10.2 页面结构
+
+站点主要包含两个内容区：
+
+| 类别 | 页面列表 | 说明 |
+|------|---------|------|
+| **Tips & Tricks** | `adhoc_dk.htm`(丹麦语), `adhoc_1.htm` ~ `adhoc_7.htm` | 每页 ~7-11 个 AS400 编程技巧 |
+| **API 参考** | `apier_1.htm` ~ `apier_9.htm` | 每页 ~5-15 个 API 接口说明 + RPG 代码示例 |
+
+每个页面结构如下：
+
+```html
+<!-- 页面头部：站点 Logo + 导航 + TOC -->
+<IMG src="./files/think400_050.png">
+<b>Tips & Tricks - Table of Contents</b>
+<A HREF="#eks0001">Debug 132x27 mode</A><br>
+<A HREF="#eks0002">DLYJOB inside RPG IV</A><br>
+...
+
+<!-- 文章段落：由 <a name=eksXXXX> 定位 -->
+<A NAME=eks0001></A>
+<table>
+  <td align=center><font size=+1><b>Debug 132x27 mode</b></font></td>
+  <pre>
+    <font face="verdana">文章内容 + 代码示例...</font>
+  </pre>
+</table>
+<A HREF="javascript:history.go(-1)">Back</A>   ← 段落分隔符
+
+<A NAME=eks0002></A>
+<table>
+  <td align=center><font size=+1><b>DLYJOB inside RPG IV</b></font></td>
+  <pre>
+    下一篇文章...
+  </pre>
+</table>
+<A HREF="javascript:history.go(-1)">Back</A>
+<!-- ... 后续段落 ... -->
+
+<!-- 页面底部 -->
+<A HREF="adhoc_2.htm">Page #2</A>
+<IMG src="./files/think400-sep.gif">
+```
+
+### 10.3 抓取策略
+
+```
+抓取方式：✅ Jsoup 纯 HTTP（无需浏览器，无需解析）
+
+步骤 1: 预定义所有内容页面路径
+  定于两个列表：
+    THINK400_TIPS_PAGES = ["adhoc_dk.htm", "adhoc_1.htm" ... "adhoc_7.htm"]
+    THINK400_API_PAGES  = ["apier_1.htm" ... "apier_9.htm"]
+  共 17 个页面
+
+步骤 2: 逐页抓取 (for each pageUrl)
+  Jsoup.connect("https://www.think400.dk/{pagePath}")
+    .userAgent("Mozilla/5.0")
+    .timeout(15000)
+    .get()
+
+步骤 3: 解析页内所有文章段落
+  → 选择器: a[name] 命名锚点，筛选 name 匹配 eks\d+
+  → 定位相邻 <table> 元素：
+    • 标题: <td align=center><b>...</b></td>
+    • 正文: <pre>...</pre>
+  → 构建唯一 URL: {pageUrl}#eksXXXX（用于去重）
+  → 类别自动标注:
+    • adhoc_*.htm → "Tips & Tricks" / "Tips & Tricks (Dansk)"
+    • apier_*.htm → "API Reference"
+
+步骤 4: 入库
+  → source = 'think400'
+  → author = 'Leif Guldbrand'
+  → publish_date = null（静态站点无发布日期）
+  → save() + delay 按配置（默认 1s）
+```
+
+### 10.4 核心方法
+
+| 方法 | 功能 |
+|------|------|
+| `doFetchThink400(String source)` | 主入口，遍历 17 个页面，按 Tips → API 顺序抓取 |
+| `scrapeThink400Page(String pageUrl, String source, String category)` | 单页解析：定位 eks 锚点 → 提取标题/正文 → 保存 |
+
+### 10.5 关键选择器
+
+| 提取目标 | 选择器 | 备注 |
+|---------|--------|------|
+| 文章锚点 | `a[name]` | 过滤 `name` 匹配 `eks\d+` |
+| 文章容器 | `a[name^=eks] + table` | 锚点后的相邻 `<table>` |
+| 标题 | `td[align=center] b` | 嵌套表格中的粗体标题 |
+| 正文 | `pre` | `<pre>` 内含完整 HTML 代码片段 |
+
+### 10.6 特点
+
+- **最简单、最快的源**：30 秒内完成全量抓取（17 页 × 1s 间隔）
+- **无需探测分页**：所有页面路径预定义，没有动态列表页
+- **单页多文章**：每个页面包含 5-15 篇文章，通过 `<a name>` 锚点区分
+- **文章无发布日期**：静态站点不提供每篇文章的发布时间，`publish_date` 为 null
+- **作者统一**：所有内容由站长 Leif Guldbrand 撰写/整理
+- **无封面图**：页面只有站点 Logo，单篇文章无独立配图
+
+---
+
+## 11. 前后端变动对比
+
+### 11.1 数据库变动
 
 | 项 | 当前 | 改动 |
 |----|------|------|
@@ -764,15 +888,15 @@ Jsoup（纯 HTTP）可直接抓取：
 | 索引变更 | `idx_source_url(source_url(255))` | 替换为 `idx_source_url_source (source_url(255), source)` |
 | 表注释 | `'技术博客文章表(NickLitten)'` | `'技术博客文章表'` |
 
-### 10.2 Entity 变动
+### 11.2 Entity 变动
 
 ```java
 // TechBlogArticle.java 新增字段
-/** 博客来源标识: nicklitten / apimy / faq400 / rpgpgm / as400sql */
+/** 博客来源标识: nicklitten / apimy / faq400 / rpgpgm / as400sql / think400 */
 private String source;
 ```
 
-### 10.3 Service 变动
+### 11.3 Service 变动
 
 | 方法 | 当前 | 改动 | 说明 |
 |------|------|------|------|
@@ -780,7 +904,7 @@ private String source;
 | `getAllCategories()` | 无 source 参数 | 增加 `String source` 参数 | 按来源过滤分类（或全量） |
 | `getRecent()` | 无 source 参数 | 增加 `String source` 参数 | 按来源过滤 |
 | `startFetch()` | 无参数，裸 `new Thread()` | 改为 `startFetch(String source)`，用 `ExecutorService` 提交 | 指定抓取目标，线程池管理，按 source 独立守卫 |
-| `doFetch()` | 尼克专用 | 拆分为 5 个独立方法 | `doFetchNicklitten()` + `doFetchApimy()` + `doFetchFaq400()` + `doFetchRpgpgm()` + `doFetchAs400sql()` |
+| `doFetch()` | 尼克专用 | 拆分为 6 个独立方法 | `doFetchNicklitten()` + `doFetchApimy()` + `doFetchFaq400()` + `doFetchRpgpgm()` + `doFetchAs400sql()` + `doFetchThink400()` |
 | `scrapeListPage()` | Jsoup 解析尼克页面 | 各来源独立实现 | 选择器完全不同 |
 | `scrapeDetail()` | Jsoup 解析尼克详情 | 各来源独立实现 | 选择器完全不同 |
 | `detectTotalPages()` | 解析 `.tcb-pagination` | 按来源分策略 | faq400: 解析页面标题 "Page X of Y"；rpgpgm: 无需探测（单页） |
@@ -792,7 +916,7 @@ private String source;
 | 日志状态 | `List<String>` | `Map<String, List<String>>`（`ConcurrentHashMap`） | 多源独立日志 |
 | 线程管理 | `new Thread()` 裸线程 | `ExecutorService` 固定 4 线程池 | 控制并发度，可优雅关闭 |
 
-### 10.4 Controller 变动
+### 11.4 Controller 变动
 
 | 接口 | 当前 | 改动 |
 |------|------|------|
@@ -802,17 +926,17 @@ private String source;
 | `POST /fetch` | 无参数，只抓 nicklitten | `@RequestBody {source:"faq400"}`，支持多次调用触发不同源 |
 | `GET /progress` | 返回单个进度+日志 | 支持 `?source=faq400` 查单源，不传返回所有源进度概览 |
 
-### 10.5 前端变动
+### 11.5 前端变动
 
 #### API 层 (`techBlog.js`)
-- 所有 6 个函数增加 `source` 参数传递
+- 所有函数增加 `source` 参数传递
 
 #### 列表页 (`index.vue`)
 
 | 区域 | 当前 | 改动 |
 |------|------|------|
 | **新增** | 无 | **博客来源切换器**（el-tabs 或 el-select）|
-| 副标题 | `"Nick Litten's IBM i Blog"` | 动态：NickLitten 时显示原文本，Apimy 时显示对应文本 |
+| 副标题 | `"Nick Litten's IBM i Blog"` | 动态根据当前 source |
 | 同步按钮 tooltip | `"从 nicklitten.com 抓取..."` | 动态根据当前 source |
 | 同步进度提示 | `"正在从 nicklitten.com 同步..."` | 动态 |
 | 空状态文字 | `"从 Nick Litten 博客抓取"` | 动态 |
@@ -821,15 +945,15 @@ private String source;
 #### 详情页 (`detail.vue`)
 - **基本不需要改动**，只展示数据
 
-### 10.6 路由与菜单
+### 11.6 路由与菜单
 - 当前菜单/路由不需要变动
 - 所有文章统一通过列表页浏览，通过 source 切换筛选
 
 ---
 
-## 11. 多源并发抓取方案
+## 12. 多源并发抓取方案
 
-### 11.1 核心问题
+### 12.1 核心问题
 
 当前 `TechBlogArticleService` 的抓取架构是**单线程、单源**设计：
 
@@ -841,7 +965,7 @@ private String source;
 | 线程创建 | `new Thread(this::doFetch)` 裸线程 | 无线程池，多源无法并行启动 |
 | `doFetch()` | 硬编码 nicklitten URL 常量 | 只能抓一个站 |
 
-### 11.2 数据写入并发安全性论证
+### 12.2 数据写入并发安全性论证
 
 逐篇写入流程中，多线程同时写 DB 的场景：
 
@@ -858,52 +982,53 @@ private String source;
 | **INSERT 并发** | MyBatis Plus 每次 `save()` 是独立 INSERT 新行，不冲突 | ✅ 安全 |
 | **Jsoup connect()** | 每个线程独立创建 HTTP 连接，不共享 Session/Cookie | ✅ 安全 |
 | **HikariCP 连接池** | Spring Boot 默认 10 连接，4 个爬虫线程绰绰有余 | ✅ 安全 |
-| **目标站点隔离** | 4 个源部署在不同域名/服务器，互不影响 | ✅ 安全 |
+| **目标站点隔离** | 6 个源部署在不同域名/服务器，互不影响 | ✅ 安全 |
 | **内存** | 每篇文章对象逐个处理后即释放，不在内存中累积 | ✅ 安全 |
 
 **结论：数据写入层完全支持并发，无竞态条件。**
 
-### 11.3 两种并发策略
+### 12.3 两种并发策略
 
 #### 方案 A：真并行 — `ExecutorService` 线程池（推荐）
 
 ```
 ExecutorService pool = Executors.newFixedThreadPool(4);
 
-startFetch("faq400")  ──→ [线程1] 抓取 ~168篇  ≈ 3.5min
-startFetch("rpgpgm")  ──→ [线程2] 抓取 ~1104篇 ≈ 18min
-startFetch("as400sql") ──→ [线程3] 抓取 ~?篇   ≈ ?min
-startFetch("apimy")   ──→ [线程4] 抓取 ~320篇  ≈ ?min
+startFetch("faq400")     ──→ [线程1] 抓取 ~168篇   ≈ 3.5min
+startFetch("rpgpgm")     ──→ [线程2] 抓取 ~1104篇  ≈ 18min
+startFetch("as400sql")   ──→ [线程3] 抓取 ~500篇   ≈ 8min
+startFetch("apimy")      ──→ [线程4] 抓取 ~320篇   ≈ 3min
+startFetch("think400")   ──→ （快速完成，~30s）
 
-总耗时 = max(3.5, 18, ?, ?) ≈ 18min（以最慢源为准）
+总耗时 = max(3.5, 18, 8, 3) ≈ 18min（以最慢源为准）
 ```
 
 | 维度 | 值 |
 |------|-----|
 | 总耗时 | **~18 分钟**（依最长源而定） |
 | 改动量 | 约 60 行（进度 Map 化 + ExecutorService + Controller 适配） |
-| 用户体验 | 4 个源可同时发起，独立查看各自进度 |
+| 用户体验 | 6 个源可同时发起，独立查看各自进度 |
 
 #### 方案 B：顺序队列 — 单线程依次执行
 
 ```
-startFetch(["faq400","rpgpgm","as400sql","apimy"])
+startFetch(["faq400","rpgpgm","as400sql","apimy","think400"])
 
-单线程: faq400(3.5min) → rpgpgm(18min) → as400sql(?min) → apimy(?min)
-总耗时 = 3.5 + 18 + ? + ? ≈ 40+ 分钟
+单线程: faq400(3.5min) → rpgpgm(18min) → as400sql(8min) → apimy(3min) → think400(30s)
+总耗时 = 3.5 + 18 + 8 + 3 + 0.5 ≈ 33 分钟
 ```
 
 | 维度 | 值 |
 |------|-----|
-| 总耗时 | **~40+ 分钟**（累加） |
+| 总耗时 | **~33 分钟**（累加） |
 | 改动量 | 约 20 行（仅循环遍历 source） |
 | 用户体验 | 前端只能看到一个接一个的进度 |
 
-**推荐方案 A**：改动量增加不多，但总时间从 40+ 分钟降到约 18 分钟，收益显著。
+**推荐方案 A**：改动量增加不多，但总时间从 33 分钟降到约 18 分钟，收益显著。
 
-### 11.4 方案 A 具体设计
+### 12.4 方案 A 具体设计
 
-#### 11.4.1 进度与日志改造
+#### 12.4.1 进度与日志改造
 
 ```java
 // 当前（单源）
@@ -916,7 +1041,7 @@ private final Map<String, List<String>> logsMap = new ConcurrentHashMap<>();
 private final ExecutorService executor = Executors.newFixedThreadPool(4);
 ```
 
-#### 11.4.2 startFetch() 按 source 守卫
+#### 12.4.2 startFetch() 按 source 守卫
 
 ```java
 public void startFetch(String source) {
@@ -935,11 +1060,12 @@ public void startFetch(String source) {
     executor.submit(() -> {
         try {
             switch (source) {
-                case "nicklitten" -> doFetchNicklitten();
-                case "faq400"    -> doFetchFaq400();
-                case "rpgpgm"    -> doFetchRpgpgm();
-                case "as400sql"  -> doFetchAs400sql();
-                case "apimy"     -> doFetchApimy();
+                case "nicklitten" -> doFetchNicklitten(source);
+                case "faq400"     -> doFetchFaq400(source);
+                case "rpgpgm"     -> doFetchRpgpgm(source);
+                case "as400sql"   -> doFetchAs400sql(source);
+                case "apimy"      -> doFetchApimy(source);
+                case "think400"   -> doFetchThink400(source);
                 default -> throw new IllegalArgumentException("未知来源: " + source);
             }
         } catch (Exception e) {
@@ -951,13 +1077,12 @@ public void startFetch(String source) {
 }
 ```
 
-#### 11.4.3 各 doFetch 方法中的进度更新
+#### 12.4.3 各 doFetch 方法中的进度更新
 
 每个 `doFetchXxx()` 方法内部改为：
 
 ```java
-private void doFetchFaq400() {
-    String source = "faq400";
+private void doFetchFaq400(String source) {
     AtomicInteger progress = progressMap.get(source);
     List<String> logs = logsMap.get(source);
     
@@ -968,12 +1093,12 @@ private void doFetchFaq400() {
     logs.add("正在抓取第 " + pageNum + "/" + totalPages + " 页...");
     
     // 完成后
-    progress.set(100);
+    setProgress(source, 100);
     logs.add("✅ 抓取完成! 共保存 " + totalSaved + " 篇新文章");
 }
 ```
 
-#### 11.4.4 Controller 提供按 source 查询
+#### 12.4.4 Controller 提供按 source 查询
 
 ```java
 // 触发抓取
@@ -1006,7 +1131,7 @@ public Result<Map<String, Object>> progress(
 }
 ```
 
-### 11.5 前端多源抓取面板
+### 12.5 前端多源抓取面板
 
 列表页可扩展为展示各来源的抓取状态面板：
 
@@ -1019,12 +1144,13 @@ public Result<Map<String, Object>> progress(
 │ ⚪ rpgpgm (待抓取)    │ -     │ [开始抓取]  │
 │ ⚪ as400sql (待抓取)  │ -     │ [开始抓取]  │
 │ ⚪ apimy (待抓取)     │ -     │ [开始抓取]  │
+│ ⚪ think400 (待抓取)  │ -     │ [开始抓取]  │
 └─────────────────────────────────────────────┘
 ```
 
 每个 source 独立显示进度条，可同时观察多个源的抓取状态。
 
-### 11.6 断点续传（天然支持）
+### 12.6 断点续传（天然支持）
 
 由于去重逻辑 `existsBySourceUrl()` 对已入库文章自动跳过，即便抓取中途中断：
 - 再次调用 `startFetch(source)` 时，已入库的文章会被 `continue` 跳过
@@ -1032,30 +1158,25 @@ public Result<Map<String, Object>> progress(
 
 **无需额外实现断点续传机制。**
 
-### 11.7 rpgpgm.com 的特殊注意事项
+### 12.7 各源特殊注意事项
 
-rpgpgm.com 有 ~1104 篇文章，单线程约 18-22 分钟（1s 延迟 × 1104 篇），但它是 Jsoup 纯 HTTP，不会阻塞其他源的 Playwright 浏览器线程。
+| 来源 | 注意事项 |
+|------|---------|
+| rpgpgm | ~1104 篇文章，单线程约 18-22 分钟，占用线程池中最长时间 |
+| think400 | 最快完成（~30s），无发布日期，无封面图，作者统一为 Leif Guldbrand |
 
-| 关注点 | 处理 |
-|--------|------|
-| 耗时最长 | 占用线程池中的一个线程约 18min，不影响其他 3 个线程 |
-| 中途重启 | 已入库文章自动跳过，无需重抓 |
-| 日志量 | 1104 行日志，`logsMap.get("rpgpgm")` 列表占用内存约 110KB，可接受 |
-| 目标站压力 | 1s 延迟足够友好，不会触发反爬 |
-
-### 11.8 并发安全性总结
+### 12.8 并发安全性总结
 
 | 层面 | 安全性 | 说明 |
 |------|--------|------|
 | DB 写入 | ✅ 安全 | 不同 source 不同 URL，INSERT 不冲突 |
 | 内存状态 | ✅ 安全 | `ConcurrentHashMap` + `AtomicInteger` 天然线程安全 |
 | 网络请求 | ✅ 安全 | Jsoup 无共享连接池，各线程独立 |
-| Playwright | ✅ 安全 | Playwright Java 支持多 BrowserContext 并发，一个线程一个 context |
 | 进度展示 | ✅ 安全 | 每个 source 独立进度，互不覆盖 |
 
 ---
 
-## 12. 开发排期建议
+## 13. 开发排期建议
 
 ### 阶段一：数据表改造 + 并发框架（所有来源的前置依赖）
 - [ ] 执行 DDL 添加 `source` 字段，重建索引
@@ -1146,6 +1267,7 @@ rpgpgm.com 有 ~1104 篇文章，单线程约 18-22 分钟（1s 延迟 × 1104 �
 | `faq400` | BlogFaq400 (English) | `https://blog.faq400.com/en/` |
 | `rpgpgm` | RPGPGM.COM | `https://www.rpgpgm.com/` |
 | `as400sql` | AS400 and SQL Tricks | `https://www.as400andsqltricks.com/` |
+| `think400` | Think400.dk (Leif Guldbrand) | `https://www.think400.dk/` |
 
 ### D. 页面结构快照参考
 

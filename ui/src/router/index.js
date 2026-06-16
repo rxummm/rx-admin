@@ -72,6 +72,9 @@ const router = createRouter({
 // 内置固定路由（如 Profile）预先加入，防止 generateDynamicRoutes 重复注册
 const registeredRouteNames = new Set(['Profile', 'PermissionRequest', 'TechBlogDetail'])
 
+// 内置固定路由名称，不会被 removeRoute 移除
+const BUILTIN_ROUTE_NAMES = new Set(['Profile', 'PermissionRequest', 'TechBlogDetail', 'ErrorPage'])
+
 export function generateDynamicRoutes(menuTree) {
   function walk(menus) {
     menus.forEach(menu => {
@@ -102,8 +105,13 @@ export function generateDynamicRoutes(menuTree) {
 }
 
 export function resetDynamicRoutes() {
+  for (const name of registeredRouteNames) {
+    if (!BUILTIN_ROUTE_NAMES.has(name)) {
+      try { router.removeRoute(name) } catch {}
+    }
+  }
   registeredRouteNames.clear()
-  ;['Profile', 'PermissionRequest', 'TechBlogDetail'].forEach(n => registeredRouteNames.add(n))
+  BUILTIN_ROUTE_NAMES.forEach(n => registeredRouteNames.add(n))
 }
 
 useRouterGuard(router)

@@ -35,7 +35,7 @@ function cancelPendingRequest(key) {
 }
 
 const request = axios.create({
-  baseURL: '/api',
+  baseURL: '/api/v1',
   timeout: Number(import.meta.env.VITE_API_REQUEST_TIMEOUT) || 15000
 })
 
@@ -264,5 +264,3 @@ function stopHeartbeat() {
 startHeartbeat()
 
 export default request
-
-

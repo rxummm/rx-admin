@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+@SuppressWarnings("null")
 public class SysIpRuleService extends ServiceImpl<SysIpRuleMapper, SysIpRule> {
 
     public PageResult<SysIpRule> pageQuery(int page, int size, String keyword, String ruleType) {

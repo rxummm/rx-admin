@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
+@SuppressWarnings("null")
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     private int code;

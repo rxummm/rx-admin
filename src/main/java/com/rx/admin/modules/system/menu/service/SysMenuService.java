@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
     private final CacheManager cacheManager;

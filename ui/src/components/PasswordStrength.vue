@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'PasswordStrength' })
 import { computed } from 'vue'
 import { checkPasswordStrength } from '@/composables/usePasswordStrength'
 

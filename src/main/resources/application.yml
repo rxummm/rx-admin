@@ -1,14 +1,21 @@
 server:
   port: 8088
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 2048
   tomcat:
     max-swallow-size: 100MB
 
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   servlet:
     multipart:
       enabled: true
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 500MB
+      max-request-size: 500MB
   application:
     name: rx-admin
   jackson:
@@ -31,6 +38,15 @@ spring:
       jdbc-url: jdbc:mysql://localhost:3306/rxusysadmin?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
       username: ${MYSQL_USERNAME:root}
       password: ${MYSQL_PASSWORD:root}
+
+  # Flyway 数据库迁移（主数据源）
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/primary
+    baseline-on-migrate: true
+    baseline-version: 1
+    baseline-description: Baseline
+    clean-disabled: true
 
 mybatis-plus:
   type-aliases-package: com.rx.admin.modules.**.entity
@@ -71,6 +87,14 @@ knife4j:
 
 # 应用自定义配置
 app:
+  # API 版本控制配置
+  api:
+    # API 前缀，默认 /api
+    prefix: /api
+    # 默认版本号，默认 v1
+    default-version: v1
+    # 是否启用版本控制，false 则忽略版本号
+    enabled: true
   cors:
     # 允许的跨域来源，多个逗号分隔，生产环境请指定具体域名，开发环境 Vite 代理不受此影响
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:*}
@@ -109,6 +133,36 @@ app:
     page-timeout-ms: 15000
     # 单篇文章详情抓取超时（毫秒）
     article-timeout-ms: 30000
+  # 音频转写配置
+  audio:
+    # Whisper 可执行文件路径
+    whisper-path: ${AUDIO_WHISPER_PATH:D:\vueprojects\ffmpeg\bin\whisper.exe}
+    # 模型文件存储路径
+    model-path: ${AUDIO_MODEL_PATH:D:\whisper\models}
+    # 默认使用的模型（tiny/base/small/medium/large-v3）
+    #default-model: ${AUDIO_DEFAULT_MODEL:small}
+    default-model: ${AUDIO_DEFAULT_MODEL:tiny}
+    # 默认语言（zh/en/ja/ko 等）
+    default-language: ${AUDIO_DEFAULT_LANGUAGE:zh}
+    # Whisper CPU 线程数（默认 4，适量减少可降低 CPU 占用）
+    threads: ${AUDIO_THREADS:4}
+    # 临时文件目录
+    temp-dir: ${AUDIO_TEMP_DIR:D:\temp\audio}
+    # 最大文件大小（MB）
+    max-file-size-mb: ${AUDIO_MAX_FILE_SIZE_MB:100}
+    # 是否启用音频转写功能
+    enabled: ${AUDIO_ENABLED:true}
+    # WhisperX 说话人分离配置（可选高级模式，需要 Python whisperx-api 服务）
+    whisperx-enabled: ${WHISPERX_ENABLED:true}
+    whisperx-api-url: ${WHISPERX_API_URL:http://localhost:8880}
+    whisperx-api-key: ${WHISPERX_API_KEY:}
+  # OCR 文档识别配置
+  ocr:
+    enabled: ${OCR_ENABLED:true}
+    tessdata-path: ${OCR_TESSDATA_PATH:D:\tesseract-ocr\tessdata}
+    default-language: ${OCR_DEFAULT_LANGUAGE:chi_sim+eng}
+    temp-dir: ${OCR_TEMP_DIR:D:\temp\ocr}
+    max-file-size-mb: ${OCR_MAX_FILE_SIZE_MB:50}
   # 邮件发送配置（SMTP）
   mail:
     # 发件人地址（与认证用户一致）
@@ -143,6 +197,10 @@ as400:
   # 默认库列表
   default-libraries: A7RXUZZ1,A7RXUZZ2,A7RXUZZB
 
+# 代码生成器配置
+gen:
+  table-schema: rx_admin
+
 # 常用工具配置
 common-tools:
   upload:
@@ -151,6 +209,10 @@ common-tools:
 # 音乐播放器配置
 music:
   folder: C:/Users/admin/Downloads/music
+
+# 视频播放器配置
+video:
+  folder: C:/Users/admin/Downloads/video
 
 # Actuator 监控
 management:

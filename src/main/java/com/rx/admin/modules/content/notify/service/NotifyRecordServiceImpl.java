@@ -10,6 +10,7 @@ import com.rx.admin.modules.content.notify.mapper.SysNotifyRecordMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class NotifyRecordServiceImpl extends ServiceImpl<SysNotifyRecordMapper, SysNotifyRecord>
         implements NotifyRecordService {
 

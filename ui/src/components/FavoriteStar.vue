@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'FavoriteStar' })
 import { ref, watch, onMounted } from 'vue'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { toggleFavoriteApi } from '@/api/favorite'

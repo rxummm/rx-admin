@@ -1,8 +1,8 @@
 package com.rx.admin.modules.auth.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
@@ -28,7 +28,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Tag(name = "认证管理")
 @RestController
-@RequestMapping("/api/auth")
+@ApiVersion(1)
+@RequestMapping("/auth")
 public class AuthController {
 
     private final IAuthService authService;
@@ -106,7 +107,7 @@ public class AuthController {
     @Operation(summary = "更新个人信息")
     @PutMapping("/update-profile")
     @OperateLog(module = "认证管理", operation = "更新个人信息")
-    public Result<?> updateProfile(@RequestBody ProfileUpdateDTO dto) {
+    public Result<?> updateProfile(@RequestBody @Valid ProfileUpdateDTO dto) {
         authService.updateProfile(dto.getNickname(), dto.getEmail(), dto.getPhone(),
                 dto.getGender(), dto.getPassword(), dto.getOldPassword());
         return Result.ok();

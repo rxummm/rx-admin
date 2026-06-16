@@ -1,7 +1,5 @@
 package com.rx.admin.modules.auth.service;
 
-import com.rx.admin.modules.auth.dto.ProfileUpdateDTO;
-import com.rx.admin.modules.auth.dto.RegisterRequest;
 import com.rx.admin.modules.auth.vo.LoginResponseVO;
 import com.rx.admin.modules.auth.vo.UserInfoVO;
 

@@ -2,6 +2,8 @@ package com.rx.admin.modules.literature.common.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
@@ -33,13 +35,16 @@ import com.rx.admin.modules.literature.common.service.LiteraryWorkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "历代文学数据")
 @RestController
-@RequestMapping("/api/classics/literature")
+@ApiVersion(1)
+@RequestMapping("/classics/literature")
+@RequiredArgsConstructor
 public class LiteratureController {
     private final AuthorService authorService;
     private final AuthorConvert authorConvert;
@@ -51,27 +56,6 @@ public class LiteratureController {
     private final ContentCategoryConvert contentCategoryConvert;
     private final LiteraryWorkService literaryWorkService;
     private final LiteraryWorkConvert literaryWorkConvert;
-    public LiteratureController(AuthorService authorService,
-                                AuthorConvert authorConvert,
-                                DynastyService dynastyService,
-                                DynastyConvert dynastyConvert,
-                                GenreService genreService,
-                                GenreConvert genreConvert,
-                                ContentCategoryService contentCategoryService,
-                                ContentCategoryConvert contentCategoryConvert,
-                                LiteraryWorkService literaryWorkService,
-                                LiteraryWorkConvert literaryWorkConvert) {
-        this.authorService = authorService;
-        this.authorConvert = authorConvert;
-        this.dynastyService = dynastyService;
-        this.dynastyConvert = dynastyConvert;
-        this.genreService = genreService;
-        this.genreConvert = genreConvert;
-        this.contentCategoryService = contentCategoryService;
-        this.contentCategoryConvert = contentCategoryConvert;
-        this.literaryWorkService = literaryWorkService;
-        this.literaryWorkConvert = literaryWorkConvert;
-    }
 
     // ====== 作者 ======
 
@@ -103,6 +87,7 @@ public class LiteratureController {
     @Operation(summary = "新增作者")
     @PostMapping("/author")
     @SaCheckPermission(PermissionConstants.Literature.AUTHOR_ADD)
+    @OperateLog(module = "历代文学数据", operation = "新增作者")
     public Result<?> authorAdd(@RequestBody @Valid AuthorCreateDTO dto) {
         authorService.save(authorConvert.toEntity(dto));
         return Result.ok();
@@ -111,6 +96,7 @@ public class LiteratureController {
     @Operation(summary = "编辑作者")
     @PutMapping("/author")
     @SaCheckPermission(PermissionConstants.Literature.AUTHOR_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "编辑作者")
     public Result<?> authorUpdate(@RequestBody @Valid AuthorUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Author entity = authorService.getById(dto.getId());
         authorConvert.updateEntity(entity, dto);
@@ -121,6 +107,7 @@ public class LiteratureController {
     @Operation(summary = "删除作者")
     @DeleteMapping("/author/{id}")
     @SaCheckPermission(PermissionConstants.Literature.AUTHOR_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "删除作者")
     public Result<?> authorDelete(@PathVariable Long id) {
         authorService.removeById(id);
         return Result.ok();
@@ -129,6 +116,7 @@ public class LiteratureController {
     @Operation(summary = "批量删除作者")
     @DeleteMapping("/author/batch")
     @SaCheckPermission(PermissionConstants.Literature.AUTHOR_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "批量删除作者")
     public Result<?> authorBatchDelete(@RequestBody List<Long> ids) {
         authorService.removeByIds(ids);
         return Result.ok();
@@ -164,6 +152,7 @@ public class LiteratureController {
     @Operation(summary = "新增朝代")
     @PostMapping("/dynasty")
     @SaCheckPermission(PermissionConstants.Literature.DYNASTY_ADD)
+    @OperateLog(module = "历代文学数据", operation = "新增朝代")
     public Result<?> dynastyAdd(@RequestBody @Valid DynastyCreateDTO dto) {
         dynastyService.save(dynastyConvert.toEntity(dto));
         return Result.ok();
@@ -172,6 +161,7 @@ public class LiteratureController {
     @Operation(summary = "编辑朝代")
     @PutMapping("/dynasty")
     @SaCheckPermission(PermissionConstants.Literature.DYNASTY_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "编辑朝代")
     public Result<?> dynastyUpdate(@RequestBody @Valid DynastyUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Dynasty entity = dynastyService.getById(dto.getId());
         dynastyConvert.updateEntity(entity, dto);
@@ -182,6 +172,7 @@ public class LiteratureController {
     @Operation(summary = "删除朝代")
     @DeleteMapping("/dynasty/{id}")
     @SaCheckPermission(PermissionConstants.Literature.DYNASTY_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "删除朝代")
     public Result<?> dynastyDelete(@PathVariable Long id) {
         dynastyService.removeById(id);
         return Result.ok();
@@ -190,6 +181,7 @@ public class LiteratureController {
     @Operation(summary = "批量删除朝代")
     @DeleteMapping("/dynasty/batch")
     @SaCheckPermission(PermissionConstants.Literature.DYNASTY_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "批量删除朝代")
     public Result<?> dynastyBatchDelete(@RequestBody List<Long> ids) {
         dynastyService.removeByIds(ids);
         return Result.ok();
@@ -225,6 +217,7 @@ public class LiteratureController {
     @Operation(summary = "新增体裁")
     @PostMapping("/genre")
     @SaCheckPermission(PermissionConstants.Literature.GENRE_ADD)
+    @OperateLog(module = "历代文学数据", operation = "新增体裁")
     public Result<?> genreAdd(@RequestBody @Valid GenreCreateDTO dto) {
         genreService.save(genreConvert.toEntity(dto));
         return Result.ok();
@@ -233,6 +226,7 @@ public class LiteratureController {
     @Operation(summary = "编辑体裁")
     @PutMapping("/genre")
     @SaCheckPermission(PermissionConstants.Literature.GENRE_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "编辑体裁")
     public Result<?> genreUpdate(@RequestBody @Valid GenreUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Genre entity = genreService.getById(dto.getId());
         genreConvert.updateEntity(entity, dto);
@@ -243,6 +237,7 @@ public class LiteratureController {
     @Operation(summary = "删除体裁")
     @DeleteMapping("/genre/{id}")
     @SaCheckPermission(PermissionConstants.Literature.GENRE_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "删除体裁")
     public Result<?> genreDelete(@PathVariable Long id) {
         genreService.removeById(id);
         return Result.ok();
@@ -251,6 +246,7 @@ public class LiteratureController {
     @Operation(summary = "批量删除体裁")
     @DeleteMapping("/genre/batch")
     @SaCheckPermission(PermissionConstants.Literature.GENRE_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "批量删除体裁")
     public Result<?> genreBatchDelete(@RequestBody List<Long> ids) {
         genreService.removeByIds(ids);
         return Result.ok();
@@ -286,6 +282,7 @@ public class LiteratureController {
     @Operation(summary = "新增内容分类")
     @PostMapping("/category")
     @SaCheckPermission(PermissionConstants.Literature.CATEGORY_ADD)
+    @OperateLog(module = "历代文学数据", operation = "新增内容分类")
     public Result<?> categoryAdd(@RequestBody @Valid ContentCategoryCreateDTO dto) {
         contentCategoryService.save(contentCategoryConvert.toEntity(dto));
         return Result.ok();
@@ -294,6 +291,7 @@ public class LiteratureController {
     @Operation(summary = "编辑内容分类")
     @PutMapping("/category")
     @SaCheckPermission(PermissionConstants.Literature.CATEGORY_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "编辑内容分类")
     public Result<?> categoryUpdate(@RequestBody @Valid ContentCategoryUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.ContentCategory entity = contentCategoryService.getById(dto.getId());
         contentCategoryConvert.updateEntity(entity, dto);
@@ -304,6 +302,7 @@ public class LiteratureController {
     @Operation(summary = "删除内容分类")
     @DeleteMapping("/category/{id}")
     @SaCheckPermission(PermissionConstants.Literature.CATEGORY_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "删除内容分类")
     public Result<?> categoryDelete(@PathVariable Long id) {
         contentCategoryService.removeById(id);
         return Result.ok();
@@ -312,6 +311,7 @@ public class LiteratureController {
     @Operation(summary = "批量删除内容分类")
     @DeleteMapping("/category/batch")
     @SaCheckPermission(PermissionConstants.Literature.CATEGORY_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "批量删除内容分类")
     public Result<?> categoryBatchDelete(@RequestBody List<Long> ids) {
         contentCategoryService.removeByIds(ids);
         return Result.ok();
@@ -350,6 +350,7 @@ public class LiteratureController {
     @Operation(summary = "新增文学作品")
     @PostMapping("/work")
     @SaCheckPermission(PermissionConstants.Literature.WORK_ADD)
+    @OperateLog(module = "历代文学数据", operation = "新增文学作品")
     public Result<?> workAdd(@RequestBody @Valid LiteraryWorkCreateDTO dto) {
         literaryWorkService.saveWithWordCount(literaryWorkConvert.toEntity(dto));
         return Result.ok();
@@ -358,6 +359,7 @@ public class LiteratureController {
     @Operation(summary = "编辑文学作品")
     @PutMapping("/work")
     @SaCheckPermission(PermissionConstants.Literature.WORK_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "编辑文学作品")
     public Result<?> workUpdate(@RequestBody @Valid LiteraryWorkUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.LiteraryWork entity = literaryWorkService.getById(dto.getId());
         literaryWorkConvert.updateEntity(entity, dto);
@@ -368,6 +370,7 @@ public class LiteratureController {
     @Operation(summary = "删除文学作品")
     @DeleteMapping("/work/{id}")
     @SaCheckPermission(PermissionConstants.Literature.WORK_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "删除文学作品")
     public Result<?> workDelete(@PathVariable Long id) {
         literaryWorkService.removeById(id);
         return Result.ok();
@@ -376,6 +379,7 @@ public class LiteratureController {
     @Operation(summary = "批量删除文学作品")
     @DeleteMapping("/work/batch")
     @SaCheckPermission(PermissionConstants.Literature.WORK_DELETE)
+    @OperateLog(module = "历代文学数据", operation = "批量删除文学作品")
     public Result<?> workBatchDelete(@RequestBody List<Long> ids) {
         literaryWorkService.removeByIds(ids);
         return Result.ok();
@@ -384,6 +388,7 @@ public class LiteratureController {
     @Operation(summary = "批量重新统计所有作品真实字数")
     @PostMapping("/work/recount-word-count")
     @SaCheckPermission(PermissionConstants.Literature.WORK_EDIT)
+    @OperateLog(module = "历代文学数据", operation = "重新统计字数")
     public Result<?> recountWordCount() {
         int updated = literaryWorkService.recountAllWordCount();
         return Result.ok(updated);

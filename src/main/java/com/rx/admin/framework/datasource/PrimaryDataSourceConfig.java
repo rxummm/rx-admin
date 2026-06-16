@@ -21,6 +21,7 @@ import javax.sql.DataSource;
  * 只扫描带 @Mapper 注解的接口（classics 子包由 SecondDataSourceConfig 通过 @SecondDB 注解管理）
  */
 @Configuration
+@SuppressWarnings("null")
     @MapperScan(
         basePackages = "com.rx.admin.modules",
         sqlSessionFactoryRef = "primarySqlSessionFactory",

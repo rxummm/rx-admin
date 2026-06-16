@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.menu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
@@ -13,22 +14,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "菜单管理")
 @RestController
-@RequestMapping("/api/sys/menu")
+@ApiVersion(1)
+@RequestMapping("/sys/menu")
+@RequiredArgsConstructor
 public class SysMenuController {
 
     private final ISysMenuService menuService;
     private final MenuConvert menuConvert;
-
-    public SysMenuController(ISysMenuService menuService, MenuConvert menuConvert) {
-        this.menuService = menuService;
-        this.menuConvert = menuConvert;
-    }
 
     @Operation(summary = "菜单树列表")
     @GetMapping("/tree")

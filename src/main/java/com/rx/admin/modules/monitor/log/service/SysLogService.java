@@ -10,6 +10,7 @@ import com.rx.admin.modules.monitor.log.mapper.SysLogMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class SysLogService extends ServiceImpl<SysLogMapper, SysLog> {
 
     public PageResult<SysLog> pageQuery(int page, int size, String keyword, Integer status, String startTime, String endTime) {

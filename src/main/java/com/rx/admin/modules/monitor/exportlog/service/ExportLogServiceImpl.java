@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
+@SuppressWarnings("null")
 public class ExportLogServiceImpl extends ServiceImpl<SysExportLogMapper, SysExportLog> implements ExportLogService {
 
     @Override

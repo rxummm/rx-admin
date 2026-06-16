@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.dict.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
@@ -19,7 +20,8 @@ import java.util.List;
 
 @Tag(name = "字典数据管理")
 @RestController
-@RequestMapping("/api/sys/dict/data")
+@ApiVersion(1)
+@RequestMapping("/sys/dict/data")
 @RequiredArgsConstructor
 public class SysDictDataController {
 

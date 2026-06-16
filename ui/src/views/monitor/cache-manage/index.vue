@@ -19,10 +19,12 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-empty v-if="!loading && caches.length === 0" />
   </div>
 </template>
 
 <script setup>
+defineOptions({ name: 'MonitorCacheManage' })
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCacheListApi, clearCacheApi, clearAllCacheApi } from '@/api/cacheManage'

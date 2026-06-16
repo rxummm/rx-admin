@@ -1,1 +1,53 @@
-package com.rx.admin.modules.tool.region.entity;  import com.baomidou.mybatisplus.annotation.*; import lombok.Data; import java.math.BigDecimal; import java.time.LocalDateTime;  /**  * 涓浗琛屾斂鍖哄垝琛?(china_regions)  */ @Data @TableName("china_regions") public class ChinaRegion {     @TableId(type = IdType.AUTO)     private Long id;      /** 琛屾斂鍖哄垝浠ｇ爜 */     private String code;      /** 鍚嶇О */     private String name;      /** 灞傜骇 1=鐪?2=甯?3=鍖?鍘?*/     private Integer level;      /** 涓婄骇琛屾斂鍖哄垝浠ｇ爜 */     private String parentCode;      /** 鎷奸煶 */     private String pinyin;      /** 绠€绉?*/     private String abbreviation;      /** 缁忓害 */     private BigDecimal longitude;      /** 绾害 */     private BigDecimal latitude;      /** 鎺掑簭 */     private Integer sort;      /** 鐘舵€?0=绂佺敤 1=鍚敤 */     private Integer status;      @TableField(fill = FieldFill.INSERT)     private LocalDateTime createTime;      @TableField(fill = FieldFill.INSERT_UPDATE)     private LocalDateTime updateTime; }
+package com.rx.admin.modules.tool.region.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * 中国行政区划表 (china_regions)
+ */
+@Data
+@TableName("china_regions")
+public class ChinaRegion {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    /** 行政区划代码 */
+    private String code;
+
+    /** 名称 */
+    private String name;
+
+    /** 层级 1=省 2=市 3=区/县 */
+    private Integer level;
+
+    /** 上级行政区划代码 */
+    private String parentCode;
+
+    /** 拼音 */
+    private String pinyin;
+
+    /** 简称 */
+    private String abbreviation;
+
+    /** 经度 */
+    private BigDecimal longitude;
+
+    /** 纬度 */
+    private BigDecimal latitude;
+
+    /** 排序 */
+    private Integer sort;
+
+    /** 状态 0=禁用 1=启用 */
+    private Integer status;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+}

@@ -76,6 +76,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ErrorBoundary' })
 import { ref, computed, onErrorCaptured, getCurrentInstance } from 'vue'
 import {
   CircleCloseFilled,

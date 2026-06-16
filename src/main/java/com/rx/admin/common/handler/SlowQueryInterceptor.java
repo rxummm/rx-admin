@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
     @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, java.sql.ResultSet.class})
 })
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SlowQueryInterceptor implements Interceptor {
 
     private final SysSlowQueryService slowQueryService;

@@ -26,6 +26,7 @@ import java.util.List;
  * </pre>
  */
 @Slf4j
+@SuppressWarnings("null")
 public class DataScopeInnerInterceptor implements InnerInterceptor {
 
     private final DataScopeService dataScopeService;

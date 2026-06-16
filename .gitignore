@@ -45,7 +45,17 @@ p1_password.py
 scan_menus.py
 fix_log_css.py
 fix_simple.py
+# IDEs
+.trae/
+.codebuddy/
 
-# 构建产物
-ui/dist/
-backend/target/
+# Local IDE config
+opencode.json
+.opencode/
+
+# Binary artifacts
+whisper-bin.zip
+whisper.cpp/
+
+# Database files
+data/transcripts.db

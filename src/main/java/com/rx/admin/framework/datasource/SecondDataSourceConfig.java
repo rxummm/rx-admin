@@ -19,6 +19,7 @@ import javax.sql.DataSource;
  * 只扫描带 @SecondDB 注解的 Mapper 接口
  */
 @Configuration
+@SuppressWarnings("null")
     @MapperScan(
         basePackages = "com.rx.admin.modules",
         sqlSessionFactoryRef = "secondSqlSessionFactory",

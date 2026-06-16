@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> implements ISysNoticeService {
 
     private final SysUserService sysUserService;

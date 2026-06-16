@@ -1,6 +1,7 @@
 package com.rx.admin.modules.as400.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
@@ -23,7 +24,8 @@ import java.util.List;
 @Tag(name = "AS400对象管理")
 @Slf4j
 @RestController
-@RequestMapping("/api/as400")
+@ApiVersion(1)
+@RequestMapping("/as400")
 @RequiredArgsConstructor
 public class As400Controller {
     private final As400Service as400Service;

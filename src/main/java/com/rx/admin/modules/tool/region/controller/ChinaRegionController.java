@@ -1,8 +1,10 @@
 package com.rx.admin.modules.tool.region.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.tool.region.entity.ChinaRegion;
@@ -21,8 +23,10 @@ import java.util.List;
 
 @Tag(name = "行政区划")
 @RestController
-@RequestMapping("/api/tool/region")
+@ApiVersion(1)
+@RequestMapping("/tool/region")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class ChinaRegionController {
 
     private final ChinaRegionService chinaRegionService;
@@ -64,6 +68,7 @@ public class ChinaRegionController {
         return Result.ok(chinaRegionConvert.toVO(chinaRegionService.getById(id)));
     }
 
+    @OperateLog(module = "行政区划", operation = "新增行政区划")
     @Operation(summary = "新增行政区划")
     @PostMapping
     @SaCheckPermission(PermissionConstants.Tool.REGION_ADD)
@@ -72,6 +77,7 @@ public class ChinaRegionController {
         return Result.ok();
     }
 
+    @OperateLog(module = "行政区划", operation = "修改行政区划")
     @Operation(summary = "修改行政区划")
     @PutMapping
     @SaCheckPermission(PermissionConstants.Tool.REGION_EDIT)
@@ -83,6 +89,7 @@ public class ChinaRegionController {
         return Result.ok();
     }
 
+    @OperateLog(module = "行政区划", operation = "删除行政区划")
     @Operation(summary = "删除行政区划")
     @DeleteMapping("/{id}")
     @SaCheckPermission(PermissionConstants.Tool.REGION_DELETE)

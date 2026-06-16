@@ -1,8 +1,11 @@
 package com.rx.admin.modules.tool.commonTools.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rx.admin.common.annotation.ApiVersion;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.tool.commonTools.entity.SharedFile;
 import com.rx.admin.modules.system.user.entity.SysUser;
@@ -13,6 +16,7 @@ import com.rx.admin.modules.tool.commonTools.vo.SharedFileVO;
 import com.rx.admin.modules.system.user.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +32,10 @@ import java.util.*;
 @Slf4j
 @Tag(name = "办公工具")
 @RestController
-@RequestMapping("/api/common-tools")
+@ApiVersion(1)
+@RequestMapping("/common-tools")
+@RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CommonToolsController {
 
     private final CommonToolsService commonToolsService;
@@ -39,17 +46,11 @@ public class CommonToolsController {
     @Value("${common-tools.upload.dir:D:/vueprojects/RX/ui/public/shareddocs}")
     private String uploadDir;
 
-    public CommonToolsController(CommonToolsService commonToolsService, EmailService emailService,
-                                  ISysUserService sysUserService, SharedFileConvert sharedFileConvert) {
-        this.commonToolsService = commonToolsService;
-        this.emailService = emailService;
-        this.sysUserService = sysUserService;
-        this.sharedFileConvert = sharedFileConvert;
-    }
-
+    @OperateLog(module = "办公工具", operation = "解析Excel")
     @Operation(summary = "Excel解析 - 上传并解析Excel文件")
     @PostMapping("/excel/parse")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:parse")
     public Result<Map<String, Object>> parseExcel(@RequestParam("file") MultipartFile file) {
         try {
             List<Map<String, Object>> data = commonToolsService.parseExcel(file);
@@ -65,9 +66,11 @@ public class CommonToolsController {
         }
     }
 
+    @OperateLog(module = "办公工具", operation = "上传文档")
     @Operation(summary = "文档上传 - 上传文档到指定目录")
     @PostMapping("/document/upload")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:upload")
     public Result<SharedFileVO> uploadDocument(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "targetDir", required = false) String targetDir) {
@@ -84,6 +87,7 @@ public class CommonToolsController {
     @Operation(summary = "文档列表 - 分页查询已上传文件")
     @GetMapping("/document/list")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:query")
     public Result<Map<String, Object>> getDocumentList(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -97,9 +101,11 @@ public class CommonToolsController {
         return Result.ok(data);
     }
 
+    @OperateLog(module = "办公工具", operation = "删除文档")
     @Operation(summary = "删除文档")
     @DeleteMapping("/document/{id}")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:delete")
     public Result<?> deleteDocument(@PathVariable Long id) {
         boolean ok = commonToolsService.deleteFile(id);
         return ok ? Result.ok() : Result.fail("文件不存在或删除失败");
@@ -108,15 +114,18 @@ public class CommonToolsController {
     @Operation(summary = "获取默认存储路径")
     @GetMapping("/document/default-dir")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:query")
     public Result<Map<String, String>> getDefaultDir() {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("defaultDir", commonToolsService.getDefaultUploadDir());
         return Result.ok(data);
     }
 
+    @OperateLog(module = "办公工具", operation = "PDF转Word")
     @Operation(summary = "文档转换 - PDF转Word")
     @PostMapping("/convert/pdf-to-word")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:convert")
     public Result<Map<String, String>> convertPdfToWord(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "outputDir", required = false) String outputDir) {
@@ -133,9 +142,11 @@ public class CommonToolsController {
         }
     }
 
+    @OperateLog(module = "办公工具", operation = "Word转PDF")
     @Operation(summary = "文档转换 - Word转PDF")
     @PostMapping("/convert/word-to-pdf")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:convert")
     public Result<Map<String, String>> convertWordToPdf(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "outputDir", required = false) String outputDir) {
@@ -152,9 +163,11 @@ public class CommonToolsController {
         }
     }
 
+    @OperateLog(module = "办公工具", operation = "发送邮件")
     @Operation(summary = "发送邮件")
     @PostMapping("/email/send")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:email")
     public Result<Map<String, String>> sendEmail(
             @RequestParam("to") String to,
             @RequestParam(value = "cc", required = false) String cc,
@@ -187,9 +200,11 @@ public class CommonToolsController {
         }
     }
 
+    @OperateLog(module = "办公工具", operation = "上传邮件附件")
     @Operation(summary = "上传邮件附件")
     @PostMapping("/email/upload-attachment")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:upload")
     public Result<Map<String, String>> uploadAttachment(@RequestParam("file") MultipartFile file) {
         try {
             if (file.isEmpty()) {
@@ -217,6 +232,7 @@ public class CommonToolsController {
     @Operation(summary = "获取邮件配置")
     @GetMapping("/email/config")
     @SaCheckLogin
+    @SaCheckPermission("tool:tools:query")
     public Result<Map<String, String>> getEmailConfig() {
         String userEmail = getCurrentUserEmail();
         return Result.ok(emailService.getMailConfig(userEmail));

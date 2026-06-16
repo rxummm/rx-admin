@@ -41,7 +41,7 @@ defineOptions({ name: 'SystemConfig' })
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
+import { API } from '@/api/routes'
 
 const { t } = useI18n()
 
@@ -58,7 +58,7 @@ onMounted(() => fetchData())
 async function fetchData() {
   loading.value = true
   try {
-    const res = await request({ url: '/system/config/grouped', method: 'get' })
+    const res = await request({ url: API.SYS.CONFIG.GROUPED, method: 'get' })
     groupedConfigs.value = res.data || {}
     if (Object.keys(groupedConfigs.value).length > 0 && !groupedConfigs.value[activeGroup.value]) {
       activeGroup.value = Object.keys(groupedConfigs.value)[0]
@@ -75,7 +75,7 @@ function startEdit(row) {
 
 async function saveConfig(row) {
   try {
-    await request({ url: `/system/config/value/${row.configKey}`, method: 'put', data: { value: editValue.value } })
+    await request({ url: API.SYS.CONFIG.VALUE_BY_KEY(row.configKey), method: 'put', data: { value: editValue.value } })
     ElMessage.success(t('common.saveSuccess'))
     editKey.value = ''
     await fetchData()
@@ -84,7 +84,7 @@ async function saveConfig(row) {
 
 async function updateConfig(row, value) {
   try {
-    await request({ url: `/system/config/value/${row.configKey}`, method: 'put', data: { value } })
+    await request({ url: API.SYS.CONFIG.VALUE_BY_KEY(row.configKey), method: 'put', data: { value } })
     ElMessage.success(t('common.updateSuccess'))
     await fetchData()
   } catch {}

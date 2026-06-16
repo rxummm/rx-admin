@@ -1,14 +1,24 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('system.menu.menuName') + '/' + $t('system.menu.perm')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('system.menu.menuName') + '/' + $t('system.menu.perm')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
       <el-button @click="resetSearch">{{ $t('common.reset') }}</el-button>
-      <ExportButton :data="flattenedExportData" :columns="exportColumns" title="菜单管理" />
+      <ExportButton :data="flattenedExportData" :columns="exportColumns" :title="$t('system.menu.title')" />
       <div style="flex: 1" />
-      <el-button type="primary" @click="handleAdd({ parentId: 0, menuType: 1 })" v-if="userStore.hasPerm('sys:menu:add')">
+      <el-button
+        type="primary"
+        @click="handleAdd({ parentId: 0, menuType: 1 })"
+        v-if="userStore.hasPerm('sys:menu:add')"
+      >
         <el-icon><Plus /></el-icon> {{ $t('common.add') + $t('system.menu.title') }}
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -27,23 +37,70 @@
     </div>
 
     <div class="table-container">
-      <el-table :data="filteredMenuTree" row-key="id" border stripe v-loading="loading">
-        <el-table-column v-if="visibleColumns.includes('menuName')" prop="menuName" :label="$t('system.menu.menuName')" min-width="200" />
+      <el-table
+        :data="filteredMenuTree"
+        row-key="id"
+        border
+        stripe
+        v-loading="loading"
+        max-height="calc(100vh - 260px)"
+        style="width: 100%"
+      >
+        <el-table-column
+          v-if="visibleColumns.includes('menuName')"
+          prop="menuName"
+          :label="$t('system.menu.menuName')"
+          min-width="200"
+        />
         <el-table-column v-if="visibleColumns.includes('icon')" prop="icon" :label="$t('system.menu.icon')" width="80">
           <template #default="{ row }">
-            <el-icon v-if="row.icon"><component :is="row.icon" /></el-icon>
+            <el-icon v-if="getElIconComponent(row.icon)"><component :is="getElIconComponent(row.icon)" /></el-icon>
+            <FontAwesomeIcon
+              v-else-if="getFaIcon(row.icon)"
+              :icon="getFaIcon(row.icon)"
+              style="width: 14px; height: 14px"
+            />
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('menuType')" prop="menuType" :label="$t('system.menu.type')" width="80">
+        <el-table-column
+          v-if="visibleColumns.includes('menuType')"
+          prop="menuType"
+          :label="$t('system.menu.type')"
+          width="80"
+        >
           <template #default="{ row }">
             <el-tag :type="row.menuType === 1 ? 'info' : row.menuType === 2 ? 'success' : 'warning'" size="small">
-              {{ row.menuType === 1 ? $t('system.menu.typeOptions.dir') : row.menuType === 2 ? $t('system.menu.typeOptions.menu') : $t('system.menu.typeOptions.button') }}
+              {{
+                row.menuType === 1
+                  ? $t('system.menu.typeOptions.dir')
+                  : row.menuType === 2
+                    ? $t('system.menu.typeOptions.menu')
+                    : $t('system.menu.typeOptions.button')
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('perms')" prop="perms" :label="$t('system.menu.perm')" width="160" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('path')" prop="path" :label="$t('system.menu.path')" width="160" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('component')" prop="component" :label="$t('system.menu.component')" width="200" show-overflow-tooltip />
+        <el-table-column
+          v-if="visibleColumns.includes('perms')"
+          prop="perms"
+          :label="$t('system.menu.perm')"
+          width="160"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('path')"
+          prop="path"
+          :label="$t('system.menu.path')"
+          width="160"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('component')"
+          prop="component"
+          :label="$t('system.menu.component')"
+          width="200"
+          show-overflow-tooltip
+        />
         <el-table-column v-if="visibleColumns.includes('sort')" prop="sort" :label="$t('common.sort')" width="60" />
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" :label="$t('common.status')" width="80">
           <template #default="{ row }">
@@ -54,9 +111,30 @@
         </el-table-column>
         <el-table-column :label="$t('common.operation')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleAdd(row)" v-if="userStore.hasPerm('sys:menu:add') && row.menuType !== 3">{{ $t('system.menu.addChild') }}</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('sys:menu:edit')">{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('sys:menu:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleAdd(row)"
+              v-if="userStore.hasPerm('sys:menu:add') && row.menuType !== 3"
+              >{{ $t('system.menu.addChild') }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('sys:menu:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('sys:menu:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -88,16 +166,27 @@
         </el-form-item>
         <el-form-item :label="$t('system.menu.icon')" v-if="form.menuType !== 3">
           <div class="icon-picker-wrapper">
-            <el-input v-model="form.icon" :placeholder="$t('common.input') + $t('system.menu.icon') + ' / ' + t('system.menu.iconPicker')">
+            <el-input
+              v-model="form.icon"
+              :placeholder="$t('common.input') + $t('system.menu.icon') + ' / ' + t('system.menu.iconPicker')"
+            >
               <template #prefix>
-                <el-icon v-if="form.icon && isElementIcon(form.icon)"><component :is="form.icon" /></el-icon>
-                <FontAwesomeIcon v-else-if="form.icon && isFontAwesomeIcon(form.icon)" :icon="getFaIcons(form.icon)" style="font-size: 14px;" />
+                <el-icon v-if="getElIconComponent(form.icon)"
+                  ><component :is="getElIconComponent(form.icon)"
+                /></el-icon>
+                <FontAwesomeIcon
+                  v-else-if="form.icon && isFontAwesomeIcon(form.icon)"
+                  :icon="getFaIcons(form.icon)"
+                  style="font-size: 14px"
+                />
                 <el-icon v-else><Grid /></el-icon>
               </template>
             </el-input>
             <el-popover trigger="click" placement="bottom-start" :width="520" popper-class="icon-picker-popper">
               <template #reference>
-                <el-button class="icon-picker-btn"><el-icon><MoreFilled /></el-icon></el-button>
+                <el-button class="icon-picker-btn"
+                  ><el-icon><MoreFilled /></el-icon
+                ></el-button>
               </template>
               <div class="icon-picker-panel">
                 <!-- Tab 切换 -->
@@ -116,7 +205,7 @@
                     :class="['icon-item', { active: form.icon === name }]"
                     @click="selectIcon(name)"
                   >
-                    <el-icon :size="18"><component :is="name" /></el-icon>
+                    <el-icon :size="18"><component :is="getElIconComponent(name) || Grid" /></el-icon>
                     <span class="icon-name">{{ name }}</span>
                   </div>
                   <div v-if="filteredEpIcons.length === 0" class="icon-empty">无匹配图标</div>
@@ -171,24 +260,98 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-  faHome, faUser, faUsers, faGear, faCog, faTools, faChartBar, faChartLine,
-  faFile, faFolder, faFolderOpen, faTag, faBookmark, faStar, faHeart,
-  faBell, faMessage, faEnvelope, faPaperPlane, faShareNodes,
-  faLock, faKey, faShield, faEye, faEyeSlash,
-  faPlus, faMinus, faXmark, faCheck, faEdit, faTrash, faSearch, faRefresh,
-  faArrowRight, faArrowLeft, faArrowUp, faArrowDown, faRotateRight,
-  faGlobe, faExpand, faCompress, faMaximize, faMinimize,
-  faCalendar, faClock, faStopwatch,
-  faDatabase, faServer, faCloud, faCode, faTerminal, faBug,
-  faDesktop, faLaptop, faMobileScreen, faWifi, faPlug, faPuzzlePiece,
-  faCircleInfo, faTriangleExclamation, faCircleCheck, faCircleXmark,
-  faList, faTable, faGrip, faThLarge, faSquare, faLayerGroup,
-  faCamera, faImage, faFilm, faMicrophone, faMusic,
-  faMapLocationDot, faLocationPin, faCompass,
-  faBook, faBookOpen, faGraduationCap, faPenNib,
-  faBasketShopping, faCartShopping, faCreditCard, faDollarSign,
-  faRocket, faBolt, faFire, faAward, faTrophy,
-  faQuestion, faLightbulb, faWandMagicSparkles,
+  faHome,
+  faUser,
+  faUsers,
+  faGear,
+  faCog,
+  faTools,
+  faChartBar,
+  faChartLine,
+  faFile,
+  faFolder,
+  faFolderOpen,
+  faTag,
+  faBookmark,
+  faStar,
+  faHeart,
+  faBell,
+  faMessage,
+  faEnvelope,
+  faPaperPlane,
+  faShareNodes,
+  faLock,
+  faKey,
+  faShield,
+  faEye,
+  faEyeSlash,
+  faPlus,
+  faMinus,
+  faXmark,
+  faCheck,
+  faEdit,
+  faTrash,
+  faSearch,
+  faRefresh,
+  faArrowRight,
+  faArrowLeft,
+  faArrowUp,
+  faArrowDown,
+  faRotateRight,
+  faGlobe,
+  faExpand,
+  faCompress,
+  faMaximize,
+  faMinimize,
+  faCalendar,
+  faClock,
+  faStopwatch,
+  faDatabase,
+  faServer,
+  faCloud,
+  faCode,
+  faTerminal,
+  faBug,
+  faDesktop,
+  faLaptop,
+  faMobileScreen,
+  faWifi,
+  faPlug,
+  faPuzzlePiece,
+  faCircleInfo,
+  faTriangleExclamation,
+  faCircleCheck,
+  faCircleXmark,
+  faList,
+  faTable,
+  faGrip,
+  faThLarge,
+  faSquare,
+  faLayerGroup,
+  faCamera,
+  faImage,
+  faFilm,
+  faMicrophone,
+  faMusic,
+  faMapLocationDot,
+  faLocationPin,
+  faCompass,
+  faBook,
+  faBookOpen,
+  faGraduationCap,
+  faPenNib,
+  faBasketShopping,
+  faCartShopping,
+  faCreditCard,
+  faDollarSign,
+  faRocket,
+  faBolt,
+  faFire,
+  faAward,
+  faTrophy,
+  faQuestion,
+  faLightbulb,
+  faWandMagicSparkles
 } from '@fortawesome/free-solid-svg-icons'
 import { useUserStore } from '@/stores/user'
 import { getMenuTreeApi, addMenuApi, updateMenuApi, deleteMenuApi } from '@/api/menu'
@@ -196,24 +359,98 @@ import ExportButton from '@/components/ExportButton/index.vue'
 
 // 注册 FA 图标到库
 library.add(
-  faHome, faUser, faUsers, faGear, faCog, faTools, faChartBar, faChartLine,
-  faFile, faFolder, faFolderOpen, faTag, faBookmark, faStar, faHeart,
-  faBell, faMessage, faEnvelope, faPaperPlane, faShareNodes,
-  faLock, faKey, faShield, faEye, faEyeSlash,
-  faPlus, faMinus, faXmark, faCheck, faEdit, faTrash, faSearch, faRefresh,
-  faArrowRight, faArrowLeft, faArrowUp, faArrowDown, faRotateRight,
-  faGlobe, faExpand, faCompress, faMaximize, faMinimize,
-  faCalendar, faClock, faStopwatch,
-  faDatabase, faServer, faCloud, faCode, faTerminal, faBug,
-  faDesktop, faLaptop, faMobileScreen, faWifi, faPlug, faPuzzlePiece,
-  faCircleInfo, faTriangleExclamation, faCircleCheck, faCircleXmark,
-  faList, faTable, faGrip, faThLarge, faSquare, faLayerGroup,
-  faCamera, faImage, faFilm, faMicrophone, faMusic,
-  faMapLocationDot, faLocationPin, faCompass,
-  faBook, faBookOpen, faGraduationCap, faPenNib,
-  faBasketShopping, faCartShopping, faCreditCard, faDollarSign,
-  faRocket, faBolt, faFire, faAward, faTrophy,
-  faQuestion, faLightbulb, faWandMagicSparkles,
+  faHome,
+  faUser,
+  faUsers,
+  faGear,
+  faCog,
+  faTools,
+  faChartBar,
+  faChartLine,
+  faFile,
+  faFolder,
+  faFolderOpen,
+  faTag,
+  faBookmark,
+  faStar,
+  faHeart,
+  faBell,
+  faMessage,
+  faEnvelope,
+  faPaperPlane,
+  faShareNodes,
+  faLock,
+  faKey,
+  faShield,
+  faEye,
+  faEyeSlash,
+  faPlus,
+  faMinus,
+  faXmark,
+  faCheck,
+  faEdit,
+  faTrash,
+  faSearch,
+  faRefresh,
+  faArrowRight,
+  faArrowLeft,
+  faArrowUp,
+  faArrowDown,
+  faRotateRight,
+  faGlobe,
+  faExpand,
+  faCompress,
+  faMaximize,
+  faMinimize,
+  faCalendar,
+  faClock,
+  faStopwatch,
+  faDatabase,
+  faServer,
+  faCloud,
+  faCode,
+  faTerminal,
+  faBug,
+  faDesktop,
+  faLaptop,
+  faMobileScreen,
+  faWifi,
+  faPlug,
+  faPuzzlePiece,
+  faCircleInfo,
+  faTriangleExclamation,
+  faCircleCheck,
+  faCircleXmark,
+  faList,
+  faTable,
+  faGrip,
+  faThLarge,
+  faSquare,
+  faLayerGroup,
+  faCamera,
+  faImage,
+  faFilm,
+  faMicrophone,
+  faMusic,
+  faMapLocationDot,
+  faLocationPin,
+  faCompass,
+  faBook,
+  faBookOpen,
+  faGraduationCap,
+  faPenNib,
+  faBasketShopping,
+  faCartShopping,
+  faCreditCard,
+  faDollarSign,
+  faRocket,
+  faBolt,
+  faFire,
+  faAward,
+  faTrophy,
+  faQuestion,
+  faLightbulb,
+  faWandMagicSparkles
 )
 
 const { t } = useI18n()
@@ -239,7 +476,7 @@ const columnOptions = [
   { key: 'sort', label: t('common.sort') },
   { key: 'status', label: t('common.status') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -256,6 +493,17 @@ const filteredMenuTree = computed(() => {
   if (!kw) return menuTree.value
   return filterTree(menuTree.value, kw)
 })
+
+function getElIconComponent(icon) {
+  if (!icon || icon.startsWith('fa-')) return null
+  return ElementPlusIconsVue[icon] || null
+}
+
+function getFaIcon(icon) {
+  if (!icon || !icon.startsWith('fa-')) return null
+  const parts = icon.split(' ')
+  return parts.length > 1 ? parts[1].replace(/^fa-/, '') : null
+}
 
 function filterTree(nodes, kw) {
   return nodes.reduce((acc, node) => {
@@ -275,14 +523,14 @@ function resetSearch() {
 
 // 导出列定义
 const exportColumns = [
-  { field: 'menuName', label: '菜单名称' },
-  { field: 'icon', label: '图标' },
-  { field: 'menuType', label: '类型' },
-  { field: 'perms', label: '权限标识' },
-  { field: 'path', label: '路由路径' },
-  { field: 'component', label: '组件路径' },
-  { field: 'sort', label: '排序' },
-  { field: 'status', label: '状态' }
+  { field: 'menuName', label: t('system.menu.menuName') },
+  { field: 'icon', label: t('system.menu.icon') },
+  { field: 'menuType', label: t('system.menu.type') },
+  { field: 'perms', label: t('system.menu.perm') },
+  { field: 'path', label: t('system.menu.path') },
+  { field: 'component', label: t('system.menu.component') },
+  { field: 'sort', label: t('common.sort') },
+  { field: 'status', label: t('common.status') }
 ]
 
 // 将过滤后的树展平为导出数据
@@ -294,12 +542,16 @@ const flattenedExportData = computed(() => {
 
 function flattenTree(nodes, prefix, result) {
   for (const node of nodes) {
-    const typeMap = { 1: '目录', 2: '菜单', 3: '按钮' }
+    const typeMap = {
+      1: t('system.menu.typeOptions.dir'),
+      2: t('system.menu.typeOptions.menu'),
+      3: t('system.menu.typeOptions.button')
+    }
     result.push({
       ...node,
       menuName: prefix + node.menuName,
       menuType: typeMap[node.menuType] || node.menuType,
-      status: node.status === 1 ? '启用' : '禁用'
+      status: node.status === 1 ? t('common.enable') : t('common.disable')
     })
     if (node.children && node.children.length > 0) {
       flattenTree(node.children, prefix + '  ├─ ', result)
@@ -313,7 +565,7 @@ const iconSearch = ref('')
 
 // 所有 Element Plus 图标名（排序后的列表）
 const allEpIcons = Object.keys(ElementPlusIconsVue)
-  .filter(name => name !== 'Icon' && name !== 'IconProps') // 过滤掉非图标组件
+  .filter((name) => name !== 'Icon' && name !== 'IconProps') // 过滤掉非图标组件
   .sort()
 
 // Font Awesome 图标定义：{ name: 显示名, fullName: 'fa-solid 名称' (存后端), iconObj: 图标对象 (用于渲染) }
@@ -400,19 +652,19 @@ const allFaIcons = [
   { name: 'trophy', fullName: 'fa-solid fa-trophy', iconObj: faTrophy },
   { name: 'question', fullName: 'fa-solid fa-question', iconObj: faQuestion },
   { name: 'lightbulb', fullName: 'fa-solid fa-lightbulb', iconObj: faLightbulb },
-  { name: 'wand', fullName: 'fa-solid fa-wand-magic-sparkles', iconObj: faWandMagicSparkles },
+  { name: 'wand', fullName: 'fa-solid fa-wand-magic-sparkles', iconObj: faWandMagicSparkles }
 ]
 
 const filteredEpIcons = computed(() => {
   if (!iconSearch.value) return allEpIcons
   const kw = iconSearch.value.toLowerCase()
-  return allEpIcons.filter(n => n.toLowerCase().includes(kw))
+  return allEpIcons.filter((n) => n.toLowerCase().includes(kw))
 })
 
 const filteredFaIcons = computed(() => {
   if (!iconSearch.value) return allFaIcons
   const kw = iconSearch.value.toLowerCase()
-  return allFaIcons.filter(item => item.name.includes(kw) || item.fullName.includes(kw))
+  return allFaIcons.filter((item) => item.name.includes(kw) || item.fullName.includes(kw))
 })
 
 function selectIcon(name) {
@@ -428,7 +680,7 @@ function isFontAwesomeIcon(name) {
 }
 
 // 根据 fullName 字符串查找对应的图标对象（用于输入框前缀预览）
-const faIconMap = Object.fromEntries(allFaIcons.map(item => [item.fullName, item.iconObj]))
+const faIconMap = Object.fromEntries(allFaIcons.map((item) => [item.fullName, item.iconObj]))
 function getFaIcons(fullName) {
   return faIconMap[fullName] || null
 }
@@ -493,10 +745,13 @@ function handleEdit(row) {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(t('system.menu.deleteConfirm', { name: row.menuName }), t('common.tip'), { type: 'warning' })
+    await ElMessageBox.confirm(t('system.menu.deleteConfirm', { name: row.menuName }), t('common.tip'), {
+      type: 'warning'
+    })
     await deleteMenuApi(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     fetchData()
+    await userStore.refreshRouters()
   } catch {}
 }
 
@@ -515,6 +770,7 @@ async function handleSubmit() {
     }
     dialogVisible.value = false
     fetchData()
+    await userStore.refreshRouters()
   } finally {
     submitLoading.value = false
   }
@@ -542,7 +798,9 @@ function resetForm() {
   width: 100%;
   align-items: center;
 
-  :deep(.el-input) { flex: 1; }
+  :deep(.el-input) {
+    flex: 1;
+  }
 }
 
 .icon-picker-btn {

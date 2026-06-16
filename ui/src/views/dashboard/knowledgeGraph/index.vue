@@ -150,9 +150,19 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'DashboardKnowledgeGraph' })
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import * as echarts from 'echarts'
 import { getCyberTheme } from '@/utils/echartsTheme'
+
+let _echarts = null
+async function loadEcharts() {
+  if (!_echarts) {
+    const mod = await import('echarts')
+    _echarts = mod.default || mod
+  }
+  return _echarts
+}
+const logWarn = import.meta.env.DEV ? console.warn : () => {}
 import {
   Connection, PieChart, Grid, Link, Collection, Compass, Search
 } from '@element-plus/icons-vue'
@@ -246,7 +256,7 @@ function doSearch() {
 }
 
 // Charts
-function renderLangChart() {
+async function renderLangChart() {
   if (!langChartRef.value || !graph.value) return
   const files = graph.value.nodes.filter(n => n.type === 'file')
   const langCount = {}
@@ -255,7 +265,7 @@ function renderLangChart() {
     langCount[lang] = (langCount[lang] || 0) + 1
   })
   const data = Object.entries(langCount).map(([k, v]) => ({ name: k, value: v }))
-  if (!langChart) langChart = echarts.init(langChartRef.value, getCyberTheme())
+  if (!langChart) langChart = (await loadEcharts()).init(langChartRef.value, getCyberTheme())
   langChart.setOption({
     tooltip: { trigger: 'item' },
     series: [{
@@ -266,11 +276,11 @@ function renderLangChart() {
   })
 }
 
-function renderLayerChart() {
+async function renderLayerChart() {
   if (!layerChartRef.value || !graph.value || !graph.value.layers) return
   const names = graph.value.layers.map(l => l.name)
   const counts = graph.value.layers.map(l => l.nodeIds.length)
-  if (!layerChart) layerChart = echarts.init(layerChartRef.value, getCyberTheme())
+  if (!layerChart) layerChart = (await loadEcharts()).init(layerChartRef.value, getCyberTheme())
   layerChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
@@ -285,12 +295,12 @@ function renderLayerChart() {
   })
 }
 
-function renderEdgeChart() {
+async function renderEdgeChart() {
   if (!edgeChartRef.value || !graph.value) return
   const edgeTypes = {}
   graph.value.edges.forEach(e => { edgeTypes[e.type] = (edgeTypes[e.type] || 0) + 1 })
   const data = Object.entries(edgeTypes).sort((a, b) => b[1] - a[1])
-  if (!edgeChart) edgeChart = echarts.init(edgeChartRef.value, getCyberTheme())
+  if (!edgeChart) edgeChart = (await loadEcharts()).init(edgeChartRef.value, getCyberTheme())
   edgeChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
@@ -319,11 +329,11 @@ async function loadGraph() {
     const res = await fetch('/data/knowledge-graph.json')
     graph.value = await res.json()
     await nextTick()
-    renderLangChart()
-    renderLayerChart()
-    renderEdgeChart()
+    await renderLangChart()
+    await renderLayerChart()
+    await renderEdgeChart()
   } catch (e) {
-    console.warn('加载知识图谱失败:', e)
+    logWarn('加载知识图谱失败:', e)
   } finally {
     loading.value = false
   }

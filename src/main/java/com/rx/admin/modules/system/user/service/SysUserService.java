@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final SysUserRoleMapper userRoleMapper;
@@ -226,7 +227,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
         userRoleMapper.insert(userId, roleId);
     }
 
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[A-Za-z](?=.*\\d).{5,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}:;\",.<>/?]).{8,32}$");
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
 

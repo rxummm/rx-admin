@@ -10,6 +10,7 @@ import com.rx.admin.modules.monitor.slowquery.mapper.SysSlowQueryMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class SysSlowQueryService extends ServiceImpl<SysSlowQueryMapper, SysSlowQuery> {
 
     @org.springframework.beans.factory.annotation.Value("${app.slow-query.threshold-ms:2000}")

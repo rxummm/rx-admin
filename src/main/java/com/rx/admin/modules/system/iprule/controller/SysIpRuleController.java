@@ -1,8 +1,10 @@
 package com.rx.admin.modules.system.iprule.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.exception.ErrorCode;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.iprule.entity.SysIpRule;
@@ -22,7 +24,8 @@ import java.util.Map;
 
 @Tag(name = "IP黑白名单管理")
 @RestController
-@RequestMapping("/api/system/ip-rule")
+@ApiVersion(1)
+@RequestMapping("/system/ip-rule")
 @RequiredArgsConstructor
 public class SysIpRuleController {
 
@@ -47,6 +50,7 @@ public class SysIpRuleController {
         return Result.ok(ipRuleConvert.toVO(ipRuleService.getById(id)));
     }
 
+    @OperateLog(module = "IP黑白名单", operation = "新增IP规则")
     @Operation(summary = "新增IP规则")
     @PostMapping
     @SaCheckPermission(PermissionConstants.IpRule.ADD)
@@ -55,6 +59,7 @@ public class SysIpRuleController {
         return Result.ok();
     }
 
+    @OperateLog(module = "IP黑白名单", operation = "修改IP规则")
     @Operation(summary = "修改IP规则")
     @PutMapping
     @SaCheckPermission(PermissionConstants.IpRule.EDIT)
@@ -63,6 +68,7 @@ public class SysIpRuleController {
         return Result.ok();
     }
 
+    @OperateLog(module = "IP黑白名单", operation = "删除IP规则")
     @Operation(summary = "删除IP规则")
     @DeleteMapping("/{id}")
     @SaCheckPermission(PermissionConstants.IpRule.DELETE)
@@ -82,6 +88,7 @@ public class SysIpRuleController {
     @PutMapping("/mode")
     @SaCheckPermission(PermissionConstants.IpRule.EDIT)
     @Operation(summary = "设置IP过滤模式")
+    @OperateLog(module = "IP黑白名单", operation = "设置过滤模式")
     public Result<Void> setMode(@RequestBody Map<String, String> body) {
         String mode = body.get("mode");
         if (mode == null || !mode.matches("BLACK|WHITE|OFF")) {

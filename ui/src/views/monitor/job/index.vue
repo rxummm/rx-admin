@@ -47,6 +47,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-empty v-if="!loading && tableData.length === 0" />
       <el-pagination
         class="page-pagination"
         v-model:current-page="queryParams.page"
@@ -84,6 +85,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'MonitorJob' })
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'

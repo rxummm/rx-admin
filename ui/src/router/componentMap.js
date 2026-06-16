@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 组件映射表
  *
  * key = sys_menu.component 字段值（对应 views/ 下文件路径去掉 .vue 后缀）
@@ -32,6 +32,7 @@ export const componentMap = {
   // AS400管理
   'as400/objects/index':     { component: () => import('@/views/as400/objects/index.vue'),       name: 'As400Objects' },
   'as400/iservice/index':    { component: () => import('@/views/as400/iservice/index.vue'),      name: 'As400IService' },
+  'as400/codeAnalysis/index': { component: () => import('@/views/as400/codeAnalysis/index.vue'),   name: 'As400CodeAnalysis' },
   'as400/techblog/index':    { component: () => import('@/views/as400/techblog/index.vue'),      name: 'TechBlogIndex' },
   'as400/techblog/detail':   { component: () => import('@/views/as400/techblog/detail.vue'),     name: 'TechBlogDetail' },
 
@@ -126,4 +127,16 @@ export const componentMap = {
 
   // 开发工具
   'tool/devTools/index':      { component: () => import('@/views/tool/devTools/index.vue'),       name: 'ToolDevTools' },
+
+  // 音频转写
+  'audio/transcription/index': { component: () => import('@/views/audio/transcription/index.vue'), name: 'AudioTranscription' },
+
+  // 视频播放
+  'video/player/index': { component: () => import('@/views/video/player/index.vue'), name: 'VideoPlayer' },
+
+  // 视频转写
+  'video/transcription/index': { component: () => import('@/views/video/transcription/index.vue'), name: 'VideoTranscription' },
+
+  // OCR 文档识别
+  'ocr/recognition/index': { component: () => import('@/views/ocr/recognition/index.vue'), name: 'OcrRecognition' },
 }

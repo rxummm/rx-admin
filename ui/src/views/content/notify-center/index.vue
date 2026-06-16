@@ -94,6 +94,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ContentNotifyCenter' })
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTemplatePageApi, addTemplateApi, updateTemplateApi, deleteTemplateApi,

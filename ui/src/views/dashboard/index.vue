@@ -456,6 +456,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'Dashboard' })
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
 import { useRouter } from "vue-router"
 import { getDashboardStatsApi, getLoginStatsApi, getExportStatsApi, getOperationTop10Api } from "@/api/dashboard"
@@ -465,6 +466,7 @@ import { getSystemHealthApi, getGcStatsApi } from "@/api/health"
 import * as echarts from "echarts"
 import { getCyberTheme } from '@/utils/echartsTheme'
 import { COLORS } from '@/config/colors'
+import { API } from '@/api/routes'
 import {
   Setting, Reading, Histogram, PieChart, TrendCharts, View,
   DataAnalysis, Sort, DataBoard, ArrowRight, Headset,
@@ -898,7 +900,7 @@ async function fetchEnhancedStats() {
     renderLoginTrendChart()
     renderOperationTopChart()
   } catch (e) {
-    console.warn("获取增强仪表盘数据失败:", e)
+    logWarn("获取增强仪表盘数据失败:", e)
   }
 }
 
@@ -936,7 +938,7 @@ async function fetchNoticeAndHealthStats() {
       healthStats.value.gcTime = Math.round((gcRes.data?.totalTimeSeconds || 0) * 10) / 10
     }
   } catch (e) {
-    console.warn("获取通知与健康数据失败:", e)
+      logWarn("获取通知与健康数据失败:", e)
   }
 }
 
@@ -946,7 +948,7 @@ function startSse() {
   stopSse()
   try {
     const token = tokenStore.get()
-    const url = token ? "/api/notification/stream?Authorization=" + encodeURIComponent(token) : "/api/notification/stream"
+    const url = token ? API.SYS.NOTIFICATION.STREAM + "?Authorization=" + encodeURIComponent(token) : API.SYS.NOTIFICATION.STREAM
     sseEventSource = new EventSource(url)
     sseEventSource.addEventListener("stats", (event) => {
       try {
@@ -955,7 +957,7 @@ function startSse() {
           statsData.value = parsed.data
           renderAllCharts()
         }
-      } catch (e) { console.warn("SSE parse error:", e) }
+      } catch (e) { logWarn("SSE parse error:", e) }
       fetchNoticeAndHealthStats()
     })
     sseEventSource.addEventListener("enhanced", (event) => {
@@ -969,7 +971,7 @@ function startSse() {
           renderLoginTrendChart()
           renderOperationTopChart()
         }
-      } catch (e) { console.warn("SSE enhanced parse error:", e) }
+      } catch (e) { logWarn("SSE enhanced parse error:", e) }
     })
     sseEventSource.addEventListener("health", (event) => {
       try {
@@ -984,7 +986,7 @@ function startSse() {
             diskTotal: Math.round(h.disk?.total || 0)
           }
         }
-      } catch (e) { console.warn("SSE health parse error:", e) }
+      } catch (e) { logWarn("SSE health parse error:", e) }
     })
     sseEventSource.addEventListener("gc", (event) => {
       try {
@@ -993,10 +995,10 @@ function startSse() {
           healthStats.value.gcCount = parsed.data.totalCount || 0
           healthStats.value.gcTime = Math.round((parsed.data.totalTimeSeconds || 0) * 10) / 10
         }
-      } catch (e) { console.warn("SSE gc parse error:", e) }
+      } catch (e) { logWarn("SSE gc parse error:", e) }
     })
     sseEventSource.onerror = () => { stopSse() }
-  } catch (e) { console.warn("SSE init error:", e) }
+  } catch (e) { logWarn("SSE init error:", e) }
 }
 
 function stopSse() {

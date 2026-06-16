@@ -46,6 +46,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ShortcutsHelp' })
 import { ref, computed } from 'vue'
 
 const visible = ref(false)

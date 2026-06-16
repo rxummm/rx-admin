@@ -1,0 +1,36 @@
+# ============================================
+# 本地开发环境配置模板
+# 复制本文件为 application-local.yml（已 gitignore）
+# 填入你自己的凭据后启动：mvn spring-boot:run -Dspring-boot.run.profiles=local
+# ============================================
+
+# ---- 数据库 ----
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: root
+
+# ---- MyBatis SQL 日志（仅本地开发开启） ----
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ---- 邮件 SMTP ----
+# 如不使用邮件功能可留空或注释掉
+MAIL_FROM: your_email@163.com
+MAIL_HOST: smtp.163.com
+MAIL_PORT: 465
+MAIL_USERNAME: your_email@163.com
+MAIL_PASSWORD: your_smtp_password_or_auth_code
+MAIL_SMTP_AUTH: "true"
+MAIL_SMTP_STARTTLS: "false"
+MAIL_SMTP_SSL: "true"
+
+# ---- AS400（可选）----
+# AS400_HOST: pub400.com
+# AS400_USERNAME: your_user
+# AS400_PASSWORD: your_password
+
+# ---- WhisperX（可选）----
+# WHISPERX_API_KEY: your_key
+
+# ---- OCR（可选）----
+# OCR_TESSDATA_PATH: D:\tesseract-ocr\tessdata

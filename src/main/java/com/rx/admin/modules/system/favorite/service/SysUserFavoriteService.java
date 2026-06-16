@@ -11,6 +11,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, SysUserFavorite> {
 
     public List<SysUserFavorite> getUserFavorites(Long userId) {

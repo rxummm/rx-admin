@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class HonglouCharacterRelationService extends ServiceImpl<HonglouCharacterRelationMapper, HonglouCharacterRelation> {
 
     /** 查询某人相关的所有关系 */

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class OperateLogAspect {
 
     private final SysLogService logService;

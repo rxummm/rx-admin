@@ -26,7 +26,7 @@
 
 <script setup>
 defineOptions({ name: 'ToolDocs' })
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { useMarkdownRenderer } from '@/composables/useMarkdownRenderer'
 
 const {
@@ -52,6 +52,10 @@ function handleScroll() {
 onMounted(() => {
   loadDocument('/docs/rxadmin.md')
   window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 

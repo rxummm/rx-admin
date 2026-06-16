@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.importData.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,8 @@ import java.util.*;
 @Slf4j
 @Tag(name = "批量导入")
 @RestController
-@RequestMapping("/api/tool/import")
+@ApiVersion(1)
+@RequestMapping("/tool/import")
 public class ImportController {
 
     @Operation(summary = "分析导入文件")

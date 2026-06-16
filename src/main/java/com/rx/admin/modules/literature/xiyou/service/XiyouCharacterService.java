@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class XiyouCharacterService extends ServiceImpl<XiyouCharacterMapper, XiyouCharacter> {
 
     public PageResult<XiyouCharacter> pageQuery(int page, int size, String keyword) {

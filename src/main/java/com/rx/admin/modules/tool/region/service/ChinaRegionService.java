@@ -15,6 +15,7 @@ import java.util.List;
  * 中国行政区划 Service
  */
 @Service
+@SuppressWarnings("null")
 public class ChinaRegionService extends ServiceImpl<ChinaRegionMapper, ChinaRegion> {
 
     /**

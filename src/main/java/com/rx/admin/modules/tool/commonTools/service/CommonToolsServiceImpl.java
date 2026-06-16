@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@SuppressWarnings("null")
 public class CommonToolsServiceImpl extends ServiceImpl<SharedFileMapper, SharedFile> implements CommonToolsService {
 
     @Value("${common-tools.upload.dir:D:\\vueprojects\\RX\\ui\\public\\shareddocs}")

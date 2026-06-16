@@ -1,5 +1,6 @@
 package com.rx.admin.modules.as400.techblog.controller;
 
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
@@ -29,7 +30,8 @@ import java.util.Map;
 @Tag(name = "技术博客")
 @Slf4j
 @RestController
-@RequestMapping("/api/techblog")
+@ApiVersion(1)
+@RequestMapping("/techblog")
 @RequiredArgsConstructor
 public class TechBlogController {
 

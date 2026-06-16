@@ -1,17 +1,36 @@
-﻿<template>
+<template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('common.input') + ' ' + $t('system.user.username') + '/' + $t('system.user.nickname') + '/' + $t('system.user.phone')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="
+          $t('common.input') +
+          ' ' +
+          $t('system.user.username') +
+          '/' +
+          $t('system.user.nickname') +
+          '/' +
+          $t('system.user.phone')
+        "
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
       <el-button @click="resetSearch">{{ $t('common.reset') }}</el-button>
-      <ExportButton :data="sortedTableData" :columns="exportColumns" title="用户管理" />
+      <ExportButton :data="sortedTableData" :columns="exportColumns" :title="$t('system.user.title')" />
       <div style="flex: 1" />
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('sys:user:add')">
         <el-icon><Plus /></el-icon> {{ $t('common.add') + $t('system.user.title') }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('sys:user:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('sys:user:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -36,20 +55,69 @@
 
     <div class="table-container">
       <!-- 骨架屏加载状态（仅在首次加载且无数据时显示） -->
-      <SkeletonLoader v-if="loading && !tableData.length" type="table" :rows="10" :columns="visibleColumns.length + 2" />
-      
+      <SkeletonLoader
+        v-if="loading && !tableData.length"
+        type="table"
+        :rows="10"
+        :columns="visibleColumns.length + 2"
+      />
+
       <!-- 正常表格（有数据后显示，刷新时保留旧数据并显示 loading 遮罩） -->
-      <el-table v-else :data="sortedTableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        v-else
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('username')" prop="username" :label="$t('system.user.username')" width="120" sortable />
-        <el-table-column v-if="visibleColumns.includes('nickname')" prop="nickname" :label="$t('system.user.nickname')" width="120" sortable />
-        <el-table-column v-if="visibleColumns.includes('email')" prop="email" :label="$t('system.user.email')" min-width="180" show-overflow-tooltip sortable />
-        <el-table-column v-if="visibleColumns.includes('phone')" prop="phone" :label="$t('system.user.phone')" width="130" />
-        <el-table-column v-if="visibleColumns.includes('gender')" prop="gender" :label="$t('system.user.gender')" width="70">
+        <el-table-column
+          v-if="visibleColumns.includes('username')"
+          prop="username"
+          :label="$t('system.user.username')"
+          width="120"
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('nickname')"
+          prop="nickname"
+          :label="$t('system.user.nickname')"
+          width="120"
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('email')"
+          prop="email"
+          :label="$t('system.user.email')"
+          min-width="180"
+          show-overflow-tooltip
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('phone')"
+          prop="phone"
+          :label="$t('system.user.phone')"
+          width="130"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('gender')"
+          prop="gender"
+          :label="$t('system.user.gender')"
+          width="70"
+        >
           <template #default="{ row }">
             <el-tag :type="row.gender === 1 ? 'primary' : row.gender === 2 ? 'danger' : 'info'" size="small">
-              {{ row.gender === 1 ? $t('system.user.genderOptions.male') : row.gender === 2 ? $t('system.user.genderOptions.female') : $t('system.user.genderOptions.unknown') }}
+              {{
+                row.gender === 1
+                  ? $t('system.user.genderOptions.male')
+                  : row.gender === 2
+                    ? $t('system.user.genderOptions.female')
+                    : $t('system.user.genderOptions.unknown')
+              }}
             </el-tag>
           </template>
         </el-table-column>
@@ -60,21 +128,52 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createTime')" prop="createTime" :label="$t('common.createTime')" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createTime')"
+          prop="createTime"
+          :label="$t('common.createTime')"
+          width="170"
+          sortable
+        />
         <el-table-column :label="$t('common.operation')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('sys:user:edit')">{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('sys:user:delete')">{{ $t('common.delete') }}</el-button>
-            <el-button link type="warning" size="small" @click="openPermManage(row)" v-if="userStore.hasRole('admin')">{{ $t('permission.manage.title') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('sys:user:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('sys:user:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
+            <el-button
+              link
+              type="warning"
+              size="small"
+              @click="openPermManage(row)"
+              v-if="userStore.hasRole('admin')"
+              >{{ $t('permission.manage.title') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -82,11 +181,20 @@
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="550px" :close-on-click-modal="false">
       <el-form ref="formRef" :model="form" :rules="formRules" label-width="80px">
         <el-form-item :label="$t('system.user.username')" prop="username">
-          <el-input v-model="form.username" :disabled="isEdit" :placeholder="$t('common.input') + $t('system.user.username')" />
+          <el-input
+            v-model="form.username"
+            :disabled="isEdit"
+            :placeholder="$t('common.input') + $t('system.user.username')"
+          />
         </el-form-item>
         <el-form-item :label="$t('system.user.password')" :prop="isEdit ? '' : 'password'">
-          <el-input v-model="form.password" type="password" show-password :placeholder="isEdit ? $t('common.leaveBlank') : $t('common.input') + $t('system.user.password')" />
-        <PasswordStrength :password="form.password" />
+          <el-input
+            v-model="form.password"
+            type="password"
+            show-password
+            :placeholder="isEdit ? $t('common.leaveBlank') : $t('common.input') + $t('system.user.password')"
+          />
+          <PasswordStrength :password="form.password" />
         </el-form-item>
         <el-form-item :label="$t('system.user.nickname')" prop="nickname">
           <el-input v-model="form.nickname" :placeholder="$t('common.input') + $t('system.user.nickname')" />
@@ -120,28 +228,51 @@
     </el-dialog>
 
     <!-- 权限审批弹窗 -->
-    <el-dialog v-model="approvalDialogVisible" :title="$t('permission.request.approvalTitle')" width="700px" :close-on-click-modal="false">
-      <el-table :data="pendingRequests" border stripe v-loading="approvalLoading" style="width:100%" max-height="400">
+    <el-dialog
+      v-model="approvalDialogVisible"
+      :title="$t('permission.request.approvalTitle')"
+      width="700px"
+      :close-on-click-modal="false"
+    >
+      <el-table :data="pendingRequests" border stripe v-loading="approvalLoading" style="width: 100%" max-height="400">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="username" :label="$t('system.user.username')" width="120" />
-        <el-table-column prop="menuNames" :label="$t('permission.request.appliedMenus')" min-width="200" show-overflow-tooltip />
+        <el-table-column
+          prop="menuNames"
+          :label="$t('permission.request.appliedMenus')"
+          min-width="200"
+          show-overflow-tooltip
+        />
         <el-table-column prop="createTime" :label="$t('common.createTime')" width="160" />
         <el-table-column :label="$t('common.operation')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleApprove(row)">{{ $t('permission.request.approve') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleReject(row)">{{ $t('permission.request.reject') }}</el-button>
+            <el-button link type="primary" size="small" @click="handleApprove(row)">{{
+              $t('permission.request.approve')
+            }}</el-button>
+            <el-button link type="danger" size="small" @click="handleReject(row)">{{
+              $t('permission.request.reject')
+            }}</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div style="text-align:center;padding:12px 0 0" v-if="pendingRequests.length === 0 && !approvalLoading">{{ $t('permission.request.noPending') }}</div>
+      <div style="text-align: center; padding: 12px 0 0" v-if="pendingRequests.length === 0 && !approvalLoading">
+        {{ $t('permission.request.noPending') }}
+      </div>
     </el-dialog>
 
     <!-- 权限管理弹窗（admin 主动管理用户权限） -->
-    <el-dialog v-model="permManageVisible" :title="$t('permission.manage.title') + ' - ' + permManageUser.username" width="750px" :close-on-click-modal="false" @opened="initPermManage" @closed="resetPermManage">
+    <el-dialog
+      v-model="permManageVisible"
+      :title="$t('permission.manage.title') + ' - ' + permManageUser.username"
+      width="750px"
+      :close-on-click-modal="false"
+      @opened="initPermManage"
+      @closed="resetPermManage"
+    >
       <el-tabs v-model="permManageTab">
         <!-- 标签1：用户已有权限 -->
         <el-tab-pane :label="$t('permission.manage.currentPerms')" name="current">
-          <div style="margin-bottom:12px">
+          <div style="margin-bottom: 12px">
             <el-alert type="info" :closable="false" show-icon>
               <template #title>{{ $t('permission.manage.currentPermsHint') }}</template>
             </el-alert>
@@ -158,21 +289,37 @@
               @check="handleCurrentPermCheck"
             >
               <template #default="{ node, data }">
-                <span style="display:flex;align-items:center;gap:6px">
-                  <el-tag :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'" size="small">
-                    {{ data.menuType === 1 ? $t('system.menu.typeOptions.dir') : data.menuType === 2 ? $t('system.menu.typeOptions.menu') : $t('system.menu.typeOptions.button') }}
+                <span style="display: flex; align-items: center; gap: 6px">
+                  <el-tag
+                    :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'"
+                    size="small"
+                  >
+                    {{
+                      data.menuType === 1
+                        ? $t('system.menu.typeOptions.dir')
+                        : data.menuType === 2
+                          ? $t('system.menu.typeOptions.menu')
+                          : $t('system.menu.typeOptions.button')
+                    }}
                   </el-tag>
-                  <span :style="pendingRemoveIds.has(data.id) ? 'text-decoration:line-through;color:#f56c6c' : ''">{{ data.menuName }}</span>
-                  <span v-if="data.perms" style="color:#909399;font-size:12px">({{ data.perms }})</span>
+                  <span :style="pendingRemoveIds.has(data.id) ? 'text-decoration:line-through;color:#f56c6c' : ''">{{
+                    data.menuName
+                  }}</span>
+                  <span v-if="data.perms" style="color: #909399; font-size: 12px">({{ data.perms }})</span>
                 </span>
               </template>
             </el-tree>
           </el-scrollbar>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
-            <span style="color:#909399;font-size:13px">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px">
+            <span style="color: #909399; font-size: 13px">
               {{ $t('permission.manage.pendingRemove', { count: pendingRemoveIds.size }) }}
             </span>
-            <el-button type="danger" :loading="permManageLoading" :disabled="pendingRemoveIds.size === 0" @click="handleRemovePerms">
+            <el-button
+              type="danger"
+              :loading="permManageLoading"
+              :disabled="pendingRemoveIds.size === 0"
+              @click="handleRemovePerms"
+            >
               {{ $t('permission.manage.removeSelected') }}
             </el-button>
           </div>
@@ -180,7 +327,7 @@
 
         <!-- 标签2：可分配权限 -->
         <el-tab-pane :label="$t('permission.manage.assignPerms')" name="assign">
-          <div style="margin-bottom:12px">
+          <div style="margin-bottom: 12px">
             <el-alert type="success" :closable="false" show-icon>
               <template #title>{{ $t('permission.manage.assignPermsHint') }}</template>
             </el-alert>
@@ -196,18 +343,32 @@
               :props="{ label: 'menuName', children: 'children' }"
             >
               <template #default="{ node, data }">
-                <span style="display:flex;align-items:center;gap:6px">
-                  <el-tag :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'" size="small">
-                    {{ data.menuType === 1 ? $t('system.menu.typeOptions.dir') : data.menuType === 2 ? $t('system.menu.typeOptions.menu') : $t('system.menu.typeOptions.button') }}
+                <span style="display: flex; align-items: center; gap: 6px">
+                  <el-tag
+                    :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'"
+                    size="small"
+                  >
+                    {{
+                      data.menuType === 1
+                        ? $t('system.menu.typeOptions.dir')
+                        : data.menuType === 2
+                          ? $t('system.menu.typeOptions.menu')
+                          : $t('system.menu.typeOptions.button')
+                    }}
                   </el-tag>
                   <span>{{ data.menuName }}</span>
-                  <span v-if="data.perms" style="color:#909399;font-size:12px">({{ data.perms }})</span>
+                  <span v-if="data.perms" style="color: #909399; font-size: 12px">({{ data.perms }})</span>
                 </span>
               </template>
             </el-tree>
           </el-scrollbar>
-          <div style="text-align:right;margin-top:16px">
-            <el-button type="primary" :loading="permManageLoading" :disabled="getCheckedAssignKeys().length === 0" @click="handleAddPerms">
+          <div style="text-align: right; margin-top: 16px">
+            <el-button
+              type="primary"
+              :loading="permManageLoading"
+              :disabled="getCheckedAssignKeys().length === 0"
+              @click="handleAddPerms"
+            >
               {{ $t('permission.manage.assignSelected') }}
             </el-button>
           </div>
@@ -227,7 +388,15 @@ import { useNoticeBroadcast } from '@/composables/useNoticeBroadcast'
 import { getUserPageApi, addUserApi, updateUserApi, deleteUserApi } from '@/api/user'
 import { getRoleListApi } from '@/api/role'
 import { getMenuTreeApi } from '@/api/menu'
-import { getPendingRequestsApi, approveRequestApi, rejectRequestApi, getUserMenuIdsApi, getManageableMenuTreeApi, addUserMenusApi, removeUserMenusApi } from '@/api/permission'
+import {
+  getPendingRequestsApi,
+  approveRequestApi,
+  rejectRequestApi,
+  getUserMenuIdsApi,
+  getManageableMenuTreeApi,
+  addUserMenusApi,
+  removeUserMenusApi
+} from '@/api/permission'
 import PasswordStrength from '@/components/PasswordStrength.vue'
 import ExportButton from '@/components/ExportButton/index.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
@@ -256,18 +425,18 @@ const columnOptions = [
   { key: 'status', label: t('common.status') },
   { key: 'createTime', label: t('common.createTime') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 // 导出列定义
 const exportColumns = [
   { field: 'id', label: 'ID' },
-  { field: 'username', label: '用户名' },
-  { field: 'nickname', label: '昵称' },
-  { field: 'email', label: '邮箱' },
-  { field: 'phone', label: '手机号' },
-  { field: 'gender', label: '性别' },
-  { field: 'status', label: '状态' },
-  { field: 'createTime', label: '创建时间' }
+  { field: 'username', label: t('system.user.username') },
+  { field: 'nickname', label: t('system.user.nickname') },
+  { field: 'email', label: t('system.user.email') },
+  { field: 'phone', label: t('system.user.phone') },
+  { field: 'gender', label: t('system.user.gender') },
+  { field: 'status', label: t('common.status') },
+  { field: 'createTime', label: t('common.createTime') }
 ]
 
 function toggleColumn(key) {
@@ -302,7 +471,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 弹窗相关
@@ -327,7 +496,10 @@ const form = reactive({
 
 const formRules = {
   username: [{ required: true, message: t('common.input') + t('system.user.username'), trigger: 'blur' }],
-  password: [{ required: true, message: t('common.input') + t('system.user.password'), trigger: 'blur', min: 6 }, { pattern: /^[A-Za-z]/, message: '需以字母开头', trigger: 'blur' }],
+  password: [
+    { required: true, message: t('common.input') + t('system.user.password'), trigger: 'blur', min: 6 },
+    { pattern: /^[A-Za-z]/, message: '需以字母开头', trigger: 'blur' }
+  ],
   nickname: [{ required: true, message: t('common.input') + t('system.user.nickname'), trigger: 'blur' }]
 }
 
@@ -343,7 +515,7 @@ async function fetchPendingRequests() {
   try {
     const res = await getPendingRequestsApi({ page: 1, size: 100 })
     const records = res.data?.records || []
-    records.forEach(r => {
+    records.forEach((r) => {
       try {
         const names = JSON.parse(r.menuNames)
         r.menuNames = Array.isArray(names) ? names.join('、') : r.menuNames
@@ -365,11 +537,9 @@ function openApprovalDialog() {
 
 async function handleApprove(row) {
   try {
-    await ElMessageBox.confirm(
-      t('permission.request.approveConfirm', { name: row.username }),
-      t('common.tip'),
-      { type: 'warning' }
-    )
+    await ElMessageBox.confirm(t('permission.request.approveConfirm', { name: row.username }), t('common.tip'), {
+      type: 'warning'
+    })
   } catch {
     return
   }
@@ -440,10 +610,7 @@ async function refreshPermManageData(keepTab) {
     const userId = permManageUser.value.id
 
     // 加载当前用户已有权限的菜单树
-    const [menuIdsRes, fullTreeRes] = await Promise.all([
-      getUserMenuIdsApi(userId),
-      getMenuTreeApi()
-    ])
+    const [menuIdsRes, fullTreeRes] = await Promise.all([getUserMenuIdsApi(userId), getMenuTreeApi()])
     const menuIds = new Set(menuIdsRes.data || [])
     const fullTree = fullTreeRes.data || []
 
@@ -467,7 +634,7 @@ async function refreshPermManageData(keepTab) {
         if (excludedIds.has(n.id)) continue
         const ownedChildren = n.children ? filterOwned(n.children) : []
         if (menuIds.has(n.id) || ownedChildren.length > 0) {
-          result.push({ ...n, children: ownedChildren.length > 0 ? ownedChildren : (n.children ? [] : undefined) })
+          result.push({ ...n, children: ownedChildren.length > 0 ? ownedChildren : n.children ? [] : undefined })
         }
       }
       return result
@@ -475,7 +642,7 @@ async function refreshPermManageData(keepTab) {
     currentPermTree.value = filterOwned(fullTree)
 
     // 记录原始权限ID集合
-    const userPermIds = [...menuIds].filter(id => !excludedIds.has(id))
+    const userPermIds = [...menuIds].filter((id) => !excludedIds.has(id))
     originalPermIds.value = new Set(userPermIds)
     pendingRemoveIds.value = new Set()
 
@@ -521,12 +688,12 @@ async function handleRemovePerms() {
   const removeIds = [...pendingRemoveIds.value]
   if (removeIds.length === 0) return
   try {
-    await ElMessageBox.confirm(
-      t('permission.manage.removeConfirm', { count: removeIds.length }),
-      t('common.tip'),
-      { type: 'warning' }
-    )
-  } catch { return }
+    await ElMessageBox.confirm(t('permission.manage.removeConfirm', { count: removeIds.length }), t('common.tip'), {
+      type: 'warning'
+    })
+  } catch {
+    return
+  }
 
   permManageLoading.value = true
   try {
@@ -534,6 +701,10 @@ async function handleRemovePerms() {
     ElMessage.success(t('permission.manage.removeSuccess'))
     // 刷新数据，保持当前 tab 不变
     await refreshPermManageData(permManageTab.value)
+    // 如果修改的是当前用户，刷新路由和权限
+    if (permManageUser.value.id === userStore.userInfo?.id) {
+      await userStore.refreshRouters()
+    }
   } catch {
     ElMessage.error(t('common.operateFail'))
   } finally {
@@ -545,12 +716,10 @@ async function handleAddPerms() {
   const keys = getCheckedAssignKeys()
   if (keys.length === 0) return
   try {
-    await ElMessageBox.confirm(
-      t('permission.manage.addConfirm'),
-      t('common.tip'),
-      { type: 'warning' }
-    )
-  } catch { return }
+    await ElMessageBox.confirm(t('permission.manage.addConfirm'), t('common.tip'), { type: 'warning' })
+  } catch {
+    return
+  }
 
   permManageLoading.value = true
   try {
@@ -558,6 +727,10 @@ async function handleAddPerms() {
     ElMessage.success(t('permission.manage.addSuccess'))
     // 刷新数据，保持当前 tab 不变
     await refreshPermManageData(permManageTab.value)
+    // 如果修改的是当前用户，刷新路由和权限
+    if (permManageUser.value.id === userStore.userInfo?.id) {
+      await userStore.refreshRouters()
+    }
   } catch {
     ElMessage.error(t('common.operateFail'))
   } finally {
@@ -578,7 +751,7 @@ async function fetchData() {
   try {
     const res = await getUserPageApi({ page: page.value, size: size.value, keyword: keyword.value })
     // 确保骨架屏至少显示 300ms，避免闪烁
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
     tableData.value = res.data.records
     total.value = res.data.total
   } finally {
@@ -623,7 +796,9 @@ function handleEdit(row) {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.username }), t('common.tip'), { type: 'warning' })
+    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.username }), t('common.tip'), {
+      type: 'warning'
+    })
     await deleteUserApi(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     fetchData()
@@ -633,8 +808,12 @@ async function handleDelete(row) {
 async function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   try {
-    await ElMessageBox.confirm(t('common.confirmBatchDelete', { count: selectedIds.value.length }), t('common.batchDelete'), { type: 'warning' })
-    await Promise.all(selectedIds.value.map(id => deleteUserApi(id)))
+    await ElMessageBox.confirm(
+      t('common.confirmBatchDelete', { count: selectedIds.value.length }),
+      t('common.batchDelete'),
+      { type: 'warning' }
+    )
+    await Promise.all(selectedIds.value.map((id) => deleteUserApi(id)))
     ElMessage.success(t('common.batchDeleteSuccess'))
     selectedIds.value = []
     fetchData()
@@ -661,7 +840,7 @@ async function handleSubmit() {
   } finally {
     submitLoading.value = false
   }
-  }
+}
 function resetForm() {
   form.id = null
   form.username = ''
@@ -674,7 +853,6 @@ function resetForm() {
   selectedRoleIds.value = []
 }
 </script>
-
 
 <style scoped>
 .page-pagination {

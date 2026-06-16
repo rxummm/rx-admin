@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> implements ISysDeptService {
 
     public List<SysDept> getDeptTree() {

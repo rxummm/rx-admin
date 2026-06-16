@@ -23,7 +23,7 @@
             >
               <template #default="{ node, data }">
                 <span class="tree-node">
-                  <el-icon v-if="data.icon" style="margin-right:6px"><component :is="data.icon" /></el-icon>
+                  <el-icon v-if="getIconComponent(data.icon)" style="margin-right:6px"><component :is="getIconComponent(data.icon)" /></el-icon>
                   <span>{{ data.menuName }}</span>
                   <el-tag size="small" :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'" style="margin-left:8px">
                     {{ data.menuType === 1 ? $t('system.menu.typeOptions.dir') : data.menuType === 2 ? $t('system.menu.typeOptions.menu') : $t('system.menu.typeOptions.button') }}
@@ -120,10 +120,16 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { getRequestableMenusApi, submitPermissionRequestApi, getMyRequestsApi, emailPermissionRequestApi } from '@/api/permission'
 
 const { t } = useI18n()
 const userStore = useUserStore()
+
+function getIconComponent(iconName) {
+  if (!iconName || iconName.startsWith('fa-')) return null
+  return ElementPlusIconsVue[iconName] || null
+}
 
 const treeRef = ref(null)
 const menuTree = ref([])

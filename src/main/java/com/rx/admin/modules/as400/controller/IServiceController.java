@@ -1,5 +1,7 @@
 package com.rx.admin.modules.as400.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.as400.service.IServiceCategoryService;
@@ -17,7 +19,8 @@ import java.util.List;
 @Tag(name = "AS400服务目录")
 @Slf4j
 @RestController
-@RequestMapping("/api/iservice")
+@ApiVersion(1)
+@RequestMapping("/iservice")
 @RequiredArgsConstructor
 public class IServiceController {
 
@@ -25,12 +28,14 @@ public class IServiceController {
     private final IServiceCategoryConvert categoryConvert;
     private final IServiceItemConvert itemConvert;
 
+    @SaCheckPermission("as400:iservice:query")
     @Operation(summary = "查询所有服务分类")
     @GetMapping("/categories")
     public Result<List<IServiceCategoryVO>> listCategories() {
         return Result.ok(categoryConvert.toVOList(categoryService.listWithItems()));
     }
 
+    @SaCheckPermission("as400:iservice:query")
     @Operation(summary = "根据编码查询服务分类")
     @GetMapping("/categories/{code}")
     public Result<IServiceCategoryVO> getCategory(@PathVariable String code) {
@@ -41,6 +46,7 @@ public class IServiceController {
         return Result.ok(categoryConvert.toVO(category));
     }
 
+    @SaCheckPermission("as400:iservice:query")
     @Operation(summary = "查询服务项目详情")
     @GetMapping("/items/{id}")
     public Result<?> getItemDetail(@PathVariable Long id) {

@@ -707,7 +707,7 @@ function formatFileSize(bytes) {
 <style lang="scss" scoped>
 /*
  * 邮件编辑器样式说明：
- * 本文件 !important 较多（~77 处），主要分布在三处：
+ * 本文件 !important 45 处，主要分布在三处：
  *   1. 暗黑模式覆盖（body.dark 下需覆盖 Element Plus 默认主题）
  *   2. :deep() 穿透 wangEditor 富文本编辑器（scoped 隔离后必须提升优先级）
  *   3. :deep() 覆盖 .el-input / .el-card 内部样式（Element Plus 主题色穿透）
@@ -764,7 +764,7 @@ function formatFileSize(bytes) {
 
 .email-input {
   :deep(.el-input__wrapper) {
-    box-shadow: none !important;
+    box-shadow: none;
     background: transparent;
     padding: 0 4px;
   }
@@ -1043,32 +1043,32 @@ function formatFileSize(bytes) {
 // ── 暗黑模式 ──
 :global(html.dark) {
   .email-compose-card {
-    background: #1d1e1f !important;
-    border-color: #3a3b3c !important;
+    background: #1d1e1f;
+    border-color: #3a3b3c;
 
     :deep(.el-card__body) {
-      background-color: #1d1e1f !important;
-      color: #e0e0e0 !important;
+      background-color: #1d1e1f;
+      color: #e0e0e0;
     }
   }
 
   .email-header {
-    background: #252627 !important;
+    background: #252627;
 
-    .email-label { color: #c0c4cc !important; }
+    .email-label { color: #c0c4cc; }
   }
 
   .email-row {
-    border-bottom-color: #3a3b3c !important;
+    border-bottom-color: #3a3b3c;
 
     .email-input {
       :deep(.el-input__wrapper) {
-        background: transparent !important;
-        box-shadow: none !important;
+        background: transparent;
+        box-shadow: none;
       }
       :deep(.el-input__inner) {
-        background: transparent !important;
-        color: #e0e0e0 !important;
+        background: transparent;
+        color: #e0e0e0;
 
         &::placeholder { color: #6b6d70; }
       }
@@ -1076,60 +1076,60 @@ function formatFileSize(bytes) {
   }
 
   .email-tag-input {
-    background: transparent !important;
+    background: transparent;
     border-radius: 4px;
 
-    :deep(.el-tag) { color: #e0e0e0 !important; }
+    :deep(.el-tag) { color: #e0e0e0; }
     .email-tag-input-inner { 
-      color: #e0e0e0 !important;
+      color: #e0e0e0;
       &::placeholder { color: #6b6d70; }
     }
   }
 
   .email-toolbar {
-    background: #1d1e1f !important;
-    border-top-color: #3a3b3c !important;
-    border-bottom-color: #3a3b3c !important;
+    background: #1d1e1f;
+    border-top-color: #3a3b3c;
+    border-bottom-color: #3a3b3c;
   }
 
   .rich-editor {
-    background: #1d1e1f !important;
+    background: #1d1e1f;
   }
 
   .plain-editor {
     :deep(.el-textarea__inner) {
-      color: #e0e0e0 !important;
-      background: #1d1e1f !important;
+      color: #e0e0e0;
+      background: #1d1e1f;
 
       &::placeholder { color: #6b6d70; }
     }
   }
 
   .email-attachments {
-    background: #252627 !important;
-    border-top-color: #3a3b3c !important;
+    background: #252627;
+    border-top-color: #3a3b3c;
 
-    .attachment-title { color: #c0c4cc !important; }
+    .attachment-title { color: #c0c4cc; }
     .attachment-item {
-      background: #2d2e30 !important;
-      border-color: #3a3b3c !important;
+      background: #2d2e30;
+      border-color: #3a3b3c;
 
-      .att-name { color: #e0e0e0 !important; }
+      .att-name { color: #e0e0e0; }
       .att-size { color: #909399; }
     }
   }
 
   .email-footer {
-    background: #252627 !important;
-    border-top-color: #3a3b3c !important;
+    background: #252627;
+    border-top-color: #3a3b3c;
   }
 
   .signature-editor-wrap {
-    background: #252627 !important;
-    border-color: #3a3b3c !important;
+    background: #252627;
+    border-color: #3a3b3c;
   }
 
-  .page-header h3 { color: #e0e0e0 !important; }
+  .page-header h3 { color: #e0e0e0; }
 }
 </style>
 

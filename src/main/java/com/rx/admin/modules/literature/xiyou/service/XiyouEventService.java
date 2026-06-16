@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class XiyouEventService extends ServiceImpl<XiyouEventMapper, XiyouEvent> {
 
     public PageResult<XiyouEvent> pageQuery(int page, int size, String keyword) {

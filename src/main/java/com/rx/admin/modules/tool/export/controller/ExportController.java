@@ -1,15 +1,20 @@
 package com.rx.admin.modules.tool.export.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
+import com.rx.admin.common.annotation.ApiVersion;
+import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.exportlog.entity.SysExportLog;
-import com.rx.admin.modules.monitor.exportlog.service.ExportLogService;
+import com.rx.admin.modules.monitor.exportlog.service.ExportLogService;
 import com.rx.admin.modules.tool.export.dto.ExportRequestDTO;
 import com.rx.admin.modules.tool.export.service.ExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -26,18 +31,14 @@ import java.util.*;
 @Slf4j
 @Tag(name = "数据导出")
 @RestController
-@RequestMapping("/api/export")
+@ApiVersion(1)
+@RequestMapping("/export")
+@RequiredArgsConstructor
 public class ExportController {
 
     private final ExportService exportService;
     private final ExportLogService exportLogService;
     private final HttpServletRequest request;
-
-    public ExportController(ExportService exportService, ExportLogService exportLogService, HttpServletRequest request) {
-        this.exportService = exportService;
-        this.exportLogService = exportLogService;
-        this.request = request;
-    }
 
     /**
      * 查询指定菜单页面是否启用了导出功能，以及支持哪些导出类型
@@ -47,6 +48,7 @@ public class ExportController {
     @Operation(summary = "查询导出配置")
     @GetMapping("/config")
     @SaCheckLogin
+    @SaCheckPermission("tool:export:export")
     public Result<Map<String, Object>> getConfig(@RequestParam String path) {
         List<String> types = exportService.getExportTypes(path);
         Map<String, Object> data = new LinkedHashMap<>();
@@ -59,10 +61,12 @@ public class ExportController {
      * 导出 Excel
      * <p>接收前端传来的列定义 + 表格数据，生成 .xlsx 文件并返回下载流</p>
      */
+    @OperateLog(module = "数据导出", operation = "导出Excel")
     @Operation(summary = "导出Excel")
     @PostMapping("/excel")
     @SaCheckLogin
-    public void exportExcel(@RequestBody ExportRequestDTO dto, HttpServletResponse response) {
+    @SaCheckPermission("tool:export:export")
+    public void exportExcel(@RequestBody @Valid ExportRequestDTO dto, HttpServletResponse response) {
         String title = dto.getTitle() != null && !dto.getTitle().isBlank() ? dto.getTitle().trim() : "数据导出";
         List<Map<String, String>> columns = dto.getColumns();
         List<Map<String, Object>> data = dto.getData();
@@ -78,10 +82,12 @@ public class ExportController {
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
 
+    @OperateLog(module = "数据导出", operation = "导出PDF")
     @Operation(summary = "导出PDF")
     @PostMapping("/pdf")
     @SaCheckLogin
-    public void exportPdf(@RequestBody ExportRequestDTO dto, HttpServletResponse response) {
+    @SaCheckPermission("tool:export:export")
+    public void exportPdf(@RequestBody @Valid ExportRequestDTO dto, HttpServletResponse response) {
         String title = dto.getTitle() != null && !dto.getTitle().isBlank() ? dto.getTitle().trim() : "数据导出";
         List<Map<String, String>> columns = dto.getColumns();
         List<Map<String, Object>> data = dto.getData();

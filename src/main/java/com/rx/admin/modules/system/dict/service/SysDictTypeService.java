@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+@SuppressWarnings("null")
 public class SysDictTypeService extends ServiceImpl<SysDictTypeMapper, SysDictType> implements ISysDictTypeService {
 
     public PageResult<SysDictType> pageQuery(int page, int size, String keyword) {

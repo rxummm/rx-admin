@@ -45,7 +45,7 @@
           <el-input v-model="jsonEditInput" type="textarea" :rows="14" placeholder='{"name":"value"}' style="flex:1;font-family:monospace;font-size:13px" @input="jsonEditOnInput" />
           <div class="json-tree-panel">
             <div v-if="jsonEditTree" class="json-tree-title">结构预览</div>
-            <div v-if="jsonEditTree" v-html="jsonEditTree" style="overflow:auto;font-family:monospace;font-size:12px;line-height:1.6"></div>
+            <div v-if="jsonEditTree" v-html="sanitizeHtml(jsonEditTree)" style="overflow:auto;font-family:monospace;font-size:12px;line-height:1.6"></div>
             <div v-if="!jsonEditTree && jsonEditInput" style="color:#c0c4cc;text-align:center;padding-top:40px">输入有效JSON后显示结构</div>
           </div>
         </div>
@@ -810,7 +810,9 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolDevTools' })
 import { ref, nextTick, watch, computed } from 'vue'
+import { sanitizeHtml } from '@/utils/sanitize'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { RefreshRight, Switch, Tickets, Timer, BrushFilled, Lock, Link, Document, Picture, Plus } from '@element-plus/icons-vue'

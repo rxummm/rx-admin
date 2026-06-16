@@ -10,7 +10,8 @@
           :class="{ active: isActive(tag) }"
           @contextmenu.prevent="openContextMenu($event, tag)"
         >
-          <el-icon class="tags-item-icon"><component :is="tagIcon(tag)" /></el-icon>
+          <el-icon v-if="tagIconInfo(tag).type === 'el'" class="tags-item-icon"><component :is="tagIconInfo(tag).component" /></el-icon>
+          <FontAwesomeIcon v-else :icon="tagIconInfo(tag).icon" class="tags-item-icon fa-icon" />
           <span class="tags-item-title">{{ tMenu(tag.meta?.title || tag.name) }}</span>
           <el-icon
             v-if="!isAffix(tag)"
@@ -53,6 +54,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'TagsView' })
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -60,6 +62,8 @@ import { useTagsStore } from '@/stores/tags'
 import { useMenuI18n } from '@/composables/useMenuI18n'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { toggleFavoriteApi } from '@/api/favorite'
 import { useFavEvents } from '@/composables/useFavEvents'
 import { useStorage, STORAGE_KEYS, useNamespacedKey, getKeysByPrefix, removeKeysByPrefix } from '@/composables/useStorage'
@@ -88,9 +92,16 @@ function isAffix(tag) {
   return tag.meta?.affix
 }
 
-// 获取标签对应的菜单图标，优先从 meta.icon 取，否则回退默认
-function tagIcon(tag) {
-  return tag.meta?.icon || 'Menu'
+// 获取标签对应的菜单图标，支持 Element Plus 图标和 FontAwesome 图标
+function tagIconInfo(tag) {
+  const iconName = tag.meta?.icon
+  if (!iconName) return { type: 'el', component: ElementPlusIconsVue.Menu }
+  if (iconName.startsWith('fa-')) {
+    const parts = iconName.split(' ')
+    const faName = parts.length > 1 ? parts[1].replace(/^fa-/, '') : null
+    return faName ? { type: 'fa', icon: faName } : { type: 'el', component: ElementPlusIconsVue.Menu }
+  }
+  return { type: 'el', component: ElementPlusIconsVue[iconName] || ElementPlusIconsVue.Menu }
 }
 
 // 关闭标签
@@ -323,6 +334,11 @@ onUnmounted(() => {
     .tags-item-icon {
       margin-right: 4px;
       font-size: 13px;
+
+      &.fa-icon {
+        width: 13px;
+        height: 13px;
+      }
     }
 
     .tags-item-close {

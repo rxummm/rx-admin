@@ -61,6 +61,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolApiDebug' })
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getEndpointsApi } from '@/api/apiDebug'

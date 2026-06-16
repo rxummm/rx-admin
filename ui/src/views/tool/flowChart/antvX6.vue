@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolAntvX6Chart' })
 import { ref, computed, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { Graph } from '@antv/x6'
 import { DArrowLeft, DArrowRight, Close, Download } from '@element-plus/icons-vue'
@@ -270,17 +271,54 @@ function clearCanvas() {
 
 // ==================== 导出图片 ====================
 function exportImage() {
-  if (!graph.value) {
+  if (!graph.value || !containerRef.value) {
     ElMessage.warning('画布未就绪')
     return
   }
   try {
-    const dataURL = graph.value.toPNG({ backgroundColor: '#ffffff', padding: 20 })
-    const link = document.createElement('a')
-    link.download = `流程图_${new Date().toLocaleDateString()}.png`
-    link.href = dataURL
-    link.click()
-    ElMessage.success('导出成功')
+    const svgEl = containerRef.value.querySelector('svg')
+    if (!svgEl) {
+      ElMessage.warning('未找到 SVG')
+      return
+    }
+    const clone = svgEl.cloneNode(true)
+    const box = svgEl.viewBox.baseVal || { x: 0, y: 0, width: 800, height: 600 }
+    const scale = 2
+    const w = (box.width || 800) * scale
+    const h = (box.height || 600) * scale
+
+    const serializer = new XMLSerializer()
+    const svgStr = serializer.serializeToString(clone)
+    const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(svgBlob)
+
+    const img = new Image()
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, w, h)
+      ctx.drawImage(img, 0, 0, w, h)
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          ElMessage.error('导出失败: canvas 为空')
+          return
+        }
+        const link = document.createElement('a')
+        link.download = `流程图_${new Date().toLocaleDateString()}.png`
+        link.href = URL.createObjectURL(blob)
+        link.click()
+        ElMessage.success('导出成功')
+      }, 'image/png')
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      ElMessage.error('SVG 渲染失败')
+    }
+    img.src = url
   } catch (e) {
     ElMessage.error('导出失败: ' + e.message)
   }

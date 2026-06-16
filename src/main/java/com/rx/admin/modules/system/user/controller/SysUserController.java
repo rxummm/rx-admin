@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.user.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -14,22 +15,21 @@ import com.rx.admin.modules.system.user.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "用户管理")
 @RestController
-@RequestMapping("/api/sys/user")
+@ApiVersion(1)
+@RequestMapping("/sys/user")
+@RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SysUserController {
 
     private final ISysUserService userService;
     private final UserConvert userConvert;
-
-    public SysUserController(ISysUserService userService, UserConvert userConvert) {
-        this.userService = userService;
-        this.userConvert = userConvert;
-    }
 
     @Operation(summary = "用户列表(分页)")
     @GetMapping("/page")

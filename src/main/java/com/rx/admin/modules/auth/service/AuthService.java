@@ -11,6 +11,7 @@ import com.rx.admin.modules.system.user.service.ISysUserService;
 import com.rx.admin.modules.system.menu.service.SysMenuService;
 import com.rx.admin.modules.monitor.online.service.OnlineUserService;
 import com.rx.admin.modules.content.message.service.SysMessageService;
+import com.rx.admin.common.metrics.CustomMetricsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,31 +28,37 @@ public class AuthService implements IAuthService {
     private final SysUserMenuMapper sysUserMenuMapper;
     private final OnlineUserService onlineUserService;
     private final SysMessageService messageService;
+    private final CustomMetricsService metricsService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(ISysUserService userService, SysUserMapper userMapper, SysMenuService menuService,
                        SysUserMenuMapper sysUserMenuMapper, OnlineUserService onlineUserService,
-                       SysMessageService messageService) {
+                       SysMessageService messageService, CustomMetricsService metricsService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.menuService = menuService;
         this.sysUserMenuMapper = sysUserMenuMapper;
         this.onlineUserService = onlineUserService;
         this.messageService = messageService;
+        this.metricsService = metricsService;
     }
 
     @Override
     public LoginResponseVO login(String username, String password) {
         SysUser user = userService.getByUsername(username);
         if (user == null) {
+            metricsService.recordLoginFailure();
             throw new IllegalArgumentException("用户名或密码错误");
         }
         if (user.getStatus() == 0) {
+            metricsService.recordLoginFailure();
             throw new IllegalArgumentException("账号已被禁用");
         }
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            metricsService.recordLoginFailure();
             throw new IllegalArgumentException("用户名或密码错误");
         }
+        metricsService.recordLoginSuccess();
 
         StpUtil.login(user.getId());
         onlineUserService.userLoggedIn(StpUtil.getTokenValue(), user.getId());

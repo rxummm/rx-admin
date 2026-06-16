@@ -39,8 +39,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册 Font Awesome 图标
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette } from '@fortawesome/free-solid-svg-icons'
-library.add(faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette)
+import { faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette, faVideo, faFilm, faCode } from '@fortawesome/free-solid-svg-icons'
+library.add(faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette, faVideo, faFilm, faCode)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 
 // Pinia 必须在 router 之前注册，因为 userStore 在 router 守卫中被使用

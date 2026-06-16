@@ -56,6 +56,7 @@ export default defineConfig({
             if (id.includes('@fortawesome')) return 'icons'
             if (id.includes('fontsource')) return 'fonts'
             if (id.includes('highlight.js') || id.includes('github-markdown-css') || id.includes('marked')) return 'markdown'
+            if (id.includes('artplayer') || id.includes('hls.js')) return 'player'
             if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router') || id.includes('vue-i18n') || id.includes('axios')) return 'vendor'
           }
         }

@@ -1,7 +1,5 @@
 {
-  "dependencies": {
-    "exceljs": "^4.4.0",
-    "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.8"
-  }
+  "name": "rx-admin",
+  "private": true,
+  "workspaces": ["ui"]
 }

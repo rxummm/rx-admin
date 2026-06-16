@@ -1,24 +1,35 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索标题 / 作者 / 内容" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索标题 / 作者 / 内容"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterPoemType" placeholder="诗词类型" clearable style="width: 130px" @change="fetchData">
-        <el-option v-for="t in poemTypes" :key="t" :label="t" :value="t" />
+        <el-option v-for="pt in poemTypes" :key="pt" :label="pt" :value="pt" />
       </el-select>
       <el-button type="primary" @click="fetchData">
-        <el-icon><Search /></el-icon> 搜索
+        <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
-      <el-button @click="resetSearch">重置</el-button>
+      <el-button @click="resetSearch">{{ $t('common.reset') }}</el-button>
       <div style="flex: 1" />
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:xiyou:poem:add')">
-        <el-icon><Plus /></el-icon> 新增诗词
+        <el-icon><Plus /></el-icon> {{ $t('common.add') }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:xiyou:poem:delete')" :disabled="selectedIds.length === 0">
-        <el-icon><Delete /></el-icon> 批量删除
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:xiyou:poem:delete')"
+        :disabled="selectedIds.length === 0"
+      >
+        <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
         <el-button>
-          <el-icon><Setting /></el-icon> 列设置
+          <el-icon><Setting /></el-icon> {{ $t('common.columns') }}
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
@@ -32,38 +43,97 @@
     </div>
 
     <div class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('title')" prop="title" label="标题" min-width="200" show-overflow-tooltip sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('title')"
+          prop="title"
+          label="标题"
+          min-width="200"
+          show-overflow-tooltip
+          sortable
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="handleView(row)">{{ row.title }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('author')" prop="author" label="作者" width="120" show-overflow-tooltip sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('author')"
+          prop="author"
+          :label="$t('classics.literature.work.author')"
+          width="120"
+          show-overflow-tooltip
+          sortable
+        />
         <el-table-column v-if="visibleColumns.includes('poemType')" prop="poemType" label="类型" width="90">
           <template #default="{ row }">
             <el-tag v-if="row.poemType" size="small">{{ row.poemType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('relatedScene')" prop="relatedScene" label="场景/回目" min-width="160" show-overflow-tooltip sortable />
-        <el-table-column v-if="visibleColumns.includes('relatedCharacter')" prop="relatedCharacter" label="相关人物" width="130" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column
+          v-if="visibleColumns.includes('relatedScene')"
+          prop="relatedScene"
+          label="场景/回目"
+          min-width="160"
+          show-overflow-tooltip
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('relatedCharacter')"
+          prop="relatedCharacter"
+          label="相关人物"
+          width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          :label="$t('common.createTime')"
+          width="170"
+          sortable
+        />
+        <el-table-column :label="$t('common.operation')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:xiyou:poem:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:xiyou:poem:delete')">删除</el-button>
+            <el-button link type="primary" size="small" @click="handleView(row)">{{ $t('common.view') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:xiyou:poem:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:xiyou:poem:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -90,13 +160,13 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">{{ $t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 查看弹窗 -->
-    <el-dialog v-model="viewVisible" title="诗词详情" width="700px">
+    <el-dialog v-model="viewVisible" :title="$t('common.detail')" width="700px">
       <div v-if="viewData" class="poem-detail">
         <h3 class="poem-title">{{ viewData.title }}</h3>
         <div class="poem-meta">
@@ -110,7 +180,7 @@
         </div>
       </div>
       <template #footer>
-        <el-button @click="viewVisible = false">关闭</el-button>
+        <el-button @click="viewVisible = false">{{ $t('common.close') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -119,9 +189,12 @@
 <script setup>
 defineOptions({ name: 'ClassicsXiyouPoems' })
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useTableHeight } from '@/composables/useTableHeight'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+
+const { t } = useI18n()
 import {
   getXiyouPoemPageApi,
   getXiyouPoemDetailApi,
@@ -155,7 +228,7 @@ const columnOptions = [
   { key: 'relatedCharacter', label: '相关人物' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -188,7 +261,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -237,12 +310,12 @@ async function fetchData() {
     const res = await getXiyouPoemPageApi(params)
     let records = res.data.records
     if (filterPoemType.value) {
-      records = records.filter(r => r.poemType === filterPoemType.value)
+      records = records.filter((r) => r.poemType === filterPoemType.value)
     }
     tableData.value = records
     total.value = res.data.total
     // 收集诗词类型
-    const types = new Set(records.map(r => r.poemType).filter(Boolean))
+    const types = new Set(records.map((r) => r.poemType).filter(Boolean))
     poemTypes.value = [...types]
   } finally {
     loading.value = false
@@ -285,9 +358,9 @@ function handleEdit(row) {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(`确认删除诗词 "${row.title}" 吗？`, '提示', { type: 'warning' })
+    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.title }), t('common.tip'), { type: 'warning' })
     await deleteXiyouPoemApi(row.id)
-    ElMessage.success('删除成功')
+    ElMessage.success(t('common.deleteSuccess'))
     fetchData()
   } catch {}
 }
@@ -295,9 +368,13 @@ async function handleDelete(row) {
 async function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   try {
-    await ElMessageBox.confirm(`确认删除选中的 ${selectedIds.value.length} 条诗词吗？`, '批量删除', { type: 'warning' })
+    await ElMessageBox.confirm(
+      t('common.confirmBatchDelete', { count: selectedIds.value.length }),
+      t('common.batchDelete'),
+      { type: 'warning' }
+    )
     await batchDeleteXiyouPoemApi(selectedIds.value)
-    ElMessage.success('批量删除成功')
+    ElMessage.success(t('common.batchDeleteSuccess'))
     selectedIds.value = []
     fetchData()
   } catch {}
@@ -311,10 +388,10 @@ async function handleSubmit() {
   try {
     if (isEdit.value) {
       await updateXiyouPoemApi({ ...form })
-      ElMessage.success('修改成功')
+      ElMessage.success(t('common.updateSuccess'))
     } else {
       await addXiyouPoemApi({ ...form })
-      ElMessage.success('新增成功')
+      ElMessage.success(t('common.addSuccess'))
     }
     dialogVisible.value = false
     fetchData()

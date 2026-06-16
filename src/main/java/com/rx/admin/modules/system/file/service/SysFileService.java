@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysFileService extends ServiceImpl<SysFileMapper, SysFile> {
 
     @Value("${app.upload-dir:uploads}")

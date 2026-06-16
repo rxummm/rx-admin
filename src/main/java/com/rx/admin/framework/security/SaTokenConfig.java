@@ -13,6 +13,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SaTokenConfig implements WebMvcConfigurer {
 
     private final AppConfig appConfig;

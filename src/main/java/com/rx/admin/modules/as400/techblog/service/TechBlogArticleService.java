@@ -37,9 +37,11 @@ import java.util.stream.Collectors;
  *   rpgpgm     - https://www.rpgpgm.com/
  *   as400sql   - https://www.as400andsqltricks.com/
  *   apimy      - https://apimymymy.wordpress.com/blog/
+ *   think400   - https://www.think400.dk/ (静态HTML站点)
  */
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, TechBlogArticle> implements ITechBlogArticleService {
 
     // ==================== 并发状态管理 ====================
@@ -68,7 +70,8 @@ public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, T
         "faq400",     "https://blog.faq400.com",
         "rpgpgm",     "https://www.rpgpgm.com",
         "as400sql",   "https://www.as400andsqltricks.com",
-        "apimy",      "https://apimymymy.wordpress.com"
+        "apimy",      "https://apimymymy.wordpress.com",
+        "think400",   "https://www.think400.dk"
     );
 
     private static final Map<String, String> BLOG_URLS = Map.of(
@@ -76,11 +79,12 @@ public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, T
         "faq400",     "https://blog.faq400.com/en/",
         "rpgpgm",     "https://www.rpgpgm.com/p/list-of-all-posts.html",
         "as400sql",   "https://www.as400andsqltricks.com/",
-        "apimy",      "https://apimymymy.wordpress.com/blog/"
+        "apimy",      "https://apimymymy.wordpress.com/blog/",
+        "think400",   "https://www.think400.dk/"
     );
 
     /** 所有已注册的来源标识 */
-    public static final List<String> ALL_SOURCES = List.of("nicklitten", "faq400", "rpgpgm", "as400sql", "apimy");
+    public static final List<String> ALL_SOURCES = List.of("nicklitten", "faq400", "rpgpgm", "as400sql", "apimy", "think400");
 
     /** 列表页抓取超时（毫秒），通过 app.techblog.page-timeout-ms 配置 */
     @Value("${app.techblog.page-timeout-ms:15000}")
@@ -222,6 +226,8 @@ public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, T
                     case "rpgpgm"     -> doFetchRpgpgm(source);
                     case "as400sql"   -> doFetchAs400sql(source);
                     case "apimy"      -> doFetchApimy(source);
+                    case "think400"   -> doFetchThink400(source);
+                    default -> log.warn("未知的博客来源: {}", source);
                 }
             } catch (Exception e) {
                 progress.set(-1);
@@ -1133,6 +1139,127 @@ public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, T
             .execute()
             .body();
         return OBJECT_MAPPER.readTree(body);
+    }
+
+    // ==================== think400 抓取 (Jsoup 静态HTML解析) ====================
+
+    /** think400.dk 所有内容页面路径 */
+    private static final List<String> THINK400_TIPS_PAGES = List.of(
+        "adhoc_dk.htm", "adhoc_1.htm", "adhoc_2.htm", "adhoc_3.htm",
+        "adhoc_4.htm", "adhoc_5.htm", "adhoc_6.htm", "adhoc_7.htm"
+    );
+
+    private static final List<String> THINK400_API_PAGES = List.of(
+        "apier_1.htm", "apier_2.htm", "apier_3.htm", "apier_4.htm",
+        "apier_5.htm", "apier_6.htm", "apier_7.htm", "apier_8.htm", "apier_9.htm"
+    );
+
+    private void doFetchThink400(String source) {
+        String baseUrl = BASE_URLS.get(source);
+        int totalSaved = 0;
+        int totalPages = THINK400_TIPS_PAGES.size() + THINK400_API_PAGES.size();
+        int pageIndex = 0;
+
+        try {
+            // 1) Tips & Tricks 页面
+            logFetch(source, "正在抓取 Tips & Tricks 页面 (" + THINK400_TIPS_PAGES.size() + " 页)...");
+            for (String pagePath : THINK400_TIPS_PAGES) {
+                pageIndex++;
+                String pageUrl = baseUrl + "/" + pagePath;
+                String category = pagePath.equals("adhoc_dk.htm") ? "Tips & Tricks (Dansk)" : "Tips & Tricks";
+                logFetch(source, "  正在解析第 " + pageIndex + "/" + totalPages + " 页: " + pagePath);
+                int saved = scrapeThink400Page(pageUrl, source, category);
+                totalSaved += saved;
+                setProgress(source, (int) ((pageIndex * 100.0) / totalPages));
+                Thread.sleep(requestDelayMs);
+            }
+
+            // 2) API 参考页面
+            logFetch(source, "正在抓取 API 参考页面 (" + THINK400_API_PAGES.size() + " 页)...");
+            for (String pagePath : THINK400_API_PAGES) {
+                pageIndex++;
+                String pageUrl = baseUrl + "/" + pagePath;
+                logFetch(source, "  正在解析第 " + pageIndex + "/" + totalPages + " 页: " + pagePath);
+                int saved = scrapeThink400Page(pageUrl, source, "API Reference");
+                totalSaved += saved;
+                setProgress(source, (int) ((pageIndex * 100.0) / totalPages));
+                Thread.sleep(requestDelayMs);
+            }
+
+            setProgress(source, 100);
+            logFetch(source, "✅ 抓取完成! 共保存 " + totalSaved + " 篇新文章");
+
+        } catch (Exception e) {
+            logFetch(source, "❌ 抓取出错: " + e.getMessage());
+            setProgress(source, -1);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** 解析 think400 单个页面中的所有文章段落 */
+    private int scrapeThink400Page(String pageUrl, String source, String defaultCategory) {
+        int saved = 0;
+        try {
+            Document doc = Jsoup.connect(pageUrl)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .timeout(pageTimeoutMs)
+                .get();
+
+            // 找到所有以 eks 开头的命名锚点（每个锚点对应一篇文章）
+            Elements eksAnchors = doc.select("a[name]");
+            for (Element anchor : eksAnchors) {
+                String name = anchor.attr("name");
+                if (name == null || !name.matches("eks\\d+")) continue;
+
+                // 文章内容在紧随锚点的 <table> 中
+                Element articleTable = anchor.nextElementSibling();
+                if (articleTable == null || !"table".equals(articleTable.tagName())) continue;
+
+                // 提取标题：<td align=center> 下的 <b>
+                Element titleEl = articleTable.selectFirst("td[align=center] b, td[align=CENTER] b");
+                if (titleEl == null) continue;
+                String title = titleEl.text().trim();
+                if (title.isEmpty() || title.length() > 500) continue;
+
+                // 构建唯一 URL (使用锚点)
+                String sourceUrl = pageUrl + "#" + name;
+                if (existsBySourceUrl(sourceUrl)) continue;
+
+                // 提取正文：<pre> 标签内的 HTML
+                Element preEl = articleTable.selectFirst("pre");
+                String contentHtml = preEl != null ? preEl.html() : articleTable.html();
+
+                // 提取纯文本摘要
+                String contentText = preEl != null ? preEl.text() : articleTable.text();
+
+                TechBlogArticle article = new TechBlogArticle();
+                article.setTitle(title);
+                article.setSourceUrl(sourceUrl);
+                article.setSlug(pageUrl.substring(pageUrl.lastIndexOf('/') + 1) + "#" + name);
+                article.setAuthor("Leif Guldbrand");
+                article.setSource(source);
+                article.setCategories(defaultCategory);
+                article.setContentHtml(contentHtml);
+                article.setContentText(contentText.length() > 5000 ? contentText.substring(0, 5000) : contentText);
+                article.setExcerptText(contentText.length() > 300 ? contentText.substring(0, 300) : contentText);
+                article.setPublishDate(null); // 静态站点无发布日期
+                article.setSort(0);
+                article.setViewCount(0);
+
+                save(article);
+                saved++;
+                if (saved % 5 == 0) {
+                    logFetch(source, "  ✓ [" + saved + "] " + title);
+                }
+            }
+
+            if (saved > 0) {
+                logFetch(source, "  ✓ 页面 " + pageUrl.substring(pageUrl.lastIndexOf('/') + 1) + " 完成，共 " + saved + " 篇");
+            }
+        } catch (Exception e) {
+            logFetch(source, "  ✗ 页面解析失败: " + pageUrl + " - " + e.getMessage());
+        }
+        return saved;
     }
 
     // ==================== 通用工具方法 ====================

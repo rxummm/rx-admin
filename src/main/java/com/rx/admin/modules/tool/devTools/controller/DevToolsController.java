@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.devTools.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +16,8 @@ import java.util.*;
 
 @Tag(name = "开发工具")
 @RestController
-@RequestMapping("/api/tool/dev")
+@ApiVersion(1)
+@RequestMapping("/tool/dev")
 public class DevToolsController {
 
     @Operation(summary = "JSON格式化")

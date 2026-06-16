@@ -15,6 +15,7 @@ import java.io.IOException;
  * 全局反序列化时自动转义所有 String 字段中的 HTML 特殊字符
  */
 @Configuration
+@SuppressWarnings("null")
 public class XssJacksonConfig {
 
     @Bean

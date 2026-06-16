@@ -2,6 +2,7 @@ package com.rx.admin.modules.literature.xiyou.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -27,14 +28,16 @@ import com.rx.admin.modules.literature.xiyou.service.XiyouPoemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "西游记数据")
 @RestController
-@RequestMapping("/api/classics/xiyou")
+@ApiVersion(1)
+@RequestMapping("/classics/xiyou")
+@RequiredArgsConstructor
 public class XiyouController {
-
 
     private final XiyouPoemService poemService;
     private final XiyouPoemConvert poemConvert;
@@ -42,15 +45,6 @@ public class XiyouController {
     private final XiyouCharacterConvert characterConvert;
     private final XiyouEventService eventService;
     private final XiyouEventConvert eventConvert;
-
-    public XiyouController(XiyouPoemService poemService, XiyouPoemConvert poemConvert, XiyouCharacterService characterService, XiyouCharacterConvert characterConvert, XiyouEventService eventService, XiyouEventConvert eventConvert) {
-        this.poemService = poemService;
-        this.poemConvert = poemConvert;
-        this.characterService = characterService;
-        this.characterConvert = characterConvert;
-        this.eventService = eventService;
-        this.eventConvert = eventConvert;
-    }
 
     // ====== 西游诗词 ======
 
@@ -112,6 +106,7 @@ public class XiyouController {
     @Operation(summary = "批量删除XiyouPoem")
     @DeleteMapping("/poem/batch")
     @SaCheckPermission(PermissionConstants.Xiyou.POEM_DELETE)
+    @OperateLog(module = "西游记数据", operation = "批量删除XiyouPoem")
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -176,6 +171,7 @@ public class XiyouController {
     @Operation(summary = "批量删除XiyouCharacter")
     @DeleteMapping("/character/batch")
     @SaCheckPermission(PermissionConstants.Xiyou.CHARACTER_DELETE)
+    @OperateLog(module = "西游记数据", operation = "批量删除XiyouCharacter")
     public Result<?> characterServiceBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();
@@ -246,6 +242,7 @@ public class XiyouController {
     @Operation(summary = "批量删除XiyouEvent")
     @DeleteMapping("/event/batch")
     @SaCheckPermission(PermissionConstants.Xiyou.EVENT_DELETE)
+    @OperateLog(module = "西游记数据", operation = "批量删除XiyouEvent")
     public Result<?> eventServiceBatchDelete(@RequestBody List<Long> ids) {
         eventService.removeByIds(ids);
         return Result.ok();

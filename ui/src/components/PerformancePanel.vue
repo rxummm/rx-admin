@@ -188,6 +188,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'PerformancePanel' })
 import { ref, computed } from 'vue'
 import { Monitor, Connection, Timer, Cpu } from '@element-plus/icons-vue'
 import { usePerformanceMonitor, resetAPIStats } from '@/composables/usePerformanceMonitor'

@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.dict.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -21,7 +22,8 @@ import java.util.List;
 
 @Tag(name = "字典类型管理")
 @RestController
-@RequestMapping("/api/sys/dict/type")
+@ApiVersion(1)
+@RequestMapping("/sys/dict/type")
 @RequiredArgsConstructor
 public class SysDictTypeController {
 

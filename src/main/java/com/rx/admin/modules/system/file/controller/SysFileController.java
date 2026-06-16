@@ -1,6 +1,8 @@
 package com.rx.admin.modules.system.file.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
@@ -29,8 +31,10 @@ import java.nio.file.Paths;
 
 @Tag(name = "文件管理")
 @RestController
-@RequestMapping("/api/sys/file")
+@ApiVersion(1)
+@RequestMapping("/sys/file")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SysFileController {
 
     private final SysFileService fileService;
@@ -40,6 +44,7 @@ public class SysFileController {
     private String uploadDir;
 
     @Operation(summary = "文件分页列表")
+    @SaCheckPermission("sys:file:list")
     @GetMapping("/page")
     public Result<PageResult<FileVO>> page(
             @RequestParam(defaultValue = "1") int page,
@@ -51,6 +56,7 @@ public class SysFileController {
     }
 
     @Operation(summary = "上传文件")
+    @SaCheckPermission("sys:file:upload")
     @PostMapping("/upload")
     @OperateLog(module = "文件管理", operation = "上传文件")
     public Result<FileVO> upload(@RequestParam("file") MultipartFile file,
@@ -61,6 +67,7 @@ public class SysFileController {
     }
 
     @Operation(summary = "下载/预览文件")
+    @SaCheckPermission("sys:file:download")
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> download(@PathVariable Long id) throws IOException {
         SysFile sysFile = fileService.getById(id);
@@ -84,6 +91,7 @@ public class SysFileController {
     }
 
     @Operation(summary = "删除文件")
+    @SaCheckPermission("sys:file:delete")
     @DeleteMapping("/{id}")
     @OperateLog(module = "文件管理", operation = "删除文件")
     public Result<Void> delete(@PathVariable Long id) {
@@ -92,6 +100,7 @@ public class SysFileController {
     }
 
     @Operation(summary = "批量删除文件")
+    @SaCheckPermission("sys:file:delete")
     @DeleteMapping("/batch")
     @OperateLog(module = "文件管理", operation = "批量删除文件")
     public Result<Void> deleteBatch(@RequestBody List<Long> ids) {

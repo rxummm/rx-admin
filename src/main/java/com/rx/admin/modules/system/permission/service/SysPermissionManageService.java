@@ -7,8 +7,7 @@ import com.rx.admin.modules.system.menu.mapper.SysMenuMapper;
 import com.rx.admin.modules.system.role.mapper.SysRoleMenuMapper;
 import com.rx.admin.modules.system.user.mapper.SysUserMenuMapper;
 import com.rx.admin.modules.system.user.mapper.SysUserRoleMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +26,10 @@ import java.util.stream.Collectors;
  *
  * 不再为每个用户创建独立角色 user_{userId}，避免角色冗余
  */
+@Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysPermissionManageService {
-
-    private static final Logger log = LoggerFactory.getLogger(SysPermissionManageService.class);
 
     private final SysRoleMenuMapper sysRoleMenuMapper;
     private final SysUserRoleMapper sysUserRoleMapper;

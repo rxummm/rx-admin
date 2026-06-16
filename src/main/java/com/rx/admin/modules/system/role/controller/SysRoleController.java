@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.role.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
@@ -12,22 +13,20 @@ import com.rx.admin.modules.system.role.vo.RoleVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "角色管理")
 @RestController
-@RequestMapping("/api/sys/role")
+@ApiVersion(1)
+@RequestMapping("/sys/role")
+@RequiredArgsConstructor
 public class SysRoleController {
 
     private final ISysRoleService roleService;
     private final RoleConvert roleConvert;
-
-    public SysRoleController(ISysRoleService roleService, RoleConvert roleConvert) {
-        this.roleService = roleService;
-        this.roleConvert = roleConvert;
-    }
 
     @Operation(summary = "角色列表")
     @GetMapping("/list")

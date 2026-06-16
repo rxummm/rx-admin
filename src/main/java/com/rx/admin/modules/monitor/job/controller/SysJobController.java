@@ -1,6 +1,7 @@
 package com.rx.admin.modules.monitor.job.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "定时任务管理")
 @RestController
-@RequestMapping("/api/monitor/job")
+@ApiVersion(1)
+@RequestMapping("/monitor/job")
 @RequiredArgsConstructor
 public class SysJobController {
 

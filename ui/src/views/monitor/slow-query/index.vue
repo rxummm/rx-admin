@@ -101,20 +101,26 @@ function handleDelete(row) {
   ElMessageBox.confirm(t('common.deleteConfirm'), t('common.tip'), { type: "warning" }).then(async () => {
     await deleteSlowQueryApi(row.id)
     ElMessage.success(t('common.deleteSuccess')); fetchData()
-  }).catch(() => {})
+  }).catch(() => {
+    ElMessage.error('操作已取消')
+  })
 }
 function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   ElMessageBox.confirm(t('common.confirmBatchDelete', { count: selectedIds.value.length }), t('common.tip'), { type: "warning" }).then(async () => {
     await batchDeleteSlowQueryApi(selectedIds.value)
     ElMessage.success(t('common.deleteSuccess')); selectedIds.value = []; fetchData()
-  }).catch(() => {})
+  }).catch(() => {
+    ElMessage.error('操作已取消')
+  })
 }
 function handleClearAll() {
   ElMessageBox.confirm(t('common.clear') + '?', t('common.tip'), { type: "warning" }).then(async () => {
     await clearSlowQueryApi()
     ElMessage.success(t('common.deleteSuccess')); fetchData()
-  }).catch(() => {})
+  }).catch(() => {
+    ElMessage.error('操作已取消')
+  })
 }
 onMounted(() => { fetchData() })
 </script>

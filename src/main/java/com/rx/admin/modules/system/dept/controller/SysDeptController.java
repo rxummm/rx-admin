@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.dept.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
@@ -19,7 +20,8 @@ import java.util.List;
 
 @Tag(name = "部门管理")
 @RestController
-@RequestMapping("/api/sys/dept")
+@ApiVersion(1)
+@RequestMapping("/sys/dept")
 @RequiredArgsConstructor
 public class SysDeptController {
 

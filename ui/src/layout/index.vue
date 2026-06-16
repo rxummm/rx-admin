@@ -142,6 +142,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'Layout' })
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { resetDynamicRoutes } from '@/router'

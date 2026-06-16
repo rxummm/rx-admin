@@ -1,6 +1,7 @@
 package com.rx.admin.modules.monitor.logAnalysis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.log.entity.SysLog;
@@ -17,8 +18,10 @@ import java.util.stream.Collectors;
 
 @Tag(name = "日志分析")
 @RestController
-@RequestMapping("/api/monitor/log-analysis")
+@ApiVersion(1)
+@RequestMapping("/monitor/log-analysis")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class LogAnalysisController {
 
     private final SysLogMapper sysLogMapper;

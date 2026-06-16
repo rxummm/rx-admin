@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;

@@ -25,6 +25,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class IServiceCategoryService extends ServiceImpl<IServiceCategoryMapper, IServiceCategory> {
 
     private final IServiceItemMapper itemMapper;

@@ -12,6 +12,7 @@ import com.rx.admin.modules.content.notify.dto.MessageTemplateUpdateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class MessageTemplateServiceImpl extends ServiceImpl<SysMessageTemplateMapper, SysMessageTemplate>
         implements MessageTemplateService {
 

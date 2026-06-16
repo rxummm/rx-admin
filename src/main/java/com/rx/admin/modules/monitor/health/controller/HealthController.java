@@ -1,8 +1,9 @@
 package com.rx.admin.modules.monitor.health.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
-import com.rx.admin.modules.monitor.health.service.HealthService;
+import com.rx.admin.modules.monitor.health.service.HealthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 @Tag(name = "系统健康监控")
 @RestController
-@RequestMapping("/api/monitor/health")
+@ApiVersion(1)
+@RequestMapping("/monitor/health")
 @RequiredArgsConstructor
 public class HealthController {
 

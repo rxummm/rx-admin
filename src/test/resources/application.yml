@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    primary:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:rx_admin;DB_CLOSE_DELAY=-1;MODE=MYSQL
+      username: sa
+      password:
+    second:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:rxusysadmin;DB_CLOSE_DELAY=-1;MODE=MYSQL
+      username: sa
+      password:
+  flyway:
+    enabled: false
+  sql:
+    init:
+      mode: never
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  active-timeout: 1800
+  is-concurrent: false
+  is-share: false
+  token-style: uuid
+  is-log: false

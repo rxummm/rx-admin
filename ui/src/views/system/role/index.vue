@@ -1,17 +1,28 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('system.role.roleName') + '/' + $t('system.role.roleCode')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('system.role.roleName') + '/' + $t('system.role.roleCode')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
       <el-button @click="resetSearch">{{ $t('common.reset') }}</el-button>
-      <ExportButton :data="sortedTableData" :columns="exportColumns" title="角色管理" />
+      <ExportButton :data="sortedTableData" :columns="exportColumns" :title="$t('system.role.title')" />
       <div style="flex: 1" />
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('sys:role:add')">
         <el-icon><Plus /></el-icon> {{ $t('common.add') + $t('system.role.title') }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('sys:role:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('sys:role:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -31,16 +42,54 @@
 
     <div class="table-container">
       <!-- 骨架屏加载状态（仅在首次加载且无数据时显示） -->
-      <SkeletonLoader v-if="loading && !tableData.length" type="table" :rows="10" :columns="visibleColumns.length + 2" />
-      
+      <SkeletonLoader
+        v-if="loading && !tableData.length"
+        type="table"
+        :rows="10"
+        :columns="visibleColumns.length + 2"
+      />
+
       <!-- 正常表格（有数据后显示，刷新时保留旧数据并显示 loading 遮罩） -->
-      <el-table v-else :data="sortedTableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        v-else
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('roleName')" prop="roleName" :label="$t('system.role.roleName')" width="150" sortable />
-        <el-table-column v-if="visibleColumns.includes('roleCode')" prop="roleCode" :label="$t('system.role.roleCode')" width="150" sortable />
-        <el-table-column v-if="visibleColumns.includes('description')" prop="description" :label="$t('system.role.description')" min-width="200" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('sort')" prop="sort" :label="$t('common.sort')" width="80" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('roleName')"
+          prop="roleName"
+          :label="$t('system.role.roleName')"
+          width="150"
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('roleCode')"
+          prop="roleCode"
+          :label="$t('system.role.roleCode')"
+          width="150"
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('description')"
+          prop="description"
+          :label="$t('system.role.description')"
+          min-width="200"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('sort')"
+          prop="sort"
+          :label="$t('common.sort')"
+          width="80"
+          sortable
+        />
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" :label="$t('common.status')" width="80">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
@@ -48,33 +97,62 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createTime')" prop="createTime" :label="$t('common.createTime')" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createTime')"
+          prop="createTime"
+          :label="$t('common.createTime')"
+          width="170"
+          sortable
+        />
         <el-table-column :label="$t('common.operation')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('sys:role:edit')">{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('sys:role:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('sys:role:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('sys:role:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
+      <el-empty v-if="!loading && sortedTableData.length === 0" />
     </div>
 
     <!-- 弹窗 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="900px" :close-on-click-modal="false" draggable>
       <el-form ref="formRef" :model="form" :rules="formRules" label-width="80px">
         <el-form-item :label="$t('system.role.roleName')" prop="roleName">
-          <el-input v-model="form.roleName" :disabled="isEdit" :placeholder="$t('common.input') + $t('system.role.roleName')" />
+          <el-input
+            v-model="form.roleName"
+            :disabled="isEdit"
+            :placeholder="$t('common.input') + $t('system.role.roleName')"
+          />
         </el-form-item>
         <el-form-item :label="$t('system.role.roleCode')" prop="roleCode">
-          <el-input v-model="form.roleCode" :disabled="isEdit" :placeholder="$t('common.input') + $t('system.role.roleCode')" />
+          <el-input
+            v-model="form.roleCode"
+            :disabled="isEdit"
+            :placeholder="$t('common.input') + $t('system.role.roleCode')"
+          />
         </el-form-item>
         <el-form-item :label="$t('system.role.description')">
           <el-input v-model="form.description" :placeholder="$t('common.input') + $t('system.role.description')" />
         </el-form-item>
-        <div style="display: flex; gap: 16px;">
-          <el-form-item :label="$t('common.sort')" style="flex: 0 0 auto; margin-bottom: 22px;">
+        <div style="display: flex; gap: 16px">
+          <el-form-item :label="$t('common.sort')" style="flex: 0 0 auto; margin-bottom: 22px">
             <el-input-number v-model="form.sort" :min="0" />
           </el-form-item>
-          <el-form-item :label="$t('common.status')" style="flex: 1; margin-bottom: 22px;">
+          <el-form-item :label="$t('common.status')" style="flex: 1; margin-bottom: 22px">
             <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
           </el-form-item>
         </div>
@@ -91,7 +169,7 @@
             :props="{ label: 'deptName', value: 'id', children: 'children' }"
             check-strictly
             clearable
-            style="width:100%"
+            style="width: 100%"
             :placeholder="$t('system.role.customDeptPlaceholder')"
           />
         </el-form-item>
@@ -170,17 +248,17 @@ const columnOptions = [
   { key: 'status', label: t('common.status') },
   { key: 'createTime', label: t('common.createTime') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 // 导出列定义
 const exportColumns = [
   { field: 'id', label: 'ID' },
-  { field: 'roleName', label: '角色名称' },
-  { field: 'roleCode', label: '角色编码' },
-  { field: 'description', label: '描述' },
-  { field: 'sort', label: '排序' },
-  { field: 'status', label: '状态' },
-  { field: 'createTime', label: '创建时间' }
+  { field: 'roleName', label: t('system.role.roleName') },
+  { field: 'roleCode', label: t('system.role.roleCode') },
+  { field: 'description', label: t('system.role.description') },
+  { field: 'sort', label: t('common.sort') },
+  { field: 'status', label: t('common.status') },
+  { field: 'createTime', label: t('common.createTime') }
 ]
 
 function toggleColumn(key) {
@@ -197,9 +275,10 @@ const filteredData = computed(() => {
   let data = tableData.value
   const kw = keyword.value.trim().toLowerCase()
   if (kw) {
-    data = data.filter(item =>
-      (item.roleName && item.roleName.toLowerCase().includes(kw)) ||
-      (item.roleCode && item.roleCode.toLowerCase().includes(kw))
+    data = data.filter(
+      (item) =>
+        (item.roleName && item.roleName.toLowerCase().includes(kw)) ||
+        (item.roleCode && item.roleCode.toLowerCase().includes(kw))
     )
   }
   return data
@@ -227,7 +306,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 function resetSearch() {
@@ -262,12 +341,15 @@ const dataScopeOptions = computed(() => [
 ])
 
 // 切换数据范围时清空自定义部门选择
-watch(() => form.dataScope, (val) => {
-  if (val !== 5) {
-    dataScopeDeptIds.value = []
-    form.dataDeptIds = ''
+watch(
+  () => form.dataScope,
+  (val) => {
+    if (val !== 5) {
+      dataScopeDeptIds.value = []
+      form.dataDeptIds = ''
+    }
   }
-})
+)
 
 const formRules = {
   roleName: [{ required: true, message: t('common.input') + t('system.role.roleName'), trigger: 'blur' }],
@@ -283,7 +365,7 @@ async function fetchData() {
   try {
     const res = await getRoleListApi()
     // 确保骨架屏至少显示 300ms，避免闪烁
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
     tableData.value = res.data || []
   } finally {
     loading.value = false
@@ -324,7 +406,10 @@ async function handleEdit(row) {
   })
   // 自定义部门回显
   if (form.dataScope === 5 && form.dataDeptIds) {
-    dataScopeDeptIds.value = form.dataDeptIds.split(',').map(Number).filter(n => n)
+    dataScopeDeptIds.value = form.dataDeptIds
+      .split(',')
+      .map(Number)
+      .filter((n) => n)
   } else {
     dataScopeDeptIds.value = []
   }
@@ -338,7 +423,7 @@ async function handleEdit(row) {
     // 对左右两棵树分别设置勾选
     for (const treeRef of [leftTreeRef.value, rightTreeRef.value]) {
       if (!treeRef) continue
-      const leafIds = menuIds.filter(id => {
+      const leafIds = menuIds.filter((id) => {
         const node = treeRef.getNode(id)
         return node && (!node.childNodes || node.childNodes.length === 0)
       })
@@ -349,10 +434,11 @@ async function handleEdit(row) {
   }
 }
 
-
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.roleName }), t('common.tip'), { type: 'warning' })
+    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.roleName }), t('common.tip'), {
+      type: 'warning'
+    })
     await deleteRoleApi(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     fetchData()
@@ -362,8 +448,12 @@ async function handleDelete(row) {
 async function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   try {
-    await ElMessageBox.confirm(t('common.confirmBatchDelete', { count: selectedIds.value.length }), t('common.batchDelete'), { type: 'warning' })
-    await Promise.all(selectedIds.value.map(id => deleteRoleApi(id)))
+    await ElMessageBox.confirm(
+      t('common.confirmBatchDelete', { count: selectedIds.value.length }),
+      t('common.batchDelete'),
+      { type: 'warning' }
+    )
+    await Promise.all(selectedIds.value.map((id) => deleteRoleApi(id)))
     ElMessage.success(t('common.batchDeleteSuccess'))
     selectedIds.value = []
     fetchData()
@@ -407,6 +497,10 @@ async function handleSubmit() {
     }
     dialogVisible.value = false
     fetchData()
+    // 如果修改的是当前用户所属角色，刷新路由和权限
+    if (userStore.roles.includes(form.roleCode)) {
+      await userStore.refreshRouters()
+    }
   } finally {
     submitLoading.value = false
   }

@@ -31,6 +31,7 @@
           <template #default="{ row }"><el-button size="small" link type="danger" @click="handleDelete(row.id)">删除</el-button></template>
         </el-table-column>
       </el-table>
+      <el-empty v-if="!loading && tableData.length === 0" />
       <el-pagination
         class="page-pagination"
         v-model:current-page="pagination.page" v-model:page-size="pagination.size"
@@ -41,6 +42,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'MonitorJobLog' })
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getJobLogPageApi, deleteJobLogApi, deleteJobLogBatchApi } from '@/api/jobLog'

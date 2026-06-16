@@ -1,7 +1,9 @@
 package com.rx.admin.modules.content.announcement.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.content.notice.entity.SysNotice;
 import com.rx.admin.modules.content.notice.entity.SysNoticeRead;
@@ -20,8 +22,10 @@ import java.util.stream.Collectors;
 
 @Tag(name = "系统公告弹窗")
 @RestController
-@RequestMapping("/api/content/announcement")
+@ApiVersion(1)
+@RequestMapping("/content/announcement")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class AnnouncementController {
 
     private final SysNoticeMapper noticeMapper;
@@ -59,6 +63,7 @@ public class AnnouncementController {
 
     @PostMapping("/read/{noticeId}")
     @Operation(summary = "标记公告已读")
+    @SaCheckPermission("content:announcement:read")
     public Result<Void> markRead(@PathVariable Long noticeId) {
         Long userId = StpUtil.getLoginIdAsLong();
         SysNoticeRead read = new SysNoticeRead();

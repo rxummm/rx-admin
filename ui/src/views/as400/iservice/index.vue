@@ -176,7 +176,7 @@
                   </el-table-column>
                   <el-table-column prop="description" label="说明" min-width="250">
                     <template #default="{ row: p }">
-                      <div class="multi-line" v-html="formatDesc(p.description)"></div>
+                      <div class="multi-line" v-html="sanitizeHtml(formatDesc(p.description))"></div>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -210,7 +210,7 @@
                   </el-table-column>
                   <el-table-column prop="description" label="说明" min-width="300">
                     <template #default="{ row: c }">
-                      <div class="multi-line" v-html="formatDesc(c.description)"></div>
+                      <div class="multi-line" v-html="sanitizeHtml(formatDesc(c.description))"></div>
                     </template>
                   </el-table-column>
                 </el-table>

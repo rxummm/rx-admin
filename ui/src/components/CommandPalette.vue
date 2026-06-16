@@ -18,7 +18,7 @@
           <div v-for="(item, i) in filteredMenus" :key="item.path"
             :class="['cp-item', { active: i === activeIndex }]"
             @click="goMenu(item)" @mouseenter="activeIndex = i">
-            <el-icon><component :is="item.icon" /></el-icon>
+            <el-icon><component :is="getIconComponent(item.icon)" /></el-icon>
             <span>{{ item.name }}</span>
             <span class="cp-path">{{ item.path }}</span>
           </div>
@@ -42,7 +42,7 @@
           <div v-for="(item, i) in filteredActions" :key="item.name"
             :class="['cp-item', { active: i + filteredMenus.length + filteredRecent.length === activeIndex }]"
             @click="doAction(item)" @mouseenter="activeIndex = i + filteredMenus.length + filteredRecent.length">
-            <el-icon><component :is="item.icon" /></el-icon>
+            <el-icon><component :is="item.iconComponent" /></el-icon>
             <span>{{ item.name }}</span>
           </div>
         </div>
@@ -63,9 +63,11 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CommandPalette' })
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Clock, Moon, FullScreen, Lock, Back } from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useTagsStore } from '@/stores/tags'
 
@@ -81,11 +83,18 @@ const inputRef = ref(null)
 function flattenMenus(menus, result = []) {
   for (const m of menus) {
     if (m.component && m.menuType === 2) {
-      result.push({ name: m.menuName, path: m.path, icon: m.icon || 'Menu' })
+      result.push({ name: m.menuName, path: m.path, icon: m.icon })
     }
     if (m.children) flattenMenus(m.children, result)
   }
   return result
+}
+
+function getIconComponent(iconName) {
+  if (!iconName || iconName.startsWith('fa-')) {
+    return ElementPlusIconsVue.Menu
+  }
+  return ElementPlusIconsVue[iconName] || ElementPlusIconsVue.Menu
 }
 
 const allMenus = computed(() => flattenMenus(userStore.menus || []))

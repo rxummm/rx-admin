@@ -18,7 +18,12 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         for (String origin : allowedOrigins.split(",")) {
-            config.addAllowedOriginPattern(origin.trim());
+            String trimmed = origin.trim();
+            if ("*".equals(trimmed)) {
+                config.addAllowedOriginPattern("*");
+            } else {
+                config.addAllowedOrigin(trimmed);
+            }
         }
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");

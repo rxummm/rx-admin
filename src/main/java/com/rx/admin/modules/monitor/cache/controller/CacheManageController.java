@@ -1,30 +1,33 @@
 package com.rx.admin.modules.monitor.cache.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @Tag(name = "缓存管理")
 @RestController
-@RequestMapping("/api/monitor/cache")
+@ApiVersion(1)
+@RequestMapping("/monitor/cache")
 @SaCheckRole("admin")
+@RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CacheManageController {
 
     private final CacheManager cacheManager;
 
-    public CacheManageController(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
     @Operation(summary = "获取所有缓存信息")
     @GetMapping("/list")
+    @SaCheckPermission("monitor:cache:query")
     public Result<?> listCaches() {
         List<Map<String, Object>> list = new ArrayList<>();
         for (String name : cacheManager.getCacheNames()) {
@@ -56,6 +59,7 @@ public class CacheManageController {
 
     @Operation(summary = "清除指定缓存")
     @DeleteMapping("/clear/{cacheName}")
+    @SaCheckPermission("monitor:cache:clear")
     public Result<?> clearCache(@PathVariable String cacheName) {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
@@ -67,6 +71,7 @@ public class CacheManageController {
 
     @Operation(summary = "清除所有缓存")
     @DeleteMapping("/clear-all")
+    @SaCheckPermission("monitor:cache:clear")
     public Result<?> clearAllCache() {
         for (String name : cacheManager.getCacheNames()) {
             Cache cache = cacheManager.getCache(name);

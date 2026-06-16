@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage> implements ISysMessageService {
 
     private final SysUserMapper sysUserMapper;

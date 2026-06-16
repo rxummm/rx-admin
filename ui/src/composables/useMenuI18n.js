@@ -43,6 +43,7 @@ const menuNameI18nMap = {
   '文档格式转换': 'tool.docConverter.title',
   '文档上传': 'tool.docUpload.title',
   '音乐播放': 'tool.musicPlayer.title',
+  '视频播放': 'tool.videoPlayer.title',
   '邮件发送': 'tool.emailSender.title',
   '代码生成': 'tool.gen.title',
   '批量导入': 'tool.importData.title',

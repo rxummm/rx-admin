@@ -134,7 +134,12 @@ function shouldIgnoreResourceError(tagName, src) {
   if (src.startsWith('data:') || src.startsWith('blob:')) {
     return true
   }
-  
+
+  // 忽略 track 元素（字幕轨道，ArtPlayer 等播放器自动创建）
+  if (tagName === 'track') {
+    return true
+  }
+
   return false
 }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+@SuppressWarnings("null")
 public class ShuihuPoemService extends ServiceImpl<ShuihuPoemMapper, ShuihuPoem> {
 
     public PageResult<ShuihuPoem> pageQuery(int page, int size, String keyword) {

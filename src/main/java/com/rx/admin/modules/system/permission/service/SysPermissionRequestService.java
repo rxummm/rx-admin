@@ -16,8 +16,7 @@ import com.rx.admin.modules.system.user.mapper.SysUserMapper;
 import com.rx.admin.modules.content.notice.service.SysNoticeService;
 import com.rx.admin.modules.content.message.service.SysMessageService;
 import com.rx.admin.modules.system.user.mapper.SysUserMenuMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,10 +38,10 @@ import java.util.Set;
  * - sys_user_menu 表语义更清晰：直接表达"用户拥有哪些菜单/按钮"
  * - 查询更简单：用户权限 = 角色权限 ∪ 直接授权权限
  */
+@Slf4j
 @Service
+@SuppressWarnings("null")
 public class SysPermissionRequestService extends ServiceImpl<SysPermissionRequestMapper, SysPermissionRequest> {
-
-    private static final Logger log = LoggerFactory.getLogger(SysPermissionRequestService.class);
 
     private final SysUserMapper sysUserMapper;
     private final SysMenuMapper sysMenuMapper;

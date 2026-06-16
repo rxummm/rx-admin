@@ -1,7 +1,8 @@
 package com.rx.admin.modules.auth.controller;
 
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
-import com.rx.admin.modules.auth.service.CaptchaService;
+import com.rx.admin.modules.auth.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,8 @@ import java.util.Map;
 
 @Tag(name = "验证码")
 @RestController
-@RequestMapping("/api/auth")
+@ApiVersion(1)
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class CaptchaController {
 

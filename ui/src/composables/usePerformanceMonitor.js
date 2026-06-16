@@ -283,6 +283,8 @@ export function getPerformanceLevel() {
   return { level: '较差', color: COLORS.STATUS.DANGER, emoji: '❌' }
 }
 
+let memoryInterval = null
+
 // ==================== Vue Composition API ====================
 
 /**
@@ -295,19 +297,14 @@ export function usePerformanceMonitor() {
    * 启动监控
    */
   function start() {
-    if (isMonitoring.value) return
+    if (isMonitoring.value || memoryInterval) return
     
     isMonitoring.value = true
     startFPSMonitor()
     collectPageLoadMetrics()
     
     // 每秒更新内存使用
-    const memoryInterval = setInterval(updateMemoryUsage, 1000)
-    
-    return () => {
-      clearInterval(memoryInterval)
-      stop()
-    }
+    memoryInterval = setInterval(updateMemoryUsage, 1000)
   }
   
   /**
@@ -316,6 +313,10 @@ export function usePerformanceMonitor() {
   function stop() {
     isMonitoring.value = false
     stopFPSMonitor()
+    if (memoryInterval) {
+      clearInterval(memoryInterval)
+      memoryInterval = null
+    }
   }
   
   /**

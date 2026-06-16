@@ -104,7 +104,7 @@
 
 <script setup>
 defineOptions({ name: 'As400Objects' })
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAs400ObjectsByLibApi } from '@/api/as400'
 import { ElMessage } from 'element-plus'
@@ -280,6 +280,10 @@ async function fetchData() {
 onMounted(() => {
   calcTableMaxHeight()
   window.addEventListener('resize', calcTableMaxHeight)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calcTableMaxHeight)
 })
 </script>
 

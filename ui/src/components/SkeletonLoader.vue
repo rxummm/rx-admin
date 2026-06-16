@@ -51,6 +51,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SkeletonLoader' })
 import { computed } from 'vue'
 
 const props = defineProps({

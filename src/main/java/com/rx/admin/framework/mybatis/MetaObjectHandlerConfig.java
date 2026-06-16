@@ -12,11 +12,13 @@ import java.time.LocalDateTime;
  * 无外部依赖，可安全被 PrimaryDataSourceConfig 引用。
  */
 @Configuration
+@SuppressWarnings("null")
 public class MetaObjectHandlerConfig {
 
     @Bean
     public MetaObjectHandler metaObjectHandler() {
         return new MetaObjectHandler() {
+            @SuppressWarnings("null")
             @Override
             public void insertFill(MetaObject metaObject) {
                 this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, LocalDateTime.now());

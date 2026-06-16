@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'FavoritesPanel' })
 import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getFavoritesApi, toggleFavoriteApi } from '@/api/favorite'

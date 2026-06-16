@@ -34,6 +34,7 @@ import org.springframework.http.HttpHeaders;
 
 @Slf4j
 @RestControllerAdvice
+@SuppressWarnings("null")
 public class GlobalExceptionHandler {
 
     // ===================== 辅助方法 =====================
@@ -44,10 +45,6 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Result<Object>> json(ErrorCode errorCode, Object data, HttpStatus status) {
         return json(errorCode.getCode(), errorCode.getMessage(), data, status);
-    }
-
-    private ResponseEntity<Result<Object>> json(int code, String message, HttpStatus status) {
-        return json(code, message, null, status);
     }
 
     private ResponseEntity<Result<Object>> json(int code, String message, Object data, HttpStatus status) {
@@ -133,12 +130,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Result<Object>> handleMethodNotSupported(HttpRequestMethodNotSupportedException e) {
-        return json(405, "请求方法不支持: " + e.getMethod(), HttpStatus.METHOD_NOT_ALLOWED);
+        log.warn("不支持的请求方法: {}", e.getMethod());
+        return json(ErrorCode.METHOD_NOT_ALLOWED, "请求方法不支持: " + e.getMethod(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<Result<Object>> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException e) {
-        return json(415, "不支持的媒体类型", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        log.warn("不支持的媒体类型: {}", e.getContentType());
+        return json(ErrorCode.UNSUPPORTED_MEDIA_TYPE, "不支持的媒体类型", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     // ===================== 数据/事务 =====================
@@ -203,7 +202,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AsyncRequestTimeoutException.class)
     public ResponseEntity<Result<Object>> handleAsyncRequestTimeout(AsyncRequestTimeoutException e) {
         log.debug("异步请求超时: {}", e.getMessage());
-        return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+        return json(ErrorCode.SERVICE_UNAVAILABLE, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     // ===================== 兜底 =====================
@@ -211,7 +210,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AsyncRequestNotUsableException.class)
     public ResponseEntity<Result<Object>> handleAsyncRequestNotUsable(AsyncRequestNotUsableException e) {
         log.debug("异步请求客户端已断开: {}", e.getMessage());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return json(ErrorCode.SERVICE_UNAVAILABLE, "连接已断开", HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(IOException.class)

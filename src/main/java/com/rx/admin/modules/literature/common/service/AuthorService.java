@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("null")
 public class AuthorService extends ServiceImpl<AuthorMapper, Author> {
 
     public PageResult<Author> pageQuery(int page, int size, String keyword) {

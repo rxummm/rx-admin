@@ -388,6 +388,7 @@ async function playSong(song) {
   audio.play().then(() => {
     isPlaying.value = true
   }).catch(e => {
+    ElMessage.warning('流式播放失败，尝试静态文件')
     console.warn('流式播放失败，尝试静态路径', e)
     const fileName = song.title + '.mp3'
     audio.src = `/shareddocs/${fileName}`
@@ -469,7 +470,9 @@ function seekToLyric(time) {
   if (audio.src) {
     audio.currentTime = time
     if (!isPlaying.value) {
-      audio.play().then(() => { isPlaying.value = true }).catch(() => {})
+      audio.play().then(() => { isPlaying.value = true }).catch(() => {
+  ElMessage.error('播放失败')
+})
     }
   }
 }
@@ -544,7 +547,9 @@ function onAudioError() {
 // 上报播放记录
 function reportPlay() {
   if (!currentSong.value) return
-  recordPlayApi(currentSong.value.id, Math.floor(audio.currentTime)).catch(() => {})
+  recordPlayApi(currentSong.value.id, Math.floor(audio.currentTime)).catch(() => {
+  ElMessage.error('上报播放记录失败')
+})
 }
 
 // 右键菜单

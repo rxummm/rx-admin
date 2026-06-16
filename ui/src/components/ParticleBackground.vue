@@ -3,12 +3,16 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ParticleBackground' })
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvasRef = ref(null)
 let animationId = null
 let particles = []
 let mouse = { x: null, y: null, radius: 150 }
+let resizeHandler = null
+let mouseMoveHandler = null
+let mouseLeaveHandler = null
 
 // 粒子配置
 const config = {
@@ -85,12 +89,12 @@ function initParticles() {
   const ctx = canvas.getContext('2d')
   
   // 设置画布尺寸
-  function resize() {
+  resizeHandler = () => {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
   }
-  resize()
-  window.addEventListener('resize', resize)
+  resizeHandler()
+  window.addEventListener('resize', resizeHandler)
 
   // 创建粒子
   particles = []
@@ -99,15 +103,16 @@ function initParticles() {
   }
 
   // 鼠标事件监听
-  window.addEventListener('mousemove', (e) => {
+  mouseMoveHandler = (e) => {
     mouse.x = e.x
     mouse.y = e.y
-  })
-
-  window.addEventListener('mouseleave', () => {
+  }
+  mouseLeaveHandler = () => {
     mouse.x = null
     mouse.y = null
-  })
+  }
+  window.addEventListener('mousemove', mouseMoveHandler)
+  window.addEventListener('mouseleave', mouseLeaveHandler)
 
   // 动画循环
   function animate() {
@@ -155,6 +160,9 @@ onUnmounted(() => {
   if (animationId) {
     cancelAnimationFrame(animationId)
   }
+  if (resizeHandler) window.removeEventListener('resize', resizeHandler)
+  if (mouseMoveHandler) window.removeEventListener('mousemove', mouseMoveHandler)
+  if (mouseLeaveHandler) window.removeEventListener('mouseleave', mouseLeaveHandler)
 })
 </script>
 

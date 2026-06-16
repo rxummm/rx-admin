@@ -284,7 +284,8 @@ const sourceList = [
   { key: 'faq400', label: 'BlogFaq400', url: 'blog.faq400.com' },
   { key: 'rpgpgm', label: 'RPGPGM', url: 'rpgpgm.com' },
   { key: 'as400sql', label: 'AS400 SQL Tricks', url: 'as400andsqltricks.com' },
-  { key: 'apimy', label: 'API My My My', url: 'apimymymy.wordpress.com' }
+  { key: 'apimy', label: 'API My My My', url: 'apimymymy.wordpress.com' },
+  { key: 'think400', label: 'Think400', url: 'think400.dk' }
 ]
 
 // 状态

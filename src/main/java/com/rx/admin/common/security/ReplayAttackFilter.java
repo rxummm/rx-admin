@@ -1,5 +1,7 @@
 package com.rx.admin.common.security;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,9 +13,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * API 防重放过滤器
@@ -24,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+@SuppressWarnings("null")
 public class ReplayAttackFilter extends OncePerRequestFilter {
 
     @Value("${app.replay.time-window-ms:300000}")
@@ -32,17 +36,25 @@ public class ReplayAttackFilter extends OncePerRequestFilter {
     @Value("${app.replay.max-nonce-cache:10000}")
     private int maxNonceCache;
 
-    private static final ConcurrentHashMap<String, Long> USED_NONCES = new ConcurrentHashMap<>();
+    private Cache<String, Long> usedNonces;
+
+    @PostConstruct
+    public void init() {
+        this.usedNonces = Caffeine.newBuilder()
+                .maximumSize(maxNonceCache)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .build();
+    }
 
     private static final Set<String> SKIP_PATHS = Set.of(
-            "/api/auth/login", "/api/auth/register", "/api/auth/captcha",
-            "/api/auth/ping"
+            "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/captcha",
+            "/api/v1/auth/ping"
     );
 
     private static final Set<String> PROTECTED_PREFIXES = Set.of(
-            "/api/auth/login", "/api/auth/register",
-            "/api/monitor/online/", "/api/sys/user/",
-            "/api/sys/role/", "/api/sys/menu/", "/api/sys/dept/"
+            "/api/v1/auth/login", "/api/v1/auth/register",
+            "/api/v1/monitor/online/", "/api/v1/sys/user/",
+            "/api/v1/sys/role/", "/api/v1/sys/menu/", "/api/v1/sys/dept/"
     );
 
     @Override
@@ -92,22 +104,13 @@ public class ReplayAttackFilter extends OncePerRequestFilter {
             writeError(response, "missing X-Nonce header");
             return;
         }
-        Long existing = USED_NONCES.putIfAbsent(nonce, now);
-        if (existing != null) {
+        if (usedNonces.getIfPresent(nonce) != null) {
             writeError(response, "nonce already used (replay attack detected)");
             return;
         }
-
-        if (USED_NONCES.size() > maxNonceCache) {
-            cleanupExpiredNonces();
-        }
+        usedNonces.put(nonce, now);
 
         chain.doFilter(request, response);
-    }
-
-    private void cleanupExpiredNonces() {
-        long cutoff = System.currentTimeMillis() - timeWindowMs;
-        USED_NONCES.entrySet().removeIf(e -> e.getValue() < cutoff);
     }
 
     private void writeError(HttpServletResponse response, String message) throws IOException {

@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.apiDebug.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +16,9 @@ import java.util.*;
 
 @Tag(name = "API调试面板")
 @RestController
-@RequestMapping("/api/tool/api-debug")
+@ApiVersion(1)
+@RequestMapping("/tool/api-debug")
+@SuppressWarnings("null")
 public class ApiDebugController {
 
     private final RequestMappingHandlerMapping handlerMapping;

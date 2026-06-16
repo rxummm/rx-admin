@@ -25,7 +25,7 @@
           :class="{ active: index === highlightIndex }"
           @mousedown.prevent="goTo(item)"
         >
-          <el-icon><component :is="item.icon || 'Menu'" /></el-icon>
+          <el-icon><component :is="getIconComponent(item.icon)" /></el-icon>
           <span class="result-title">{{ item.menuName }}</span>
           <span class="result-path">{{ item.path }}</span>
         </li>
@@ -38,11 +38,13 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SearchBox' })
 import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import { Search } from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const emit = defineEmits(['openCommand'])
 const router = useRouter()
@@ -65,6 +67,13 @@ function flattenMenus(menus) {
   }
   walk(menus)
   return result
+}
+
+function getIconComponent(iconName) {
+  if (!iconName || iconName.startsWith('fa-')) {
+    return ElementPlusIconsVue.Menu
+  }
+  return ElementPlusIconsVue[iconName] || ElementPlusIconsVue.Menu
 }
 
 function handleInput() {

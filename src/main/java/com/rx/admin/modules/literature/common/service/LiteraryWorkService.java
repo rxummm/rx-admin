@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("null")
 public class LiteraryWorkService extends ServiceImpl<LiteraryWorkMapper, LiteraryWork> {
 
     private final AuthorMapper authorMapper;

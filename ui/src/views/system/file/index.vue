@@ -51,10 +51,12 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SystemFile' })
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { getFilePageApi, uploadFileApi, deleteFileApi, deleteFileBatchApi } from '@/api/file'
+import { API } from '@/api/routes'
 
 const { t } = useI18n()
 
@@ -98,7 +100,7 @@ async function handleUpload(options) {
 }
 
 async function handleDownload(row) {
-  window.open(`/api/sys/file/download/${row.id}`, '_blank')
+  window.open(API.SYS.FILE.DOWNLOAD(row.id), '_blank')
 }
 
 async function handleDelete(id) {

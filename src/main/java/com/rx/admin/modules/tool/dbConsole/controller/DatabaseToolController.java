@@ -1,11 +1,14 @@
 package com.rx.admin.modules.tool.dbConsole.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
@@ -14,18 +17,18 @@ import java.util.*;
 
 @Tag(name = "数据库工具")
 @RestController
-@RequestMapping("/api/tool/database")
+@ApiVersion(1)
+@RequestMapping("/tool/database")
 @SaCheckRole("admin")
+@RequiredArgsConstructor
+@SuppressWarnings("null")
 public class DatabaseToolController {
 
     private final DataSource primaryDataSource;
 
-    public DatabaseToolController(DataSource primaryDataSource) {
-        this.primaryDataSource = primaryDataSource;
-    }
-
     @Operation(summary = "执行SQL查询(只读)")
     @PostMapping("/execute")
+    @SaCheckPermission("tool:db-console:execute")
     public Result<?> executeSql(@RequestBody Map<String, Object> body) {
         String sql = (String) body.get("sql");
         if (sql == null || sql.trim().isEmpty()) {
@@ -133,6 +136,7 @@ public class DatabaseToolController {
 
     @Operation(summary = "获取数据库表列表")
     @GetMapping("/tables")
+    @SaCheckPermission("tool:db-console:query")
     public Result<?> getTables() {
         try (Connection conn = DataSourceUtils.getConnection(primaryDataSource)) {
             DatabaseMetaData meta = conn.getMetaData();
@@ -154,6 +158,7 @@ public class DatabaseToolController {
 
     @Operation(summary = "获取表结构详情")
     @GetMapping("/tables/{tableName}/columns")
+    @SaCheckPermission("tool:db-console:query")
     public Result<?> getTableColumns(@PathVariable String tableName) {
         try (Connection conn = DataSourceUtils.getConnection(primaryDataSource)) {
             DatabaseMetaData meta = conn.getMetaData();
@@ -193,6 +198,7 @@ public class DatabaseToolController {
 
     @Operation(summary = "获取连接池状态")
     @GetMapping("/pool-status")
+    @SaCheckPermission("tool:db-console:query")
     public Result<?> getPoolStatus() {
         try {
             if (primaryDataSource instanceof com.zaxxer.hikari.HikariDataSource hikari) {

@@ -193,4 +193,30 @@ public class PermissionConstants {
         public static final String WORK_EDIT = "classics:literature:work:edit";
         public static final String WORK_DELETE = "classics:literature:work:delete";
     }
+
+    // ==================== 音频转写模块 ====================
+    public static class AudioTranscription {
+        public static final String UPLOAD = "audio:transcription:upload";
+        public static final String LIST = "audio:transcription:list";
+        public static final String VIEW = "audio:transcription:view";
+        public static final String UPDATE = "audio:transcription:update";
+        public static final String DELETE = "audio:transcription:delete";
+    }
+
+    // ==================== 视频转写模块 ====================
+    public static class VideoTranscription {
+        public static final String UPLOAD = "video:transcription:upload";
+        public static final String LIST = "video:transcription:list";
+        public static final String VIEW = "video:transcription:view";
+        public static final String UPDATE = "video:transcription:update";
+        public static final String DELETE = "video:transcription:delete";
+    }
+
+    // ==================== OCR 文档识别模块 ====================
+    public static class OcrRecognition {
+        public static final String RECOGNIZE = "ocr:recognition:recognize";
+        public static final String LIST = "ocr:recognition:list";
+        public static final String VIEW = "ocr:recognition:view";
+        public static final String DELETE = "ocr:recognition:delete";
+    }
 }

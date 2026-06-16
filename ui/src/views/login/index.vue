@@ -35,8 +35,8 @@
           <div class="captcha-row">
             <el-input v-model="loginForm.captchaCode" :placeholder="$t('login.captchaPlaceholder')" size="large" maxlength="4" class="captcha-input" />
             <div class="captcha-image" @click="refreshCaptcha">
-              <img v-if="captchaImage" :src="captchaImage" alt="验证码" />
-              <span v-else class="captcha-loading">加载中...</span>
+              <img v-if="captchaImage" :src="captchaImage" :alt="$t('login.captchaAlt')" />
+              <span v-else class="captcha-loading">{{ $t('common.loading') }}</span>
             </div>
           </div>
         </el-form-item>
@@ -79,6 +79,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'Login' })
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { generateDynamicRoutes } from '@/router'

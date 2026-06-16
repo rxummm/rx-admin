@@ -2,6 +2,7 @@ package com.rx.admin.modules.literature.shuihu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -21,26 +22,21 @@ import com.rx.admin.modules.literature.shuihu.service.ShuihuPoemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "水浒传数据")
 @RestController
-@RequestMapping("/api/classics/shuihu")
+@ApiVersion(1)
+@RequestMapping("/classics/shuihu")
+@RequiredArgsConstructor
 public class ShuihuController {
-
 
     private final ShuihuChapterService chapterService;
     private final ShuihuChapterConvert chapterConvert;
     private final ShuihuPoemService poemService;
     private final ShuihuPoemConvert poemConvert;
-
-    public ShuihuController(ShuihuChapterService chapterService, ShuihuChapterConvert chapterConvert, ShuihuPoemService poemService, ShuihuPoemConvert poemConvert) {
-        this.chapterService = chapterService;
-        this.chapterConvert = chapterConvert;
-        this.poemService = poemService;
-        this.poemConvert = poemConvert;
-    }
 
     // ====== 水浒章节 ======
 
@@ -102,6 +98,7 @@ public class ShuihuController {
     @Operation(summary = "批量删除ShuihuChapter")
     @DeleteMapping("/chapter/batch")
     @SaCheckPermission(PermissionConstants.Shuihu.CHAPTER_DELETE)
+    @OperateLog(module = "水浒传数据", operation = "批量删除ShuihuChapter")
     public Result<?> chapterServiceBatchDelete(@RequestBody List<Long> ids) {
         chapterService.removeByIds(ids);
         return Result.ok();
@@ -166,6 +163,7 @@ public class ShuihuController {
     @Operation(summary = "批量删除ShuihuPoem")
     @DeleteMapping("/poem/batch")
     @SaCheckPermission(PermissionConstants.Shuihu.POEM_DELETE)
+    @OperateLog(module = "水浒传数据", operation = "批量删除ShuihuPoem")
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();

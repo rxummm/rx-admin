@@ -20,6 +20,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
+@SuppressWarnings("null")
 public class StpInterfaceImpl implements StpInterface {
 
     private final SysUserMapper userMapper;
@@ -38,7 +39,7 @@ public class StpInterfaceImpl implements StpInterface {
         try {
             List<String> roles = getRoleList(loginId, loginType);
             if (roles != null && roles.contains("admin")) {
-                return userMapper.selectAllValidPerms();
+                return List.of("*");
             }
         } catch (Exception e) {
             log.warn("获取角色列表失败: {}", e.getMessage());

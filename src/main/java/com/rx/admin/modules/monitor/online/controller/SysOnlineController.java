@@ -2,7 +2,7 @@ package com.rx.admin.modules.monitor.online.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
-import com.rx.admin.common.constant.PermissionConstants;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.online.service.OnlineUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +16,8 @@ import java.util.*;
 @Tag(name = "在线用户")
 @Slf4j
 @RestController
-@RequestMapping("/api/monitor/online")
+@ApiVersion(1)
+@RequestMapping("/monitor/online")
 @RequiredArgsConstructor
 public class SysOnlineController {
 
@@ -24,6 +25,7 @@ public class SysOnlineController {
 
     @Operation(summary = "获取在线用户列表")
     @GetMapping("/list")
+    @SaCheckPermission("monitor:online:query")
     public Result<List<Map<String, Object>>> list() {
         // 优先保证当前用户在线
         try {
@@ -41,7 +43,7 @@ public class SysOnlineController {
 
     @Operation(summary = "踢出在线用户")
     @DeleteMapping("/{tokenValue}")
-    @SaCheckPermission(PermissionConstants.Monitor.ONLINE_KICK)
+    @SaCheckPermission("monitor:online:force-logout")
     public Result<Void> kickOut(@PathVariable String tokenValue) {
         // Sa-Token 踢出
         StpUtil.kickoutByTokenValue(tokenValue);

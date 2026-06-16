@@ -23,6 +23,4 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
             "AND m.status = 1 AND m.deleted = 0")
     List<String> selectPermsByUserId(@Param("userId") Long userId);
 
-    @Select("SELECT DISTINCT perms FROM sys_menu WHERE perms IS NOT NULL AND perms != '' AND status = 1 AND deleted = 0")
-    List<String> selectAllValidPerms();
 }

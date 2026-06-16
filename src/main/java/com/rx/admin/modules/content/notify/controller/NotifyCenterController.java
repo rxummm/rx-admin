@@ -1,6 +1,7 @@
 package com.rx.admin.modules.content.notify.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.exception.ErrorCode;
@@ -27,7 +28,8 @@ import java.util.List;
 
 @Tag(name = "通知中心")
 @RestController
-@RequestMapping("/api/notify-center")
+@ApiVersion(1)
+@RequestMapping("/notify-center")
 @RequiredArgsConstructor
 public class NotifyCenterController {
 

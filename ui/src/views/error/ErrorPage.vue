@@ -94,6 +94,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ErrorPage' })
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {

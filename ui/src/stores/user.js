@@ -1,8 +1,8 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { loginApi, getUserInfoApi, getRoutersApi } from '@/api/auth'
 import { formatResponseData } from '@/utils'
-import { resetDynamicRoutes } from '@/router'
+import { resetDynamicRoutes, generateDynamicRoutes } from '@/router'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 
 export const useUserStore = defineStore('user', () => {
@@ -57,6 +57,13 @@ export const useUserStore = defineStore('user', () => {
     return menus.value
   }
 
+  // 刷新路由菜单（菜单管理修改后即时生效，无需重新登录）
+  async function refreshRouters() {
+    resetDynamicRoutes()
+    await Promise.all([fetchRouters(), fetchUserInfo()])
+    generateDynamicRoutes(menus.value)
+  }
+
   // 登出
   function logout() {
     resetDynamicRoutes()
@@ -82,5 +89,5 @@ export const useUserStore = defineStore('user', () => {
     return perms.value.includes(perm) || roles.value.includes('admin')
   }
 
-  return { token, userInfo, roles, perms, menus, login, fetchUserInfo, fetchRouters, logout, hasRole, hasPerm }
+  return { token, userInfo, roles, perms, menus, login, fetchUserInfo, fetchRouters, refreshRouters, logout, hasRole, hasPerm }
 })

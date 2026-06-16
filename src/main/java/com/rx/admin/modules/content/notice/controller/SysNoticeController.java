@@ -2,6 +2,7 @@ package com.rx.admin.modules.content.notice.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -22,7 +23,8 @@ import java.util.Map;
 
 @Tag(name = "通知公告管理")
 @RestController
-@RequestMapping("/api/content/notice")
+@ApiVersion(1)
+@RequestMapping("/content/notice")
 @RequiredArgsConstructor
 public class SysNoticeController {
 

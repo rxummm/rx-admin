@@ -46,7 +46,7 @@
                 </el-button>
               </div>
             </div>
-            <div class="card-body" v-html="formatMsgText(msg.content?.substring(0, 200), msg)"></div>
+            <div class="card-body" v-html="sanitizeHtml(formatMsgText(msg.content?.substring(0, 200), msg))"></div>
           </el-card>
         </el-timeline-item>
       </el-timeline>
@@ -70,7 +70,9 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ContentMessage' })
 import { ref, computed } from 'vue'
+import { sanitizeHtml } from '@/utils/sanitize'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'

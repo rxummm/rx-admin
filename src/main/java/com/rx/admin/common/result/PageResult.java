@@ -24,17 +24,6 @@ public class PageResult<T> {
         return result;
     }
 
-    /**
-     * @deprecated 请使用 {@link #of(long, long, long, List)} 补全分页信息
-     */
-    @Deprecated
-    public static <T> PageResult<T> of(long total, List<T> records) {
-        PageResult<T> result = new PageResult<>();
-        result.total = total;
-        result.records = records;
-        return result;
-    }
-
     public static <T> PageResult<T> of(IPage<T> page) {
         PageResult<T> result = new PageResult<>();
         result.total = page.getTotal();

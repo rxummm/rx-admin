@@ -83,6 +83,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolGen' })
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getTableListApi, getTableColumnsApi, previewCodeApi, generateCodeApi } from '@/api/gen'

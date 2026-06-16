@@ -2,6 +2,7 @@ package com.rx.admin.modules.literature.honglou.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -27,14 +28,16 @@ import com.rx.admin.modules.literature.honglou.entity.HonglouPoem;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "红楼梦数据")
 @RestController
-@RequestMapping("/api/classics/honglou")
+@ApiVersion(1)
+@RequestMapping("/classics/honglou")
+@RequiredArgsConstructor
 public class HonglouController {
-
 
     private final HonglouPoemService poemService;
     private final HonglouPoemConvert poemConvert;
@@ -42,15 +45,6 @@ public class HonglouController {
     private final HonglouCharacterConvert characterConvert;
     private final HonglouCharacterRelationService relationService;
     private final HonglouCharacterRelationConvert relationConvert;
-
-    public HonglouController(HonglouPoemService poemService, HonglouPoemConvert poemConvert, HonglouCharacterService characterService, HonglouCharacterConvert characterConvert, HonglouCharacterRelationService relationService, HonglouCharacterRelationConvert relationConvert) {
-        this.poemService = poemService;
-        this.poemConvert = poemConvert;
-        this.characterService = characterService;
-        this.characterConvert = characterConvert;
-        this.relationService = relationService;
-        this.relationConvert = relationConvert;
-    }
 
     // ====== 诗词 ======
 
@@ -105,6 +99,7 @@ public class HonglouController {
     @Operation(summary = "批量删除红楼诗词")
     @DeleteMapping("/poem/batch")
     @SaCheckPermission(PermissionConstants.Honglou.POEM_DELETE)
+    @OperateLog(module = "红楼梦管理", operation = "批量删除红楼诗词")
     public Result<?> poemBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -177,6 +172,7 @@ public class HonglouController {
     @Operation(summary = "批量删除红楼人物")
     @DeleteMapping("/character/batch")
     @SaCheckPermission(PermissionConstants.Honglou.CHARACTER_DELETE)
+    @OperateLog(module = "红楼梦管理", operation = "批量删除红楼人物")
     public Result<?> characterBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();

@@ -64,6 +64,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolDbConsole' })
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { executeSqlApi, getTablesApi, getTableColumnsApi, getPoolStatusApi } from '@/api/dbTool'

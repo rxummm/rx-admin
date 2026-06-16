@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'MonitorExportLog' })
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getExportLogPageApi } from '@/api/exportLog'

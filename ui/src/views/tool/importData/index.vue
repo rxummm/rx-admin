@@ -60,6 +60,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'ToolImportData' })
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'

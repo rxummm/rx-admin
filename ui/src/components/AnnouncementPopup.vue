@@ -10,6 +10,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'AnnouncementPopup' })
 import { ref, computed, onMounted } from 'vue'
 import { getPopupAnnouncementsApi, markAnnouncementReadApi } from '@/api/announcement'
 import { sanitizeHtml } from '@/utils/sanitize'

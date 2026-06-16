@@ -2,6 +2,7 @@ package com.rx.admin.modules.literature.sanguo.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
@@ -21,26 +22,21 @@ import com.rx.admin.modules.literature.sanguo.service.SanguoPoemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "三国演义数据")
 @RestController
-@RequestMapping("/api/classics/sanguo")
+@ApiVersion(1)
+@RequestMapping("/classics/sanguo")
+@RequiredArgsConstructor
 public class SanguoController {
-
 
     private final SanguoPoemService poemService;
     private final SanguoPoemConvert poemConvert;
     private final SanguoCharacterService characterService;
     private final SanguoCharacterConvert characterConvert;
-
-    public SanguoController(SanguoPoemService poemService, SanguoPoemConvert poemConvert, SanguoCharacterService characterService, SanguoCharacterConvert characterConvert) {
-        this.poemService = poemService;
-        this.poemConvert = poemConvert;
-        this.characterService = characterService;
-        this.characterConvert = characterConvert;
-    }
 
     // ====== 三国诗词 ======
 
@@ -102,6 +98,7 @@ public class SanguoController {
     @Operation(summary = "批量删除SanguoPoem")
     @DeleteMapping("/poem/batch")
     @SaCheckPermission(PermissionConstants.Sanguo.POEM_DELETE)
+    @OperateLog(module = "三国演义数据", operation = "批量删除SanguoPoem")
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -166,6 +163,7 @@ public class SanguoController {
     @Operation(summary = "批量删除SanguoCharacter")
     @DeleteMapping("/character/batch")
     @SaCheckPermission(PermissionConstants.Sanguo.CHARACTER_DELETE)
+    @OperateLog(module = "三国演义数据", operation = "批量删除SanguoCharacter")
     public Result<?> characterServiceBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();

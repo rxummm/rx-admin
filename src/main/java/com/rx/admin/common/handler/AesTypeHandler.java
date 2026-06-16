@@ -18,6 +18,7 @@ import java.util.Base64;
  * 
  * 使用方式：@TableField(typeHandler = AesTypeHandler.class)
  */
+@SuppressWarnings("null")
 public class AesTypeHandler extends BaseTypeHandler<String> {
 
     /** 16 位密钥（生产环境应从配置中心/环境变量读取） */

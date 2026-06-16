@@ -34,6 +34,7 @@ import java.util.Set;
 @Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 3)
+@SuppressWarnings("null")
 public class IpFilter extends OncePerRequestFilter {
 
     @Value("${app.ip-filter.enabled:false}")

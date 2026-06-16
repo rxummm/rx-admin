@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictData> implements ISysDictDataService {
 
     public List<SysDictData> listByTypeId(Long typeId) {

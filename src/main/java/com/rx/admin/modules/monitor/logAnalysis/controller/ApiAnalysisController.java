@@ -1,10 +1,12 @@
 package com.rx.admin.modules.monitor.logAnalysis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
-import com.rx.admin.modules.monitor.logAnalysis.service.ApiAnalysisService;
+import com.rx.admin.modules.monitor.logAnalysis.service.ApiAnalysisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +18,12 @@ import java.util.Map;
  */
 @Tag(name = "API接口分析")
 @RestController
-@RequestMapping("/api/tool/analysis")
+@ApiVersion(1)
+@RequestMapping("/tool/analysis")
+@RequiredArgsConstructor
 public class ApiAnalysisController {
 
     private final ApiAnalysisService analysisService;
-
-    public ApiAnalysisController(ApiAnalysisService analysisService) {
-        this.analysisService = analysisService;
-    }
 
     /**
      * 获取所有可分析的菜单/模块列表

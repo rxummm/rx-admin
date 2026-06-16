@@ -6,8 +6,11 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "未登录或登录已过期"),
     FORBIDDEN(403, "没有操作权限"),
     NOT_FOUND(404, "资源不存在"),
+    METHOD_NOT_ALLOWED(405, "请求方法不支持"),
     CONFLICT(409, "数据冲突"),
+    UNSUPPORTED_MEDIA_TYPE(415, "不支持的媒体类型"),
     TOO_MANY_REQUESTS(429, "请求过于频繁"),
+    SERVICE_UNAVAILABLE(503, "服务暂不可用"),
     INTERNAL_ERROR(500, "系统繁忙"),
 
     MENU_NOT_FOUND(10001, "菜单不存在"),

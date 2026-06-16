@@ -68,7 +68,10 @@ export const API = {
       UPLOAD: '/sys/file/upload',
       BY_ID: (id) => `/sys/file/${id}`,
       BATCH: '/sys/file/batch',
-      DOWNLOAD: (id) => `/api/sys/file/download/${id}`,
+      DOWNLOAD: (id) => `/api/v1/sys/file/download/${id}`,
+    },
+    NOTIFICATION: {
+      STREAM: '/api/v1/notification/stream',
     },
     PERMISSION_REQUEST: {
       CRUD: '/sys/permission-request',
@@ -255,6 +258,20 @@ export const API = {
     },
   },
 
+  // ==================== 音频转写 ====================
+  AUDIO: {
+    TRANSCRIPTION: {
+      PAGE: '/audio/transcription/page',
+      UPLOAD_ONLY: '/audio/transcription/upload-only',
+      UPLOAD: '/audio/transcription/upload',
+      TRANSCRIBE: (id) => `/audio/transcription/${id}/transcribe`,
+      BASE: '/audio/transcription',
+      BY_ID: (id) => `/audio/transcription/${id}`,
+      FILE_NAME: (id) => `/audio/transcription/${id}/file-name`,
+      BATCH_DELETE: (ids) => `/audio/transcription/batch/${ids}`,
+    },
+  },
+
   // ==================== 音乐 ====================
   MUSIC: {
     SCAN: '/music/scan',
@@ -267,10 +284,36 @@ export const API = {
     FOLDER: '/music/folder',
   },
 
+  // ==================== 视频播放 ====================
+  VIDEO: {
+    TRANSCRIPTION: {
+      PAGE: '/video/transcription/page',
+      UPLOAD_ONLY: '/video/transcription/upload-only',
+      TRANSCRIBE: (id) => `/video/transcription/${id}/transcribe`,
+      BASE: '/video/transcription',
+      BY_ID: (id) => `/video/transcription/${id}`,
+      FILE_NAME: (id) => `/video/transcription/${id}/file-name`,
+      BATCH_DELETE: (ids) => `/video/transcription/batch/${ids}`,
+      SPEAKER_NAME: (id) => `/video/transcription/${id}/speaker-name`,
+    },
+    PLAYER: {
+      SCAN: '/video/player/scan',
+      LIST: '/video/player/list',
+      DETAIL: (id) => `/video/player/${id}`,
+      RECORD: '/video/player/record',
+      STATS: '/video/player/stats',
+      RECENT: '/video/player/recent',
+      DELETE: (id) => `/video/player/${id}`,
+      FOLDER: '/video/player/folder',
+      STREAM: (id) => `/api/v1/video/player/stream/${id}`,
+    },
+  },
+
   // ==================== AS400 ====================
   AS400: {
     OBJECTS_BY_LIB: (lib) => `/as400/objects/${lib}`,
     OBJECTS: '/as400/objects',
+    ANALYSIS: '/as400/analysis',
   },
 
   // ==================== IService ====================
@@ -307,6 +350,15 @@ export const API = {
       MODE_GET: '/system/ip-rule/mode',
       MODE_SET: '/system/ip-rule/mode',
     },
+  },
+
+  // ==================== OCR 文档识别 ====================
+  OCR: {
+    RECOGNIZE: '/ocr/recognize',
+    PAGE: '/ocr/page',
+    BY_ID: (id) => `/ocr/${id}`,
+    DOWNLOAD: (id) => `/ocr/${id}/download`,
+    BATCH: '/ocr/batch',
   },
 
   // ==================== 经典文学（四大名著 + 文学库） ====================

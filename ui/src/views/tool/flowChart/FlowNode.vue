@@ -19,6 +19,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'FlowNode' })
 import { computed } from 'vue'
 import { Handle, Position } from '@vue-flow/core'
 

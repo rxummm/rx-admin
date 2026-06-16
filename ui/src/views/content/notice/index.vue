@@ -57,6 +57,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-empty v-if="!loading && sortedTableData.length === 0" />
 
       <el-pagination
         v-model:current-page="page" v-model:page-size="size" :total="total"

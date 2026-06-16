@@ -1,5 +1,6 @@
 package com.rx.admin.modules.monitor.dashboard.controller;
 
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.common.entity.LiteraryWork;
 import com.rx.admin.modules.literature.common.entity.Author;
@@ -31,12 +32,7 @@ import com.rx.admin.modules.literature.shuihu.service.ShuihuChapterService;
 import com.rx.admin.modules.tool.music.service.MusicService;
 import com.rx.admin.modules.as400.techblog.entity.TechBlogArticle;
 import com.rx.admin.modules.as400.techblog.service.ITechBlogArticleService;
-import com.rx.admin.modules.monitor.loginlog.mapper.SysLoginLogMapper;
-import com.rx.admin.modules.monitor.exportlog.mapper.SysExportLogMapper;
-import com.rx.admin.modules.monitor.exportlog.entity.SysExportLog;
-import com.rx.admin.modules.monitor.log.mapper.SysLogMapper;
-import com.rx.admin.modules.monitor.log.entity.SysLog;
-import com.rx.admin.modules.monitor.loginlog.entity.SysLoginLog;
+import com.rx.admin.modules.monitor.dashboard.service.DashboardEnhancedService;
 import com.rx.admin.modules.monitor.health.service.HealthService;
 import com.rx.admin.modules.monitor.notification.service.SseSessionManager;
 import com.rx.admin.modules.monitor.notification.service.DashboardCache;
@@ -52,10 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.PostConstruct;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -67,8 +59,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Tag(name = "仪表盘")
 @RestController
-@RequestMapping("/api/dashboard")
+@ApiVersion(1)
+@RequestMapping("/dashboard")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class DashboardController {
 
     private final ISysUserService userService;
@@ -84,10 +78,8 @@ public class DashboardController {
     private final SseSessionManager sseSessionManager;
     private final DashboardCache dashboardCache;
 
-    // 增强统计（原 EnhancedController 合并）
-    private final SysLoginLogMapper loginLogMapper;
-    private final SysExportLogMapper exportLogMapper;
-    private final SysLogMapper sysLogMapper;
+    // 增强统计
+    private final DashboardEnhancedService dashboardEnhancedService;
     private final HealthService healthService;
 
     // 经典文学模块
@@ -181,6 +173,9 @@ public class DashboardController {
             case DashboardChangeEvent.SECTION_ALL:
                 dashboardCache.markAllDirty();
                 computeAndPushAll();
+                break;
+            default:
+                log.warn("未知的仪表盘区域: {}", event.getSection());
                 break;
         }
     }
@@ -406,73 +401,10 @@ public class DashboardController {
     }
 
     /**
-     * 计算增强统计（原 EnhancedController 合并）
+     * 计算增强统计
      */
     private Map<String, Object> computeEnhanced() {
-        Map<String, Object> data = new LinkedHashMap<>();
-
-        // 登录统计
-        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
-        var loginQw = new LambdaQueryWrapper<SysLoginLog>();
-        data.put("todayLogins", loginLogMapper.selectCount(
-            loginQw.ge(SysLoginLog::getLoginTime, todayStart).eq(SysLoginLog::getStatus, 1)));
-        data.put("todayFailLogins", loginLogMapper.selectCount(
-            new LambdaQueryWrapper<SysLoginLog>()
-                .ge(SysLoginLog::getLoginTime, todayStart)
-                .eq(SysLoginLog::getStatus, 0)));
-        LocalDateTime sevenDaysAgo = LocalDate.now().minusDays(6).atStartOfDay();
-        var trendQuery = new QueryWrapper<SysLoginLog>()
-            .select("DATE(login_time) as date", "COUNT(*) as count")
-            .ge("login_time", sevenDaysAgo)
-            .eq("status", 1)
-            .groupBy("DATE(login_time)")
-            .orderByAsc("DATE(login_time)");
-        List<Map<String, Object>> trendData = loginLogMapper.selectMaps(trendQuery);
-        Map<String, Long> trendMap = new LinkedHashMap<>();
-        for (int i = 6; i >= 0; i--) {
-            String date = LocalDate.now().minusDays(i).toString();
-            trendMap.put(date, 0L);
-        }
-        for (Map<String, Object> row : trendData) {
-            Object dateObj = row.get("date");
-            Object countObj = row.get("count");
-            if (dateObj != null && countObj != null) {
-                trendMap.put(dateObj.toString(), ((Number) countObj).longValue());
-            }
-        }
-        data.put("trend", trendMap);
-
-        // 导出统计
-        Map<String, Object> exportData = new LinkedHashMap<>();
-        exportData.put("totalExports", exportLogMapper.selectCount(null));
-        exportData.put("todayExcelExports", exportLogMapper.selectCount(
-            new LambdaQueryWrapper<SysExportLog>()
-                .ge(SysExportLog::getCreateTime, todayStart)
-                .eq(SysExportLog::getExportType, "excel")));
-        exportData.put("todayPdfExports", exportLogMapper.selectCount(
-            new LambdaQueryWrapper<SysExportLog>()
-                .ge(SysExportLog::getCreateTime, todayStart)
-                .eq(SysExportLog::getExportType, "pdf")));
-        data.put("exportStats", exportData);
-
-        // 操作日志 Top10
-        var topQuery = new QueryWrapper<SysLog>()
-            .select("operation", "COUNT(*) as count")
-            .ge("create_time", todayStart)
-            .groupBy("operation")
-            .orderByDesc("count")
-            .last("LIMIT 10");
-        List<Map<String, Object>> rows = sysLogMapper.selectMaps(topQuery);
-        List<Map<String, Object>> opTop10 = new ArrayList<>();
-        for (Map<String, Object> row : rows) {
-            Map<String, Object> item = new LinkedHashMap<>();
-            item.put("operation", row.get("operation"));
-            item.put("count", ((Number) row.get("count")).longValue());
-            opTop10.add(item);
-        }
-        data.put("operationTop10", opTop10);
-
-        return data;
+        return dashboardEnhancedService.computeEnhanced();
     }
 
     @Operation(summary = "获取统计数据（读取 @Scheduled 缓存，30秒刷新间隔；在线人数实时计算）")

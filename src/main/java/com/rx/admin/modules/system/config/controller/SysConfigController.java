@@ -1,6 +1,7 @@
 package com.rx.admin.modules.system.config.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
@@ -23,8 +24,10 @@ import java.util.stream.Collectors;
 
 @Tag(name = "系统配置")
 @RestController
-@RequestMapping("/api/system/config")
+@ApiVersion(1)
+@RequestMapping("/system/config")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class SysConfigController {
 
     private final ISysConfigService configService;

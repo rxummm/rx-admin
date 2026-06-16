@@ -14,8 +14,8 @@ export function useNotificationSse() {
     try {
       const token = tokenStore.get()
       const url = token
-        ? '/api/notification/stream?Authorization=' + encodeURIComponent(token)
-        : '/api/notification/stream'
+        ? '/api/v1/notification/stream?Authorization=' + encodeURIComponent(token)
+        : '/api/v1/notification/stream'
       eventSource = new EventSource(url)
       eventSource.onopen = () => { connected.value = true }
       eventSource.onerror = () => { connected.value = false }
