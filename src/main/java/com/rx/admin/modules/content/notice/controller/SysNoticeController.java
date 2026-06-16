@@ -3,12 +3,13 @@ package com.rx.admin.modules.content.notice.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.content.notice.entity.SysNotice;
 import com.rx.admin.modules.content.notice.dto.NoticeCreateDTO;
 import com.rx.admin.modules.content.notice.dto.NoticeUpdateDTO;
-import com.rx.admin.modules.content.notice.service.SysNoticeService;
+import com.rx.admin.modules.content.notice.service.ISysNoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SysNoticeController {
 
-    private final SysNoticeService sysNoticeService;
+    private final ISysNoticeService sysNoticeService;
 
     @Operation(summary = "分页查询通知公告")
     @GetMapping("/page")
@@ -57,7 +58,7 @@ public class SysNoticeController {
 
     @Operation(summary = "新增通知")
     @PostMapping
-    @SaCheckPermission("content:notice:add")
+    @SaCheckPermission(PermissionConstants.Content.NOTICE_ADD)
     @OperateLog(module = "通知公告", operation = "新增通知")
     public Result<Void> add(@RequestBody @Valid NoticeCreateDTO dto) {
         sysNoticeService.addNotice(dto);
@@ -66,7 +67,7 @@ public class SysNoticeController {
 
     @Operation(summary = "修改通知")
     @PutMapping
-    @SaCheckPermission("content:notice:edit")
+    @SaCheckPermission(PermissionConstants.Content.NOTICE_EDIT)
     @OperateLog(module = "通知公告", operation = "修改通知")
     public Result<Void> update(@RequestBody @Valid NoticeUpdateDTO dto) {
         sysNoticeService.updateNotice(dto);
@@ -75,7 +76,7 @@ public class SysNoticeController {
 
     @Operation(summary = "删除通知")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("content:notice:delete")
+    @SaCheckPermission(PermissionConstants.Content.NOTICE_DELETE)
     @OperateLog(module = "通知公告", operation = "删除通知")
     public Result<Void> delete(@PathVariable Long id) {
         sysNoticeService.removeById(id);

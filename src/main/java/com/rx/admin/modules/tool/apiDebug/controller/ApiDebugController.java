@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.apiDebug.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +26,7 @@ public class ApiDebugController {
 
     @Operation(summary = "查询所有API端点")
     @GetMapping("/endpoints")
-    @SaCheckPermission("tool:api-debug:list")
+    @SaCheckPermission(PermissionConstants.Tool.API_DEBUG_LIST)
     public Result<List<Map<String, Object>>> endpoints() {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMapping.getHandlerMethods().entrySet()) {

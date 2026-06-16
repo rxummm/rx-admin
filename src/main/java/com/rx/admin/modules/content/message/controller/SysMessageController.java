@@ -5,7 +5,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.content.message.entity.SysMessage;
-import com.rx.admin.modules.content.message.service.SysMessageService;
+
+import com.rx.admin.modules.content.message.service.ISysMessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SysMessageController {
 
-    private final SysMessageService messageService;
+    private final ISysMessageService messageService;
 
     @GetMapping("/page")
     @Operation(summary = "消息分页查询（管理员可看全部，普通用户只看自己的）")

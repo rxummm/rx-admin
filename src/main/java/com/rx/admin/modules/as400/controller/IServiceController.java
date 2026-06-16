@@ -1,5 +1,6 @@
 package com.rx.admin.modules.as400.controller;
 
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.as400.service.IServiceCategoryService;
 import com.rx.admin.modules.as400.convert.IServiceCategoryConvert;
@@ -35,7 +36,7 @@ public class IServiceController {
     public Result<IServiceCategoryVO> getCategory(@PathVariable String code) {
         var category = categoryService.getByCodeWithItems(code);
         if (category == null) {
-            return Result.fail(404, "分类不存在: " + code);
+            return Result.fail(ErrorCode.NOT_FOUND, "分类不存在: " + code);
         }
         return Result.ok(categoryConvert.toVO(category));
     }
@@ -45,7 +46,7 @@ public class IServiceController {
     public Result<?> getItemDetail(@PathVariable Long id) {
         var item = categoryService.getItemDetail(id);
         if (item == null) {
-            return Result.fail(404, "服务不存在: " + id);
+            return Result.fail(ErrorCode.NOT_FOUND, "服务不存在: " + id);
         }
         return Result.ok(itemConvert.toVO(item));
     }

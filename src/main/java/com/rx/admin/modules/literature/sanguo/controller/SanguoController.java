@@ -3,6 +3,7 @@ package com.rx.admin.modules.literature.sanguo.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.sanguo.vo.SanguoPoemVO;
@@ -71,7 +72,7 @@ public class SanguoController {
 
     @Operation(summary = "新增SanguoPoem")
     @PostMapping("/poem")
-    @SaCheckPermission("classics:sanguo:poem:add")
+    @SaCheckPermission(PermissionConstants.Sanguo.POEM_ADD)
     @OperateLog(module = "三国演义数据", operation = "新增SanguoPoem")
     public Result<?> poemServiceAdd(@RequestBody @Valid SanguoPoemCreateDTO dto) {
         poemService.save(poemConvert.toEntity(dto));
@@ -80,7 +81,7 @@ public class SanguoController {
 
     @Operation(summary = "编辑SanguoPoem")
     @PutMapping("/poem")
-    @SaCheckPermission("classics:sanguo:poem:edit")
+    @SaCheckPermission(PermissionConstants.Sanguo.POEM_EDIT)
     @OperateLog(module = "三国演义数据", operation = "编辑SanguoPoem")
     public Result<?> poemServiceUpdate(@RequestBody @Valid SanguoPoemUpdateDTO dto) {
         SanguoPoem entity = poemService.getById(dto.getId());
@@ -91,7 +92,7 @@ public class SanguoController {
 
     @Operation(summary = "删除SanguoPoem")
     @DeleteMapping("/poem/{id}")
-    @SaCheckPermission("classics:sanguo:poem:delete")
+    @SaCheckPermission(PermissionConstants.Sanguo.POEM_DELETE)
     @OperateLog(module = "三国演义数据", operation = "删除SanguoPoem")
     public Result<?> poemServiceDelete(@PathVariable Long id) {
         poemService.removeById(id);
@@ -100,7 +101,7 @@ public class SanguoController {
 
     @Operation(summary = "批量删除SanguoPoem")
     @DeleteMapping("/poem/batch")
-    @SaCheckPermission("classics:sanguo:poem:delete")
+    @SaCheckPermission(PermissionConstants.Sanguo.POEM_DELETE)
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -135,7 +136,7 @@ public class SanguoController {
 
     @Operation(summary = "新增SanguoCharacter")
     @PostMapping("/character")
-    @SaCheckPermission("classics:sanguo:character:add")
+    @SaCheckPermission(PermissionConstants.Sanguo.CHARACTER_ADD)
     @OperateLog(module = "三国演义数据", operation = "新增SanguoCharacter")
     public Result<?> characterServiceAdd(@RequestBody @Valid SanguoCharacterCreateDTO dto) {
         characterService.save(characterConvert.toEntity(dto));
@@ -144,7 +145,7 @@ public class SanguoController {
 
     @Operation(summary = "编辑SanguoCharacter")
     @PutMapping("/character")
-    @SaCheckPermission("classics:sanguo:character:edit")
+    @SaCheckPermission(PermissionConstants.Sanguo.CHARACTER_EDIT)
     @OperateLog(module = "三国演义数据", operation = "编辑SanguoCharacter")
     public Result<?> characterServiceUpdate(@RequestBody @Valid SanguoCharacterUpdateDTO dto) {
         SanguoCharacter entity = characterService.getById(dto.getId());
@@ -155,7 +156,7 @@ public class SanguoController {
 
     @Operation(summary = "删除SanguoCharacter")
     @DeleteMapping("/character/{id}")
-    @SaCheckPermission("classics:sanguo:character:delete")
+    @SaCheckPermission(PermissionConstants.Sanguo.CHARACTER_DELETE)
     @OperateLog(module = "三国演义数据", operation = "删除SanguoCharacter")
     public Result<?> characterServiceDelete(@PathVariable Long id) {
         characterService.removeById(id);
@@ -164,7 +165,7 @@ public class SanguoController {
 
     @Operation(summary = "批量删除SanguoCharacter")
     @DeleteMapping("/character/batch")
-    @SaCheckPermission("classics:sanguo:character:delete")
+    @SaCheckPermission(PermissionConstants.Sanguo.CHARACTER_DELETE)
     public Result<?> characterServiceBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();

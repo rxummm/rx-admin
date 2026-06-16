@@ -1,6 +1,8 @@
 package com.rx.admin.modules.as400.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.as400.vo.As400ObjectVO;
 import com.rx.admin.modules.as400.service.As400Service;
@@ -28,20 +30,20 @@ public class As400Controller {
 
     @Operation(summary = "查询指定Library下的所有Object")
     @GetMapping("/objects/{library}")
-    @SaCheckPermission("as400:objects:query")
+    @SaCheckPermission(PermissionConstants.As400.OBJECTS_QUERY)
     public Result<List<As400ObjectVO>> listObjects(@PathVariable String library) {
         try {
             List<As400ObjectVO> objects = as400Service.listObjects(library);
             return Result.ok(objects);
         } catch (LibraryNotFoundException e) {
             log.warn("库不存在: {}", library);
-            return Result.fail(404, e.getMessage());
+            return Result.fail(ErrorCode.NOT_FOUND, e.getMessage());
         }
     }
 
     @Operation(summary = "查询所有Library下的Object")
     @GetMapping("/objects")
-    @SaCheckPermission("as400:objects:query")
+    @SaCheckPermission(PermissionConstants.As400.OBJECTS_QUERY)
     public Result<List<As400ObjectVO>> listAllObjects(
             @RequestParam(defaultValue = "A7RXUZZ1,A7RXUZZ2,A7RXUZZB") String libraries) {
         List<String> libList = Arrays.asList(libraries.split(","));

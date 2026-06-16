@@ -12,6 +12,7 @@
  * } = useTablePage(fetchApi, { columns, defaultSize: 10 })
  */
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ElMessage } from 'element-plus'
 
 const TABLE_ROW_HEIGHT = Number(import.meta.env.VITE_TABLE_ROW_HEIGHT) || 48
 const TABLE_PADDING = Number(import.meta.env.VITE_TABLE_PADDING) || 120
@@ -137,6 +138,13 @@ export function useTablePage(fetchApi, options = {}) {
       tableData.value = data.records || []
       total.value = data.total || 0
       selectedIds.value = []
+    } catch (error) {
+      console.error('Table data fetch failed:', error)
+      if (!error.message?.includes('canceled')) {
+        ElMessage.error('数据加载失败')
+      }
+      tableData.value = []
+      total.value = 0
     } finally {
       loading.value = false
     }

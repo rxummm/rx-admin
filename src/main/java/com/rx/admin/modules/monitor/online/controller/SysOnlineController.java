@@ -2,6 +2,7 @@ package com.rx.admin.modules.monitor.online.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.online.service.OnlineUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +41,7 @@ public class SysOnlineController {
 
     @Operation(summary = "踢出在线用户")
     @DeleteMapping("/{tokenValue}")
-    @SaCheckPermission("monitor:online:kick")
+    @SaCheckPermission(PermissionConstants.Monitor.ONLINE_KICK)
     public Result<Void> kickOut(@PathVariable String tokenValue) {
         // Sa-Token 踢出
         StpUtil.kickoutByTokenValue(tokenValue);

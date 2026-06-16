@@ -10,7 +10,7 @@ import com.rx.admin.modules.tool.commonTools.service.CommonToolsService;
 import com.rx.admin.modules.tool.commonTools.service.EmailService;
 import com.rx.admin.modules.tool.commonTools.convert.SharedFileConvert;
 import com.rx.admin.modules.tool.commonTools.vo.SharedFileVO;
-import com.rx.admin.modules.system.user.service.SysUserService;
+import com.rx.admin.modules.system.user.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +33,14 @@ public class CommonToolsController {
 
     private final CommonToolsService commonToolsService;
     private final EmailService emailService;
-    private final SysUserService sysUserService;
+    private final ISysUserService sysUserService;
     private final SharedFileConvert sharedFileConvert;
 
     @Value("${common-tools.upload.dir:D:/vueprojects/RX/ui/public/shareddocs}")
     private String uploadDir;
 
     public CommonToolsController(CommonToolsService commonToolsService, EmailService emailService,
-                                  SysUserService sysUserService, SharedFileConvert sharedFileConvert) {
+                                  ISysUserService sysUserService, SharedFileConvert sharedFileConvert) {
         this.commonToolsService = commonToolsService;
         this.emailService = emailService;
         this.sysUserService = sysUserService;

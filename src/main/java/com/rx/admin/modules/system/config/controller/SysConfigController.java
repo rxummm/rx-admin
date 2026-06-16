@@ -2,11 +2,12 @@ package com.rx.admin.modules.system.config.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.config.entity.SysConfig;
 import com.rx.admin.modules.system.config.dto.ConfigCreateDTO;
 import com.rx.admin.modules.system.config.dto.ConfigUpdateDTO;
-import com.rx.admin.modules.system.config.service.SysConfigService;
+import com.rx.admin.modules.system.config.service.ISysConfigService;
 import com.rx.admin.modules.system.config.convert.ConfigConvert;
 import com.rx.admin.modules.system.config.vo.ConfigVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysConfigController {
 
-    private final SysConfigService configService;
+    private final ISysConfigService configService;
     private final ConfigConvert configConvert;
 
     @Operation(summary = "获取所有配置（按分组）")
@@ -52,7 +53,7 @@ public class SysConfigController {
 
     @Operation(summary = "更新配置值")
     @PutMapping("/value/{key}")
-    @SaCheckPermission("system:config:edit")
+    @SaCheckPermission(PermissionConstants.Config.EDIT)
     @OperateLog(module = "系统配置", operation = "更新配置")
     @CacheEvict(value = "config", allEntries = true)
     public Result<Void> updateValue(@PathVariable String key, @RequestBody Map<String, String> body) {
@@ -62,7 +63,7 @@ public class SysConfigController {
 
     @Operation(summary = "新增配置")
     @PostMapping
-    @SaCheckPermission("system:config:add")
+    @SaCheckPermission(PermissionConstants.Config.ADD)
     @OperateLog(module = "系统配置", operation = "新增配置")
     @CacheEvict(value = "config", allEntries = true)
     public Result<Void> add(@RequestBody @Valid ConfigCreateDTO dto) {
@@ -72,7 +73,7 @@ public class SysConfigController {
 
     @Operation(summary = "更新配置")
     @PutMapping
-    @SaCheckPermission("system:config:edit")
+    @SaCheckPermission(PermissionConstants.Config.EDIT)
     @OperateLog(module = "系统配置", operation = "更新配置")
     @CacheEvict(value = "config", allEntries = true)
     public Result<Void> update(@RequestBody @Valid ConfigUpdateDTO dto) {
@@ -82,7 +83,7 @@ public class SysConfigController {
 
     @Operation(summary = "删除配置")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("system:config:delete")
+    @SaCheckPermission(PermissionConstants.Config.DELETE)
     @OperateLog(module = "系统配置", operation = "删除配置")
     @CacheEvict(value = "config", allEntries = true)
     public Result<Void> delete(@PathVariable Long id) {

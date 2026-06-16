@@ -1,22 +1,23 @@
 import request from '@/utils/request'
+import { API } from './routes'
 
 export function getConfigGrouped() {
   return request({
-    url: '/system/config/grouped',
+    url: API.SYS.CONFIG.GROUPED,
     method: 'get'
   })
 }
 
 export function getConfigValue(key) {
   return request({
-    url: `/system/config/value/${key}`,
+    url: API.SYS.CONFIG.VALUE_BY_KEY(key),
     method: 'get'
   })
 }
 
 export function getConfigValues(keys) {
   return request({
-    url: '/system/config/values',
+    url: API.SYS.CONFIG.VALUES,
     method: 'post',
     data: keys
   })
@@ -24,7 +25,7 @@ export function getConfigValues(keys) {
 
 export function updateConfigValue(key, value) {
   return request({
-    url: `/system/config/value/${key}`,
+    url: API.SYS.CONFIG.VALUE_BY_KEY(key),
     method: 'put',
     data: { value }
   })
@@ -32,7 +33,7 @@ export function updateConfigValue(key, value) {
 
 export function addConfig(data) {
   return request({
-    url: '/system/config',
+    url: API.SYS.CONFIG.CRUD,
     method: 'post',
     data
   })
@@ -40,7 +41,7 @@ export function addConfig(data) {
 
 export function updateConfig(data) {
   return request({
-    url: '/system/config',
+    url: API.SYS.CONFIG.CRUD,
     method: 'put',
     data
   })
@@ -48,7 +49,7 @@ export function updateConfig(data) {
 
 export function deleteConfig(id) {
   return request({
-    url: `/system/config/${id}`,
+    url: API.SYS.CONFIG.BY_ID(id),
     method: 'delete'
   })
 }

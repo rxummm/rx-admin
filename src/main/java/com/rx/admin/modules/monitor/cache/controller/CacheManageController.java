@@ -1,6 +1,7 @@
 package com.rx.admin.modules.monitor.cache.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,7 +62,7 @@ public class CacheManageController {
             cache.clear();
             return Result.ok("缓存 " + cacheName + " 已清除", null);
         }
-        return Result.fail(404, "缓存不存在");
+        return Result.fail(ErrorCode.NOT_FOUND, "缓存不存在");
     }
 
     @Operation(summary = "清除所有缓存")

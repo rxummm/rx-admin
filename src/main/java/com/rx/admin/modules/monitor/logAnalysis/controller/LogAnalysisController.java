@@ -1,6 +1,7 @@
 package com.rx.admin.modules.monitor.logAnalysis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.log.entity.SysLog;
 import com.rx.admin.modules.monitor.log.mapper.SysLogMapper;
@@ -24,7 +25,7 @@ public class LogAnalysisController {
 
     @Operation(summary = "获取日志分析摘要")
     @GetMapping("/summary")
-    @SaCheckPermission("monitor:log-analysis:list")
+    @SaCheckPermission(PermissionConstants.Monitor.LOG_ANALYSIS_LIST)
     public Result<Map<String, Object>> summary() {
         List<SysLog> today = sysLogMapper.selectList(
             new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysLog>()
@@ -43,7 +44,7 @@ public class LogAnalysisController {
 
     @Operation(summary = "获取小时级日志分布")
     @GetMapping("/hourly")
-    @SaCheckPermission("monitor:log-analysis:list")
+    @SaCheckPermission(PermissionConstants.Monitor.LOG_ANALYSIS_LIST)
     public Result<List<Map<String, Object>>> hourly() {
         List<SysLog> today = sysLogMapper.selectList(
             new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysLog>()
@@ -63,7 +64,7 @@ public class LogAnalysisController {
 
     @Operation(summary = "获取操作类型分布")
     @GetMapping("/type-distribution")
-    @SaCheckPermission("monitor:log-analysis:list")
+    @SaCheckPermission(PermissionConstants.Monitor.LOG_ANALYSIS_LIST)
     public Result<List<Map<String, Object>>> typeDistribution() {
         List<SysLog> all = sysLogMapper.selectList(null);
         return Result.ok(all.stream().filter(l -> l.getOperation() != null)
@@ -75,7 +76,7 @@ public class LogAnalysisController {
 
     @Operation(summary = "获取日志趋势")
     @GetMapping("/trend")
-    @SaCheckPermission("monitor:log-analysis:list")
+    @SaCheckPermission(PermissionConstants.Monitor.LOG_ANALYSIS_LIST)
     public Result<List<Map<String, Object>>> trend(@RequestParam(defaultValue = "7") int days) {
         List<Map<String, Object>> result = new ArrayList<>();
         for (int i = days - 1; i >= 0 ; i--) {

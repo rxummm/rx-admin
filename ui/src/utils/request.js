@@ -6,6 +6,7 @@ import { formatResponseData } from './index'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import { getActivePinia } from 'pinia'
 import { API } from '@/api/routes'
+import { ERROR_CODE, isBusinessError, isUnauthorized, isForbidden } from '@/constants/errorCode'
 import {
   performanceRequestInterceptor,
   performanceResponseSuccessInterceptor,
@@ -18,6 +19,21 @@ const rolesStore = useStorage(STORAGE_KEYS.ROLES)
 const permsStore = useStorage(STORAGE_KEYS.PERMS)
 const menusStore = useStorage(STORAGE_KEYS.MENUS)
 
+const pendingRequests = new Map()
+
+function generateRequestKey(config) {
+  const { method, url, params, data } = config
+  return `${method}:${url}:${JSON.stringify(params)}:${JSON.stringify(data)}`
+}
+
+function cancelPendingRequest(key) {
+  const pending = pendingRequests.get(key)
+  if (pending) {
+    pending.abort()
+    pendingRequests.delete(key)
+  }
+}
+
 const request = axios.create({
   baseURL: '/api',
   timeout: Number(import.meta.env.VITE_API_REQUEST_TIMEOUT) || 15000
@@ -26,17 +42,27 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   config => {
-    // 性能监控：记录请求开始时间
+    if (config._skipCancel) {
+      if (!config._skipNProgress) {
+        NProgress.start()
+      }
+    } else {
+      const key = generateRequestKey(config)
+      cancelPendingRequest(key)
+      const controller = new AbortController()
+      config.signal = controller.signal
+      pendingRequests.set(key, controller)
+      if (!config._skipNProgress) {
+        NProgress.start()
+      }
+    }
+
     performanceRequestInterceptor(config)
     
-    if (!config._skipNProgress) {
-      NProgress.start()
-    }
     const token = tokenStore.get()
     if (token) {
       config.headers['Authorization'] = token
     }
-    // 非 GET 请求自动添加防重放头（X-Timestamp + X-Nonce）
     if (config.method && config.method.toLowerCase() !== 'get' && config.method.toLowerCase() !== 'head') {
       if (!config.headers['X-Timestamp']) {
         config.headers['X-Timestamp'] = String(Date.now())
@@ -140,7 +166,11 @@ function showKickOutOverlay() {
 // 响应拦截器
 request.interceptors.response.use(
   response => {
-    // 性能监控：记录成功响应
+    if (!response.config._skipCancel) {
+      const key = generateRequestKey(response.config)
+      pendingRequests.delete(key)
+    }
+    
     performanceResponseSuccessInterceptor(response)
     
     NProgress.done()
@@ -149,7 +179,7 @@ request.interceptors.response.use(
       return response.data
     }
     const res = response.data
-    if (res.code === 401) {
+    if (res.code === ERROR_CODE.UNAUTHORIZED) {
       if (res.message === 'KICK_OUT') {
         showKickOutOverlay()
       } else {
@@ -159,21 +189,31 @@ request.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message))
     }
-    if (res.code !== 200) {
-      ElMessage.error(res.message || '请求失败')
+    if (res.code !== ERROR_CODE.SUCCESS) {
+      // 业务错误时可以根据需要精准处理
+      if (isBusinessError(res.code)) {
+        // 业务错误码统一提示
+        ElMessage.error(res.message || '操作失败')
+      } else {
+        ElMessage.error(res.message || '请求失败')
+      }
       return Promise.reject(new Error(res.message))
     }
     // 自动格式化时间字段（去掉 ISO 时间中的 T 分隔符）
     return formatResponseData(res)
   },
   error => {
-    // 性能监控：记录失败响应
+    if (!error.config?._skipCancel && error.config) {
+      const key = generateRequestKey(error.config)
+      pendingRequests.delete(key)
+    }
+    
     performanceResponseErrorInterceptor(error)
     
     NProgress.done()
     const status = error.response?.status
     const data = error.response?.data
-    if (status === 401) {
+    if (isUnauthorized(status)) {
       if (data?.message === 'KICK_OUT') {
         showKickOutOverlay()
       } else {
@@ -181,7 +221,7 @@ request.interceptors.response.use(
         window.location.replace('/login')
         ElMessage.error('登录已过期，请重新登录')
       }
-    } else if (status === 403) {
+    } else if (isForbidden(status)) {
       // 静默处理：普通用户访问受限资源时不弹错误提示
     } else {
       ElMessage.error(error.message || '网络错误')

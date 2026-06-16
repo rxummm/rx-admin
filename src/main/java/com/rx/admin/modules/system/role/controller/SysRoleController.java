@@ -2,10 +2,11 @@ package com.rx.admin.modules.system.role.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.role.dto.RoleCreateDTO;
 import com.rx.admin.modules.system.role.dto.RoleUpdateDTO;
-import com.rx.admin.modules.system.role.service.SysRoleService;
+import com.rx.admin.modules.system.role.service.ISysRoleService;
 import com.rx.admin.modules.system.role.convert.RoleConvert;
 import com.rx.admin.modules.system.role.vo.RoleVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,24 +21,24 @@ import java.util.List;
 @RequestMapping("/api/sys/role")
 public class SysRoleController {
 
-    private final SysRoleService roleService;
+    private final ISysRoleService roleService;
     private final RoleConvert roleConvert;
 
-    public SysRoleController(SysRoleService roleService, RoleConvert roleConvert) {
+    public SysRoleController(ISysRoleService roleService, RoleConvert roleConvert) {
         this.roleService = roleService;
         this.roleConvert = roleConvert;
     }
 
     @Operation(summary = "角色列表")
     @GetMapping("/list")
-    @SaCheckPermission("sys:role:query")
+    @SaCheckPermission(PermissionConstants.Role.QUERY)
     public Result<List<RoleVO>> list() {
         return Result.ok(roleConvert.toVOList(roleService.listAll()));
     }
 
     @Operation(summary = "新增角色")
     @PostMapping
-    @SaCheckPermission("sys:role:add")
+    @SaCheckPermission(PermissionConstants.Role.ADD)
     @OperateLog(module = "角色管理", operation = "新增角色")
     public Result<?> add(@RequestBody @Valid RoleCreateDTO dto) {
         roleService.addRole(dto);
@@ -46,7 +47,7 @@ public class SysRoleController {
 
     @Operation(summary = "修改角色")
     @PutMapping
-    @SaCheckPermission("sys:role:edit")
+    @SaCheckPermission(PermissionConstants.Role.EDIT)
     @OperateLog(module = "角色管理", operation = "修改角色")
     public Result<?> update(@RequestBody @Valid RoleUpdateDTO dto) {
         roleService.updateRole(dto);
@@ -55,7 +56,7 @@ public class SysRoleController {
 
     @Operation(summary = "删除角色")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("sys:role:delete")
+    @SaCheckPermission(PermissionConstants.Role.DELETE)
     @OperateLog(module = "角色管理", operation = "删除角色")
     public Result<?> delete(@PathVariable Long id) {
         roleService.deleteRole(id);
@@ -64,7 +65,7 @@ public class SysRoleController {
 
     @Operation(summary = "获取角色详情")
     @GetMapping("/{id}")
-    @SaCheckPermission("sys:role:query")
+    @SaCheckPermission(PermissionConstants.Role.QUERY)
     public Result<RoleVO> getById(@PathVariable Long id) {
         return Result.ok(roleConvert.toVO(roleService.getById(id)));
     }

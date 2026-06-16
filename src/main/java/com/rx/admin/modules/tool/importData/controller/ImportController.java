@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.importData.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +19,7 @@ public class ImportController {
 
     @Operation(summary = "分析导入文件")
     @PostMapping("/analyze")
-    @SaCheckPermission("tool:import:list")
+    @SaCheckPermission(PermissionConstants.Tool.IMPORT_LIST)
     public Result<Map<String, Object>> analyze(@RequestParam("file") MultipartFile file,
                                                @RequestParam("tableName") String tableName) {
         try {
@@ -52,7 +53,7 @@ public class ImportController {
 
     @Operation(summary = "执行数据导入")
     @PostMapping("/execute")
-    @SaCheckPermission("tool:import:list")
+    @SaCheckPermission(PermissionConstants.Tool.IMPORT_LIST)
     public Result<Map<String, Object>> execute(@RequestBody Map<String, Object> body) {
         // Simplified: return success count
         List<?> rows = (List<?>) body.getOrDefault("rows", List.of());

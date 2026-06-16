@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.dbConsole.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +29,7 @@ public class DatabaseToolController {
     public Result<?> executeSql(@RequestBody Map<String, Object> body) {
         String sql = (String) body.get("sql");
         if (sql == null || sql.trim().isEmpty()) {
-            return Result.fail(400, "SQL不能为空");
+            return Result.fail(ErrorCode.BAD_REQUEST, "SQL不能为空");
         }
 
         // ⚠️ 安全要求：白名单验证（仅允许只读语句），不再使用黑名单 contains 检查。
@@ -40,7 +41,7 @@ public class DatabaseToolController {
         if (!upperSql.startsWith("SELECT") && !upperSql.startsWith("SHOW")
                 && !upperSql.startsWith("DESCRIBE") && !upperSql.startsWith("DESC")
                 && !upperSql.startsWith("EXPLAIN") && !upperSql.startsWith("WITH")) {
-            return Result.fail(403, "仅支持 SELECT/SHOW/DESCRIBE/EXPLAIN/WITH 等只读语句");
+            return Result.fail(ErrorCode.FORBIDDEN, "仅支持 SELECT/SHOW/DESCRIBE/EXPLAIN/WITH 等只读语句");
         }
 
         try (Connection conn = DataSourceUtils.getConnection(primaryDataSource);
@@ -91,7 +92,7 @@ public class DatabaseToolController {
                 return Result.ok(result);
             }
         } catch (SQLException e) {
-            return Result.fail(500, "SQL执行错误: " + e.getMessage());
+            return Result.fail(ErrorCode.INTERNAL_ERROR, "SQL执行错误: " + e.getMessage());
         }
     }
 
@@ -147,7 +148,7 @@ public class DatabaseToolController {
             }
             return Result.ok(tables);
         } catch (SQLException e) {
-            return Result.fail(500, "获取表列表失败: " + e.getMessage());
+            return Result.fail(ErrorCode.INTERNAL_ERROR, "获取表列表失败: " + e.getMessage());
         }
     }
 
@@ -186,7 +187,7 @@ public class DatabaseToolController {
             result.put("primaryKeys", primaryKeys);
             return Result.ok(result);
         } catch (SQLException e) {
-            return Result.fail(500, "获取表结构失败: " + e.getMessage());
+            return Result.fail(ErrorCode.INTERNAL_ERROR, "获取表结构失败: " + e.getMessage());
         }
     }
 
@@ -205,7 +206,7 @@ public class DatabaseToolController {
             }
             return Result.ok(Map.of("message", "非HikariCP数据源，无法获取详细状态"));
         } catch (Exception e) {
-            return Result.fail(500, "获取连接池状态失败: " + e.getMessage());
+            return Result.fail(ErrorCode.INTERNAL_ERROR, "获取连接池状态失败: " + e.getMessage());
         }
     }
 }

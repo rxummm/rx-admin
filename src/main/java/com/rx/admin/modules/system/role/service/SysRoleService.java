@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> {
+public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
     private static final Logger log = LoggerFactory.getLogger(SysRoleService.class);
 

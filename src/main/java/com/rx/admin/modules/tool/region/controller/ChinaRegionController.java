@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.region.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
@@ -29,7 +30,7 @@ public class ChinaRegionController {
 
     @Operation(summary = "分页查询行政区划")
     @GetMapping("/page")
-    @SaCheckPermission("tool:region:query")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_QUERY)
     public Result<PageResult<ChinaRegionVO>> page(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
@@ -42,14 +43,14 @@ public class ChinaRegionController {
 
     @Operation(summary = "查询下级行政区划")
     @GetMapping("/children")
-    @SaCheckPermission("tool:region:query")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_QUERY)
     public Result<List<ChinaRegionVO>> children(@RequestParam(required = false) String parentCode) {
         return Result.ok(chinaRegionConvert.toVOList(chinaRegionService.listByParentCode(parentCode)));
     }
 
     @Operation(summary = "搜索行政区划")
     @GetMapping("/search")
-    @SaCheckPermission("tool:region:query")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_QUERY)
     public Result<List<ChinaRegionVO>> search(
             @RequestParam String keyword,
             @RequestParam(required = false) Integer level) {
@@ -58,14 +59,14 @@ public class ChinaRegionController {
 
     @Operation(summary = "根据ID查询行政区划")
     @GetMapping("/{id}")
-    @SaCheckPermission("tool:region:query")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_QUERY)
     public Result<ChinaRegionVO> getById(@PathVariable Long id) {
         return Result.ok(chinaRegionConvert.toVO(chinaRegionService.getById(id)));
     }
 
     @Operation(summary = "新增行政区划")
     @PostMapping
-    @SaCheckPermission("tool:region:add")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_ADD)
     public Result<Void> add(@RequestBody @Valid ChinaRegionCreateDTO dto) {
         chinaRegionService.save(chinaRegionConvert.toEntity(dto));
         return Result.ok();
@@ -73,7 +74,7 @@ public class ChinaRegionController {
 
     @Operation(summary = "修改行政区划")
     @PutMapping
-    @SaCheckPermission("tool:region:edit")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_EDIT)
     public Result<Void> update(@RequestBody @Valid ChinaRegionUpdateDTO dto) {
         ChinaRegion entity = chinaRegionService.getById(dto.getId());
         if (entity == null) return Result.fail("记录不存在");
@@ -84,7 +85,7 @@ public class ChinaRegionController {
 
     @Operation(summary = "删除行政区划")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("tool:region:delete")
+    @SaCheckPermission(PermissionConstants.Tool.REGION_DELETE)
     public Result<Void> delete(@PathVariable Long id) {
         ChinaRegion region = chinaRegionService.getById(id);
         if (region != null) {

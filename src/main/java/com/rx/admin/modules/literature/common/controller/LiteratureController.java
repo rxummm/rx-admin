@@ -2,6 +2,7 @@ package com.rx.admin.modules.literature.common.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.common.vo.AuthorVO;
@@ -101,7 +102,7 @@ public class LiteratureController {
 
     @Operation(summary = "新增作者")
     @PostMapping("/author")
-    @SaCheckPermission("classics:literature:author:add")
+    @SaCheckPermission(PermissionConstants.Literature.AUTHOR_ADD)
     public Result<?> authorAdd(@RequestBody @Valid AuthorCreateDTO dto) {
         authorService.save(authorConvert.toEntity(dto));
         return Result.ok();
@@ -109,7 +110,7 @@ public class LiteratureController {
 
     @Operation(summary = "编辑作者")
     @PutMapping("/author")
-    @SaCheckPermission("classics:literature:author:edit")
+    @SaCheckPermission(PermissionConstants.Literature.AUTHOR_EDIT)
     public Result<?> authorUpdate(@RequestBody @Valid AuthorUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Author entity = authorService.getById(dto.getId());
         authorConvert.updateEntity(entity, dto);
@@ -119,7 +120,7 @@ public class LiteratureController {
 
     @Operation(summary = "删除作者")
     @DeleteMapping("/author/{id}")
-    @SaCheckPermission("classics:literature:author:delete")
+    @SaCheckPermission(PermissionConstants.Literature.AUTHOR_DELETE)
     public Result<?> authorDelete(@PathVariable Long id) {
         authorService.removeById(id);
         return Result.ok();
@@ -127,7 +128,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量删除作者")
     @DeleteMapping("/author/batch")
-    @SaCheckPermission("classics:literature:author:delete")
+    @SaCheckPermission(PermissionConstants.Literature.AUTHOR_DELETE)
     public Result<?> authorBatchDelete(@RequestBody List<Long> ids) {
         authorService.removeByIds(ids);
         return Result.ok();
@@ -162,7 +163,7 @@ public class LiteratureController {
 
     @Operation(summary = "新增朝代")
     @PostMapping("/dynasty")
-    @SaCheckPermission("classics:literature:dynasty:add")
+    @SaCheckPermission(PermissionConstants.Literature.DYNASTY_ADD)
     public Result<?> dynastyAdd(@RequestBody @Valid DynastyCreateDTO dto) {
         dynastyService.save(dynastyConvert.toEntity(dto));
         return Result.ok();
@@ -170,7 +171,7 @@ public class LiteratureController {
 
     @Operation(summary = "编辑朝代")
     @PutMapping("/dynasty")
-    @SaCheckPermission("classics:literature:dynasty:edit")
+    @SaCheckPermission(PermissionConstants.Literature.DYNASTY_EDIT)
     public Result<?> dynastyUpdate(@RequestBody @Valid DynastyUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Dynasty entity = dynastyService.getById(dto.getId());
         dynastyConvert.updateEntity(entity, dto);
@@ -180,7 +181,7 @@ public class LiteratureController {
 
     @Operation(summary = "删除朝代")
     @DeleteMapping("/dynasty/{id}")
-    @SaCheckPermission("classics:literature:dynasty:delete")
+    @SaCheckPermission(PermissionConstants.Literature.DYNASTY_DELETE)
     public Result<?> dynastyDelete(@PathVariable Long id) {
         dynastyService.removeById(id);
         return Result.ok();
@@ -188,7 +189,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量删除朝代")
     @DeleteMapping("/dynasty/batch")
-    @SaCheckPermission("classics:literature:dynasty:delete")
+    @SaCheckPermission(PermissionConstants.Literature.DYNASTY_DELETE)
     public Result<?> dynastyBatchDelete(@RequestBody List<Long> ids) {
         dynastyService.removeByIds(ids);
         return Result.ok();
@@ -223,7 +224,7 @@ public class LiteratureController {
 
     @Operation(summary = "新增体裁")
     @PostMapping("/genre")
-    @SaCheckPermission("classics:literature:genre:add")
+    @SaCheckPermission(PermissionConstants.Literature.GENRE_ADD)
     public Result<?> genreAdd(@RequestBody @Valid GenreCreateDTO dto) {
         genreService.save(genreConvert.toEntity(dto));
         return Result.ok();
@@ -231,7 +232,7 @@ public class LiteratureController {
 
     @Operation(summary = "编辑体裁")
     @PutMapping("/genre")
-    @SaCheckPermission("classics:literature:genre:edit")
+    @SaCheckPermission(PermissionConstants.Literature.GENRE_EDIT)
     public Result<?> genreUpdate(@RequestBody @Valid GenreUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.Genre entity = genreService.getById(dto.getId());
         genreConvert.updateEntity(entity, dto);
@@ -241,7 +242,7 @@ public class LiteratureController {
 
     @Operation(summary = "删除体裁")
     @DeleteMapping("/genre/{id}")
-    @SaCheckPermission("classics:literature:genre:delete")
+    @SaCheckPermission(PermissionConstants.Literature.GENRE_DELETE)
     public Result<?> genreDelete(@PathVariable Long id) {
         genreService.removeById(id);
         return Result.ok();
@@ -249,7 +250,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量删除体裁")
     @DeleteMapping("/genre/batch")
-    @SaCheckPermission("classics:literature:genre:delete")
+    @SaCheckPermission(PermissionConstants.Literature.GENRE_DELETE)
     public Result<?> genreBatchDelete(@RequestBody List<Long> ids) {
         genreService.removeByIds(ids);
         return Result.ok();
@@ -284,7 +285,7 @@ public class LiteratureController {
 
     @Operation(summary = "新增内容分类")
     @PostMapping("/category")
-    @SaCheckPermission("classics:literature:category:add")
+    @SaCheckPermission(PermissionConstants.Literature.CATEGORY_ADD)
     public Result<?> categoryAdd(@RequestBody @Valid ContentCategoryCreateDTO dto) {
         contentCategoryService.save(contentCategoryConvert.toEntity(dto));
         return Result.ok();
@@ -292,7 +293,7 @@ public class LiteratureController {
 
     @Operation(summary = "编辑内容分类")
     @PutMapping("/category")
-    @SaCheckPermission("classics:literature:category:edit")
+    @SaCheckPermission(PermissionConstants.Literature.CATEGORY_EDIT)
     public Result<?> categoryUpdate(@RequestBody @Valid ContentCategoryUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.ContentCategory entity = contentCategoryService.getById(dto.getId());
         contentCategoryConvert.updateEntity(entity, dto);
@@ -302,7 +303,7 @@ public class LiteratureController {
 
     @Operation(summary = "删除内容分类")
     @DeleteMapping("/category/{id}")
-    @SaCheckPermission("classics:literature:category:delete")
+    @SaCheckPermission(PermissionConstants.Literature.CATEGORY_DELETE)
     public Result<?> categoryDelete(@PathVariable Long id) {
         contentCategoryService.removeById(id);
         return Result.ok();
@@ -310,7 +311,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量删除内容分类")
     @DeleteMapping("/category/batch")
-    @SaCheckPermission("classics:literature:category:delete")
+    @SaCheckPermission(PermissionConstants.Literature.CATEGORY_DELETE)
     public Result<?> categoryBatchDelete(@RequestBody List<Long> ids) {
         contentCategoryService.removeByIds(ids);
         return Result.ok();
@@ -348,7 +349,7 @@ public class LiteratureController {
 
     @Operation(summary = "新增文学作品")
     @PostMapping("/work")
-    @SaCheckPermission("classics:literature:work:add")
+    @SaCheckPermission(PermissionConstants.Literature.WORK_ADD)
     public Result<?> workAdd(@RequestBody @Valid LiteraryWorkCreateDTO dto) {
         literaryWorkService.saveWithWordCount(literaryWorkConvert.toEntity(dto));
         return Result.ok();
@@ -356,7 +357,7 @@ public class LiteratureController {
 
     @Operation(summary = "编辑文学作品")
     @PutMapping("/work")
-    @SaCheckPermission("classics:literature:work:edit")
+    @SaCheckPermission(PermissionConstants.Literature.WORK_EDIT)
     public Result<?> workUpdate(@RequestBody @Valid LiteraryWorkUpdateDTO dto) {
         com.rx.admin.modules.literature.common.entity.LiteraryWork entity = literaryWorkService.getById(dto.getId());
         literaryWorkConvert.updateEntity(entity, dto);
@@ -366,7 +367,7 @@ public class LiteratureController {
 
     @Operation(summary = "删除文学作品")
     @DeleteMapping("/work/{id}")
-    @SaCheckPermission("classics:literature:work:delete")
+    @SaCheckPermission(PermissionConstants.Literature.WORK_DELETE)
     public Result<?> workDelete(@PathVariable Long id) {
         literaryWorkService.removeById(id);
         return Result.ok();
@@ -374,7 +375,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量删除文学作品")
     @DeleteMapping("/work/batch")
-    @SaCheckPermission("classics:literature:work:delete")
+    @SaCheckPermission(PermissionConstants.Literature.WORK_DELETE)
     public Result<?> workBatchDelete(@RequestBody List<Long> ids) {
         literaryWorkService.removeByIds(ids);
         return Result.ok();
@@ -382,7 +383,7 @@ public class LiteratureController {
 
     @Operation(summary = "批量重新统计所有作品真实字数")
     @PostMapping("/work/recount-word-count")
-    @SaCheckPermission("classics:literature:work:edit")
+    @SaCheckPermission(PermissionConstants.Literature.WORK_EDIT)
     public Result<?> recountWordCount() {
         int updated = literaryWorkService.recountAllWordCount();
         return Result.ok(updated);

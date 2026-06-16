@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.devTools.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,12 +23,12 @@ public class DevToolsController {
     @SaCheckLogin
     public Result<?> jsonFormat(@RequestBody Map<String, Object> body) {
         String input = (String) body.get("input");
-        if (input == null || input.trim().isEmpty()) return Result.fail(400, "输入不能为空");
+        if (input == null || input.trim().isEmpty()) return Result.fail(ErrorCode.BAD_REQUEST, "输入不能为空");
         try {
             // 简化处理：直接返回格式化的JSON字符串
             return Result.ok(Map.of("output", input));
         } catch (Exception e) {
-            return Result.fail(400, "JSON格式错误: " + e.getMessage());
+            return Result.fail(ErrorCode.BAD_REQUEST, "JSON格式错误: " + e.getMessage());
         }
     }
 
@@ -63,7 +64,7 @@ public class DevToolsController {
             result.put("timestamp", millis);
             result.put("datetime", dateStr);
         } else {
-            return Result.fail(400, "参数不完整");
+            return Result.fail(ErrorCode.BAD_REQUEST, "参数不完整");
         }
         return Result.ok(result);
     }

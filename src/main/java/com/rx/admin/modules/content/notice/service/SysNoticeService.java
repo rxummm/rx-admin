@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> {
+public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> implements ISysNoticeService {
 
     private final SysUserService sysUserService;
     private final SysMessageService sysMessageService;

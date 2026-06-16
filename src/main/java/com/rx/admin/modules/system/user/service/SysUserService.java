@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
+public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final SysUserRoleMapper userRoleMapper;
     private final SysMessageService sysMessageService;
@@ -225,16 +225,14 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         userRoleMapper.insert(userId, roleId);
     }
 
-    /** 密码策略：至少6位，包含字母和数字 */
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[A-Za-z](?=.*\\d).{5,}$");
 
-    /** 邮箱格式 */
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
 
-    /** 手机号格式（中国大陆） */
     private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
 
-    public static void validatePassword(String password, String username, String nickname) {
+    @Override
+    public void validatePassword(String password, String username, String nickname) {
         if (!StringUtils.hasText(password)) {
             throw new IllegalArgumentException("密码不能为空");
         }
@@ -249,8 +247,8 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         }
     }
 
-    /** 邮箱格式校验 */
-    public static void validateEmail(String email) {
+    @Override
+    public void validateEmail(String email) {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("邮箱不能为空");
         }
@@ -262,8 +260,8 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         }
     }
 
-    /** 手机号格式校验 */
-    public static void validatePhone(String phone) {
+    @Override
+    public void validatePhone(String phone) {
         if (!StringUtils.hasText(phone)) {
             throw new IllegalArgumentException("手机号不能为空");
         }

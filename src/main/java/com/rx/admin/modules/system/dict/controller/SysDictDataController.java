@@ -1,11 +1,12 @@
 package com.rx.admin.modules.system.dict.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.dict.dto.DictDataCreateDTO;
 import com.rx.admin.modules.system.dict.dto.DictDataUpdateDTO;
-import com.rx.admin.modules.system.dict.service.SysDictDataService;
+import com.rx.admin.modules.system.dict.service.ISysDictDataService;
 import com.rx.admin.modules.system.dict.convert.DictConvert;
 import com.rx.admin.modules.system.dict.vo.DictDataVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SysDictDataController {
 
-    private final SysDictDataService sysDictDataService;
+    private final ISysDictDataService sysDictDataService;
     private final DictConvert dictConvert;
 
     @Operation(summary = "根据字典类型ID查询数据")
     @GetMapping("/list/{typeId}")
-    @SaCheckPermission("sys:dict:query")
+    @SaCheckPermission(PermissionConstants.Dict.QUERY)
     public Result<List<DictDataVO>> listByTypeId(@PathVariable Long typeId) {
         return Result.ok(dictConvert.toDataVOList(sysDictDataService.listByTypeId(typeId)));
     }
@@ -40,7 +41,7 @@ public class SysDictDataController {
 
     @Operation(summary = "新增字典数据")
     @PostMapping
-    @SaCheckPermission("sys:dict:add")
+    @SaCheckPermission(PermissionConstants.Dict.ADD)
     @OperateLog(module = "字典管理", operation = "新增字典数据")
     public Result<Void> add(@RequestBody @Valid DictDataCreateDTO dto) {
         sysDictDataService.addDictData(dto);
@@ -49,7 +50,7 @@ public class SysDictDataController {
 
     @Operation(summary = "修改字典数据")
     @PutMapping
-    @SaCheckPermission("sys:dict:edit")
+    @SaCheckPermission(PermissionConstants.Dict.EDIT)
     @OperateLog(module = "字典管理", operation = "修改字典数据")
     public Result<Void> update(@RequestBody @Valid DictDataUpdateDTO dto) {
         sysDictDataService.updateDictData(dto);
@@ -58,7 +59,7 @@ public class SysDictDataController {
 
     @Operation(summary = "删除字典数据")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("sys:dict:delete")
+    @SaCheckPermission(PermissionConstants.Dict.DELETE)
     @OperateLog(module = "字典管理", operation = "删除字典数据")
     public Result<Void> delete(@PathVariable Long id) {
         sysDictDataService.removeById(id);

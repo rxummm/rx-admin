@@ -3,6 +3,7 @@ package com.rx.admin.modules.literature.xiyou.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.xiyou.vo.XiyouPoemVO;
@@ -81,7 +82,7 @@ public class XiyouController {
 
     @Operation(summary = "新增XiyouPoem")
     @PostMapping("/poem")
-    @SaCheckPermission("classics:xiyou:poem:add")
+    @SaCheckPermission(PermissionConstants.Xiyou.POEM_ADD)
     @OperateLog(module = "西游记数据", operation = "新增XiyouPoem")
     public Result<?> poemServiceAdd(@RequestBody @Valid XiyouPoemCreateDTO dto) {
         poemService.save(poemConvert.toEntity(dto));
@@ -90,7 +91,7 @@ public class XiyouController {
 
     @Operation(summary = "编辑XiyouPoem")
     @PutMapping("/poem")
-    @SaCheckPermission("classics:xiyou:poem:edit")
+    @SaCheckPermission(PermissionConstants.Xiyou.POEM_EDIT)
     @OperateLog(module = "西游记数据", operation = "编辑XiyouPoem")
     public Result<?> poemServiceUpdate(@RequestBody @Valid XiyouPoemUpdateDTO dto) {
         XiyouPoem entity = poemService.getById(dto.getId());
@@ -101,7 +102,7 @@ public class XiyouController {
 
     @Operation(summary = "删除XiyouPoem")
     @DeleteMapping("/poem/{id}")
-    @SaCheckPermission("classics:xiyou:poem:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.POEM_DELETE)
     @OperateLog(module = "西游记数据", operation = "删除XiyouPoem")
     public Result<?> poemServiceDelete(@PathVariable Long id) {
         poemService.removeById(id);
@@ -110,7 +111,7 @@ public class XiyouController {
 
     @Operation(summary = "批量删除XiyouPoem")
     @DeleteMapping("/poem/batch")
-    @SaCheckPermission("classics:xiyou:poem:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.POEM_DELETE)
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -145,7 +146,7 @@ public class XiyouController {
 
     @Operation(summary = "新增XiyouCharacter")
     @PostMapping("/character")
-    @SaCheckPermission("classics:xiyou:character:add")
+    @SaCheckPermission(PermissionConstants.Xiyou.CHARACTER_ADD)
     @OperateLog(module = "西游记数据", operation = "新增XiyouCharacter")
     public Result<?> characterServiceAdd(@RequestBody @Valid XiyouCharacterCreateDTO dto) {
         characterService.save(characterConvert.toEntity(dto));
@@ -154,7 +155,7 @@ public class XiyouController {
 
     @Operation(summary = "编辑XiyouCharacter")
     @PutMapping("/character")
-    @SaCheckPermission("classics:xiyou:character:edit")
+    @SaCheckPermission(PermissionConstants.Xiyou.CHARACTER_EDIT)
     @OperateLog(module = "西游记数据", operation = "编辑XiyouCharacter")
     public Result<?> characterServiceUpdate(@RequestBody @Valid XiyouCharacterUpdateDTO dto) {
         XiyouCharacter entity = characterService.getById(dto.getId());
@@ -165,7 +166,7 @@ public class XiyouController {
 
     @Operation(summary = "删除XiyouCharacter")
     @DeleteMapping("/character/{id}")
-    @SaCheckPermission("classics:xiyou:character:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.CHARACTER_DELETE)
     @OperateLog(module = "西游记数据", operation = "删除XiyouCharacter")
     public Result<?> characterServiceDelete(@PathVariable Long id) {
         characterService.removeById(id);
@@ -174,7 +175,7 @@ public class XiyouController {
 
     @Operation(summary = "批量删除XiyouCharacter")
     @DeleteMapping("/character/batch")
-    @SaCheckPermission("classics:xiyou:character:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.CHARACTER_DELETE)
     public Result<?> characterServiceBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();
@@ -215,7 +216,7 @@ public class XiyouController {
 
     @Operation(summary = "新增XiyouEvent")
     @PostMapping("/event")
-    @SaCheckPermission("classics:xiyou:event:add")
+    @SaCheckPermission(PermissionConstants.Xiyou.EVENT_ADD)
     @OperateLog(module = "西游记数据", operation = "新增XiyouEvent")
     public Result<?> eventServiceAdd(@RequestBody @Valid XiyouEventCreateDTO dto) {
         eventService.save(eventConvert.toEntity(dto));
@@ -224,7 +225,7 @@ public class XiyouController {
 
     @Operation(summary = "编辑XiyouEvent")
     @PutMapping("/event")
-    @SaCheckPermission("classics:xiyou:event:edit")
+    @SaCheckPermission(PermissionConstants.Xiyou.EVENT_EDIT)
     @OperateLog(module = "西游记数据", operation = "编辑XiyouEvent")
     public Result<?> eventServiceUpdate(@RequestBody @Valid XiyouEventUpdateDTO dto) {
         XiyouEvent entity = eventService.getById(dto.getId());
@@ -235,7 +236,7 @@ public class XiyouController {
 
     @Operation(summary = "删除XiyouEvent")
     @DeleteMapping("/event/{id}")
-    @SaCheckPermission("classics:xiyou:event:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.EVENT_DELETE)
     @OperateLog(module = "西游记数据", operation = "删除XiyouEvent")
     public Result<?> eventServiceDelete(@PathVariable Long id) {
         eventService.removeById(id);
@@ -244,7 +245,7 @@ public class XiyouController {
 
     @Operation(summary = "批量删除XiyouEvent")
     @DeleteMapping("/event/batch")
-    @SaCheckPermission("classics:xiyou:event:delete")
+    @SaCheckPermission(PermissionConstants.Xiyou.EVENT_DELETE)
     public Result<?> eventServiceBatchDelete(@RequestBody List<Long> ids) {
         eventService.removeByIds(ids);
         return Result.ok();

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, TechBlogArticle> {
+public class TechBlogArticleService extends ServiceImpl<TechBlogArticleMapper, TechBlogArticle> implements ITechBlogArticleService {
 
     // ==================== 并发状态管理 ====================
 

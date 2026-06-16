@@ -2,10 +2,11 @@ package com.rx.admin.modules.system.menu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.menu.dto.MenuCreateDTO;
 import com.rx.admin.modules.system.menu.dto.MenuUpdateDTO;
-import com.rx.admin.modules.system.menu.service.SysMenuService;
+import com.rx.admin.modules.system.menu.service.ISysMenuService;
 import com.rx.admin.modules.system.menu.convert.MenuConvert;
 import com.rx.admin.modules.system.menu.vo.MenuVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,24 +22,24 @@ import java.util.List;
 @RequestMapping("/api/sys/menu")
 public class SysMenuController {
 
-    private final SysMenuService menuService;
+    private final ISysMenuService menuService;
     private final MenuConvert menuConvert;
 
-    public SysMenuController(SysMenuService menuService, MenuConvert menuConvert) {
+    public SysMenuController(ISysMenuService menuService, MenuConvert menuConvert) {
         this.menuService = menuService;
         this.menuConvert = menuConvert;
     }
 
     @Operation(summary = "菜单树列表")
     @GetMapping("/tree")
-    @SaCheckPermission("sys:menu:query")
+    @SaCheckPermission(PermissionConstants.Menu.QUERY)
     public Result<List<MenuVO>> tree() {
         return Result.ok(menuConvert.toVOList(menuService.getAllMenuTree()));
     }
 
     @Operation(summary = "新增菜单")
     @PostMapping
-    @SaCheckPermission("sys:menu:add")
+    @SaCheckPermission(PermissionConstants.Menu.ADD)
     @OperateLog(module = "菜单管理", operation = "新增菜单")
     @CacheEvict(value = "menu", allEntries = true)
     public Result<?> add(@RequestBody @Valid MenuCreateDTO dto) {
@@ -48,7 +49,7 @@ public class SysMenuController {
 
     @Operation(summary = "修改菜单")
     @PutMapping
-    @SaCheckPermission("sys:menu:edit")
+    @SaCheckPermission(PermissionConstants.Menu.EDIT)
     @OperateLog(module = "菜单管理", operation = "修改菜单")
     @CacheEvict(value = "menu", allEntries = true)
     public Result<?> update(@RequestBody @Valid MenuUpdateDTO dto) {
@@ -58,7 +59,7 @@ public class SysMenuController {
 
     @Operation(summary = "删除菜单")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("sys:menu:delete")
+    @SaCheckPermission(PermissionConstants.Menu.DELETE)
     @OperateLog(module = "菜单管理", operation = "删除菜单")
     @CacheEvict(value = "menu", allEntries = true)
     public Result<?> delete(@PathVariable Long id) {

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage> {
+public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage> implements ISysMessageService {
 
     private final SysUserMapper sysUserMapper;
     private final SysUserRoleMapper userRoleMapper;

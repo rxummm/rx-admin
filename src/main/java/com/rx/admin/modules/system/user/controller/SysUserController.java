@@ -2,12 +2,13 @@ package com.rx.admin.modules.system.user.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.user.entity.SysUser;
 import com.rx.admin.modules.system.user.dto.UserCreateDTO;
 import com.rx.admin.modules.system.user.dto.UserUpdateDTO;
-import com.rx.admin.modules.system.user.service.SysUserService;
+import com.rx.admin.modules.system.user.service.ISysUserService;
 import com.rx.admin.modules.system.user.convert.UserConvert;
 import com.rx.admin.modules.system.user.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,17 +23,17 @@ import java.util.List;
 @RequestMapping("/api/sys/user")
 public class SysUserController {
 
-    private final SysUserService userService;
+    private final ISysUserService userService;
     private final UserConvert userConvert;
 
-    public SysUserController(SysUserService userService, UserConvert userConvert) {
+    public SysUserController(ISysUserService userService, UserConvert userConvert) {
         this.userService = userService;
         this.userConvert = userConvert;
     }
 
     @Operation(summary = "用户列表(分页)")
     @GetMapping("/page")
-    @SaCheckPermission("sys:user:query")
+    @SaCheckPermission(PermissionConstants.User.QUERY)
     public Result<PageResult<UserVO>> page(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -44,7 +45,7 @@ public class SysUserController {
 
     @Operation(summary = "新增用户")
     @PostMapping
-    @SaCheckPermission("sys:user:add")
+    @SaCheckPermission(PermissionConstants.User.ADD)
     @OperateLog(module = "用户管理", operation = "新增用户")
     public Result<?> add(@RequestBody @Valid UserCreateDTO dto) {
         userService.addUser(dto);
@@ -53,7 +54,7 @@ public class SysUserController {
 
     @Operation(summary = "修改用户")
     @PutMapping
-    @SaCheckPermission("sys:user:edit")
+    @SaCheckPermission(PermissionConstants.User.EDIT)
     @OperateLog(module = "用户管理", operation = "修改用户")
     public Result<?> update(@RequestBody @Valid UserUpdateDTO dto) {
         userService.updateUser(dto);
@@ -62,7 +63,7 @@ public class SysUserController {
 
     @Operation(summary = "删除用户")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("sys:user:delete")
+    @SaCheckPermission(PermissionConstants.User.DELETE)
     @OperateLog(module = "用户管理", operation = "删除用户")
     public Result<?> delete(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -71,7 +72,7 @@ public class SysUserController {
 
     @Operation(summary = "获取用户详情")
     @GetMapping("/{id}")
-    @SaCheckPermission("sys:user:query")
+    @SaCheckPermission(PermissionConstants.User.QUERY)
     public Result<UserVO> getById(@PathVariable Long id) {
         SysUser user = userService.getById(id);
         if (user == null) return Result.fail("用户不存在");

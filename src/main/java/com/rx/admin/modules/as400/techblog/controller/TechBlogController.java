@@ -1,5 +1,6 @@
 package com.rx.admin.modules.as400.techblog.controller;
 
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.as400.techblog.entity.TechBlogArticle;
@@ -8,7 +9,8 @@ import com.rx.admin.modules.as400.techblog.dto.TechBlogCreateDTO;
 import com.rx.admin.modules.as400.techblog.dto.BatchDeleteDTO;
 import com.rx.admin.modules.as400.techblog.dto.TechBlogUpdateDTO;
 import com.rx.admin.modules.as400.techblog.vo.TechBlogVO;
-import com.rx.admin.modules.as400.techblog.service.TechBlogArticleService;
+import com.rx.admin.common.constant.PermissionConstants;
+import com.rx.admin.modules.as400.techblog.service.ITechBlogArticleService;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,12 +33,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TechBlogController {
 
-    private final TechBlogArticleService articleService;
+    private final ITechBlogArticleService articleService;
     private final TechBlogConvert techBlogConvert;
 
     @Operation(summary = "分页查询文章列表")
     @GetMapping("/articles")
-    @SaCheckPermission("techblog:query")
+    @SaCheckPermission(PermissionConstants.TechBlog.QUERY)
     public Result<PageResult<TechBlogVO>> list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -50,11 +52,11 @@ public class TechBlogController {
 
     @Operation(summary = "获取文章详情")
     @GetMapping("/articles/{id}")
-    @SaCheckPermission("techblog:query")
+    @SaCheckPermission(PermissionConstants.TechBlog.QUERY)
     public Result<TechBlogVO> detail(@PathVariable Long id) {
         TechBlogArticle article = articleService.getDetail(id);
         if (article == null) {
-            return Result.fail(404, "文章不存在");
+            return Result.fail(ErrorCode.BLOG_NOT_FOUND);
         }
         return Result.ok(techBlogConvert.toVO(article));
     }
@@ -77,7 +79,7 @@ public class TechBlogController {
 
     @Operation(summary = "触发文章抓取")
     @PostMapping("/fetch")
-    @SaCheckPermission("techblog:sync")
+    @SaCheckPermission(PermissionConstants.TechBlog.SYNC)
     public Result<String> fetch(@RequestBody Map<String, String> body) {
         String source = body.getOrDefault("source", "nicklitten");
         articleService.startFetch(source);
@@ -86,7 +88,7 @@ public class TechBlogController {
 
     @Operation(summary = "新增文章")
     @PostMapping("/articles")
-    @SaCheckPermission("techblog:add")
+    @SaCheckPermission(PermissionConstants.TechBlog.ADD)
     public Result<TechBlogVO> create(@RequestBody @Valid TechBlogCreateDTO dto) {
         TechBlogArticle article = techBlogConvert.toEntity(dto);
         article.setSort(0);
@@ -97,11 +99,11 @@ public class TechBlogController {
 
     @Operation(summary = "更新文章")
     @PutMapping("/articles/{id}")
-    @SaCheckPermission("techblog:edit")
+    @SaCheckPermission(PermissionConstants.TechBlog.EDIT)
     public Result<String> update(@PathVariable Long id, @RequestBody @Valid TechBlogUpdateDTO dto) {
         TechBlogArticle article = articleService.getById(id);
         if (article == null) {
-            return Result.fail(404, "文章不存在");
+            return Result.fail(ErrorCode.BLOG_NOT_FOUND);
         }
         techBlogConvert.updateEntity(dto, article);
         articleService.updateById(article);
@@ -110,10 +112,10 @@ public class TechBlogController {
 
     @Operation(summary = "删除单篇文章")
     @DeleteMapping("/articles/{id}")
-    @SaCheckPermission("techblog:delete")
+    @SaCheckPermission(PermissionConstants.TechBlog.DELETE)
     public Result<?> delete(@PathVariable Long id) {
         if (articleService.getById(id) == null) {
-            return Result.fail(404, "文章不存在");
+            return Result.fail(ErrorCode.BLOG_NOT_FOUND);
         }
         articleService.removeById(id);
         return Result.ok("删除成功");
@@ -121,11 +123,11 @@ public class TechBlogController {
 
     @Operation(summary = "批量删除文章")
     @DeleteMapping("/articles/batch")
-    @SaCheckPermission("techblog:batchDelete")
+    @SaCheckPermission(PermissionConstants.TechBlog.BATCH_DELETE)
     public Result<?> batchDelete(@RequestBody BatchDeleteDTO dto) {
         List<Integer> rawIds = dto.getIds();
         if (rawIds == null || rawIds.isEmpty()) {
-            return Result.fail(400, "ids不能为空");
+            return Result.fail(ErrorCode.BAD_REQUEST, "ids不能为空");
         }
         List<Long> ids = rawIds.stream().map(id -> id.longValue()).toList();
         articleService.removeByIds(ids);

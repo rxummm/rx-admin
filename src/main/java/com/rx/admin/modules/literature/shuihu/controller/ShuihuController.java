@@ -3,6 +3,7 @@ package com.rx.admin.modules.literature.shuihu.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.shuihu.vo.ShuihuChapterVO;
@@ -71,7 +72,7 @@ public class ShuihuController {
 
     @Operation(summary = "新增ShuihuChapter")
     @PostMapping("/chapter")
-    @SaCheckPermission("classics:shuihu:chapter:add")
+    @SaCheckPermission(PermissionConstants.Shuihu.CHAPTER_ADD)
     @OperateLog(module = "水浒传数据", operation = "新增ShuihuChapter")
     public Result<?> chapterServiceAdd(@RequestBody @Valid ShuihuChapterCreateDTO dto) {
         chapterService.save(chapterConvert.toEntity(dto));
@@ -80,7 +81,7 @@ public class ShuihuController {
 
     @Operation(summary = "编辑ShuihuChapter")
     @PutMapping("/chapter")
-    @SaCheckPermission("classics:shuihu:chapter:edit")
+    @SaCheckPermission(PermissionConstants.Shuihu.CHAPTER_EDIT)
     @OperateLog(module = "水浒传数据", operation = "编辑ShuihuChapter")
     public Result<?> chapterServiceUpdate(@RequestBody @Valid ShuihuChapterUpdateDTO dto) {
         ShuihuChapter entity = chapterService.getById(dto.getId());
@@ -91,7 +92,7 @@ public class ShuihuController {
 
     @Operation(summary = "删除ShuihuChapter")
     @DeleteMapping("/chapter/{id}")
-    @SaCheckPermission("classics:shuihu:chapter:delete")
+    @SaCheckPermission(PermissionConstants.Shuihu.CHAPTER_DELETE)
     @OperateLog(module = "水浒传数据", operation = "删除ShuihuChapter")
     public Result<?> chapterServiceDelete(@PathVariable Long id) {
         chapterService.removeById(id);
@@ -100,7 +101,7 @@ public class ShuihuController {
 
     @Operation(summary = "批量删除ShuihuChapter")
     @DeleteMapping("/chapter/batch")
-    @SaCheckPermission("classics:shuihu:chapter:delete")
+    @SaCheckPermission(PermissionConstants.Shuihu.CHAPTER_DELETE)
     public Result<?> chapterServiceBatchDelete(@RequestBody List<Long> ids) {
         chapterService.removeByIds(ids);
         return Result.ok();
@@ -135,7 +136,7 @@ public class ShuihuController {
 
     @Operation(summary = "新增ShuihuPoem")
     @PostMapping("/poem")
-    @SaCheckPermission("classics:shuihu:poem:add")
+    @SaCheckPermission(PermissionConstants.Shuihu.POEM_ADD)
     @OperateLog(module = "水浒传数据", operation = "新增ShuihuPoem")
     public Result<?> poemServiceAdd(@RequestBody @Valid ShuihuPoemCreateDTO dto) {
         poemService.save(poemConvert.toEntity(dto));
@@ -144,7 +145,7 @@ public class ShuihuController {
 
     @Operation(summary = "编辑ShuihuPoem")
     @PutMapping("/poem")
-    @SaCheckPermission("classics:shuihu:poem:edit")
+    @SaCheckPermission(PermissionConstants.Shuihu.POEM_EDIT)
     @OperateLog(module = "水浒传数据", operation = "编辑ShuihuPoem")
     public Result<?> poemServiceUpdate(@RequestBody @Valid ShuihuPoemUpdateDTO dto) {
         ShuihuPoem entity = poemService.getById(dto.getId());
@@ -155,7 +156,7 @@ public class ShuihuController {
 
     @Operation(summary = "删除ShuihuPoem")
     @DeleteMapping("/poem/{id}")
-    @SaCheckPermission("classics:shuihu:poem:delete")
+    @SaCheckPermission(PermissionConstants.Shuihu.POEM_DELETE)
     @OperateLog(module = "水浒传数据", operation = "删除ShuihuPoem")
     public Result<?> poemServiceDelete(@PathVariable Long id) {
         poemService.removeById(id);
@@ -164,7 +165,7 @@ public class ShuihuController {
 
     @Operation(summary = "批量删除ShuihuPoem")
     @DeleteMapping("/poem/batch")
-    @SaCheckPermission("classics:shuihu:poem:delete")
+    @SaCheckPermission(PermissionConstants.Shuihu.POEM_DELETE)
     public Result<?> poemServiceBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();

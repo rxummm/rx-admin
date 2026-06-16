@@ -3,6 +3,7 @@ package com.rx.admin.modules.content.notify.controller;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.content.notify.entity.SysMessageTemplate;
 import com.rx.admin.modules.content.notify.entity.SysNotifyRecord;
@@ -126,7 +127,7 @@ public class NotifyCenterController {
     @OperateLog(module = "通知中心", operation = "重发通知")
     public Result<Void> retry(@PathVariable Long id) {
         SysNotifyRecord record = recordService.getById(id);
-        if (record == null) return Result.fail(404, "记录不存在");
+        if (record == null) return Result.fail(ErrorCode.NOT_FOUND, "记录不存在");
         record.setStatus(1);
         record.setRetryCount(record.getRetryCount() != null ? record.getRetryCount() + 1 : 1);
         record.setSendTime(LocalDateTime.now());

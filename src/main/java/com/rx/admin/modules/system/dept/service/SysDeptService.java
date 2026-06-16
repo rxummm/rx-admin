@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
-public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> {
+public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> implements ISysDeptService {
 
     public List<SysDept> getDeptTree() {
         List<SysDept> all = list(new LambdaQueryWrapper<SysDept>()

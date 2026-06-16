@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> {
+public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> implements ISysConfigService {
 
     /**
      * 获取配置值（Caffeine 缓存，key 为 configKey）

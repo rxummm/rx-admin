@@ -38,10 +38,14 @@ public class GlobalExceptionHandler {
 
     // ===================== 辅助方法 =====================
 
-    /**
-     * 构造带 Content-Type: application/json 的 ResponseEntity，
-     * 避免 SSE 等端点抛出异常时 Spring 因 Content-Type 不匹配而无法写入响应。
-     */
+    private ResponseEntity<Result<Object>> json(ErrorCode errorCode, HttpStatus status) {
+        return json(errorCode.getCode(), errorCode.getMessage(), null, status);
+    }
+
+    private ResponseEntity<Result<Object>> json(ErrorCode errorCode, Object data, HttpStatus status) {
+        return json(errorCode.getCode(), errorCode.getMessage(), data, status);
+    }
+
     private ResponseEntity<Result<Object>> json(int code, String message, HttpStatus status) {
         return json(code, message, null, status);
     }
@@ -70,14 +74,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<Result<Object>> handleNotLogin(NotLoginException e) {
         if (NotLoginException.KICK_OUT.equals(e.getType())) {
-            return json(401, "KICK_OUT", HttpStatus.UNAUTHORIZED);
+            return json(ErrorCode.UNAUTHORIZED, "KICK_OUT", HttpStatus.UNAUTHORIZED);
         }
-        return json(401, "未登录或登录已过期", HttpStatus.UNAUTHORIZED);
+        return json(ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NotPermissionException.class)
     public ResponseEntity<Result<Object>> handleNotPermission(NotPermissionException e) {
-        return json(403, "没有操作权限", HttpStatus.FORBIDDEN);
+        return json(ErrorCode.FORBIDDEN, HttpStatus.FORBIDDEN);
     }
 
     // ===================== 参数校验 =====================
@@ -88,17 +92,17 @@ public class GlobalExceptionHandler {
                 .map(f -> f.getField() + ": " + f.getDefaultMessage())
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("参数校验失败");
-        return json(400, msg, HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, msg, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<Result<Object>> handleMissingParam(MissingServletRequestParameterException e) {
-        return json(400, "缺少必要参数: " + e.getParameterName(), HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, "缺少必要参数: " + e.getParameterName(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Result<Object>> handleMessageNotReadable(HttpMessageNotReadableException e) {
-        return json(400, "请求体格式错误，请检查JSON格式", HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, "请求体格式错误，请检查JSON格式", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -107,24 +111,24 @@ public class GlobalExceptionHandler {
                 .map(f -> f.getField() + ": " + f.getDefaultMessage())
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("参数校验失败");
-        return json(400, msg, HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, msg, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Result<Object>> handleIllegalArgument(IllegalArgumentException e) {
-        return json(400, e.getMessage(), HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<Result<Object>> handleTypeMismatch(TypeMismatchException e) {
-        return json(400, "参数类型错误: " + e.getPropertyName(), HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, "参数类型错误: " + e.getPropertyName(), HttpStatus.BAD_REQUEST);
     }
 
     // ===================== 请求映射 =====================
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Result<Object>> handleNoResourceFound(NoResourceFoundException e) {
-        return json(404, "请求的资源不存在", HttpStatus.NOT_FOUND);
+        return json(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -142,20 +146,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Result<Object>> handleDataIntegrityViolation(DataIntegrityViolationException e) {
         log.error("数据完整性异常", e);
-        return json(409, "数据操作冲突，可能存在重复记录或关联数据未清理", HttpStatus.CONFLICT);
+        return json(ErrorCode.DATA_INTEGRITY_VIOLATION, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(TransactionSystemException.class)
     public ResponseEntity<Result<Object>> handleTransactionSystem(TransactionSystemException e) {
         log.error("事务异常", e);
         Throwable root = e.getRootCause() != null ? e.getRootCause() : e;
-        return json(500, "操作失败: " + root.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "操作失败: " + root.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UnexpectedRollbackException.class)
     public ResponseEntity<Result<Object>> handleUnexpectedRollback(UnexpectedRollbackException e) {
         log.error("事务回滚异常", e);
-        return json(500, "操作失败，事务已回滚", HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "操作失败，事务已回滚", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // ===================== 校验/约束 =====================
@@ -166,18 +170,18 @@ public class GlobalExceptionHandler {
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("参数校验失败");
-        return json(400, msg, HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, msg, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<Result<Object>> handleMissingPathVariable(MissingPathVariableException e) {
-        return json(400, "缺少路径参数: " + e.getVariableName(), HttpStatus.BAD_REQUEST);
+        return json(ErrorCode.BAD_REQUEST, "缺少路径参数: " + e.getVariableName(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotWritableException.class)
     public ResponseEntity<Result<Object>> handleHttpMessageNotWritable(HttpMessageNotWritableException e) {
         log.error("响应序列化失败", e);
-        return json(500, "响应数据序列化失败", HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "响应数据序列化失败", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // ===================== 数据库 =====================
@@ -185,13 +189,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<Result<Object>> handleDuplicateKey(DuplicateKeyException e) {
         log.warn("唯一约束冲突", e);
-        return json(409, "数据重复，请检查唯一字段", HttpStatus.CONFLICT);
+        return json(ErrorCode.CONFLICT, "数据重复，请检查唯一字段", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadSqlGrammarException.class)
     public ResponseEntity<Result<Object>> handleBadSqlGrammar(BadSqlGrammarException e) {
         log.error("SQL语法错误", e);
-        return json(500, "数据库查询异常", HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "数据库查询异常", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // ===================== 异步超时 =====================
@@ -204,18 +208,9 @@ public class GlobalExceptionHandler {
 
     // ===================== 兜底 =====================
 
-    /**
-     * 异步请求（如 SSE/长轮询）写入时客户端已断开。
-     * Spring 6.x 会把它包装为 AsyncRequestNotUsableException 抛到 HandlerExceptionResolver 链，
-     * 这是客户端主动关闭 / 刷新 / 断网的正常行为，不应作为系统异常打印 ERROR 日志。
-     * <p>
-     * 响应已经写过一半或连接已关闭，无法再回写业务结果，返回 204 让框架静默。
-     * </p>
-     */
     @ExceptionHandler(AsyncRequestNotUsableException.class)
     public ResponseEntity<Result<Object>> handleAsyncRequestNotUsable(AsyncRequestNotUsableException e) {
         log.debug("异步请求客户端已断开: {}", e.getMessage());
-        // 客户端连接已关闭，无法可靠写入；返回 204 No Content 让框架丢弃响应体
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -229,12 +224,12 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         log.error("IO异常", e);
-        return json(500, "系统繁忙，请稍后再试", HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "系统繁忙，请稍后再试", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Result<Object>> handleException(Exception e) {
         log.error("系统异常", e);
-        return json(500, "系统繁忙，请稍后再试", HttpStatus.INTERNAL_SERVER_ERROR);
+        return json(ErrorCode.INTERNAL_ERROR, "系统繁忙，请稍后再试", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

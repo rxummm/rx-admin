@@ -1,6 +1,7 @@
 package com.rx.admin.modules.tool.backup.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +32,7 @@ public class BackupController {
 
     @Operation(summary = "查询备份文件列表")
     @GetMapping("/list")
-    @SaCheckPermission("tool:backup:list")
+    @SaCheckPermission(PermissionConstants.Backup.LIST)
     public Result<List<Map<String, Object>>> list() {
         File dir = new File(BACKUP_DIR);
         List<Map<String, Object>> files = new ArrayList<>();
@@ -53,7 +54,7 @@ public class BackupController {
 
     @Operation(summary = "创建数据库备份")
     @PostMapping("/create")
-    @SaCheckPermission("tool:backup:list")
+    @SaCheckPermission(PermissionConstants.Backup.LIST)
     public Result<Map<String, String>> create() {
         try {
             new File(BACKUP_DIR).mkdirs();
@@ -87,7 +88,7 @@ public class BackupController {
 
     @Operation(summary = "删除备份文件")
     @DeleteMapping("/{filename}")
-    @SaCheckPermission("tool:backup:list")
+    @SaCheckPermission(PermissionConstants.Backup.LIST)
     public Result<Void> delete(@PathVariable String filename) {
         try {
             Files.deleteIfExists(Path.of(BACKUP_DIR, filename));

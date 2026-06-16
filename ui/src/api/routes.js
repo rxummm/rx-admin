@@ -56,6 +56,13 @@ export const API = {
         BY_ID: (id) => `/sys/dict/data/${id}`,
       },
     },
+    CONFIG: {
+      GROUPED: '/system/config/grouped',
+      VALUES: '/system/config/values',
+      VALUE_BY_KEY: (key) => `/system/config/value/${key}`,
+      CRUD: '/system/config',
+      BY_ID: (id) => `/system/config/${id}`,
+    },
     FILE: {
       PAGE: '/sys/file/page',
       UPLOAD: '/sys/file/upload',

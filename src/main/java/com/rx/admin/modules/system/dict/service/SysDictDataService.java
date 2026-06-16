@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
-public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictData> {
+public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictData> implements ISysDictDataService {
 
     public List<SysDictData> listByTypeId(Long typeId) {
         return list(new LambdaQueryWrapper<SysDictData>()

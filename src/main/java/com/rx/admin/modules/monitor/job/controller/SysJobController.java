@@ -2,7 +2,9 @@ package com.rx.admin.modules.monitor.job.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.monitor.job.entity.SysJob;
 import com.rx.admin.modules.monitor.job.dto.JobCreateDTO;
@@ -27,7 +29,7 @@ public class SysJobController {
 
     @Operation(summary = "定时任务分页列表")
     @GetMapping("/page")
-    @SaCheckPermission("monitor:job:query")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_QUERY)
     public Result<PageResult<JobVO>> page(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -39,7 +41,7 @@ public class SysJobController {
 
     @Operation(summary = "新增定时任务")
     @PostMapping
-    @SaCheckPermission("monitor:job:add")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_ADD)
     @OperateLog(module = "定时任务管理", operation = "新增定时任务")
     public Result<Void> add(@RequestBody @Valid JobCreateDTO dto) {
         jobService.addJob(dto);
@@ -48,7 +50,7 @@ public class SysJobController {
 
     @Operation(summary = "修改定时任务")
     @PutMapping
-    @SaCheckPermission("monitor:job:edit")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_EDIT)
     @OperateLog(module = "定时任务管理", operation = "修改定时任务")
     public Result<Void> update(@RequestBody @Valid JobUpdateDTO dto) {
         jobService.updateJob(dto);
@@ -57,7 +59,7 @@ public class SysJobController {
 
     @Operation(summary = "删除定时任务")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("monitor:job:delete")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_DELETE)
     @OperateLog(module = "定时任务管理", operation = "删除定时任务")
     public Result<Void> delete(@PathVariable Long id) {
         jobService.removeById(id);
@@ -66,7 +68,7 @@ public class SysJobController {
 
     @Operation(summary = "切换定时任务状态")
     @PutMapping("/status/{id}")
-    @SaCheckPermission("monitor:job:edit")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_EDIT)
     @OperateLog(module = "定时任务管理", operation = "切换状态")
     public Result<Void> toggleStatus(@PathVariable Long id) {
         jobService.toggleStatus(id);
@@ -75,12 +77,12 @@ public class SysJobController {
 
     @Operation(summary = "执行一次定时任务")
     @PutMapping("/run/{id}")
-    @SaCheckPermission("monitor:job:edit")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_RUN)
     @OperateLog(module = "定时任务管理", operation = "执行一次")
     public Result<Void> runOnce(@PathVariable Long id) {
         SysJob job = jobService.getById(id);
         if (job == null) {
-            return Result.fail(404, "任务不存在");
+            return Result.fail(ErrorCode.NOT_FOUND, "任务不存在");
         }
         return Result.ok();
     }

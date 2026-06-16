@@ -1,12 +1,14 @@
 package com.rx.admin.modules.system.iprule.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.rx.admin.common.constant.PermissionConstants;
+import com.rx.admin.common.exception.ErrorCode;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.iprule.entity.SysIpRule;
 import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
 import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
-import com.rx.admin.modules.system.config.service.SysConfigService;
+import com.rx.admin.modules.system.config.service.ISysConfigService;
 import com.rx.admin.modules.system.iprule.service.SysIpRuleService;
 import com.rx.admin.modules.system.iprule.convert.IpRuleConvert;
 import com.rx.admin.modules.system.iprule.vo.IpRuleVO;
@@ -25,11 +27,11 @@ import java.util.Map;
 public class SysIpRuleController {
 
     private final SysIpRuleService ipRuleService;
-    private final SysConfigService configService;
+    private final ISysConfigService configService;
     private final IpRuleConvert ipRuleConvert;
 
     @GetMapping("/page")
-    @SaCheckPermission("system:ip-rule:list")
+    @SaCheckPermission(PermissionConstants.IpRule.LIST)
     @Operation(summary = "IP规则分页查询")
     public Result<PageResult<IpRuleVO>> page(
             @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
@@ -40,14 +42,14 @@ public class SysIpRuleController {
 
     @Operation(summary = "根据ID查询IP规则")
     @GetMapping("/{id}")
-    @SaCheckPermission("system:ip-rule:list")
+    @SaCheckPermission(PermissionConstants.IpRule.LIST)
     public Result<IpRuleVO> getById(@PathVariable Long id) {
         return Result.ok(ipRuleConvert.toVO(ipRuleService.getById(id)));
     }
 
     @Operation(summary = "新增IP规则")
     @PostMapping
-    @SaCheckPermission("system:ip-rule:add")
+    @SaCheckPermission(PermissionConstants.IpRule.ADD)
     public Result<Void> add(@RequestBody @Valid IpRuleCreateDTO dto) {
         ipRuleService.addIpRule(dto);
         return Result.ok();
@@ -55,7 +57,7 @@ public class SysIpRuleController {
 
     @Operation(summary = "修改IP规则")
     @PutMapping
-    @SaCheckPermission("system:ip-rule:edit")
+    @SaCheckPermission(PermissionConstants.IpRule.EDIT)
     public Result<Void> update(@RequestBody @Valid IpRuleUpdateDTO dto) {
         ipRuleService.updateIpRule(dto);
         return Result.ok();
@@ -63,14 +65,14 @@ public class SysIpRuleController {
 
     @Operation(summary = "删除IP规则")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("system:ip-rule:delete")
+    @SaCheckPermission(PermissionConstants.IpRule.DELETE)
     public Result<Void> delete(@PathVariable Long id) {
         ipRuleService.removeById(id);
         return Result.ok();
     }
 
     @GetMapping("/mode")
-    @SaCheckPermission("system:ip-rule:list")
+    @SaCheckPermission(PermissionConstants.IpRule.LIST)
     @Operation(summary = "获取IP过滤模式")
     public Result<Map<String, String>> getMode() {
         String enabled = configService.getValue("ip.filter.mode");
@@ -78,12 +80,12 @@ public class SysIpRuleController {
     }
 
     @PutMapping("/mode")
-    @SaCheckPermission("system:ip-rule:edit")
+    @SaCheckPermission(PermissionConstants.IpRule.EDIT)
     @Operation(summary = "设置IP过滤模式")
     public Result<Void> setMode(@RequestBody Map<String, String> body) {
         String mode = body.get("mode");
         if (mode == null || !mode.matches("BLACK|WHITE|OFF")) {
-            return Result.fail("模式只能是 BLACK / WHITE / OFF");
+            return Result.fail(ErrorCode.BAD_REQUEST, "模式只能是 BLACK / WHITE / OFF");
         }
         configService.updateValue("ip.filter.mode", mode);
         return Result.ok();

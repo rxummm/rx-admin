@@ -3,6 +3,7 @@ package com.rx.admin.modules.literature.honglou.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.literature.honglou.vo.HonglouPoemVO;
@@ -74,7 +75,7 @@ public class HonglouController {
 
     @Operation(summary = "新增红楼诗词")
     @PostMapping("/poem")
-    @SaCheckPermission("classics:honglou:poem:add")
+    @SaCheckPermission(PermissionConstants.Honglou.POEM_ADD)
     @OperateLog(module = "红楼梦管理", operation = "新增诗词")
     public Result<?> poemAdd(@RequestBody @Valid HonglouPoemCreateDTO dto) {
         poemService.save(poemConvert.toEntity(dto));
@@ -83,7 +84,7 @@ public class HonglouController {
 
     @Operation(summary = "编辑红楼诗词")
     @PutMapping("/poem")
-    @SaCheckPermission("classics:honglou:poem:edit")
+    @SaCheckPermission(PermissionConstants.Honglou.POEM_EDIT)
     @OperateLog(module = "红楼梦管理", operation = "编辑诗词")
     public Result<?> poemUpdate(@RequestBody @Valid HonglouPoemUpdateDTO dto) {
         HonglouPoem entity = poemService.getById(dto.getId());
@@ -94,7 +95,7 @@ public class HonglouController {
 
     @Operation(summary = "删除红楼诗词")
     @DeleteMapping("/poem/{id}")
-    @SaCheckPermission("classics:honglou:poem:delete")
+    @SaCheckPermission(PermissionConstants.Honglou.POEM_DELETE)
     @OperateLog(module = "红楼梦管理", operation = "删除诗词")
     public Result<?> poemDelete(@PathVariable Long id) {
         poemService.removeById(id);
@@ -103,7 +104,7 @@ public class HonglouController {
 
     @Operation(summary = "批量删除红楼诗词")
     @DeleteMapping("/poem/batch")
-    @SaCheckPermission("classics:honglou:poem:delete")
+    @SaCheckPermission(PermissionConstants.Honglou.POEM_DELETE)
     public Result<?> poemBatchDelete(@RequestBody List<Long> ids) {
         poemService.removeByIds(ids);
         return Result.ok();
@@ -146,7 +147,7 @@ public class HonglouController {
 
     @Operation(summary = "新增红楼人物")
     @PostMapping("/character")
-    @SaCheckPermission("classics:honglou:character:add")
+    @SaCheckPermission(PermissionConstants.Honglou.CHARACTER_ADD)
     @OperateLog(module = "红楼梦管理", operation = "新增人物")
     public Result<?> characterAdd(@RequestBody @Valid HonglouCharacterCreateDTO dto) {
         characterService.save(characterConvert.toEntity(dto));
@@ -155,7 +156,7 @@ public class HonglouController {
 
     @Operation(summary = "编辑红楼人物")
     @PutMapping("/character")
-    @SaCheckPermission("classics:honglou:character:edit")
+    @SaCheckPermission(PermissionConstants.Honglou.CHARACTER_EDIT)
     @OperateLog(module = "红楼梦管理", operation = "编辑人物")
     public Result<?> characterUpdate(@RequestBody @Valid HonglouCharacterUpdateDTO dto) {
         HonglouCharacter entity = characterService.getById(dto.getId());
@@ -166,7 +167,7 @@ public class HonglouController {
 
     @Operation(summary = "删除红楼人物")
     @DeleteMapping("/character/{id}")
-    @SaCheckPermission("classics:honglou:character:delete")
+    @SaCheckPermission(PermissionConstants.Honglou.CHARACTER_DELETE)
     @OperateLog(module = "红楼梦管理", operation = "删除人物")
     public Result<?> characterDelete(@PathVariable Long id) {
         characterService.removeById(id);
@@ -175,7 +176,7 @@ public class HonglouController {
 
     @Operation(summary = "批量删除红楼人物")
     @DeleteMapping("/character/batch")
-    @SaCheckPermission("classics:honglou:character:delete")
+    @SaCheckPermission(PermissionConstants.Honglou.CHARACTER_DELETE)
     public Result<?> characterBatchDelete(@RequestBody List<Long> ids) {
         characterService.removeByIds(ids);
         return Result.ok();
@@ -192,7 +193,7 @@ public class HonglouController {
 
     @Operation(summary = "新增人物关系")
     @PostMapping("/relation")
-    @SaCheckPermission("classics:honglou:relation:add")
+    @SaCheckPermission(PermissionConstants.Honglou.RELATION_ADD)
     @OperateLog(module = "红楼梦管理", operation = "新增人物关系")
     public Result<?> relationAdd(@RequestBody @Valid HonglouCharacterRelationCreateDTO dto) {
         relationService.save(relationConvert.toEntity(dto));
@@ -201,7 +202,7 @@ public class HonglouController {
 
     @Operation(summary = "编辑人物关系")
     @PutMapping("/relation")
-    @SaCheckPermission("classics:honglou:relation:edit")
+    @SaCheckPermission(PermissionConstants.Honglou.RELATION_EDIT)
     @OperateLog(module = "红楼梦管理", operation = "编辑人物关系")
     public Result<?> relationUpdate(@RequestBody @Valid HonglouCharacterRelationUpdateDTO dto) {
         HonglouCharacterRelation entity = relationService.getById(dto.getId());
@@ -212,7 +213,7 @@ public class HonglouController {
 
     @Operation(summary = "删除人物关系")
     @DeleteMapping("/relation/{id}")
-    @SaCheckPermission("classics:honglou:relation:delete")
+    @SaCheckPermission(PermissionConstants.Honglou.RELATION_DELETE)
     @OperateLog(module = "红楼梦管理", operation = "删除人物关系")
     public Result<?> relationDelete(@PathVariable Long id) {
         relationService.removeById(id);

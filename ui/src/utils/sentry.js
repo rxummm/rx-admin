@@ -81,7 +81,3 @@ export function captureException(error, options = {}) {
 export function captureMessage(message, level = 'info') {
   Sentry.captureMessage(message, level)
 }
-
-export function startTransaction(name, op = 'custom') {
-  return Sentry.startTransaction({ name, op })
-}

@@ -2,10 +2,11 @@ package com.rx.admin.modules.system.dept.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.rx.admin.common.annotation.OperateLog;
+import com.rx.admin.common.constant.PermissionConstants;
 import com.rx.admin.common.result.Result;
 import com.rx.admin.modules.system.dept.dto.DeptCreateDTO;
 import com.rx.admin.modules.system.dept.dto.DeptUpdateDTO;
-import com.rx.admin.modules.system.dept.service.SysDeptService;
+import com.rx.admin.modules.system.dept.service.ISysDeptService;
 import com.rx.admin.modules.system.dept.convert.DeptConvert;
 import com.rx.admin.modules.system.dept.vo.DeptVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,19 +23,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SysDeptController {
 
-    private final SysDeptService sysDeptService;
+    private final ISysDeptService sysDeptService;
     private final DeptConvert deptConvert;
 
     @Operation(summary = "查询部门树")
     @GetMapping("/tree")
-    @SaCheckPermission("sys:dept:query")
+    @SaCheckPermission(PermissionConstants.Dept.QUERY)
     public Result<List<DeptVO>> tree() {
         return Result.ok(deptConvert.toVOList(sysDeptService.getDeptTree()));
     }
 
     @Operation(summary = "新增部门")
     @PostMapping
-    @SaCheckPermission("sys:dept:add")
+    @SaCheckPermission(PermissionConstants.Dept.ADD)
     @OperateLog(module = "部门管理", operation = "新增部门")
     public Result<Void> add(@RequestBody @Valid DeptCreateDTO dto) {
         sysDeptService.addDept(dto);
@@ -43,7 +44,7 @@ public class SysDeptController {
 
     @Operation(summary = "修改部门")
     @PutMapping
-    @SaCheckPermission("sys:dept:edit")
+    @SaCheckPermission(PermissionConstants.Dept.EDIT)
     @OperateLog(module = "部门管理", operation = "修改部门")
     public Result<Void> update(@RequestBody @Valid DeptUpdateDTO dto) {
         sysDeptService.updateDept(dto);
@@ -52,7 +53,7 @@ public class SysDeptController {
 
     @Operation(summary = "删除部门")
     @DeleteMapping("/{id}")
-    @SaCheckPermission("sys:dept:delete")
+    @SaCheckPermission(PermissionConstants.Dept.DELETE)
     @OperateLog(module = "部门管理", operation = "删除部门")
     public Result<Void> delete(@PathVariable Long id) {
         sysDeptService.deleteDept(id);
@@ -61,7 +62,7 @@ public class SysDeptController {
 
     @Operation(summary = "根据ID查询部门")
     @GetMapping("/{id}")
-    @SaCheckPermission("sys:dept:query")
+    @SaCheckPermission(PermissionConstants.Dept.QUERY)
     public Result<DeptVO> getById(@PathVariable Long id) {
         return Result.ok(deptConvert.toVO(sysDeptService.getById(id)));
     }

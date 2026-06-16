@@ -5,12 +5,12 @@ import com.rx.admin.modules.literature.common.entity.LiteraryWork;
 import com.rx.admin.modules.literature.common.entity.Author;
 import com.rx.admin.modules.literature.common.entity.Dynasty;
 import com.rx.admin.modules.literature.common.entity.Genre;
-import com.rx.admin.modules.system.user.service.SysUserService;
-import com.rx.admin.modules.system.role.service.SysRoleService;
+import com.rx.admin.modules.system.user.service.ISysUserService;
+import com.rx.admin.modules.system.role.service.ISysRoleService;
 import com.rx.admin.modules.system.menu.service.SysMenuService;
-import com.rx.admin.modules.system.dept.service.SysDeptService;
-import com.rx.admin.modules.system.dict.service.SysDictTypeService;
-import com.rx.admin.modules.content.notice.service.SysNoticeService;
+import com.rx.admin.modules.system.dept.service.ISysDeptService;
+import com.rx.admin.modules.system.dict.service.ISysDictTypeService;
+import com.rx.admin.modules.content.notice.service.ISysNoticeService;
 import com.rx.admin.modules.monitor.log.service.SysLogService;
 import com.rx.admin.modules.monitor.online.service.OnlineUserService;
 import com.rx.admin.modules.literature.common.service.LiteraryWorkService;
@@ -30,7 +30,7 @@ import com.rx.admin.modules.literature.shuihu.service.ShuihuPoemService;
 import com.rx.admin.modules.literature.shuihu.service.ShuihuChapterService;
 import com.rx.admin.modules.tool.music.service.MusicService;
 import com.rx.admin.modules.as400.techblog.entity.TechBlogArticle;
-import com.rx.admin.modules.as400.techblog.service.TechBlogArticleService;
+import com.rx.admin.modules.as400.techblog.service.ITechBlogArticleService;
 import com.rx.admin.modules.monitor.loginlog.mapper.SysLoginLogMapper;
 import com.rx.admin.modules.monitor.exportlog.mapper.SysExportLogMapper;
 import com.rx.admin.modules.monitor.exportlog.entity.SysExportLog;
@@ -71,12 +71,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final SysUserService userService;
-    private final SysRoleService roleService;
+    private final ISysUserService userService;
+    private final ISysRoleService roleService;
     private final SysMenuService menuService;
-    private final SysDeptService deptService;
-    private final SysDictTypeService dictTypeService;
-    private final SysNoticeService noticeService;
+    private final ISysDeptService deptService;
+    private final ISysDictTypeService dictTypeService;
+    private final ISysNoticeService noticeService;
     private final SysLogService logService;
     private final OnlineUserService onlineUserService;
 
@@ -116,7 +116,7 @@ public class DashboardController {
     private final ShuihuChapterService shuihuChapterService;
 
     // 技术博客
-    private final TechBlogArticleService techBlogArticleService;
+    private final ITechBlogArticleService techBlogArticleService;
 
     // 音乐播放器
     private final MusicService musicService;
