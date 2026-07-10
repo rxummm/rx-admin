@@ -4,71 +4,43 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * 应用配置类
+ * 支持热更新的配置项
+ */
 @Data
 @Component
 @ConfigurationProperties(prefix = "app")
 public class AppConfig {
 
-    private MenuConfig menu = new MenuConfig();
     private CacheConfig cache = new CacheConfig();
-    private CorsConfig cors = new CorsConfig();
-    private CaptchaConfig captcha = new CaptchaConfig();
-    private RateLimitConfig rateLimit = new RateLimitConfig();
     private SecurityConfig security = new SecurityConfig();
+    private MenuConfig menu = new MenuConfig();
     private TechBlogConfig techblog = new TechBlogConfig();
-    private IpFilterConfig ipFilter = new IpFilterConfig();
-    private ApiConfig api = new ApiConfig();
-    private AudioConfig audio = new AudioConfig();
     private OcrConfig ocr = new OcrConfig();
-
-    @Data
-    public static class MenuConfig {
-        private String excludedTopIds = "1,24,30,36";
-        private Long excludedPermissionMenuId = 300L;
-    }
+    private AudioConfig audio = new AudioConfig();
 
     @Data
     public static class CacheConfig {
         private long configTtlSeconds = 600;
         private long menuTtlSeconds = 3600;
-        private long dictTtlSeconds = 1800;
-        private long calendarTtlSeconds = 120;
         private long dashboardRefreshMs = 30000;
     }
 
     @Data
-    public static class CorsConfig {
-        private String allowedOrigins = "*";
-    }
-
-    @Data
-    public static class CaptchaConfig {
-        private long expireMs = 300000;
-        private long cleanupIntervalMs = 60000;
-    }
-
-    @Data
-    public static class RateLimitConfig {
-        private int global = 100;
-        private int login = 10;
-        private int api = 50;
-    }
-
-    @Data
     public static class SecurityConfig {
-        private int loginAttemptMax = 5;
-        private int loginLockSeconds = 1800;
-        private String[] authExcludePaths = {
-            "/api/v1/auth/login",
-            "/api/v1/auth/register",
-            "/api/v1/auth/captcha"
-        };
-        private String[] swaggerPaths = {
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/doc.html"
-        };
-        private String[] actuatorPaths = {"/actuator/**"};
+        private long captchaExpireMs = 300000;
+        private long captchaCleanupIntervalMs = 60000;
+        private long replayTimeWindowMs = 300000;
+        private int replayMaxNonceCache = 10000;
+        private String[] authExcludePaths = new String[]{};
+        private String[] swaggerPaths = new String[]{};
+        private String[] actuatorPaths = new String[]{};
+    }
+
+    @Data
+    public static class MenuConfig {
+        private String defaultPassword = "admin123";
     }
 
     @Data
@@ -79,51 +51,23 @@ public class AppConfig {
     }
 
     @Data
-    public static class IpFilterConfig {
-        private boolean enabled = false;
-        private String mode = "blacklist";
-    }
-
-    @Data
-    public static class ApiConfig {
-        /**
-         * API 前缀，默认 /api
-         */
-        private String prefix = "/api";
-
-        /**
-         * 默认版本号，默认 v1
-         */
-        private String defaultVersion = "v1";
-
-        /**
-         * 是否启用版本控制，false 则忽略版本号
-         */
-        private boolean enabled = true;
+    public static class OcrConfig {
+        private String tempDir = "ocr-temp";
+        private String tessdataPath = "D:\\tessdata";
+        private String defaultLanguage = "chi_sim+eng";
     }
 
     @Data
     public static class AudioConfig {
-        private String whisperPath = "whisper";
-        private String modelPath = "/opt/whisper/models";
-        private String defaultModel = "small";
-        private String defaultLanguage = "zh";
-        private String tempDir = "/tmp/audio";
-        private int maxFileSizeMb = 100;
-        private boolean enabled = true;
-        private int threads = 4;  // Whisper CPU 线程数，默认 4
-        // WhisperX 说话人分离配置（可选高级模式）
+        private String tempDir = "audio-temp";
+        private String storageDir = "audio-storage";
         private boolean whisperxEnabled = false;
-        private String whisperxApiUrl = "http://localhost:8880";
+        private String defaultLanguage = "zh";
+        private String defaultModel = "demo";
+        private String whisperPath = "";
+        private String whisperxApiUrl = "";
         private String whisperxApiKey = "";
-    }
-
-    @Data
-    public static class OcrConfig {
-        private boolean enabled = true;
-        private String tessdataPath = "D:\\tesseract-ocr\\tessdata";
-        private String defaultLanguage = "chi_sim+eng";
-        private String tempDir = "D:\\temp\\ocr";
-        private int maxFileSizeMb = 50;
+        private String modelPath = "";
+        private int threads = 4;
     }
 }

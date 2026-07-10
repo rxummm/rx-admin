@@ -141,6 +141,11 @@ export const API = {
       HOURLY: '/monitor/log-analysis/hourly',
       TYPE_DISTRIBUTION: '/monitor/log-analysis/type-distribution',
       TREND: '/monitor/log-analysis/trend'
+    },
+    LOGIN_ANOMALY: {
+      STATS: '/monitor/login-anomaly/stats',
+      FAILED_BY_IP: '/monitor/login-anomaly/failed-by-ip',
+      DETECT: '/monitor/login-anomaly/detect'
     }
   },
 

@@ -23,4 +23,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
             "AND m.status = 1 AND m.deleted = 0")
     List<String> selectPermsByUserId(@Param("userId") Long userId);
 
+    @Select("SELECT * FROM sys_user WHERE username = #{username} AND deleted = 0")
+    SysUser selectByUsername(@Param("username") String username);
+
 }

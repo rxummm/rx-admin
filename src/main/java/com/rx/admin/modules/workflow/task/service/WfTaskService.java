@@ -11,4 +11,14 @@ public interface WfTaskService extends IService<WfTask> {
     PageResult<WfTask> queryPage(WfTaskQueryDTO query);
     void approveTask(WfTaskApproveDTO dto, Long operatorId, String operatorName);
     void transferTask(WfTaskTransferDTO dto);
+    
+    /**
+     * 委托任务
+     */
+    void delegateTask(Long taskId, Long delegateId, String delegateName, String reason, Long operatorId);
+    
+    /**
+     * 检查超时任务
+     */
+    void checkTimeoutTasks();
 }

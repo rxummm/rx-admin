@@ -15,6 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Tag(name = "工作流任务")
 @RestController
 @ApiVersion(1)
@@ -60,6 +62,21 @@ public class WfTaskController {
     @OperateLog(module = "工作流任务", operation = "转办")
     public Result<Void> transfer(@RequestBody @Valid WfTaskTransferDTO dto) {
         service.transferTask(dto);
+        return Result.ok();
+    }
+
+    @SaCheckPermission("wf:task:delegate")
+    @PutMapping("/delegate")
+    @Operation(summary = "委托任务")
+    @OperateLog(module = "工作流任务", operation = "委托")
+    public Result<Void> delegate(@RequestBody Map<String, Object> params) {
+        Long taskId = Long.valueOf(params.get("taskId").toString());
+        Long delegateId = Long.valueOf(params.get("delegateId").toString());
+        String delegateName = (String) params.get("delegateName");
+        String reason = (String) params.get("reason");
+        Long operatorId = StpUtil.getLoginIdAsLong();
+        
+        service.delegateTask(taskId, delegateId, delegateName, reason, operatorId);
         return Result.ok();
     }
 }

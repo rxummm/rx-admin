@@ -23,4 +23,14 @@ public class WfTask extends BaseEntity {
     private String comment;
     private LocalDateTime dueTime;
     private LocalDateTime completeTime;
+    
+    // 委托相关字段
+    /** 委托人ID */
+    private Long delegateId;
+    /** 委托人姓名 */
+    private String delegateName;
+    /** 委托时间 */
+    private LocalDateTime delegateTime;
+    /** 委托原因 */
+    private String delegateReason;
 }

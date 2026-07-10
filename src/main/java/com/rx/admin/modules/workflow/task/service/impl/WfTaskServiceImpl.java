@@ -80,4 +80,56 @@ public class WfTaskServiceImpl extends ServiceImpl<WfTaskMapper, WfTask> impleme
         updateById(update);
         log.info("任务转办: taskId={}, targetUser={}", dto.getTaskId(), dto.getTargetUserName());
     }
+
+    /**
+     * 委托任务
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delegateTask(Long taskId, Long delegateId, String delegateName, String reason, Long operatorId) {
+        WfTask task = getById(taskId);
+        if (task == null) {
+            throw new BusinessException("任务不存在");
+        }
+        if (!"PENDING".equals(task.getStatus())) {
+            throw new BusinessException("任务状态不允许委托");
+        }
+        if (!operatorId.equals(task.getAssigneeId())) {
+            throw new BusinessException("无权委托此任务");
+        }
+        
+        WfTask update = new WfTask();
+        update.setId(taskId);
+        update.setDelegateId(delegateId);
+        update.setDelegateName(delegateName);
+        update.setDelegateTime(LocalDateTime.now());
+        update.setDelegateReason(reason);
+        update.setAssigneeId(delegateId);
+        update.setAssigneeName(delegateName);
+        updateById(update);
+        
+        log.info("任务委托: taskId={}, delegate={}, reason={}", taskId, delegateName, reason);
+    }
+
+    /**
+     * 检查任务是否超时
+     */
+    @Override
+    public void checkTimeoutTasks() {
+        LambdaQueryWrapper<WfTask> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(WfTask::getStatus, "PENDING")
+               .le(WfTask::getDueTime, LocalDateTime.now())
+               .isNotNull(WfTask::getDueTime);
+        
+        list(wrapper).forEach(task -> {
+            WfTask update = new WfTask();
+            update.setId(task.getId());
+            update.setStatus("TIMEOUT");
+            update.setCompleteTime(LocalDateTime.now());
+            update.setComment("任务超时自动完成");
+            updateById(update);
+            
+            log.info("任务超时自动完成: taskId={}", task.getId());
+        });
+    }
 }

@@ -45,6 +45,10 @@ export const componentMap = {
   // 系统监控
   'monitor/log/index': { component: () => import('@/views/monitor/log/index.vue'), name: 'MonitorLog' },
   'monitor/online/index': { component: () => import('@/views/monitor/online/index.vue'), name: 'MonitorOnline' },
+  'monitor/loginAnomaly/index': { component: () => import('@/views/monitor/loginAnomaly/index.vue'), name: 'MonitorLoginAnomaly' },
+  'monitor/logAnalysis/visualization': { component: () => import('@/views/monitor/logAnalysis/visualization.vue'), name: 'MonitorLogVisualization' },
+  'monitor/userBehavior/index': { component: () => import('@/views/monitor/userBehavior/index.vue'), name: 'MonitorUserBehavior' },
+  'monitor/dashboard/realtime': { component: () => import('@/views/monitor/dashboard/realtime.vue'), name: 'MonitorRealtimeDashboard' },
 
   // 四大名著 - 红楼梦
   'classics/honglou/poems/index': {
