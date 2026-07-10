@@ -3,14 +3,14 @@
  * 提供 FPS、API 耗时、首屏加载时间等性能指标监控
  */
 
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { COLORS } from '@/config/colors'
 
 // ==================== FPS 监控 ====================
 
 const fps = ref(60)
-const frameCount = ref(0)
-let lastTime = performance.now()
+const _frameCount = ref(0)
+let _lastTime = performance.now()
 let fpsTimer = null
 
 /**
@@ -19,19 +19,19 @@ let fpsTimer = null
 export function startFPSMonitor() {
   let frames = 0
   let lastFrameTime = performance.now()
-  
+
   function updateFPS(currentTime) {
     frames++
-    
+
     if (currentTime - lastFrameTime >= 1000) {
       fps.value = frames
       frames = 0
       lastFrameTime = currentTime
     }
-    
+
     fpsTimer = requestAnimationFrame(updateFPS)
   }
-  
+
   fpsTimer = requestAnimationFrame(updateFPS)
 }
 
@@ -69,22 +69,22 @@ const MAX_REQUESTS = 50
  */
 export function recordAPIRequest(url, method, startTime, endTime, status, error = null) {
   const duration = endTime - startTime
-  
+
   apiStats.value.totalRequests++
-  
+
   if (status >= 400) {
     apiStats.value.failedRequests++
   }
-  
+
   // 更新最慢请求
   if (duration > apiStats.value.slowestRequest) {
     apiStats.value.slowestRequest = duration
   }
-  
+
   // 计算平均响应时间
   const totalTime = apiStats.value.requests.reduce((sum, req) => sum + req.duration, 0) + duration
   apiStats.value.avgResponseTime = Math.round(totalTime / apiStats.value.requests.length) || 0
-  
+
   // 添加到请求列表（保留最近 50 个）
   apiStats.value.requests.unshift({
     url,
@@ -94,7 +94,7 @@ export function recordAPIRequest(url, method, startTime, endTime, status, error 
     timestamp: new Date().toISOString(),
     error
   })
-  
+
   if (apiStats.value.requests.length > MAX_REQUESTS) {
     apiStats.value.requests.pop()
   }
@@ -139,21 +139,21 @@ export function collectPageLoadMetrics() {
   // 使用 Performance API
   if ('performance' in window) {
     const perfData = performance.getEntriesByType('navigation')[0]
-    
+
     if (perfData) {
       pageLoadMetrics.value.TTFB = Math.round(perfData.responseStart - perfData.requestStart)
       pageLoadMetrics.value.DOMContentLoaded = Math.round(perfData.domContentLoadedEventEnd - perfData.startTime)
       pageLoadMetrics.value.LoadComplete = Math.round(perfData.loadEventEnd - perfData.startTime)
     }
-    
+
     // 收集 Paint  timing
     const paintEntries = performance.getEntriesByType('paint')
-    paintEntries.forEach(entry => {
+    paintEntries.forEach((entry) => {
       if (entry.name === 'first-contentful-paint') {
         pageLoadMetrics.value.FCP = Math.round(entry.startTime)
       }
     })
-    
+
     // 收集 Largest Contentful Paint
     if ('PerformanceObserver' in window) {
       try {
@@ -162,41 +162,41 @@ export function collectPageLoadMetrics() {
           const lastEntry = entries[entries.length - 1]
           pageLoadMetrics.value.LCP = Math.round(lastEntry.startTime)
         })
-        
+
         lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true })
-      } catch (e) {
+      } catch {
         console.warn('LCP observer not supported')
       }
-      
+
       // 收集 First Input Delay
       try {
         const fidObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries()
-          entries.forEach(entry => {
+          entries.forEach((entry) => {
             pageLoadMetrics.value.FID = Math.round(entry.processingStart - entry.startTime)
           })
         })
-        
+
         fidObserver.observe({ type: 'first-input', buffered: true })
-      } catch (e) {
+      } catch {
         console.warn('FID observer not supported')
       }
-      
+
       // 收集 Cumulative Layout Shift
       try {
         let clsValue = 0
         const clsObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries()
-          entries.forEach(entry => {
+          entries.forEach((entry) => {
             if (!entry.hadRecentInput) {
               clsValue += entry.value
             }
           })
           pageLoadMetrics.value.CLS = parseFloat(clsValue.toFixed(4))
         })
-        
+
         clsObserver.observe({ type: 'layout-shift', buffered: true })
-      } catch (e) {
+      } catch {
         console.warn('CLS observer not supported')
       }
     }
@@ -246,28 +246,26 @@ export function getMemoryUsage() {
  */
 export function calculatePerformanceScore() {
   let score = 100
-  
+
   // FPS 扣分
   if (fps.value < 30) score -= 30
   else if (fps.value < 50) score -= 15
   else if (fps.value < 60) score -= 5
-  
+
   // FCP 扣分
   if (pageLoadMetrics.value.FCP > 3000) score -= 20
   else if (pageLoadMetrics.value.FCP > 1500) score -= 10
-  
+
   // API 失败率扣分
-  const failRate = apiStats.value.totalRequests > 0 
-    ? apiStats.value.failedRequests / apiStats.value.totalRequests 
-    : 0
-  
+  const failRate = apiStats.value.totalRequests > 0 ? apiStats.value.failedRequests / apiStats.value.totalRequests : 0
+
   if (failRate > 0.1) score -= 20
   else if (failRate > 0.05) score -= 10
-  
+
   // 平均响应时间扣分
   if (apiStats.value.avgResponseTime > 2000) score -= 15
   else if (apiStats.value.avgResponseTime > 1000) score -= 8
-  
+
   return Math.max(0, Math.min(100, score))
 }
 
@@ -276,7 +274,7 @@ export function calculatePerformanceScore() {
  */
 export function getPerformanceLevel() {
   const score = calculatePerformanceScore()
-  
+
   if (score >= 90) return { level: '优秀', color: COLORS.STATUS.SUCCESS, emoji: '🚀' }
   if (score >= 70) return { level: '良好', color: COLORS.STATUS.PRIMARY, emoji: '✨' }
   if (score >= 50) return { level: '一般', color: COLORS.STATUS.WARNING, emoji: '⚠️' }
@@ -292,21 +290,21 @@ let memoryInterval = null
  */
 export function usePerformanceMonitor() {
   const isMonitoring = ref(false)
-  
+
   /**
    * 启动监控
    */
   function start() {
     if (isMonitoring.value || memoryInterval) return
-    
+
     isMonitoring.value = true
     startFPSMonitor()
     collectPageLoadMetrics()
-    
+
     // 每秒更新内存使用
     memoryInterval = setInterval(updateMemoryUsage, 1000)
   }
-  
+
   /**
    * 停止监控
    */
@@ -318,7 +316,7 @@ export function usePerformanceMonitor() {
       memoryInterval = null
     }
   }
-  
+
   /**
    * 获取所有性能数据
    */
@@ -332,7 +330,7 @@ export function usePerformanceMonitor() {
       level: getPerformanceLevel()
     }
   }
-  
+
   return {
     isMonitoring,
     fps,

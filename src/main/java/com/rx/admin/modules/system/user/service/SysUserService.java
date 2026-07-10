@@ -59,7 +59,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
         IPage<SysUser> iPage = page(new Page<>(page, size), wrapper);
         // 清除密码字段
         iPage.getRecords().forEach(u -> u.setPassword(null));
-        return PageResult.of(iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -239,7 +239,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
             throw new IllegalArgumentException("密码不能为空");
         }
         if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            throw new IllegalArgumentException("密码需以字母开头，包含数字，至少6位");
+            throw new IllegalArgumentException("密码需包含大写字母、小写字母、数字和特殊字符，长度8-32位");
         }
         if (password.equalsIgnoreCase(username)) {
             throw new IllegalArgumentException("密码不能与用户名相同");
@@ -303,5 +303,12 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> implemen
         if (roleIds == null || roleIds.isEmpty()) return "";
         List<SysRole> roles = sysRoleMapper.selectBatchIds(roleIds);
         return roles.stream().map(SysRole::getRoleName).collect(Collectors.joining("、"));
+    }
+
+    @Override
+    public void deleteUserBatch(List<Long> ids) {
+        for (Long id : ids) {
+            deleteUser(id);
+        }
     }
 }

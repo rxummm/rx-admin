@@ -13,7 +13,6 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-@SuppressWarnings("null")
 public interface SanguoCharacterConvert {
 
     SanguoCharacter toEntity(SanguoCharacterCreateDTO dto);
@@ -28,6 +27,10 @@ public interface SanguoCharacterConvert {
         List<SanguoCharacterVO> voList = page.getRecords().stream()
                 .map(this::toVO)
                 .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(this::toVO);
+    }
+
+    default PageResult<SanguoCharacterVO> toPageResult(PageResult<SanguoCharacter> pageResult) {
+        return pageResult.map(this::toVO);
     }
 }

@@ -81,9 +81,7 @@
             <el-table-column prop="url" label="URL" show-overflow-tooltip />
             <el-table-column prop="duration" label="耗时" width="80">
               <template #default="{ row }">
-                <span :style="{ color: getDurationColor(row.duration) }">
-                  {{ row.duration }}ms
-                </span>
+                <span :style="{ color: getDurationColor(row.duration) }"> {{ row.duration }}ms </span>
               </template>
             </el-table-column>
             <el-table-column prop="status" label="状态" width="70">

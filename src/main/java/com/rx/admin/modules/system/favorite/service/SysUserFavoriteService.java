@@ -56,4 +56,8 @@ public class SysUserFavoriteService extends ServiceImpl<SysUserFavoriteMapper, S
             updateById(f);
         }
     }
+
+    public void deleteFavoriteBatch(List<Long> ids) {
+        removeByIds(ids);
+    }
 }

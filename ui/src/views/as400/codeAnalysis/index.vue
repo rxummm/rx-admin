@@ -13,12 +13,7 @@
           <div class="source-type-group">
             <label class="panel-label">{{ $t('as400.analysis.sourceType') }}</label>
             <el-select v-model="sourceType" style="width: 180px">
-              <el-option
-                v-for="t in sourceTypes"
-                :key="t.value"
-                :label="t.label"
-                :value="t.value"
-              />
+              <el-option v-for="t in sourceTypes" :key="t.value" :label="t.label" :value="t.value" />
             </el-select>
           </div>
           <div class="action-group">
@@ -50,19 +45,11 @@
         <template v-if="result">
           <div class="panel-header">
             <div class="result-tabs">
-              <span
-                class="result-tab"
-                :class="{ active: activeTab === 'flowchart' }"
-                @click="activeTab = 'flowchart'"
-              >
+              <span class="result-tab" :class="{ active: activeTab === 'flowchart' }" @click="activeTab = 'flowchart'">
                 <el-icon><Connection /></el-icon>
                 {{ $t('as400.analysis.flowchart') }}
               </span>
-              <span
-                class="result-tab"
-                :class="{ active: activeTab === 'details' }"
-                @click="activeTab = 'details'"
-              >
+              <span class="result-tab" :class="{ active: activeTab === 'details' }" @click="activeTab = 'details'">
                 <el-icon><Document /></el-icon>
                 {{ $t('as400.analysis.details') }}
               </span>
@@ -110,36 +97,21 @@
               <div v-if="summary?.referencedFiles?.length" class="stat-block">
                 <span class="stat-label">{{ $t('as400.analysis.referencedFiles') }}</span>
                 <div class="tag-list">
-                  <el-tag
-                    v-for="f in summary.referencedFiles"
-                    :key="f"
-                    size="small"
-                    type="info"
-                  >{{ f }}</el-tag>
+                  <el-tag v-for="f in summary.referencedFiles" :key="f" size="small" type="info">{{ f }}</el-tag>
                 </div>
               </div>
 
               <div v-if="summary?.calledPrograms?.length" class="stat-block">
                 <span class="stat-label">{{ $t('as400.analysis.calledPrograms') }}</span>
                 <div class="tag-list">
-                  <el-tag
-                    v-for="p in summary.calledPrograms"
-                    :key="p"
-                    size="small"
-                    type="warning"
-                  >{{ p }}</el-tag>
+                  <el-tag v-for="p in summary.calledPrograms" :key="p" size="small" type="warning">{{ p }}</el-tag>
                 </div>
               </div>
 
               <div v-if="summary?.procedures?.length" class="stat-block">
                 <span class="stat-label">{{ $t('as400.analysis.procedures') }}</span>
                 <div class="tag-list">
-                  <el-tag
-                    v-for="p in summary.procedures"
-                    :key="p"
-                    size="small"
-                    type="primary"
-                  >{{ p }}</el-tag>
+                  <el-tag v-for="p in summary.procedures" :key="p" size="small" type="primary">{{ p }}</el-tag>
                 </div>
               </div>
             </div>
@@ -183,9 +155,11 @@ const BLOCK_START_TYPES = ['for', 'if', 'doWhile', 'doUntil', 'select', 'monitor
 function classifyNode(stmt) {
   const nt = stmt.nodeType
   const op = (stmt.operation || '').toUpperCase()
-  if (['for', 'if', 'doWhile', 'doUntil', 'select', 'monitor', 'else', 'elseif', 'when', 'other'].includes(nt)) return 'control'
+  if (['for', 'if', 'doWhile', 'doUntil', 'select', 'monitor', 'else', 'elseif', 'when', 'other'].includes(nt))
+    return 'control'
   if (nt === 'endBlock') return 'control-end'
-  if (['return', 'leaveSubroutine'].includes(nt) || op === 'RETURN' || op === 'LEAVE' || op === 'LEAVESR') return 'return'
+  if (['return', 'leaveSubroutine'].includes(nt) || op === 'RETURN' || op === 'LEAVE' || op === 'LEAVESR')
+    return 'return'
   if (['display', 'dump', 'read', 'write', 'update', 'delete', 'chain', 'setPosition'].includes(nt)) return 'io'
   if (['eval', 'callp', 'exsr', 'clear', 'sort'].includes(nt)) return 'operation'
   if (nt === 'operation') {
@@ -204,7 +178,7 @@ function classifyColor(type) {
     io: { stroke: '#67C23A', fill: '#EDF7ED' },
     operation: { stroke: '#5B7FFF', fill: '#EEF1FF' },
     return: { stroke: '#F56C6C', fill: '#FDEEEE' },
-    variable: { stroke: '#8B5CF6', fill: '#F3EEFF' },
+    variable: { stroke: '#8B5CF6', fill: '#F3EEFF' }
   }
   return map[type] || { stroke: '#909399', fill: '#F5F5F5' }
 }
@@ -232,7 +206,7 @@ const sourceTypes = [
   { label: 'DDS - Physical File (PF)', value: 'PF' },
   { label: 'DDS - Logical File (LF)', value: 'LF' },
   { label: 'DDS - Display File (DSPF)', value: 'DSPF' },
-  { label: 'DDS - Printer File (PRTF)', value: 'PRTF' },
+  { label: 'DDS - Printer File (PRTF)', value: 'PRTF' }
 ]
 
 const samples = {
@@ -260,7 +234,7 @@ end-proc;`,
               CHGVAR     VAR(&MSG) VALUE('Hello CL Program')
               SNDPGMMSG  MSG(&MSG)
               RETURN
-              ENDPGM`,
+              ENDPGM`
 }
 
 const sourceType = ref('RPGLE')
@@ -307,17 +281,17 @@ function buildFlowchart(irData) {
     mousewheel: true,
     interacting: false,
     selecting: { enabled: false },
-    keyboard: { enabled: false },
+    keyboard: { enabled: false }
   })
 
-  const metadata = irData.metadata || {}
+  const _metadata = irData.metadata || {}
   const content = irData.content || {}
   const statements = content.freeFormatStatements || content.calculationSpecs || []
   const procSpecs = content.procedureSpecs || []
   const defSpecs = content.definitionSpecs || []
 
   if (!statements.length && !defSpecs.length && !procSpecs.length) {
-    const sourceCodeText = irData?.content?.sourceLines?.map?.(l => l.rawText).join('\n') || ''
+    const sourceCodeText = irData?.content?.sourceLines?.map?.((l) => l.rawText).join('\n') || ''
     const isFreeFormat = sourceCodeText.includes('**free')
     let msg
     if (!isFreeFormat && sourceType.value === 'RPGLE') {
@@ -325,23 +299,28 @@ function buildFlowchart(irData) {
     } else {
       msg = 'No parseable statements found'
     }
-    const n = graph.addNode({
-      x: 60, y: 60, width: 340, height: 60,
+    const _n = graph.addNode({
+      x: 60,
+      y: 60,
+      width: 340,
+      height: 60,
       shape: 'rect',
       attrs: {
         body: { stroke: '#E6A23C', strokeWidth: 2, fill: '#FFF7E6', rx: 8, ry: 8 },
-        label: { text: msg, fontSize: 14, fill: '#E6A23C' },
-      },
+        label: { text: msg, fontSize: 14, fill: '#E6A23C' }
+      }
     })
     return
   }
 
   // Process definitions
-  const defNodes = defSpecs.filter(d => d.rawSourceLine).map((d, i) => ({
-    id: `def_${i}`,
-    type: 'variable',
-    label: truncateLabel(d.rawSourceLine),
-  }))
+  const defNodes = defSpecs
+    .filter((d) => d.rawSourceLine)
+    .map((d, i) => ({
+      id: `def_${i}`,
+      type: 'variable',
+      label: truncateLabel(d.rawSourceLine)
+    }))
 
   // Process freeFormatStatements into a flat list with depth
   const depthEntries = []
@@ -384,7 +363,7 @@ function buildFlowchart(irData) {
     const bodyAttrs = {
       stroke: colors.stroke,
       strokeWidth: isControlEnd ? 1.5 : 2,
-      fill: colors.fill,
+      fill: colors.fill
     }
     if (isRounded) {
       bodyAttrs.rx = 8
@@ -395,7 +374,10 @@ function buildFlowchart(irData) {
     }
 
     const node = graph.addNode({
-      x, y, width: width || NODE_W, height: height || NODE_H,
+      x,
+      y,
+      width: width || NODE_W,
+      height: height || NODE_H,
       shape: type === 'control' ? 'diamond-shape' : 'rect',
       attrs: {
         body: bodyAttrs,
@@ -404,18 +386,16 @@ function buildFlowchart(irData) {
           fontSize: 12,
           fill: '#303133',
           fontFamily: 'Consolas, Monaco, monospace',
-          textWrap: { width: (width || NODE_W) - 16 },
-        },
-      },
+          textWrap: { width: (width || NODE_W) - 16 }
+        }
+      }
     })
     return node
   }
 
   // Add definition nodes first
   if (defNodes.length) {
-    const defLabel = defNodes.length === 1
-      ? defNodes[0].label
-      : `Variables (${defNodes.length} declared)`
+    const defLabel = defNodes.length === 1 ? defNodes[0].label : `Variables (${defNodes.length} declared)`
     addNode(defLabel, 'variable', PAD_X, y, NODE_W, Math.max(DEF_H, defNodes.length * 20))
     y += Math.max(DEF_H, defNodes.length * 20) + V_GAP
   }
@@ -426,9 +406,7 @@ function buildFlowchart(irData) {
   for (const entry of depthEntries) {
     const stmt = entry.stmt
     const raw = stmt.rawSourceLine
-    const type = entry.isBlockStart ? 'control'
-      : entry.isBlockEnd ? 'control-end'
-      : classifyNode(stmt)
+    const type = entry.isBlockStart ? 'control' : entry.isBlockEnd ? 'control-end' : classifyNode(stmt)
 
     const x = PAD_X + entry.depth * INDENT
     const label = truncateLabel(raw, 55)
@@ -439,7 +417,7 @@ function buildFlowchart(irData) {
     let isProcBegin = false
     let isProcEnd = false
     if (procSpecs.length) {
-      const ps2 = procSpecs.find(p => p.rawSourceLine === raw)
+      const ps2 = procSpecs.find((p) => p.rawSourceLine === raw)
       if (ps2?.beginEnd === 'B') isProcBegin = true
       if (ps2?.beginEnd === 'E') isProcEnd = true
     }
@@ -455,16 +433,16 @@ function buildFlowchart(irData) {
           line: {
             stroke: '#909399',
             strokeWidth: 1.5,
-            targetMarker: { name: 'classic', size: 6 },
-          },
+            targetMarker: { name: 'classic', size: 6 }
+          }
         },
         router: 'manhattan',
-        connector: 'rounded',
+        connector: 'rounded'
       })
-  }
+    }
 
-  prevNode = node
-  y += NODE_H + V_GAP
+    prevNode = node
+    y += NODE_H + V_GAP
   }
 
   // Auto-fit content
@@ -505,28 +483,28 @@ function initGraph() {
     mousewheel: true,
     connecting: {
       router: 'manhattan',
-      connector: 'rounded',
+      connector: 'rounded'
     },
     defaultNode: {
       attrs: {
         body: { stroke: '#909399', strokeWidth: 2, fill: '#ffffff' },
-        label: { fontSize: 14, fill: '#303133' },
-      },
+        label: { fontSize: 14, fill: '#303133' }
+      }
     },
     defaultEdge: {
       attrs: {
         line: {
           stroke: '#909399',
           strokeWidth: 1.5,
-          targetMarker: { name: 'classic', size: 6 },
-        },
+          targetMarker: { name: 'classic', size: 6 }
+        }
       },
       router: 'manhattan',
-      connector: 'rounded',
+      connector: 'rounded'
     },
     interacting: false,
     selecting: { enabled: false },
-    keyboard: { enabled: false },
+    keyboard: { enabled: false }
   })
 
   if (result.value) {
@@ -556,12 +534,15 @@ onBeforeUnmount(() => {
   }
 })
 
-watch(() => result.value, (val) => {
-  if (val && graph) {
-    activeTab.value = 'flowchart'
-    buildFlowchart(val)
+watch(
+  () => result.value,
+  (val) => {
+    if (val && graph) {
+      activeTab.value = 'flowchart'
+      buildFlowchart(val)
+    }
   }
-})
+)
 
 function exportFlowchartImage() {
   if (!graph || !flowchartRef.value) {
@@ -577,8 +558,7 @@ function exportFlowchartImage() {
     const scale = 2
     const pad = 24
     const markerPad = 14
-    const LEAF_TAGS = ['rect', 'polygon', 'path', 'circle',
-                       'ellipse', 'line', 'polyline', 'use', 'text', 'image']
+    const LEAF_TAGS = ['rect', 'polygon', 'path', 'circle', 'ellipse', 'line', 'polyline', 'use', 'text', 'image']
 
     // ============================================================
     // Step 1: Compute content bbox on the ORIGINAL svgEl.
@@ -599,24 +579,24 @@ function exportFlowchartImage() {
 
     function hasMarkers(el) {
       if (el.nodeType !== 1) return false
-      if (el.hasAttribute('marker-end') ||
-          el.hasAttribute('marker-start') ||
-          el.hasAttribute('marker-mid')) return true
+      if (el.hasAttribute('marker-end') || el.hasAttribute('marker-start') || el.hasAttribute('marker-mid')) return true
       for (const child of el.children) {
-        if (child.nodeType === 1 &&
-            (child.hasAttribute('marker-end') ||
-             child.hasAttribute('marker-start') ||
-             child.hasAttribute('marker-mid'))) return true
+        if (
+          child.nodeType === 1 &&
+          (child.hasAttribute('marker-end') || child.hasAttribute('marker-start') || child.hasAttribute('marker-mid'))
+        )
+          return true
       }
       return false
     }
 
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity
     let hasContent = false
 
-    const targetEls = svgEl.querySelectorAll(
-      'g, rect, polygon, path, circle, ellipse, line, polyline, use, text'
-    )
+    const targetEls = svgEl.querySelectorAll('g, rect, polygon, path, circle, ellipse, line, polyline, use, text')
 
     for (const el of targetEls) {
       if (isInsideDefs(el, svgEl)) continue
@@ -650,7 +630,7 @@ function exportFlowchartImage() {
           { x: bbox.x + bbox.width / 2, y: bbox.y },
           { x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height },
           { x: bbox.x, y: bbox.y + bbox.height / 2 },
-          { x: bbox.x + bbox.width, y: bbox.y + bbox.height / 2 },
+          { x: bbox.x + bbox.width, y: bbox.y + bbox.height / 2 }
         ]
 
         const extra = hasMarkers(el) ? markerPad : 0
@@ -664,7 +644,7 @@ function exportFlowchartImage() {
           if (y + extra > maxY) maxY = y + extra
         }
         hasContent = true
-      } catch (_) {
+      } catch {
         // Skip: empty groups, disconnected elements, etc.
       }
     }
@@ -676,8 +656,8 @@ function exportFlowchartImage() {
 
     const vbX = minX - pad
     const vbY = minY - pad
-    const vbW = (maxX - minX) + pad * 2
-    const vbH = (maxY - minY) + pad * 2
+    const vbW = maxX - minX + pad * 2
+    const vbH = maxY - minY + pad * 2
     const finalW = vbW
     const finalH = vbH
 
@@ -780,7 +760,7 @@ async function handleAnalyze() {
     const res = await request.post(API.AS400.ANALYSIS, {
       sourceCode: sourceCode.value,
       sourceType: sourceType.value,
-      fileName: `input.${sourceType.value.toLowerCase()}`,
+      fileName: `input.${sourceType.value.toLowerCase()}`
     })
     if (res.code === 200 && res.data) {
       result.value = res.data
@@ -994,12 +974,30 @@ async function copyResult() {
   border: 2px solid;
 }
 
-.legend-dot.proc { border-color: #409EFF; background: #EBF5FF; }
-.legend-dot.control { border-color: #E6A23C; background: #FFF7E6; }
-.legend-dot.io { border-color: #67C23A; background: #EDF7ED; }
-.legend-dot.op { border-color: #5B7FFF; background: #EEF1FF; }
-.legend-dot.ret { border-color: #F56C6C; background: #FDEEEE; }
-.legend-dot.var { border-color: #8B5CF6; background: #F3EEFF; }
+.legend-dot.proc {
+  border-color: #409eff;
+  background: #ebf5ff;
+}
+.legend-dot.control {
+  border-color: #e6a23c;
+  background: #fff7e6;
+}
+.legend-dot.io {
+  border-color: #67c23a;
+  background: #edf7ed;
+}
+.legend-dot.op {
+  border-color: #5b7fff;
+  background: #eef1ff;
+}
+.legend-dot.ret {
+  border-color: #f56c6c;
+  background: #fdeeee;
+}
+.legend-dot.var {
+  border-color: #8b5cf6;
+  background: #f3eeff;
+}
 
 .x6-container {
   flex: 1;

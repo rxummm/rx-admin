@@ -10,7 +10,6 @@ import com.rx.admin.modules.monitor.log.mapper.SysLogMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuppressWarnings("null")
 public class SysLogService extends ServiceImpl<SysLogMapper, SysLog> {
 
     public PageResult<SysLog> pageQuery(int page, int size, String keyword, Integer status, String startTime, String endTime) {
@@ -26,6 +25,6 @@ public class SysLogService extends ServiceImpl<SysLogMapper, SysLog> {
         wrapper.orderByDesc(SysLog::getCreateTime);
 
         IPage<SysLog> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 }

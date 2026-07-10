@@ -2,6 +2,7 @@ package com.rx.admin.common.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.rx.admin.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,7 +35,6 @@ import org.springframework.http.HttpHeaders;
 
 @Slf4j
 @RestControllerAdvice
-@SuppressWarnings("null")
 public class GlobalExceptionHandler {
 
     // ===================== 辅助方法 =====================
@@ -79,6 +79,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotPermissionException.class)
     public ResponseEntity<Result<Object>> handleNotPermission(NotPermissionException e) {
         return json(ErrorCode.FORBIDDEN, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(NotRoleException.class)
+    public ResponseEntity<Result<Object>> handleNotRole(NotRoleException e) {
+        return json(ErrorCode.FORBIDDEN, "无角色权限", HttpStatus.FORBIDDEN);
     }
 
     // ===================== 参数校验 =====================

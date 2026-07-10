@@ -48,8 +48,7 @@ public class SanguoController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<SanguoPoem> pr = poemService.pageQuery(page, size, keyword);
-        List<SanguoPoemVO> voList = poemConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(poemConvert.toPageResult(pr));
     }
 
     @Operation(summary = "SanguoPoem详情")
@@ -113,8 +112,7 @@ public class SanguoController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<SanguoCharacter> pr = characterService.pageQuery(page, size, keyword);
-        List<SanguoCharacterVO> voList = characterConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(characterConvert.toPageResult(pr));
     }
 
     @Operation(summary = "SanguoCharacter详情")

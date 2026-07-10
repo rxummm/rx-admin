@@ -13,7 +13,6 @@ import java.io.IOException;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
-@SuppressWarnings("null")
 public class SecurityHeadersFilter extends OncePerRequestFilter {
 
     @Override

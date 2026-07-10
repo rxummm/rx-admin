@@ -28,9 +28,7 @@
             accept=".pdf"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              拖拽PDF文件到此处，或<em>点击上传</em>
-            </div>
+            <div class="el-upload__text">拖拽PDF文件到此处，或<em>点击上传</em></div>
             <template #tip>
               <div class="el-upload__tip">支持 .pdf 格式</div>
             </template>
@@ -48,12 +46,7 @@
               size="small"
               style="margin-top: 8px"
             />
-            <el-button
-              type="primary"
-              style="margin-top: 8px"
-              @click="handleConvertPdfToWord"
-              :loading="pdfConverting"
-            >
+            <el-button type="primary" style="margin-top: 8px" @click="handleConvertPdfToWord" :loading="pdfConverting">
               <el-icon><Switch /></el-icon> 开始转换
             </el-button>
           </div>
@@ -94,9 +87,7 @@
             accept=".docx"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              拖拽Word文件到此处，或<em>点击上传</em>
-            </div>
+            <div class="el-upload__text">拖拽Word文件到此处，或<em>点击上传</em></div>
             <template #tip>
               <div class="el-upload__tip">支持 .docx 格式</div>
             </template>
@@ -114,12 +105,7 @@
               size="small"
               style="margin-top: 8px"
             />
-            <el-button
-              type="primary"
-              style="margin-top: 8px"
-              @click="handleConvertWordToPdf"
-              :loading="wordConverting"
-            >
+            <el-button type="primary" style="margin-top: 8px" @click="handleConvertWordToPdf" :loading="wordConverting">
               <el-icon><Switch /></el-icon> 开始转换
             </el-button>
           </div>

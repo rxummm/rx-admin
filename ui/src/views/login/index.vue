@@ -2,7 +2,7 @@
   <div class="login-page" :class="{ 'login-page--dark': isDark }">
     <!-- 粒子动画背景 -->
     <ParticleBackground />
-    
+
     <div class="login-wrapper">
       <!-- 表单工具栏（暗黑/语言切换） -->
       <div class="form-toolbar">
@@ -23,17 +23,37 @@
       </div>
 
       <!-- 登录表单 -->
-      <el-form v-if="!isRegister" ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" @keyup.enter="handleLogin">
+      <el-form
+        v-if="!isRegister"
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginRules"
+        class="login-form"
+        @keyup.enter="handleLogin"
+      >
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" :placeholder="$t('login.username')" size="large" :prefix-icon="User" />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" :placeholder="$t('login.password')" size="large" show-password :prefix-icon="Lock" />
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            :placeholder="$t('login.password')"
+            size="large"
+            show-password
+            :prefix-icon="Lock"
+          />
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item prop="captchaCode">
           <div class="captcha-row">
-            <el-input v-model="loginForm.captchaCode" :placeholder="$t('login.captchaPlaceholder')" size="large" maxlength="4" class="captcha-input" />
+            <el-input
+              v-model="loginForm.captchaCode"
+              :placeholder="$t('login.captchaPlaceholder')"
+              size="large"
+              maxlength="4"
+              class="captcha-input"
+            />
             <div class="captcha-image" @click="refreshCaptcha">
               <img v-if="captchaImage" :src="captchaImage" :alt="$t('login.captchaAlt')" />
               <span v-else class="captcha-loading">{{ $t('common.loading') }}</span>
@@ -46,24 +66,57 @@
           </el-button>
         </el-form-item>
         <div class="form-footer">
-          <span class="register-link" @click="switchToRegister">{{ $t('login.noAccount') }}{{ $t('login.registerNow') }}</span>
+          <span class="register-link" @click="switchToRegister"
+            >{{ $t('login.noAccount') }}{{ $t('login.registerNow') }}</span
+          >
         </div>
       </el-form>
 
       <!-- 注册表单 -->
-      <el-form v-else ref="registerFormRef" :model="registerForm" :rules="registerRules" class="login-form" @keyup.enter="handleRegister">
+      <el-form
+        v-else
+        ref="registerFormRef"
+        :model="registerForm"
+        :rules="registerRules"
+        class="login-form"
+        @keyup.enter="handleRegister"
+      >
         <el-form-item prop="username">
-          <el-input v-model="registerForm.username" :placeholder="$t('login.username')" size="large" :prefix-icon="User" />
+          <el-input
+            v-model="registerForm.username"
+            :placeholder="$t('login.username')"
+            size="large"
+            :prefix-icon="User"
+          />
         </el-form-item>
         <el-form-item prop="nickname">
-          <el-input v-model="registerForm.nickname" :placeholder="$t('login.nickname')" size="large" :prefix-icon="Edit" />
+          <el-input
+            v-model="registerForm.nickname"
+            :placeholder="$t('login.nickname')"
+            size="large"
+            :prefix-icon="Edit"
+          />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="registerForm.password" type="password" :placeholder="$t('login.password')" size="large" show-password :prefix-icon="Lock" />
-        <PasswordStrength :password="registerForm.password" />
+          <el-input
+            v-model="registerForm.password"
+            type="password"
+            :placeholder="$t('login.password')"
+            size="large"
+            show-password
+            :prefix-icon="Lock"
+          />
+          <PasswordStrength :password="registerForm.password" />
         </el-form-item>
         <el-form-item prop="confirmPassword">
-          <el-input v-model="registerForm.confirmPassword" type="password" :placeholder="$t('login.confirmPassword')" size="large" show-password :prefix-icon="Lock" />
+          <el-input
+            v-model="registerForm.confirmPassword"
+            type="password"
+            :placeholder="$t('login.confirmPassword')"
+            size="large"
+            show-password
+            :prefix-icon="Lock"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="large" class="login-btn" :loading="registerLoading" @click="handleRegister">
@@ -71,7 +124,9 @@
           </el-button>
         </el-form-item>
         <div class="form-footer">
-          <span class="register-link" @click="switchToLogin">{{ $t('login.hasAccount') }}{{ $t('login.backLogin') }}</span>
+          <span class="register-link" @click="switchToLogin"
+            >{{ $t('login.hasAccount') }}{{ $t('login.backLogin') }}</span
+          >
         </div>
       </el-form>
     </div>
@@ -144,7 +199,8 @@ const registerRules = {
   confirmPassword: [
     { required: true, message: () => t('login.confirmRequired'), trigger: 'blur' },
     {
-      validator: (rule, value) => value === registerForm.password || Promise.reject(new Error(t('login.passwordMismatch'))),
+      validator: (rule, value) =>
+        value === registerForm.password || Promise.reject(new Error(t('login.passwordMismatch'))),
       trigger: 'blur'
     }
   ]
@@ -162,10 +218,12 @@ onMounted(() => {
 })
 
 function refreshCaptcha() {
-  getCaptchaApi().then(res => {
-    captchaUuid.value = res.data.uuid
-    captchaImage.value = res.data.image
-  }).catch(() => {})
+  getCaptchaApi()
+    .then((res) => {
+      captchaUuid.value = res.data.uuid
+      captchaImage.value = res.data.image
+    })
+    .catch(() => {})
 }
 
 async function handleLogin() {
@@ -177,7 +235,7 @@ async function handleLogin() {
     generateDynamicRoutes(userStore.menus)
     ElMessage.success(t('login.loginSuccess'))
     router.push('/dashboard')
-  } catch (e) {
+  } catch {
     refreshCaptcha()
     loginForm.captchaCode = ''
   } finally {
@@ -252,7 +310,9 @@ async function handleRegister() {
   justify-content: center;
   cursor: pointer;
   color: var(--text-secondary);
-  transition: color var(--transition-fast), background var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
 
   &:hover {
     background: var(--bg-hover);
@@ -298,7 +358,9 @@ async function handleRegister() {
   flex-shrink: 0;
   transition: border-color var(--transition-fast);
 
-  &:hover { border-color: var(--color-primary); }
+  &:hover {
+    border-color: var(--color-primary);
+  }
 }
 
 .captcha-image img {

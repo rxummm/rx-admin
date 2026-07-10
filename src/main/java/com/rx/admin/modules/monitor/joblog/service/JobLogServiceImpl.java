@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-@SuppressWarnings("null")
 public class JobLogServiceImpl extends ServiceImpl<SysJobLogMapper, SysJobLog> implements JobLogService {
 
     @Override
@@ -34,6 +33,6 @@ public class JobLogServiceImpl extends ServiceImpl<SysJobLogMapper, SysJobLog> i
         }
         wrapper.orderByDesc(SysJobLog::getStartTime);
         Page<SysJobLog> result = page(new Page<>(page, size), wrapper);
-        return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+        return PageResult.of(result);
     }
 }

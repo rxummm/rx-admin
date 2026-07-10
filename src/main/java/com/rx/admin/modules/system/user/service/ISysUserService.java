@@ -3,6 +3,7 @@ package com.rx.admin.modules.system.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.system.user.entity.SysUser;
+import java.util.List;
 import com.rx.admin.modules.system.user.dto.UserCreateDTO;
 import com.rx.admin.modules.system.user.dto.UserUpdateDTO;
 
@@ -15,6 +16,8 @@ public interface ISysUserService extends IService<SysUser> {
     void updateUser(UserUpdateDTO dto);
 
     void deleteUser(Long id);
+
+    void deleteUserBatch(List<Long> ids);
 
     SysUser getByUsername(String username);
 

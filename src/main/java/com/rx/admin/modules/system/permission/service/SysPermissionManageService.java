@@ -83,7 +83,7 @@ public class SysPermissionManageService {
      * - 勾选"红楼诗词"菜单 + "查询"按钮 → 用户只能查看该页面
      * - 勾选"红楼诗词"菜单 + "查询"按钮 + "编辑"按钮 → 用户可查看和编辑
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addUserMenus(Long userId, List<Long> menuIds) {
         if (menuIds == null || menuIds.isEmpty()) return;
 
@@ -103,7 +103,7 @@ public class SysPermissionManageService {
      * 只保留选中的权限，取消勾选的会被移除
      * 注意：不会影响通过角色获得的权限
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void setUserMenus(Long userId, List<Long> menuIds) {
         // 先清空所有直接授权
         sysUserMenuMapper.deleteByUserId(userId);
@@ -126,7 +126,7 @@ public class SysPermissionManageService {
      * 对按钮（type=3）只移除自身，避免误删兄弟节点的权限
      * 注意：不会删除通过角色获得的权限
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeUserMenus(Long userId, List<Long> menuIds) {
         List<SysMenu> allMenus = sysMenuMapper.selectList(new LambdaQueryWrapper<SysMenu>()
                 .eq(SysMenu::getStatus, 1));

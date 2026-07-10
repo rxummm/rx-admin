@@ -16,4 +16,16 @@ public interface SysUserRoleMapper {
 
     @Select("SELECT user_id FROM sys_user_role WHERE role_id = #{roleId}")
     java.util.List<Long> selectUserIdsByRoleId(@Param("roleId") Long roleId);
+
+    @Insert("<script>INSERT INTO sys_user_role (user_id, role_id) VALUES "
+            + "<foreach item='roleId' collection='roleIds' separator=','>(#{userId}, #{roleId})</foreach></script>")
+    int insertBatch(@Param("userId") Long userId, @Param("roleIds") java.util.List<Long> roleIds);
+
+    @Delete("<script>DELETE FROM sys_user_role WHERE user_id IN "
+            + "<foreach item='id' collection='userIds' open='(' separator=',' close=')'>#{id}</foreach></script>")
+    int deleteByUserIds(@Param("userIds") java.util.List<Long> userIds);
+
+    @Delete("<script>DELETE FROM sys_user_role WHERE role_id IN "
+            + "<foreach item='id' collection='roleIds' open='(' separator=',' close=')'>#{id}</foreach></script>")
+    int deleteByRoleIds(@Param("roleIds") java.util.List<Long> roleIds);
 }

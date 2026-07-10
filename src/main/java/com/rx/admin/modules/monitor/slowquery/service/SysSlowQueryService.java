@@ -10,7 +10,6 @@ import com.rx.admin.modules.monitor.slowquery.mapper.SysSlowQueryMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuppressWarnings("null")
 public class SysSlowQueryService extends ServiceImpl<SysSlowQueryMapper, SysSlowQuery> {
 
     @org.springframework.beans.factory.annotation.Value("${app.slow-query.threshold-ms:2000}")
@@ -26,7 +25,7 @@ public class SysSlowQueryService extends ServiceImpl<SysSlowQueryMapper, SysSlow
         }
         wrapper.orderByDesc(SysSlowQuery::getCreateTime);
         IPage<SysSlowQuery> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     public void addSlowQuery(String sqlText, String params, long costTimeMs, String queryType, String mapperMethod) {

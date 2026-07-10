@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索标题 / 内容 / 人物" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索标题 / 内容 / 人物"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterDifficulty" placeholder="阅读难度" clearable style="width: 130px" @change="fetchData">
         <el-option label="简单" value="简单" />
         <el-option label="一般" value="一般" />
@@ -15,7 +21,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:shuihu:chapter:add')">
         <el-icon><Plus /></el-icon> 新增章节
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:shuihu:chapter:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:shuihu:chapter:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -34,51 +45,127 @@
     </div>
 
     <div class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('chapterNumber')" prop="chapterNumber" label="回" width="60" sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('chapterNumber')"
+          prop="chapterNumber"
+          label="回"
+          width="60"
+          sortable
+        >
           <template #default="{ row }">
             <el-tag size="small" type="primary">{{ row.chapterNumber }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('chapterTitle')" prop="chapterTitle" label="章节标题" min-width="220" show-overflow-tooltip sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('chapterTitle')"
+          prop="chapterTitle"
+          label="章节标题"
+          min-width="220"
+          show-overflow-tooltip
+          sortable
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="handleView(row)">{{ row.chapterTitle }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('characters')" prop="characters" label="出场人物" min-width="150" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('locations')" prop="locations" label="涉及地点" width="120" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('themes')" prop="themes" label="主题" width="120" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('readingDifficulty')" prop="readingDifficulty" label="阅读难度" width="100">
+        <el-table-column
+          v-if="visibleColumns.includes('characters')"
+          prop="characters"
+          label="出场人物"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('locations')"
+          prop="locations"
+          label="涉及地点"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('themes')"
+          prop="themes"
+          label="主题"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('readingDifficulty')"
+          prop="readingDifficulty"
+          label="阅读难度"
+          width="100"
+        >
           <template #default="{ row }">
-            <el-tag v-if="row.readingDifficulty" size="small"
-              :type="row.readingDifficulty === '困难' ? 'danger' : row.readingDifficulty === '一般' ? 'warning' : 'success'">
+            <el-tag
+              v-if="row.readingDifficulty"
+              size="small"
+              :type="
+                row.readingDifficulty === '困难' ? 'danger' : row.readingDifficulty === '一般' ? 'warning' : 'success'
+              "
+            >
               {{ row.readingDifficulty }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('estimatedReadingTime')" prop="estimatedReadingTime" label="预计阅读" width="100">
-          <template #default="{ row }">
-            {{ row.estimatedReadingTime }}分钟
-          </template>
+        <el-table-column
+          v-if="visibleColumns.includes('estimatedReadingTime')"
+          prop="estimatedReadingTime"
+          label="预计阅读"
+          width="100"
+        >
+          <template #default="{ row }"> {{ row.estimatedReadingTime }}分钟 </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:shuihu:chapter:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:shuihu:chapter:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:shuihu:chapter:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:shuihu:chapter:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -134,8 +221,17 @@
       <div v-if="viewData" class="chapter-detail">
         <h3 class="chapter-title">第{{ viewData.chapterNumber }}回 {{ viewData.chapterTitle }}</h3>
         <div class="chapter-meta">
-          <el-tag v-if="viewData.readingDifficulty" size="small"
-            :type="viewData.readingDifficulty === '困难' ? 'danger' : viewData.readingDifficulty === '一般' ? 'warning' : 'success'">
+          <el-tag
+            v-if="viewData.readingDifficulty"
+            size="small"
+            :type="
+              viewData.readingDifficulty === '困难'
+                ? 'danger'
+                : viewData.readingDifficulty === '一般'
+                  ? 'warning'
+                  : 'success'
+            "
+          >
             {{ viewData.readingDifficulty }}
           </el-tag>
           <span v-if="viewData.estimatedReadingTime">预计阅读：{{ viewData.estimatedReadingTime }}分钟</span>
@@ -169,7 +265,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
   getShuihuChapterPageApi,
-  getShuihuChapterDetailApi,
   addShuihuChapterApi,
   updateShuihuChapterApi,
   deleteShuihuChapterApi,
@@ -200,7 +295,7 @@ const columnOptions = [
   { key: 'estimatedReadingTime', label: '预计阅读' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -233,7 +328,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -285,7 +380,7 @@ async function fetchData() {
     const res = await getShuihuChapterPageApi(params)
     let records = res.data.records
     if (filterDifficulty.value) {
-      records = records.filter(r => r.readingDifficulty === filterDifficulty.value)
+      records = records.filter((r) => r.readingDifficulty === filterDifficulty.value)
     }
     tableData.value = records
     total.value = res.data.total
@@ -335,7 +430,9 @@ function handleEdit(row) {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(`确认删除第${row.chapterNumber}回 "${row.chapterTitle}" 吗？`, '提示', { type: 'warning' })
+    await ElMessageBox.confirm(`确认删除第${row.chapterNumber}回 "${row.chapterTitle}" 吗？`, '提示', {
+      type: 'warning'
+    })
     await deleteShuihuChapterApi(row.id)
     ElMessage.success('删除成功')
     fetchData()

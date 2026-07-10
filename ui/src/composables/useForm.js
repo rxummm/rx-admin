@@ -14,25 +14,20 @@
 import { reactive, ref } from 'vue'
 
 export function useForm(initialData = {}, options = {}) {
-  const {
-    onSubmit = null,
-    onSuccess = null,
-    onError = null,
-    beforeSubmit = null
-  } = options
+  const { onSubmit = null, onSuccess = null, onError = null, beforeSubmit = null } = options
 
   const form = reactive({ ...initialData })
   const loading = ref(false)
 
   function resetForm(newData = initialData) {
-    Object.keys(form).forEach(key => {
+    Object.keys(form).forEach((key) => {
       form[key] = newData[key] !== undefined ? newData[key] : initialData[key] !== undefined ? initialData[key] : ''
     })
   }
 
   function setFormData(data) {
     if (!data) return
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (key in form) {
         form[key] = data[key]
       }

@@ -4,7 +4,7 @@
       <el-icon v-if="elIconComponent">
         <component :is="elIconComponent" />
       </el-icon>
-      <FontAwesomeIcon v-else-if="faIcon" :icon="faIcon" style="width: 14px; height: 14px;" />
+      <FontAwesomeIcon v-else-if="faIcon" :icon="faIcon" style="width: 14px; height: 14px" />
       <el-icon v-else><Menu /></el-icon>
       <span>{{ tMenu(menu.menuName) }}</span>
     </template>
@@ -14,7 +14,7 @@
     <el-icon v-if="elIconComponent">
       <component :is="elIconComponent" />
     </el-icon>
-    <FontAwesomeIcon v-else-if="faIcon" :icon="faIcon" style="width: 14px; height: 14px;" />
+    <FontAwesomeIcon v-else-if="faIcon" :icon="faIcon" style="width: 14px; height: 14px" />
     <el-icon v-else><Menu /></el-icon>
     <span>{{ tMenu(menu.menuName) }}</span>
   </el-menu-item>

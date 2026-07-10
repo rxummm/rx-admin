@@ -31,13 +31,7 @@
           </span>
         </div>
         <div class="article-categories" v-if="article.categories">
-          <el-tag
-            v-for="cat in splitCats(article.categories)"
-            :key="cat"
-            size="small"
-            type="info"
-            effect="plain"
-          >
+          <el-tag v-for="cat in splitCats(article.categories)" :key="cat" size="small" type="info" effect="plain">
             {{ cat }}
           </el-tag>
         </div>
@@ -189,10 +183,24 @@ const editForm = ref({
   contentHtml: ''
 })
 const toolbars = [
-  'bold', 'italic', 'strikethrough', 'title', '-',
-  'unorderedList', 'orderedList', 'checkedList', '-',
-  'code', 'codeRow', 'quote', 'link', 'image', 'table', '-',
-  'preview', 'fullscreen'
+  'bold',
+  'italic',
+  'strikethrough',
+  'title',
+  '-',
+  'unorderedList',
+  'orderedList',
+  'checkedList',
+  '-',
+  'code',
+  'codeRow',
+  'quote',
+  'link',
+  'image',
+  'table',
+  '-',
+  'preview',
+  'fullscreen'
 ]
 
 // 自定义 HTML 消毒函数：保留图片等安全标签，防止 XSS
@@ -207,7 +215,10 @@ function customSanitize(html) {
 
 function splitCats(cats) {
   if (!cats) return []
-  return cats.split(',').map(c => c.trim()).filter(Boolean)
+  return cats
+    .split(',')
+    .map((c) => c.trim())
+    .filter(Boolean)
 }
 
 async function loadDetail() {
@@ -219,7 +230,7 @@ async function loadDetail() {
     if (res.code === 200 && res.data) {
       article.value = res.data
     }
-  } catch (e) {
+  } catch {
     ElMessage.error('加载文章失败')
   } finally {
     loading.value = false
@@ -280,7 +291,7 @@ async function submitEdit() {
     ElMessage.success('保存成功')
     editVisible.value = false
     loadDetail()
-  } catch (e) {
+  } catch {
     ElMessage.error('保存失败')
   } finally {
     editSaving.value = false
@@ -292,11 +303,14 @@ onMounted(() => {
 })
 
 // 监听路由参数变化（keep-alive 缓存下 onMounted 不触发，需 watch 手动刷新）
-watch(() => route.query.id, (newId) => {
-  if (newId) {
-    loadDetail()
+watch(
+  () => route.query.id,
+  (newId) => {
+    if (newId) {
+      loadDetail()
+    }
   }
-})
+)
 </script>
 
 <style scoped>

@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索标题 / 作者 / 内容" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索标题 / 作者 / 内容"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterPoemType" placeholder="诗词类型" clearable style="width: 130px" @change="fetchData">
         <el-option v-for="t in poemTypes" :key="t" :label="t" :value="t" />
       </el-select>
@@ -13,7 +19,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:shuihu:poem:add')">
         <el-icon><Plus /></el-icon> 新增诗词
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:shuihu:poem:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:shuihu:poem:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -32,38 +43,97 @@
     </div>
 
     <div class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('title')" prop="title" label="标题" min-width="200" show-overflow-tooltip sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('title')"
+          prop="title"
+          label="标题"
+          min-width="200"
+          show-overflow-tooltip
+          sortable
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="handleView(row)">{{ row.title }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('author')" prop="author" label="作者" width="120" show-overflow-tooltip sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('author')"
+          prop="author"
+          label="作者"
+          width="120"
+          show-overflow-tooltip
+          sortable
+        />
         <el-table-column v-if="visibleColumns.includes('poemType')" prop="poemType" label="类型" width="90">
           <template #default="{ row }">
             <el-tag v-if="row.poemType" size="small">{{ row.poemType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('relatedScene')" prop="relatedScene" label="场景/回目" min-width="160" show-overflow-tooltip sortable />
-        <el-table-column v-if="visibleColumns.includes('relatedCharacter')" prop="relatedCharacter" label="相关人物" width="130" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('relatedScene')"
+          prop="relatedScene"
+          label="场景/回目"
+          min-width="160"
+          show-overflow-tooltip
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('relatedCharacter')"
+          prop="relatedCharacter"
+          label="相关人物"
+          width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:shuihu:poem:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:shuihu:poem:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:shuihu:poem:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:shuihu:poem:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -137,7 +207,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
   getShuihuPoemPageApi,
-  getShuihuPoemDetailApi,
   addShuihuPoemApi,
   updateShuihuPoemApi,
   deleteShuihuPoemApi,
@@ -168,7 +237,7 @@ const columnOptions = [
   { key: 'relatedCharacter', label: '相关人物' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -201,7 +270,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -251,11 +320,11 @@ async function fetchData() {
     const res = await getShuihuPoemPageApi(params)
     let records = res.data.records
     if (filterPoemType.value) {
-      records = records.filter(r => r.poemType === filterPoemType.value)
+      records = records.filter((r) => r.poemType === filterPoemType.value)
     }
     tableData.value = records
     total.value = res.data.total
-    const types = new Set(records.map(r => r.poemType).filter(Boolean))
+    const types = new Set(records.map((r) => r.poemType).filter(Boolean))
     poemTypes.value = [...types]
   } finally {
     loading.value = false

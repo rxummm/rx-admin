@@ -6,6 +6,8 @@ import com.rx.admin.modules.system.dict.entity.SysDictType;
 import com.rx.admin.modules.system.dict.dto.DictTypeCreateDTO;
 import com.rx.admin.modules.system.dict.dto.DictTypeUpdateDTO;
 
+import java.util.List;
+
 public interface ISysDictTypeService extends IService<SysDictType> {
 
     PageResult<SysDictType> pageQuery(int page, int size, String keyword);
@@ -13,4 +15,6 @@ public interface ISysDictTypeService extends IService<SysDictType> {
     void addDictType(DictTypeCreateDTO dto);
 
     void updateDictType(DictTypeUpdateDTO dto);
+
+    void deleteDictTypeBatch(List<Long> ids);
 }

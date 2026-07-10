@@ -7,26 +7,24 @@
           <component :is="errorIcon" />
         </el-icon>
       </div>
-      
+
       <!-- 错误标题 -->
       <h2 class="error-title">{{ title }}</h2>
-      
+
       <!-- 错误代码 -->
       <div v-if="errorCode" class="error-code">
-        <el-tag type="danger" effect="plain" size="large">
-          错误码: {{ errorCode }}
-        </el-tag>
+        <el-tag type="danger" effect="plain" size="large"> 错误码: {{ errorCode }} </el-tag>
       </div>
-      
+
       <!-- 错误描述 -->
       <p class="error-message">{{ message }}</p>
-      
+
       <!-- 发生时间 -->
       <div v-if="errorTimestamp" class="error-timestamp">
         <el-icon><Clock /></el-icon>
         <span>发生时间: {{ errorTimestamp }}</span>
       </div>
-      
+
       <!-- 错误详情（开发环境） -->
       <div v-if="showDetails && isDev" class="error-details">
         <details>
@@ -46,7 +44,7 @@
           </div>
         </details>
       </div>
-      
+
       <!-- 操作按钮 -->
       <div class="error-actions">
         <el-button type="primary" size="large" @click="handleRetry">
@@ -62,7 +60,7 @@
           复制错误
         </el-button>
       </div>
-      
+
       <!-- 帮助提示 -->
       <div class="error-help">
         <el-icon><InfoFilled /></el-icon>
@@ -70,7 +68,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- 正常内容 -->
   <slot v-else></slot>
 </template>
@@ -136,22 +134,22 @@ const isDev = import.meta.env.DEV
  */
 onErrorCaptured((err, componentInstance, info) => {
   console.error('ErrorBoundary 捕获到错误:', err, info)
-  
+
   hasError.value = true
   error.value = err
   errorTimestamp.value = new Date().toLocaleString('zh-CN')
-  
+
   // 调用外部错误回调
   if (props.onError) {
     props.onError(err, info)
   }
-  
+
   // 上报错误（如果有 Sentry）
   reportError(err, info)
-  
+
   // 触发事件
   emit('error', err, info)
-  
+
   // 阻止错误继续向上传播
   return false
 })
@@ -161,30 +159,30 @@ onErrorCaptured((err, componentInstance, info) => {
  */
 const errorType = computed(() => {
   if (!error.value) return 'unknown'
-  
+
   const errMsg = error.value.message || ''
   const errCode = error.value.code || error.value.response?.status
-  
+
   // 网络错误
   if (errMsg.includes('Network Error') || errMsg.includes('Failed to fetch')) {
     return 'network'
   }
-  
+
   // 权限错误
   if (errCode === 401 || errCode === 403 || errMsg.includes('permission')) {
     return 'permission'
   }
-  
+
   // 服务器错误
   if (errCode >= 500 || errMsg.includes('Internal Server Error')) {
     return 'server'
   }
-  
+
   // 资源未找到
   if (errCode === 404 || errMsg.includes('Not Found')) {
     return 'notfound'
   }
-  
+
   return 'unknown'
 })
 
@@ -215,10 +213,10 @@ const errorTypeClass = computed(() => {
 function handleRetry() {
   hasError.value = false
   error.value = null
-  
+
   // 触发自定义事件，父组件可以重新初始化
   emit('retry')
-  
+
   ElMessage.success('已重试，正在重新加载...')
 }
 
@@ -241,11 +239,11 @@ async function handleCopyError() {
     url: window.location.href,
     userAgent: navigator.userAgent
   }
-  
+
   try {
     await navigator.clipboard.writeText(JSON.stringify(errorInfo, null, 2))
     ElMessage.success('错误信息已复制到剪贴板')
-  } catch (e) {
+  } catch {
     ElMessage.error('复制失败，请手动复制')
   }
 }
@@ -255,11 +253,11 @@ async function handleCopyError() {
  */
 async function handleCopyStack() {
   const stackText = error.value?.stack || error.value?.message || ''
-  
+
   try {
     await navigator.clipboard.writeText(stackText)
     ElMessage.success('堆栈信息已复制')
-  } catch (e) {
+  } catch {
     ElMessage.error('复制失败')
   }
 }
@@ -285,7 +283,7 @@ function reportError(err, info) {
     // Sentry 未初始化或上报失败，静默处理
     console.warn('Sentry 上报失败:', e)
   }
-  
+
   // 本地日志
   console.error('[ErrorBoundary]', {
     component: instance?.type?.name,
@@ -320,51 +318,51 @@ defineExpose({ reset })
 .error-content {
   text-align: center;
   max-width: 550px;
-  
+
   .error-icon {
     margin-bottom: 24px;
     animation: shake 0.6s ease-in-out;
-    
+
     // 错误类型颜色
     &.error-type-network {
       color: #f85149;
     }
-    
+
     &.error-type-permission {
       color: #d29922;
     }
-    
+
     &.error-type-server {
       color: #f85149;
     }
-    
+
     &.error-type-notfound {
       color: #8b949e;
     }
-    
+
     &.error-type-unknown {
       color: #f85149;
     }
   }
-  
+
   .error-title {
     font-size: 24px;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 12px;
   }
-  
+
   .error-code {
     margin-bottom: 16px;
   }
-  
+
   .error-message {
     font-size: 14px;
     color: var(--text-secondary);
     margin-bottom: 24px;
     line-height: 1.6;
   }
-  
+
   .error-timestamp {
     display: flex;
     align-items: center;
@@ -378,28 +376,28 @@ defineExpose({ reset })
     border-radius: var(--radius-sm);
     display: inline-flex;
   }
-  
+
   .error-details {
     margin-bottom: 24px;
-    
+
     details {
       background: var(--bg-page);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 12px;
       text-align: left;
-      
+
       summary {
         cursor: pointer;
         font-size: 13px;
         color: var(--color-primary);
         margin-bottom: 8px;
-        
+
         &:hover {
           text-decoration: underline;
         }
       }
-      
+
       .stack-header {
         display: flex;
         align-items: center;
@@ -407,14 +405,14 @@ defineExpose({ reset })
         margin-bottom: 8px;
         padding-bottom: 8px;
         border-bottom: 1px solid var(--border-color);
-        
+
         .stack-label {
           font-size: 12px;
           font-weight: 600;
           color: var(--text-secondary);
         }
       }
-      
+
       pre {
         font-family: var(--font-family-mono);
         font-size: 12px;
@@ -430,7 +428,7 @@ defineExpose({ reset })
       }
     }
   }
-  
+
   .error-actions {
     display: flex;
     gap: 12px;
@@ -438,7 +436,7 @@ defineExpose({ reset })
     flex-wrap: wrap;
     margin-bottom: 20px;
   }
-  
+
   .error-help {
     display: flex;
     align-items: center;
@@ -454,8 +452,15 @@ defineExpose({ reset })
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
 }
 </style>

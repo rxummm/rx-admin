@@ -48,8 +48,7 @@ public class ShuihuController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<ShuihuChapter> pr = chapterService.pageQuery(page, size, keyword);
-        List<ShuihuChapterVO> voList = chapterConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(chapterConvert.toPageResult(pr));
     }
 
     @Operation(summary = "ShuihuChapter详情")
@@ -113,8 +112,7 @@ public class ShuihuController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<ShuihuPoem> pr = poemService.pageQuery(page, size, keyword);
-        List<ShuihuPoemVO> voList = poemConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(poemConvert.toPageResult(pr));
     }
 
     @Operation(summary = "ShuihuPoem详情")

@@ -62,7 +62,10 @@ export const ERROR_CODE = {
 export function getErrorMessage(code) {
   const entry = Object.entries(ERROR_CODE).find(([, value]) => value === code)
   if (entry) {
-    return entry[0].replace(/_/g, '').replace(/([A-Z])/g, ' $1').trim()
+    return entry[0]
+      .replace(/_/g, '')
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
   }
   return `未知错误 (${code})`
 }

@@ -19,7 +19,7 @@ export function exportExcelApi(payload) {
     method: 'post',
     data: payload,
     responseType: 'blob',
-    timeout: 120000  // 导出超时 2 分钟
+    timeout: 120000 // 导出超时 2 分钟
   })
 }
 
@@ -33,6 +33,6 @@ export function exportPdfApi(payload) {
     method: 'post',
     data: payload,
     responseType: 'blob',
-    timeout: 120000  // PDF 字体加载 + 渲染较慢，超时 2 分钟
+    timeout: 120000 // PDF 字体加载 + 渲染较慢，超时 2 分钟
   })
 }

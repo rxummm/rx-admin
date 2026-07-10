@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('video.transcription.keyword')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('video.transcription.keyword')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="language" :placeholder="$t('video.transcription.language')" clearable style="width: 120px">
         <el-option label="中文" value="zh" />
         <el-option label="English" value="en" />
@@ -14,15 +20,32 @@
       <el-button type="primary" @click="handleUpload" v-if="userStore.hasPerm('video:transcription:upload')">
         <el-icon><Upload /></el-icon> {{ $t('video.transcription.upload') }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('video:transcription:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('video:transcription:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
     </div>
 
     <div class="table-container">
-      <el-table :data="tableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="45" />
-        <el-table-column prop="fileName" :label="$t('video.transcription.fileName')" min-width="200" show-overflow-tooltip />
+        <el-table-column
+          prop="fileName"
+          :label="$t('video.transcription.fileName')"
+          min-width="200"
+          show-overflow-tooltip
+        />
         <el-table-column prop="language" :label="$t('video.transcription.language')" width="100">
           <template #default="{ row }">
             <el-tag size="small">{{ row.language === 'zh' ? '中文' : 'English' }}</el-tag>
@@ -49,23 +72,64 @@
         <el-table-column prop="createdAt" :label="$t('common.createTime')" width="170" />
         <el-table-column :label="$t('common.operation')" width="280" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" :disabled="transcribingIds.includes(row.id)" @click="showModelSelectDialog(row)" v-if="userStore.hasPerm('video:transcription:upload')">{{ transcribingIds.includes(row.id) ? '转写中...' : (row.status === 1 && row.fullText ? '重新转写' : '转写') }}</el-button>
-            <el-button link type="primary" size="small" @click="handleView(row)" v-if="userStore.hasPerm('video:transcription:view')">{{ $t('common.view') }}</el-button>
-            <el-button link type="primary" size="small" @click="downloadSrt(row)" v-if="userStore.hasPerm('video:transcription:view') && row.status === 1">下载SRT</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('video:transcription:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              :disabled="transcribingIds.includes(row.id)"
+              @click="showModelSelectDialog(row)"
+              v-if="userStore.hasPerm('video:transcription:upload')"
+              >{{
+                transcribingIds.includes(row.id) ? '转写中...' : row.status === 1 && row.fullText ? '重新转写' : '转写'
+              }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleView(row)"
+              v-if="userStore.hasPerm('video:transcription:view')"
+              >{{ $t('common.view') }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="downloadSrt(row)"
+              v-if="userStore.hasPerm('video:transcription:view') && row.status === 1"
+              >下载SRT</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('video:transcription:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
-    <el-dialog v-model="uploadDialogVisible" :title="$t('video.transcription.upload')" width="600px" :close-on-click-modal="false" draggable>
+    <el-dialog
+      v-model="uploadDialogVisible"
+      :title="$t('video.transcription.upload')"
+      width="600px"
+      :close-on-click-modal="false"
+      draggable
+    >
       <el-upload
         ref="uploadRef"
         :before-upload="beforeUpload"
@@ -99,11 +163,7 @@
           <span class="detail-label">{{ $t('video.transcription.fileName') }}：</span>
           <template v-if="editingFileName">
             <div class="file-name-edit-group">
-              <el-input
-                v-model="editFileNameValue"
-                class="file-name-input"
-                @keyup.enter="saveFileName"
-              />
+              <el-input v-model="editFileNameValue" class="file-name-input" @keyup.enter="saveFileName" />
               <el-button size="small" type="primary" @click="saveFileName">保存</el-button>
               <el-button size="small" @click="cancelEditFileName">取消</el-button>
             </div>
@@ -158,15 +218,17 @@
       </div>
     </el-dialog>
 
-    <el-dialog v-model="modelSelectDialogVisible" title="选择模型" width="400px" :close-on-click-modal="false" draggable>
+    <el-dialog
+      v-model="modelSelectDialogVisible"
+      title="选择模型"
+      width="400px"
+      :close-on-click-modal="false"
+      draggable
+    >
       <div class="model-select-content">
         <div class="model-select-tip">请选择用于转写的 Whisper 模型：</div>
         <div class="model-options">
-          <div 
-            class="model-option"
-            :class="{ selected: selectedModel === 'tiny' }"
-            @click="selectedModel = 'tiny'"
-          >
+          <div class="model-option" :class="{ selected: selectedModel === 'tiny' }" @click="selectedModel = 'tiny'">
             <div class="option-radio">
               <span v-if="selectedModel === 'tiny'" class="radio-inner"></span>
             </div>
@@ -175,11 +237,7 @@
               <span class="model-desc">速度快、CPU占用低，精度较低</span>
             </div>
           </div>
-          <div 
-            class="model-option"
-            :class="{ selected: selectedModel === 'small' }"
-            @click="selectedModel = 'small'"
-          >
+          <div class="model-option" :class="{ selected: selectedModel === 'small' }" @click="selectedModel = 'small'">
             <div class="option-radio">
               <span v-if="selectedModel === 'small'" class="radio-inner"></span>
             </div>
@@ -196,17 +254,24 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="transcribingDialogVisible" title="正在转写" width="420px" :close-on-click-modal="false" :show-close="false" draggable>
+    <el-dialog
+      v-model="transcribingDialogVisible"
+      title="正在转写"
+      width="420px"
+      :close-on-click-modal="false"
+      :show-close="false"
+      draggable
+    >
       <div class="transcribing-content">
         <div class="transcribing-icon">
           <svg viewBox="0 0 100 100" class="video-wave">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/>
-            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5"/>
-            <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
-            <rect x="47" y="5" width="6" height="10" fill="currentColor" class="wave-bar wave-1"/>
-            <rect x="47" y="85" width="6" height="10" fill="currentColor" class="wave-bar wave-2"/>
-            <rect x="5" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-3"/>
-            <rect x="85" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-4"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3" />
+            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5" />
+            <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7" />
+            <rect x="47" y="5" width="6" height="10" fill="currentColor" class="wave-bar wave-1" />
+            <rect x="47" y="85" width="6" height="10" fill="currentColor" class="wave-bar wave-2" />
+            <rect x="5" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-3" />
+            <rect x="85" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-4" />
           </svg>
         </div>
         <div class="transcribing-info">
@@ -234,7 +299,7 @@ import request from '@/utils/request'
 import { useTranscriptionPolling } from '@/utils/useTranscriptionPolling'
 import { API } from '@/api/routes'
 
-const { polling, startPolling, stopPolling } = useTranscriptionPolling()
+const { polling: _polling, startPolling, stopPolling } = useTranscriptionPolling()
 
 const userStore = useUserStore()
 
@@ -294,22 +359,26 @@ const editFileNameValue = ref('')
 
 const speakers = ref([])
 
-watch(detailData, (newData) => {
-  if (newData && newData.segments) {
-    const speakerMap = new Map()
-    newData.segments.forEach(seg => {
-      if (seg.speakerLabel && !speakerMap.has(seg.speakerLabel)) {
-        speakerMap.set(seg.speakerLabel, {
-          label: seg.speakerLabel,
-          name: seg.speakerName || ''
-        })
-      }
-    })
-    speakers.value = Array.from(speakerMap.values())
-  } else {
-    speakers.value = []
-  }
-}, { immediate: true })
+watch(
+  detailData,
+  (newData) => {
+    if (newData && newData.segments) {
+      const speakerMap = new Map()
+      newData.segments.forEach((seg) => {
+        if (seg.speakerLabel && !speakerMap.has(seg.speakerLabel)) {
+          speakerMap.set(seg.speakerLabel, {
+            label: seg.speakerLabel,
+            name: seg.speakerName || ''
+          })
+        }
+      })
+      speakers.value = Array.from(speakerMap.values())
+    } else {
+      speakers.value = []
+    }
+  },
+  { immediate: true }
+)
 
 async function fetchData() {
   loading.value = true
@@ -326,7 +395,7 @@ async function fetchData() {
     })
     tableData.value = res.data.records
     total.value = res.data.total
-  } catch (e) {
+  } catch {
   } finally {
     loading.value = false
   }
@@ -340,7 +409,7 @@ function resetSearch() {
 }
 
 function handleSelectionChange(val) {
-  selectedIds.value = val.map(item => item.id)
+  selectedIds.value = val.map((item) => item.id)
 }
 
 function handleUpload() {
@@ -351,7 +420,16 @@ function handleUpload() {
 }
 
 function validateVideoFile(file) {
-  const videoTypes = ['video/mp4', 'video/avi', 'video/x-matroska', 'video/flv', 'video/quicktime', 'video/webm', 'video/x-ms-wmv', 'video/x-m4v']
+  const videoTypes = [
+    'video/mp4',
+    'video/avi',
+    'video/x-matroska',
+    'video/flv',
+    'video/quicktime',
+    'video/webm',
+    'video/x-ms-wmv',
+    'video/x-m4v'
+  ]
   const isVideoByType = videoTypes.includes(file.type)
   const fileName = (file.name || '').toLowerCase()
   const isVideoByExt = /\.(mp4|avi|mkv|flv|mov|webm|wmv|m4v)$/.test(fileName)
@@ -372,11 +450,11 @@ function beforeUpload(file) {
 }
 
 function handleFileChange(file, fileList) {
-  pendingFiles.value = fileList.map(f => f.raw || f).filter(Boolean)
+  pendingFiles.value = fileList.map((f) => f.raw || f).filter(Boolean)
 }
 
 function handleFileRemove(file, fileList) {
-  pendingFiles.value = fileList.map(f => f.raw || f).filter(Boolean)
+  pendingFiles.value = fileList.map((f) => f.raw || f).filter(Boolean)
 }
 
 function cancelUpload() {
@@ -415,7 +493,7 @@ async function submitUpload() {
           data: formData
         })
         successCount++
-      } catch (error) {
+      } catch {
         failCount++
       }
     }
@@ -471,19 +549,21 @@ async function handleTranscribeWithModel() {
     transcribingBackground.value = true
     fetchData()
 
-    startPolling(row.id, API.VIDEO.TRANSCRIPTION.BASE).then(record => {
-      ElMessage.success('转写成功')
-      transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
-      fetchData()
-      if (detailDialogVisible.value && detailData.value && detailData.value.id === row.id) {
-        handleView(row)
-      }
-    }).catch(error => {
-      ElMessage.error('转写失败: ' + (error.message || '未知错误'))
-      transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
-    })
+    startPolling(row.id, API.VIDEO.TRANSCRIPTION.BASE)
+      .then((_record) => {
+        ElMessage.success('转写成功')
+        transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
+        fetchData()
+        if (detailDialogVisible.value && detailData.value && detailData.value.id === row.id) {
+          handleView(row)
+        }
+      })
+      .catch((error) => {
+        ElMessage.error('转写失败: ' + (error.message || '未知错误'))
+        transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
+      })
 
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    await new Promise((resolve) => setTimeout(resolve, 3000))
   } catch (error) {
     ElMessage.error('转写失败: ' + (error.message || '未知错误'))
   } finally {
@@ -493,7 +573,7 @@ async function handleTranscribeWithModel() {
     }
     transcribingDialogVisible.value = false
     transcribing.value = false
-    transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
+    transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
   }
 }
 
@@ -513,7 +593,7 @@ function handleView(row) {
   request({
     url: API.VIDEO.TRANSCRIPTION.BY_ID(row.id),
     method: 'get'
-  }).then(data => {
+  }).then((data) => {
     detailData.value = data.data
     editingFileName.value = false
     detailDialogVisible.value = true
@@ -546,7 +626,7 @@ async function saveFileName() {
     editFileNameValue.value = ''
     ElMessage.success('文件名修改成功')
     fetchData()
-  } catch (error) {
+  } catch {
     ElMessage.error('文件名修改失败')
   }
 }
@@ -564,7 +644,7 @@ async function updateSpeakerName(speaker) {
     })
     ElMessage.success('说话人名称修改成功')
     handleView({ id: detailData.value.id })
-  } catch (error) {
+  } catch {
     ElMessage.error('说话人名称修改失败')
   }
 }
@@ -590,10 +670,12 @@ function downloadDialogueFromDetail() {
 
 function handleDelete(row) {
   ElMessageBox.confirm('确定删除该转写记录？', '提示', { type: 'warning' })
-    .then(() => request({
-      url: API.VIDEO.TRANSCRIPTION.BY_ID(row.id),
-      method: 'delete'
-    }))
+    .then(() =>
+      request({
+        url: API.VIDEO.TRANSCRIPTION.BY_ID(row.id),
+        method: 'delete'
+      })
+    )
     .then(() => {
       ElMessage.success('删除成功')
       fetchData()
@@ -602,10 +684,12 @@ function handleDelete(row) {
 
 function handleBatchDelete() {
   ElMessageBox.confirm('确定删除选中的转写记录？', '提示', { type: 'warning' })
-    .then(() => request({
-      url: API.VIDEO.TRANSCRIPTION.BATCH_DELETE(selectedIds.value.join(',')),
-      method: 'delete'
-    }))
+    .then(() =>
+      request({
+        url: API.VIDEO.TRANSCRIPTION.BATCH_DELETE(selectedIds.value.join(',')),
+        method: 'delete'
+      })
+    )
     .then(() => {
       ElMessage.success('批量删除成功')
       selectedIds.value = []
@@ -754,22 +838,39 @@ onMounted(() => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .wave-bar {
   animation: wave 1.5s ease-in-out infinite;
 }
 
-.wave-1 { animation-delay: 0s; }
-.wave-2 { animation-delay: 0.375s; }
-.wave-3 { animation-delay: 0.75s; }
-.wave-4 { animation-delay: 1.125s; }
+.wave-1 {
+  animation-delay: 0s;
+}
+.wave-2 {
+  animation-delay: 0.375s;
+}
+.wave-3 {
+  animation-delay: 0.75s;
+}
+.wave-4 {
+  animation-delay: 1.125s;
+}
 
 @keyframes wave {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .transcribing-info {
@@ -804,8 +905,15 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.6; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
 }
 
 .transcribing-time {

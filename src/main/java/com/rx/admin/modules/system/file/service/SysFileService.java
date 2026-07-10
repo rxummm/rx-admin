@@ -40,7 +40,7 @@ public class SysFileService extends ServiceImpl<SysFileMapper, SysFile> {
         wrapper.orderByDesc(SysFile::getCreateTime);
 
         IPage<SysFile> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /**

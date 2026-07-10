@@ -1,5 +1,6 @@
 package com.rx.admin.modules.monitor.exportlog.convert;
 
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.monitor.exportlog.entity.SysExportLog;
 import com.rx.admin.modules.monitor.exportlog.vo.SysExportLogVO;
 import org.mapstruct.Mapper;
@@ -10,4 +11,8 @@ import java.util.List;
 public interface SysExportLogConvert {
     SysExportLogVO toVO(SysExportLog entity);
     List<SysExportLogVO> toVOList(List<SysExportLog> list);
+
+    default PageResult<SysExportLogVO> toPageResult(PageResult<SysExportLog> pageResult) {
+        return pageResult.map(this::toVO);
+    }
 }

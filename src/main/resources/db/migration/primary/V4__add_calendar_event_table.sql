@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS sys_calendar_event (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '用户ID',
+    title VARCHAR(200) NOT NULL COMMENT '事件标题',
+    description TEXT COMMENT '事件描述',
+    event_date DATE NOT NULL COMMENT '事件日期',
+    start_time TIME COMMENT '开始时间',
+    end_time TIME COMMENT '结束时间',
+    event_type VARCHAR(20) NOT NULL DEFAULT 'EVENT' COMMENT '类型：REMINDER/EVENT/TODO',
+    priority INT DEFAULT 0 COMMENT '优先级：0=低 1=中 2=高',
+    color VARCHAR(20) COMMENT '显示颜色',
+    is_all_day TINYINT(1) DEFAULT 1 COMMENT '是否全天',
+    status INT DEFAULT 0 COMMENT '状态：0=待办 1=已完成 2=已取消',
+    deleted TINYINT(1) DEFAULT 0 COMMENT '逻辑删除',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_user_id (user_id),
+    INDEX idx_event_date (event_date),
+    INDEX idx_user_date (user_id, event_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日历事件表';

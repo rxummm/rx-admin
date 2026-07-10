@@ -1,10 +1,10 @@
 <template>
-  <span style="cursor: pointer; display: inline-flex; align-items: center;" @click.stop="toggle">
+  <span style="cursor: pointer; display: inline-flex; align-items: center" @click.stop="toggle">
     <el-icon :size="18" :color="isFavorited ? '#F56C6C' : '#909399'">
       <StarFilled v-if="isFavorited" />
       <Star v-else />
     </el-icon>
-    <span v-if="showText" style="margin-left: 4px; font-size: 12px; color: #909399;">
+    <span v-if="showText" style="margin-left: 4px; font-size: 12px; color: #909399">
       {{ isFavorited ? '已收藏' : '收藏' }}
     </span>
   </span>
@@ -12,7 +12,7 @@
 
 <script setup>
 defineOptions({ name: 'FavoriteStar' })
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { toggleFavoriteApi } from '@/api/favorite'
 import { useStorage } from '@/composables/useStorage'
@@ -49,7 +49,10 @@ onMounted(() => {
 const toggle = async () => {
   try {
     const res = await toggleFavoriteApi({
-      name: props.name, path: props.path, icon: props.icon, menuId: props.menuId
+      name: props.name,
+      path: props.path,
+      icon: props.icon,
+      menuId: props.menuId
     })
     isFavorited.value = res.data?.collected
     if (isFavorited.value) {
@@ -60,6 +63,8 @@ const toggle = async () => {
       favoriteId.value = null
     }
     triggerRefresh()
-  } catch (e) { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 </script>

@@ -19,6 +19,7 @@ import com.rx.admin.modules.monitor.notification.event.DashboardChangeEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> im
     /**
      * 新增通知/公告
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addNotice(NoticeCreateDTO dto) {
         long userId = StpUtil.getLoginIdAsLong();
         SysUser user = sysUserService.getById(userId);
@@ -72,7 +74,7 @@ public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> im
 
         // 发布通知/公告时，同步写入消息中心（广播给所有启用用户）
         if ("announcement".equals(notice.getCategory()) || "notice".equals(notice.getCategory())) {
-            String type = "announcement".equals(notice.getCategory()) ? "notice" : "notice";
+            String type = "notice";
             sysMessageService.sendToAll(notice.getTitle(), notice.getContent(), type, notice.getLinkPath());
         }
 
@@ -126,6 +128,7 @@ public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> im
     /**
      * 标记单条通知/公告为已读
      */
+    @Transactional(rollbackFor = Exception.class)
     public void markRead(Long userId, Long noticeId) {
         Long exists = noticeReadMapper.selectCount(
                 new LambdaQueryWrapper<SysNoticeRead>()
@@ -144,6 +147,7 @@ public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> im
     /**
      * 标记所有通知/公告为已读
      */
+    @Transactional(rollbackFor = Exception.class)
     public void markAllRead(Long userId) {
         // 查当前所有通知/公告ID
         List<Long> allNoticeIds = list(
@@ -159,16 +163,20 @@ public class SysNoticeService extends ServiceImpl<SysNoticeMapper, SysNotice> im
                             .eq(SysNoticeRead::getUserId, userId)
             ).stream().map(SysNoticeRead::getNoticeId).collect(Collectors.toList());
 
-            // 批量插入未读的
-            for (Long noticeId : allNoticeIds) {
-                if (!alreadyReadIds.contains(noticeId)) {
-                    SysNoticeRead read = new SysNoticeRead();
-                    read.setNoticeId(noticeId);
-                    read.setUserId(userId);
-                    read.setReadTime(LocalDateTime.now());
-                    noticeReadMapper.insert(read);
-                }
+            // 过滤出未读的
+            List<Long> unreadIds = allNoticeIds.stream()
+                    .filter(id -> !alreadyReadIds.contains(id))
+                    .collect(Collectors.toList());
+
+            // 批量插入
+            if (!unreadIds.isEmpty()) {
+                noticeReadMapper.insertBatch(userId, unreadIds);
             }
         }
+    }
+
+    @Override
+    public void deleteNoticeBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

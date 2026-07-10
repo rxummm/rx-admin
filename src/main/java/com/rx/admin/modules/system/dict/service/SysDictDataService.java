@@ -7,6 +7,7 @@ import com.rx.admin.modules.system.dict.mapper.SysDictDataMapper;
 import com.rx.admin.modules.system.dict.dto.DictDataCreateDTO;
 import com.rx.admin.modules.system.dict.dto.DictDataUpdateDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictDa
     /**
      * 新增字典数据
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addDictData(DictDataCreateDTO dto) {
         long count = count(new LambdaQueryWrapper<SysDictData>()
                 .eq(SysDictData::getTypeId, dto.getTypeId())
@@ -50,6 +52,7 @@ public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictDa
     /**
      * 更新字典数据
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateDictData(DictDataUpdateDTO dto) {
         SysDictData entity = getById(dto.getId());
         if (entity == null) {
@@ -64,5 +67,21 @@ public class SysDictDataService extends ServiceImpl<SysDictDataMapper, SysDictDa
         if (dto.getStatus() != null) entity.setStatus(dto.getStatus());
         if (StringUtils.hasText(dto.getRemark())) entity.setRemark(dto.getRemark());
         updateById(entity);
+    }
+
+    @Override
+    public void deleteDictData(Long id) {
+        SysDictData entity = getById(id);
+        if (entity == null) {
+            throw new IllegalArgumentException("字典数据不存在");
+        }
+        removeById(id);
+    }
+
+    @Override
+    public void deleteDictDataBatch(List<Long> ids) {
+        for (Long id : ids) {
+            deleteDictData(id);
+        }
     }
 }

@@ -8,16 +8,7 @@ export function createCyberTheme(primaryColor) {
   const pc = primaryColor || getCSSColor('--color-primary', '#58a6ff')
 
   return {
-    color: [
-      pc,
-      '#3fb950',
-      '#d29922',
-      '#f85149',
-      '#56d4dd',
-      '#db61a2',
-      '#a371f7',
-      '#8b949e'
-    ],
+    color: [pc, '#3fb950', '#d29922', '#f85149', '#56d4dd', '#db61a2', '#a371f7', '#8b949e'],
 
     backgroundColor: 'transparent',
 

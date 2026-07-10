@@ -22,14 +22,16 @@
     <!-- 消息列表（可滚动区域） -->
     <div class="msg-body" v-loading="loading">
       <el-timeline v-if="tableData.length > 0" class="msg-timeline">
-        <el-timeline-item v-for="msg in tableData" :key="msg.id"
-          :timestamp="msg.createTime" placement="top"
+        <el-timeline-item
+          v-for="msg in tableData"
+          :key="msg.id"
+          :timestamp="msg.createTime"
+          placement="top"
           :color="msg.isRead ? '#c0c4cc' : '#409EFF'"
           :hollow="!!msg.isRead"
-          size="large">
-          <el-card shadow="never" class="msg-card"
-            :class="{ 'is-unread': !msg.isRead }"
-            @click="handleClick(msg)">
+          size="large"
+        >
+          <el-card shadow="never" class="msg-card" :class="{ 'is-unread': !msg.isRead }" @click="handleClick(msg)">
             <div class="card-header">
               <div class="card-title-row">
                 <span class="card-title">{{ formatMsgText(msg.title, msg) }}</span>
@@ -71,7 +73,7 @@
 
 <script setup>
 defineOptions({ name: 'ContentMessage' })
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { sanitizeHtml } from '@/utils/sanitize'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -82,23 +84,33 @@ import { useUserStore } from '@/stores/user'
 const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
-const tableData = ref([]); const loading = ref(false)
-const page = ref(1); const size = ref(10); const total = ref(0)
-const msgType = ref(''); const unreadCount = ref(0)
+const tableData = ref([])
+const loading = ref(false)
+const page = ref(1)
+const size = ref(10)
+const total = ref(0)
+const msgType = ref('')
+const unreadCount = ref(0)
 
 // 管理员视角：将消息中的"您"替换为实际接收人用户名
 function formatMsgText(text, msg) {
   if (!text) return ''
   if (userStore.hasRole('admin') && msg.receiverUsername) {
-    return text.replace(/您申请/g, msg.receiverUsername + '申请')
+    return text
+      .replace(/您申请/g, msg.receiverUsername + '申请')
       .replace(/您的/g, msg.receiverUsername + '的')
       .replace(/^您(?=[，。、：])/g, msg.receiverUsername)
   }
   return text
 }
 
-const tagType = (type) => type === 'system' ? 'warning' : type === 'notice' ? 'danger' : 'info'
-const typeLabel = (type) => type === 'system' ? t('content.message.typeSys') : type === 'notice' ? t('content.message.typeNotice') : t('content.message.typeInfo')
+const tagType = (type) => (type === 'system' ? 'warning' : type === 'notice' ? 'danger' : 'info')
+const typeLabel = (type) =>
+  type === 'system'
+    ? t('content.message.typeSys')
+    : type === 'notice'
+      ? t('content.message.typeNotice')
+      : t('content.message.typeInfo')
 
 const fetchData = async () => {
   loading.value = true
@@ -110,21 +122,38 @@ const fetchData = async () => {
     tableData.value = msgRes.data?.records || []
     total.value = msgRes.data?.total || 0
     unreadCount.value = countRes.data?.count || 0
-  } finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
-const handleRead = async (msg) => { await markAsReadApi(msg.id); msg.isRead = 1; unreadCount.value--; ElMessage.success(t('content.message.markedRead')) }
-const handleMarkAllRead = async () => { await markAllReadApi(); tableData.value.forEach(m => m.isRead = 1); unreadCount.value = 0; ElMessage.success(t('content.message.allMarkedRead')) }
-const handleClick = (msg) => { if (!msg.isRead) handleRead(msg); if (msg.linkPath) router.push(msg.linkPath) }
+const handleRead = async (msg) => {
+  await markAsReadApi(msg.id)
+  msg.isRead = 1
+  unreadCount.value--
+  ElMessage.success(t('content.message.markedRead'))
+}
+const handleMarkAllRead = async () => {
+  await markAllReadApi()
+  tableData.value.forEach((m) => (m.isRead = 1))
+  unreadCount.value = 0
+  ElMessage.success(t('content.message.allMarkedRead'))
+}
+const handleClick = (msg) => {
+  if (!msg.isRead) handleRead(msg)
+  if (msg.linkPath) router.push(msg.linkPath)
+}
 const handleDelete = async (msg) => {
   try {
     await ElMessageBox.confirm(t('content.message.deleteConfirm'), t('common.warning'), { type: 'warning' })
     await deleteMessageApi(msg.id)
-    tableData.value = tableData.value.filter(m => m.id !== msg.id)
+    tableData.value = tableData.value.filter((m) => m.id !== msg.id)
     total.value--
     if (msg.isRead === 0) unreadCount.value--
     ElMessage.success(t('common.deleteSuccess'))
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 fetchData()
@@ -272,7 +301,9 @@ fetchData()
   word-break: break-all;
 }
 
-.card-body :deep(p) { margin: 0; }
+.card-body :deep(p) {
+  margin: 0;
+}
 
 /* ========== 分页器（固定底部）========== */
 .msg-footer {

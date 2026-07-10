@@ -34,7 +34,6 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class OcrService implements IOcrService {
 
     private final OcrRecognitionMapper ocrMapper;
@@ -52,7 +51,7 @@ public class OcrService implements IOcrService {
     private static final long MAX_FILE_SIZE = 50 * 1024 * 1024;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public OcrRecognitionVO recognize(File file, String originalName, String language) {
         String fileType = getFileExtension(originalName);
         String effectiveLanguage = (language != null && !language.isEmpty()) ? language : "chi_sim+eng";
@@ -119,7 +118,7 @@ public class OcrService implements IOcrService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public OcrRecognitionVO uploadAndRecognize(MultipartFile multipartFile, String language) {
         if (multipartFile == null || multipartFile.isEmpty()) {
             throw new RuntimeException("上传文件不能为空");
@@ -170,15 +169,11 @@ public class OcrService implements IOcrService {
         IPage<OcrRecognition> page = new Page<>(query.getPage(), query.getSize());
         page = ocrMapper.selectPage(page, wrapper);
 
-        List<OcrRecognitionVO> voList = page.getRecords().stream()
-            .map(ocrConvert::toVO)
-            .toList();
-
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(ocrConvert::toVO);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         OcrRecognition record = ocrMapper.selectById(id);
         if (record != null && record.getFilePath() != null) {
@@ -192,7 +187,7 @@ public class OcrService implements IOcrService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBatch(List<Long> ids) {
         if (ids == null || ids.isEmpty()) return;
         for (Long id : ids) {
@@ -255,7 +250,7 @@ public class OcrService implements IOcrService {
             throw new RuntimeException("Word 文档解析失败: " + e.getMessage(), e);
         } finally {
             if (tempDir != null) {
-                try { Files.deleteIfExists(tempDir); } catch (Exception ignored) {}
+                try { Files.deleteIfExists(tempDir); } catch (Exception e) { log.debug("临时目录清理失败", e); }
             }
         }
         return text.toString().trim();
@@ -331,7 +326,7 @@ public class OcrService implements IOcrService {
             throw new RuntimeException("Excel 解析失败: " + e.getMessage(), e);
         } finally {
             if (tempDir != null) {
-                try { Files.deleteIfExists(tempDir); } catch (Exception ignored) {}
+                try { Files.deleteIfExists(tempDir); } catch (Exception e) { log.debug("临时目录清理失败", e); }
             }
         }
         return text.toString().trim();

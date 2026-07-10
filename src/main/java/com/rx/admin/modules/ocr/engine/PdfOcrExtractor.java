@@ -72,7 +72,7 @@ public class PdfOcrExtractor {
                 }
             } finally {
                 // 清理临时目录
-                try { Files.deleteIfExists(tempDir); } catch (Exception ignored) {}
+                try { Files.deleteIfExists(tempDir); } catch (Exception e) { log.debug("临时目录清理失败", e); }
             }
 
             String result = allText.toString().trim();

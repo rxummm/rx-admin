@@ -67,7 +67,7 @@ public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage>
         List<SysMessage> records = p.getRecords();
         // 填充接收人用户名（供前端管理员视角替换"您"为具体用户名）
         fillReceiverUsernames(records);
-        return PageResult.of(p.getTotal(), p.getCurrent(), p.getSize(), records);
+        return PageResult.of(p);
     }
 
     /**
@@ -126,7 +126,7 @@ public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage>
         sendMessage(title, content, receiverId, "info", null);
     }
 
-    private void sendMessage(String title, String content, Long receiverId, String messageType, String linkPath) {
+    void sendMessage(String title, String content, Long receiverId, String messageType, String linkPath) {
         SysMessage msg = new SysMessage();
         msg.setSenderId(0L);
         msg.setReceiverId(receiverId);
@@ -227,5 +227,10 @@ public class SysMessageService extends ServiceImpl<SysMessageMapper, SysMessage>
         if (messageType != null) update.setMessageType(messageType);
         if (linkPath != null) update.setLinkPath(linkPath);
         updateById(update);
+    }
+
+    @Override
+    public void deleteMessageBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

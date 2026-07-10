@@ -190,50 +190,55 @@ public class LiteraryWorkService extends ServiceImpl<LiteraryWorkMapper, Literar
      * 按朝代统计作品数量
      */
     public Map<Long, Long> countByDynasty() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getDynastyId() != null)
-                .collect(Collectors.groupingBy(LiteraryWork::getDynastyId, Collectors.counting()));
+        return baseMapper.countByDynasty().stream()
+                .collect(Collectors.toMap(
+                        m -> ((Number) m.get("dynasty_id")).longValue(),
+                        m -> ((Number) m.get("cnt")).longValue()
+                ));
     }
 
     /**
      * 按体裁统计作品数量
      */
     public Map<Long, Long> countByGenre() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getGenreId() != null)
-                .collect(Collectors.groupingBy(LiteraryWork::getGenreId, Collectors.counting()));
+        return baseMapper.countByGenre().stream()
+                .collect(Collectors.toMap(
+                        m -> ((Number) m.get("genre_id")).longValue(),
+                        m -> ((Number) m.get("cnt")).longValue()
+                ));
     }
 
     /**
      * 按来源统计作品数量
      */
     public Map<String, Long> countBySource() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getSource() != null && !w.getSource().isEmpty())
-                .collect(Collectors.groupingBy(LiteraryWork::getSource, Collectors.counting()));
+        return baseMapper.countBySource().stream()
+                .collect(Collectors.toMap(
+                        m -> (String) m.get("source"),
+                        m -> ((Number) m.get("cnt")).longValue()
+                ));
     }
 
     /**
      * 按难度等级统计作品数量
      */
     public Map<Integer, Long> countByDifficultyLevel() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getDifficultyLevel() != null)
-                .collect(Collectors.groupingBy(LiteraryWork::getDifficultyLevel, Collectors.counting()));
+        return baseMapper.countByDifficultyLevel().stream()
+                .collect(Collectors.toMap(
+                        m -> ((Number) m.get("difficulty_level")).intValue(),
+                        m -> ((Number) m.get("cnt")).longValue()
+                ));
     }
 
     /**
      * 按作者统计作品数量（Top作品数排行）
      */
     public Map<Long, Long> countByAuthor() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getAuthorId() != null)
-                .collect(Collectors.groupingBy(LiteraryWork::getAuthorId, Collectors.counting()));
+        return baseMapper.countByAuthor().stream()
+                .collect(Collectors.toMap(
+                        m -> ((Number) m.get("author_id")).longValue(),
+                        m -> ((Number) m.get("cnt")).longValue()
+                ));
     }
 
     /**
@@ -250,22 +255,14 @@ public class LiteraryWorkService extends ServiceImpl<LiteraryWorkMapper, Literar
      * 获取总字数
      */
     public long sumWordCount() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getWordCount() != null)
-                .mapToLong(LiteraryWork::getWordCount)
-                .sum();
+        return baseMapper.sumWordCount();
     }
 
     /**
      * 获取总浏览量
      */
     public long sumViewCount() {
-        List<LiteraryWork> works = list();
-        return works.stream()
-                .filter(w -> w.getViewCount() != null)
-                .mapToLong(LiteraryWork::getViewCount)
-                .sum();
+        return baseMapper.sumViewCount();
     }
 
     private void fillAssociation(LiteraryWork work) {

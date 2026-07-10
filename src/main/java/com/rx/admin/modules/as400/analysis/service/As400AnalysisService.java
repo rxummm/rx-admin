@@ -55,7 +55,7 @@ public class As400AnalysisService {
             return error;
         } finally {
             if (tempFile != null) {
-                try { Files.deleteIfExists(tempFile); } catch (IOException ignored) {}
+                try { Files.deleteIfExists(tempFile); } catch (IOException e) { log.debug("临时文件清理失败", e); }
             }
         }
     }

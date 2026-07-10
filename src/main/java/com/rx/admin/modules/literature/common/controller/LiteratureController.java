@@ -67,7 +67,7 @@ public class LiteratureController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<com.rx.admin.modules.literature.common.entity.Author> pr = authorService.pageQuery(page, size, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), authorConvert.toVOList(pr.getRecords())));
+        return Result.ok(authorConvert.toPageResult(pr));
     }
 
     @Operation(summary = "作者详情")
@@ -132,7 +132,7 @@ public class LiteratureController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<com.rx.admin.modules.literature.common.entity.Dynasty> pr = dynastyService.pageQuery(page, size, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), dynastyConvert.toVOList(pr.getRecords())));
+        return Result.ok(dynastyConvert.toPageResult(pr));
     }
 
     @Operation(summary = "朝代详情")
@@ -197,7 +197,7 @@ public class LiteratureController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<com.rx.admin.modules.literature.common.entity.Genre> pr = genreService.pageQuery(page, size, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), genreConvert.toVOList(pr.getRecords())));
+        return Result.ok(genreConvert.toPageResult(pr));
     }
 
     @Operation(summary = "体裁详情")
@@ -262,7 +262,7 @@ public class LiteratureController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<com.rx.admin.modules.literature.common.entity.ContentCategory> pr = contentCategoryService.pageQuery(page, size, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), contentCategoryConvert.toVOList(pr.getRecords())));
+        return Result.ok(contentCategoryConvert.toPageResult(pr));
     }
 
     @Operation(summary = "内容分类详情")
@@ -330,7 +330,7 @@ public class LiteratureController {
             @RequestParam(required = false) Long genreId,
             @RequestParam(required = false) Long authorId) {
         PageResult<com.rx.admin.modules.literature.common.entity.LiteraryWork> pr = literaryWorkService.pageQuery(page, size, keyword, dynastyId, genreId, authorId);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), literaryWorkConvert.toVOList(pr.getRecords())));
+        return Result.ok(literaryWorkConvert.toPageResult(pr));
     }
 
     @Operation(summary = "文学作品详情")

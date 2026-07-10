@@ -31,6 +31,8 @@ public class AppConfig {
     public static class CacheConfig {
         private long configTtlSeconds = 600;
         private long menuTtlSeconds = 3600;
+        private long dictTtlSeconds = 1800;
+        private long calendarTtlSeconds = 120;
         private long dashboardRefreshMs = 30000;
     }
 

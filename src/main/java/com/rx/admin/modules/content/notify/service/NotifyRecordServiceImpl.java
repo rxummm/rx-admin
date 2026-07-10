@@ -10,7 +10,6 @@ import com.rx.admin.modules.content.notify.mapper.SysNotifyRecordMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuppressWarnings("null")
 public class NotifyRecordServiceImpl extends ServiceImpl<SysNotifyRecordMapper, SysNotifyRecord>
         implements NotifyRecordService {
 
@@ -25,6 +24,6 @@ public class NotifyRecordServiceImpl extends ServiceImpl<SysNotifyRecordMapper, 
         }
         wrapper.orderByDesc(SysNotifyRecord::getCreateTime);
         Page<SysNotifyRecord> result = page(new Page<>(page, size), wrapper);
-        return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+        return PageResult.of(result);
     }
 }

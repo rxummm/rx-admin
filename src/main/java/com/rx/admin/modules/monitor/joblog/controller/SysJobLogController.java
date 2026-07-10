@@ -39,7 +39,7 @@ public class SysJobLogController {
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime) {
         PageResult<SysJobLog> pr = jobLogService.pageQuery(page, size, jobId, status, startTime, endTime);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), jobLogConvert.toVOList(pr.getRecords())));
+        return Result.ok(jobLogConvert.toPageResult(pr));
     }
 
     @Operation(summary = "删除日志")

@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "站内消息")
@@ -71,6 +71,15 @@ public class SysMessageController {
     public Result<Void> delete(@PathVariable Long id) {
         Long currentUserId = StpUtil.getLoginIdAsLong();
         messageService.deleteMyMessage(id, currentUserId);
+        return Result.ok();
+    }
+
+    @SaCheckRole("admin")
+    @DeleteMapping("/batch")
+    @Operation(summary = "批量删除消息（管理员）")
+    @OperateLog(module = "站内消息", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        messageService.deleteMessageBatch(ids);
         return Result.ok();
     }
 

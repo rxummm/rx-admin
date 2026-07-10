@@ -2,7 +2,13 @@
   <div class="page-container" :class="{ 'timeline-mode': viewMode === 'timeline' }">
     <!-- 搜索栏 -->
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索标题 / 妖怪 / 地点" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索标题 / 妖怪 / 地点"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> 搜索
       </el-button>
@@ -19,7 +25,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:xiyou:event:add')">
         <el-icon><Plus /></el-icon> 新增事件
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:xiyou:event:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:xiyou:event:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown v-if="viewMode === 'table'" trigger="click" @command="toggleColumn">
@@ -99,7 +110,14 @@
             <div class="card-body">
               <div class="card-tags">
                 <el-tag v-if="event.chapterNum" size="small" effect="dark" round>第{{ event.chapterNum }}回</el-tag>
-                <el-tag v-if="event.eventType" size="small" effect="plain" :type="eventTypeColor(event.eventType)" round>{{ event.eventType }}</el-tag>
+                <el-tag
+                  v-if="event.eventType"
+                  size="small"
+                  effect="plain"
+                  :type="eventTypeColor(event.eventType)"
+                  round
+                  >{{ event.eventType }}</el-tag
+                >
               </div>
               <div class="card-meta">
                 <div class="meta-item" v-if="event.location">
@@ -126,10 +144,22 @@
               <el-button link type="primary" size="small" @click="handleView(event)">
                 <el-icon><View /></el-icon> 详情
               </el-button>
-              <el-button link type="primary" size="small" @click="handleEdit(event)" v-if="userStore.hasPerm('classics:xiyou:event:edit')">
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="handleEdit(event)"
+                v-if="userStore.hasPerm('classics:xiyou:event:edit')"
+              >
                 <el-icon><Edit /></el-icon> 编辑
               </el-button>
-              <el-button link type="danger" size="small" @click="handleDelete(event)" v-if="userStore.hasPerm('classics:xiyou:event:delete')">
+              <el-button
+                link
+                type="danger"
+                size="small"
+                @click="handleDelete(event)"
+                v-if="userStore.hasPerm('classics:xiyou:event:delete')"
+              >
                 <el-icon><Delete /></el-icon> 删除
               </el-button>
             </div>
@@ -149,45 +179,124 @@
 
     <!-- 表格视图 -->
     <div v-else class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
-        <el-table-column v-if="visibleColumns.includes('difficultyNum')" prop="difficultyNum" label="难数" width="70" sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('difficultyNum')"
+          prop="difficultyNum"
+          label="难数"
+          width="70"
+          sortable
+        >
           <template #default="{ row }">
             <el-tag type="danger" size="small">{{ row.difficultyNum }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('chapterNum')" prop="chapterNum" label="回目" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('title')" prop="title" label="事件标题" min-width="200" show-overflow-tooltip sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('chapterNum')"
+          prop="chapterNum"
+          label="回目"
+          width="70"
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('title')"
+          prop="title"
+          label="事件标题"
+          min-width="200"
+          show-overflow-tooltip
+          sortable
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="handleView(row)">{{ row.title }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('monster')" prop="monster" label="妖怪" width="120" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('location')" prop="location" label="地点" width="120" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('helper')" prop="helper" label="帮手/救兵" min-width="130" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('difficultyLevel')" prop="difficultyLevel" label="难度" width="80" sortable>
+        <el-table-column
+          v-if="visibleColumns.includes('monster')"
+          prop="monster"
+          label="妖怪"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('location')"
+          prop="location"
+          label="地点"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('helper')"
+          prop="helper"
+          label="帮手/救兵"
+          min-width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('difficultyLevel')"
+          prop="difficultyLevel"
+          label="难度"
+          width="80"
+          sortable
+        >
           <template #default="{ row }">
-            <el-tag v-if="row.difficultyLevel" size="small" :type="row.difficultyLevel >= 8 ? 'danger' : row.difficultyLevel >= 5 ? 'warning' : 'success'">
+            <el-tag
+              v-if="row.difficultyLevel"
+              size="small"
+              :type="row.difficultyLevel >= 8 ? 'danger' : row.difficultyLevel >= 5 ? 'warning' : 'success'"
+            >
               {{ row.difficultyLevel }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:xiyou:event:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:xiyou:event:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:xiyou:event:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:xiyou:event:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -250,7 +359,14 @@
         <div class="detail-tags">
           <el-tag type="danger" size="small" effect="dark" round>第{{ viewData.difficultyNum }}难</el-tag>
           <el-tag v-if="viewData.chapterNum" size="small" effect="plain" round>第{{ viewData.chapterNum }}回</el-tag>
-          <el-tag v-if="viewData.eventType" size="small" :type="eventTypeColor(viewData.eventType)" effect="plain" round>{{ viewData.eventType }}</el-tag>
+          <el-tag
+            v-if="viewData.eventType"
+            size="small"
+            :type="eventTypeColor(viewData.eventType)"
+            effect="plain"
+            round
+            >{{ viewData.eventType }}</el-tag
+          >
           <el-tag v-if="viewData.difficultyLevel" size="small" type="warning" effect="dark" round>
             <el-icon><StarFilled /></el-icon> 难度 {{ viewData.difficultyLevel }}
           </el-tag>
@@ -261,19 +377,27 @@
           </div>
           <div class="detail-grid">
             <div class="detail-item" v-if="viewData.location">
-              <span class="detail-label"><el-icon><Location /></el-icon> 地点</span>
+              <span class="detail-label"
+                ><el-icon><Location /></el-icon> 地点</span
+              >
               <span class="detail-value">{{ viewData.location }}</span>
             </div>
             <div class="detail-item" v-if="viewData.monster">
-              <span class="detail-label"><el-icon><Warning /></el-icon> 妖怪</span>
+              <span class="detail-label"
+                ><el-icon><Warning /></el-icon> 妖怪</span
+              >
               <span class="detail-value">{{ viewData.monster }}</span>
             </div>
             <div class="detail-item" v-if="viewData.monsterWeapon">
-              <span class="detail-label"><el-icon><Aim /></el-icon> 武器/法宝</span>
+              <span class="detail-label"
+                ><el-icon><Aim /></el-icon> 武器/法宝</span
+              >
               <span class="detail-value">{{ viewData.monsterWeapon }}</span>
             </div>
             <div class="detail-item" v-if="viewData.helper">
-              <span class="detail-label"><el-icon><Connection /></el-icon> 帮手</span>
+              <span class="detail-label"
+                ><el-icon><Connection /></el-icon> 帮手</span
+              >
               <span class="detail-value">{{ viewData.helper }}</span>
             </div>
           </div>
@@ -341,7 +465,7 @@ const columnOptions = [
   { key: 'difficultyLevel', label: '难度' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function switchView(mode) {
   viewMode.value = mode
@@ -365,23 +489,24 @@ function toggleColumn(key) {
 const filteredTimelineEvents = computed(() => {
   if (!keyword.value) return allEvents.value
   const kw = keyword.value.toLowerCase()
-  return allEvents.value.filter(e =>
-    (e.title && e.title.toLowerCase().includes(kw)) ||
-    (e.monster && e.monster.toLowerCase().includes(kw)) ||
-    (e.location && e.location.toLowerCase().includes(kw))
+  return allEvents.value.filter(
+    (e) =>
+      (e.title && e.title.toLowerCase().includes(kw)) ||
+      (e.monster && e.monster.toLowerCase().includes(kw)) ||
+      (e.location && e.location.toLowerCase().includes(kw))
   )
 })
 
 // 统计
 const uniqueLocations = computed(() => {
-  const locs = new Set(allEvents.value.map(e => e.location).filter(Boolean))
+  const locs = new Set(allEvents.value.map((e) => e.location).filter(Boolean))
   return locs.size
 })
 const monstersWithData = computed(() => {
-  return allEvents.value.filter(e => e.monster).length
+  return allEvents.value.filter((e) => e.monster).length
 })
 const avgDifficulty = computed(() => {
-  const withLevel = allEvents.value.filter(e => e.difficultyLevel)
+  const withLevel = allEvents.value.filter((e) => e.difficultyLevel)
   if (!withLevel.length) return 0
   const sum = withLevel.reduce((s, e) => s + e.difficultyLevel, 0)
   return (sum / withLevel.length).toFixed(1)
@@ -398,7 +523,7 @@ function nodeColor(level) {
 
 // 事件类型颜色
 function eventTypeColor(type) {
-  const map = { '收徒': 'success', '斗妖': 'danger', '渡劫': 'warning', '遇险': 'info' }
+  const map = { 收徒: 'success', 斗妖: 'danger', 渡劫: 'warning', 遇险: 'info' }
   return map[type] || 'info'
 }
 
@@ -424,7 +549,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -645,10 +770,18 @@ function resetForm() {
   color: #fff;
 }
 
-.stat-total { background: linear-gradient(135deg, #667eea, #764ba2); }
-.stat-location { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.stat-monster { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.stat-difficulty { background: linear-gradient(135deg, #fa709a, #fee140); }
+.stat-total {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+.stat-location {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+.stat-monster {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+.stat-difficulty {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
 
 .stat-info {
   display: flex;
@@ -689,7 +822,8 @@ function resetForm() {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg,
+  background: linear-gradient(
+    180deg,
     #667eea 0%,
     #764ba2 15%,
     #f093fb 30%,
@@ -867,13 +1001,17 @@ function resetForm() {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 6px #fff, 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 0 0 6px #fff,
+    0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
 
 .timeline-item:hover .node-icon {
   transform: scale(1.15);
-  box-shadow: 0 0 0 8px #fff, 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 0 0 8px #fff,
+    0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .node-num {

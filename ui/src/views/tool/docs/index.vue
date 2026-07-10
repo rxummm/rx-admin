@@ -29,16 +29,14 @@ defineOptions({ name: 'ToolDocs' })
 import { onMounted, onUnmounted } from 'vue'
 import { useMarkdownRenderer } from '@/composables/useMarkdownRenderer'
 
-const {
-  contentRef, tocItems, activeTocId, renderedHtml,
-  loadDocument, scrollToHeading, sanitizeHtml
-} = useMarkdownRenderer()
+const { contentRef, tocItems, activeTocId, renderedHtml, loadDocument, scrollToHeading, sanitizeHtml } =
+  useMarkdownRenderer()
 
 function handleScroll() {
   if (!contentRef.value) return
   const headings = contentRef.value.querySelectorAll('h1, h2, h3')
   let currentId = ''
-  headings.forEach(h => {
+  headings.forEach((h) => {
     const rect = h.getBoundingClientRect()
     if (rect.top <= 120) {
       currentId = h.id
@@ -202,7 +200,8 @@ onUnmounted(() => {
     margin: 16px 0;
     font-size: 13px;
 
-    th, td {
+    th,
+    td {
       padding: 8px 12px;
       border: 1px solid #dfe2e5;
       text-align: left;
@@ -242,7 +241,8 @@ onUnmounted(() => {
   }
 
   // 列表
-  :deep(ul), :deep(ol) {
+  :deep(ul),
+  :deep(ol) {
     padding-left: 24px;
     margin: 8px 0;
     line-height: 1.7;
@@ -264,7 +264,8 @@ html.dark .docs-content {
   }
 
   :deep(table) {
-    th, td {
+    th,
+    td {
       border-color: #333;
     }
 
@@ -281,9 +282,17 @@ html.dark .docs-content {
     background: rgba(64, 158, 255, 0.06);
   }
 
-  :deep(h1) { border-bottom-color: #333; }
-  :deep(h2) { border-bottom-color: #333; }
-  :deep(hr) { border-top-color: #333; }
-  :deep([style*="color:red"]) { color: #f56c6c !important; }
+  :deep(h1) {
+    border-bottom-color: #333;
+  }
+  :deep(h2) {
+    border-bottom-color: #333;
+  }
+  :deep(hr) {
+    border-top-color: #333;
+  }
+  :deep([style*='color:red']) {
+    color: #f56c6c !important;
+  }
 }
 </style>

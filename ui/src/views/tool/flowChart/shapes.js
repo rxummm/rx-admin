@@ -15,32 +15,32 @@ export function registerCustomShapes() {
       inherit: 'polygon',
       attrs: {
         body: body,
-        label: { fontSize: 14, fill: '#303133' },
+        label: { fontSize: 14, fill: '#303133' }
       },
       width: 100,
-      height: 60,
+      height: 60
     })
 
     Graph.registerNode('circle-shape', {
       inherit: 'circle',
       attrs: {
         body: { stroke: '#67C23A', strokeWidth: 2, fill: '#ffffff' },
-        label: { fontSize: 14, fill: '#303133' },
+        label: { fontSize: 14, fill: '#303133' }
       },
       width: 70,
-      height: 70,
+      height: 70
     })
 
     Graph.registerNode('ellipse-shape', {
       inherit: 'ellipse',
       attrs: {
         body: { stroke: '#8B5CF6', strokeWidth: 2, fill: '#ffffff' },
-        label: { fontSize: 14, fill: '#303133' },
+        label: { fontSize: 14, fill: '#303133' }
       },
       width: 120,
-      height: 60,
+      height: 60
     })
-  } catch (_) {
+  } catch {
     // shapes already registered, ignore
   }
 }

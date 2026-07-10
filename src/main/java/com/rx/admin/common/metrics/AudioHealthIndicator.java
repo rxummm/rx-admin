@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Component
-@SuppressWarnings("null")
 public class AudioHealthIndicator implements HealthIndicator {
 
     @Value("${app.audio.enabled:false}")

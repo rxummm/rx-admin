@@ -45,7 +45,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AudioTranscriptionVO transcribe(File audioFile, String originalName, String language) {
         String effectiveLanguage = resolveLanguage(language);
         String modelName = resolveModelName(null);
@@ -84,7 +84,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AudioTranscriptionVO uploadOnly(File audioFile, String originalName, String language) {
         String effectiveLanguage = resolveLanguage(language);
         Path storageDir = getStorageDir();
@@ -108,7 +108,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AudioTranscriptionVO transcribeById(Long id, String model) {
         AudioTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription == null) {
@@ -274,14 +274,11 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
         IPage<AudioTranscription> page = new Page<>(query.getPage(), query.getSize());
         page = transcriptionMapper.selectPage(page, wrapper);
 
-        List<AudioTranscriptionVO> voList = page.getRecords().stream()
-            .map(audioConvert::toVO)
-            .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(audioConvert::toVO);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         segmentMapper.delete(new LambdaQueryWrapper<AudioSegment>()
             .eq(AudioSegment::getTranscriptionId, id));
@@ -289,7 +286,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBatch(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             return;
@@ -300,7 +297,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AudioTranscriptionVO updateFileName(Long id, String fileName) {
         AudioTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription == null) {
@@ -315,7 +312,7 @@ public class AudioTranscriptionService implements IAudioTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AudioTranscriptionVO convertScript(Long id, String target) {
         AudioTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription == null) {

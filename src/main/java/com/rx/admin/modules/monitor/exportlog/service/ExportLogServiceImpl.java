@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-@SuppressWarnings("null")
 public class ExportLogServiceImpl extends ServiceImpl<SysExportLogMapper, SysExportLog> implements ExportLogService {
 
     @Override
@@ -34,6 +33,6 @@ public class ExportLogServiceImpl extends ServiceImpl<SysExportLogMapper, SysExp
         }
         wrapper.orderByDesc(SysExportLog::getCreateTime);
         Page<SysExportLog> result = page(new Page<>(page, size), wrapper);
-        return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+        return PageResult.of(result);
     }
 }

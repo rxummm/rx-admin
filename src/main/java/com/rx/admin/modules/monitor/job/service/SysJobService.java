@@ -11,6 +11,8 @@ import com.rx.admin.modules.monitor.job.dto.JobCreateDTO;
 import com.rx.admin.modules.monitor.job.dto.JobUpdateDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @SuppressWarnings("null")
 public class SysJobService extends ServiceImpl<SysJobMapper, SysJob> {
@@ -28,7 +30,7 @@ public class SysJobService extends ServiceImpl<SysJobMapper, SysJob> {
         wrapper.orderByDesc(SysJob::getCreateTime);
 
         IPage<SysJob> iPage = page(new Page<>(page, size), wrapper);
-        return PageResult.of(iPage.getTotal(), iPage.getCurrent(), iPage.getSize(), iPage.getRecords());
+        return PageResult.of(iPage);
     }
 
     /**
@@ -71,5 +73,9 @@ public class SysJobService extends ServiceImpl<SysJobMapper, SysJob> {
             job.setStatus(job.getStatus() != null && job.getStatus() == 1 ? 0 : 1);
             updateById(job);
         }
+    }
+
+    public void deleteJobBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

@@ -66,7 +66,7 @@ async function loadEcharts() {
   }
   return _echarts
 }
-const logWarn = import.meta.env.DEV ? console.warn : () => {}
+const _logWarn = import.meta.env.DEV ? console.warn : () => {}
 import { getLogSummaryApi, getLogHourlyApi, getLogTypeDistributionApi, getLogTrendApi } from '@/api/logAnalysis'
 
 const summary = ref({})

@@ -197,7 +197,6 @@ import { useUserStore } from '@/stores/user'
 const { t } = useI18n()
 import {
   getXiyouPoemPageApi,
-  getXiyouPoemDetailApi,
   addXiyouPoemApi,
   updateXiyouPoemApi,
   deleteXiyouPoemApi,

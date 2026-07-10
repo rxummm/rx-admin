@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="page-container" v-loading="loading">
     <!-- ==================== 系统管理统计 ==================== -->
     <el-card shadow="hover" class="section-card">
@@ -10,7 +10,15 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="3" v-for="item in systemStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
+          <div
+            class="stat-item"
+            :style="{
+              borderLeftColor: item.borderColor,
+              borderRightColor: item.borderColor,
+              background: item.cardBgColor
+            }"
+            @click="safeNavigate(item.link)"
+          >
             <div class="stat-icon" :style="{ background: item.bgColor }">
               <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
@@ -25,6 +33,37 @@
       </el-row>
     </el-card>
 
+    <!-- ==================== 今日日历 ==================== -->
+    <el-card shadow="hover" class="section-card">
+      <template #header>
+        <div class="section-header">
+          <el-icon :size="20" color="#409eff"><Calendar /></el-icon>
+          <span>{{ $t('calendar.todayEvents') }}</span>
+        </div>
+      </template>
+      <div class="today-calendar">
+        <div class="today-date-section">
+          <div class="today-solar">{{ todaySolarDate }}</div>
+          <div class="today-lunar">{{ $t('calendar.lunar') }}：{{ todayLunarDate }}</div>
+          <div v-if="todayHoliday" class="today-holiday" :style="{ color: todayHolidayColor }">{{ todayHoliday }}</div>
+        </div>
+        <el-divider direction="vertical" class="calendar-divider" />
+        <div class="today-event-section">
+          <div v-if="todayEvents.length" class="today-event-list">
+            <div v-for="evt in todayEvents" :key="evt.id" class="today-event-item">
+              <span class="event-dot" :style="{ background: evt.color || '#409eff' }" />
+              <span class="event-title">{{ evt.title }}</span>
+              <span v-if="evt.startTime" class="event-time">{{ evt.startTime }}</span>
+            </div>
+          </div>
+          <el-empty v-else :description="$t('calendar.noEvents')" :image-size="40" />
+        </div>
+        <el-link type="primary" :underline="'never'" @click="goToCalendar" class="view-full-link">
+          {{ $t('calendar.viewFullCalendar') }} <el-icon><ArrowRight /></el-icon>
+        </el-link>
+      </div>
+    </el-card>
+
     <!-- ==================== 登录统计 ==================== -->
     <el-card shadow="hover" class="section-card">
       <template #header>
@@ -33,7 +72,7 @@
           <span>登录统计</span>
         </div>
       </template>
-      <el-row :gutter="16" style="margin-bottom:16px">
+      <el-row :gutter="16" style="margin-bottom: 16px">
         <el-col :span="6">
           <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }">
             <div class="stat-icon" :style="{ background: green.bgColor }">
@@ -117,7 +156,11 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#409eff', background: blue.cardBgColor }" @click="safeNavigate('/content/notice')">
+          <div
+            class="stat-item"
+            :style="{ borderLeftColor: '#409eff', background: blue.cardBgColor }"
+            @click="safeNavigate('/content/notice')"
+          >
             <div class="stat-icon" :style="{ background: blue.bgColor }">
               <el-icon :size="24" color="#409eff"><Notification /></el-icon>
             </div>
@@ -128,7 +171,11 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }" @click="safeNavigate('/content/notice')">
+          <div
+            class="stat-item"
+            :style="{ borderLeftColor: '#67c23a', background: green.cardBgColor }"
+            @click="safeNavigate('/content/notice')"
+          >
             <div class="stat-icon" :style="{ background: green.bgColor }">
               <el-icon :size="24" color="#67c23a"><Reading /></el-icon>
             </div>
@@ -139,7 +186,11 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }" @click="safeNavigate('/content/notice')">
+          <div
+            class="stat-item"
+            :style="{ borderLeftColor: '#e6a23c', background: orange.cardBgColor }"
+            @click="safeNavigate('/content/notice')"
+          >
             <div class="stat-icon" :style="{ background: orange.bgColor }">
               <el-icon :size="24" color="#e6a23c"><Clock /></el-icon>
             </div>
@@ -150,7 +201,11 @@
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="stat-item" :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }" @click="safeNavigate('/content/message')">
+          <div
+            class="stat-item"
+            :style="{ borderLeftColor: '#f56c6c', background: red.cardBgColor }"
+            @click="safeNavigate('/content/message')"
+          >
             <div class="stat-icon" :style="{ background: red.bgColor }">
               <el-icon :size="24" color="#f56c6c"><Message /></el-icon>
             </div>
@@ -178,7 +233,10 @@
               <el-icon :size="24" color="#409eff"><Odometer /></el-icon>
             </div>
             <div class="stat-meta">
-              <span class="stat-value">{{ healthStats.jvmUsed }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.jvmMax }}MB</small></span>
+              <span class="stat-value"
+                >{{ healthStats.jvmUsed
+                }}<small style="font-size: 14px; font-weight: 400"> / {{ healthStats.jvmMax }}MB</small></span
+              >
               <span class="stat-label">JVM堆内存</span>
             </div>
           </div>
@@ -189,7 +247,9 @@
               <el-icon :size="24" color="#e6a23c"><Cpu /></el-icon>
             </div>
             <div class="stat-meta">
-              <span class="stat-value">{{ healthStats.cpuUsage }}<small style="font-size:16px;font-weight:400">%</small></span>
+              <span class="stat-value"
+                >{{ healthStats.cpuUsage }}<small style="font-size: 16px; font-weight: 400">%</small></span
+              >
               <span class="stat-label">CPU使用率</span>
             </div>
           </div>
@@ -200,7 +260,10 @@
               <el-icon :size="24" color="#67c23a"><Coin /></el-icon>
             </div>
             <div class="stat-meta">
-              <span class="stat-value">{{ healthStats.diskUsed }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.diskTotal }}GB</small></span>
+              <span class="stat-value"
+                >{{ healthStats.diskUsed
+                }}<small style="font-size: 14px; font-weight: 400"> / {{ healthStats.diskTotal }}GB</small></span
+              >
               <span class="stat-label">磁盘使用</span>
             </div>
           </div>
@@ -211,7 +274,10 @@
               <el-icon :size="24" color="#f56c6c"><Delete /></el-icon>
             </div>
             <div class="stat-meta">
-              <span class="stat-value">{{ healthStats.gcCount }}<small style="font-size:14px;font-weight:400"> / {{ healthStats.gcTime }}s</small></span>
+              <span class="stat-value"
+                >{{ healthStats.gcCount
+                }}<small style="font-size: 14px; font-weight: 400"> / {{ healthStats.gcTime }}s</small></span
+              >
               <span class="stat-label">GC次数/耗时</span>
             </div>
           </div>
@@ -229,7 +295,15 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="4" v-for="item in literatureStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
+          <div
+            class="stat-item"
+            :style="{
+              borderLeftColor: item.borderColor,
+              borderRightColor: item.borderColor,
+              background: item.cardBgColor
+            }"
+            @click="safeNavigate(item.link)"
+          >
             <div class="stat-icon" :style="{ background: item.bgColor }">
               <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
@@ -413,7 +487,15 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6" v-for="item in techblogStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
+          <div
+            class="stat-item"
+            :style="{
+              borderLeftColor: item.borderColor,
+              borderRightColor: item.borderColor,
+              background: item.cardBgColor
+            }"
+            @click="safeNavigate(item.link)"
+          >
             <div class="stat-icon" :style="{ background: item.bgColor }">
               <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
@@ -438,7 +520,15 @@
       </template>
       <el-row :gutter="16">
         <el-col :span="6" v-for="item in musicStats" :key="item.key">
-          <div class="stat-item" :style="{ borderLeftColor: item.borderColor, borderRightColor: item.borderColor, background: item.cardBgColor }" @click="safeNavigate(item.link)">
+          <div
+            class="stat-item"
+            :style="{
+              borderLeftColor: item.borderColor,
+              borderRightColor: item.borderColor,
+              background: item.cardBgColor
+            }"
+            @click="safeNavigate(item.link)"
+          >
             <div class="stat-icon" :style="{ background: item.bgColor }">
               <el-icon :size="24" :color="item.color">
                 <component :is="item.icon" />
@@ -457,26 +547,56 @@
 
 <script setup>
 defineOptions({ name: 'Dashboard' })
-import { ref, computed, onMounted, onBeforeUnmount } from "vue"
-import { useRouter } from "vue-router"
-import { getDashboardStatsApi, getLoginStatsApi, getExportStatsApi, getOperationTop10Api } from "@/api/dashboard"
-import { getNoticeSummaryApi } from "@/api/notice"
-import { getUnreadCountApi } from "@/api/message"
-import { getSystemHealthApi, getGcStatsApi } from "@/api/health"
-import * as echarts from "echarts"
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { getDashboardStatsApi, getLoginStatsApi, getExportStatsApi, getOperationTop10Api } from '@/api/dashboard'
+import { getTodayEventsApi } from '@/api/calendar'
+import { Solar, HolidayUtil } from 'lunar-javascript'
+import { getNoticeSummaryApi } from '@/api/notice'
+import { getUnreadCountApi } from '@/api/message'
+import { getSystemHealthApi, getGcStatsApi } from '@/api/health'
+import * as echarts from 'echarts'
 import { getCyberTheme } from '@/utils/echartsTheme'
 import { COLORS } from '@/config/colors'
 import { API } from '@/api/routes'
 import {
-  Setting, Reading, Histogram, PieChart, TrendCharts, View,
-  DataAnalysis, Sort, DataBoard, ArrowRight, Headset,
-  UserFilled, Collection, EditPen, MagicStick,
-  User, Select, CloseBold, Download, Document,
-  Bell, Notification, Clock, Message, Monitor, Odometer, Cpu, Coin, Delete,
-  Lock, Grid, OfficeBuilding, Tickets, Compass, Promotion, Stamp,
-  CircleCheck, CircleClose
-} from "@element-plus/icons-vue"
+  Setting,
+  Reading,
+  Histogram,
+  PieChart,
+  TrendCharts,
+  View,
+  DataAnalysis,
+  Sort,
+  DataBoard,
+  ArrowRight,
+  Headset,
+  UserFilled,
+  Collection,
+  EditPen,
+  MagicStick,
+  User,
+  Bell,
+  Notification,
+  Clock,
+  Message,
+  Monitor,
+  Odometer,
+  Cpu,
+  Coin,
+  Delete,
+  Lock,
+  Grid,
+  OfficeBuilding,
+  Tickets,
+  Promotion,
+  CircleCheck,
+  CircleClose,
+  Calendar
+} from '@element-plus/icons-vue'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
+
+const logWarn = (...args) => console.warn('[Dashboard]', ...args)
 
 const loading = ref(true)
 const router = useRouter()
@@ -516,73 +636,214 @@ const noticeStats = ref({ noticeCount: 0, announcementCount: 0, todoCount: 0 })
 const messageUnread = ref(0)
 const healthStats = ref({ jvmUsed: 0, jvmMax: 0, cpuUsage: 0, diskUsed: 0, diskTotal: 0, gcCount: 0, gcTime: 0 })
 
-let dynastyChart = null, genreChart = null, difficultyChart = null
-let viewRankChart = null, classicsChart = null, authorRankChart = null
-let loginTrendChart = null, operationTopChart = null
+// 今日日历
+const todayEvents = ref([])
+const todaySolarDate = computed(() => {
+  const d = new Date()
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 星期${weekdays[d.getDay()]}`
+})
+const todayLunarDate = computed(() => {
+  try {
+    const solar = Solar.fromDate(new Date())
+    const lunar = solar.getLunar()
+    return lunar.getMonthInChinese() + '月' + lunar.getDayInChinese()
+  } catch {
+    return ''
+  }
+})
+const todayHoliday = computed(() => {
+  try {
+    const d = new Date()
+    const holiday = HolidayUtil.getHoliday(d.getFullYear(), d.getMonth() + 1, d.getDate())
+    return holiday ? holiday.getName() : null
+  } catch {
+    return null
+  }
+})
+const todayHolidayColor = computed(() => {
+  const important = ['春节', '国庆节', '元旦', '劳动节', '清明节', '端午节', '中秋节']
+  return todayHoliday.value && important.includes(todayHoliday.value)
+    ? 'var(--el-color-danger)'
+    : 'var(--el-color-warning)'
+})
 
-const isDark = ref(document.documentElement.classList.contains("dark"))
+let dynastyChart = null,
+  genreChart = null,
+  difficultyChart = null
+let viewRankChart = null,
+  classicsChart = null,
+  authorRankChart = null
+let loginTrendChart = null,
+  operationTopChart = null
+
+const isDark = ref(document.documentElement.classList.contains('dark'))
 
 function statCardColors(colorKey) {
   // 图标背景改为极淡的半透明色，让彩色图标清晰可见
   const iconBgLight = {
-    blue: "rgba(245,158,11,0.08)",
-    green: "rgba(16,185,129,0.08)",
-    orange: "rgba(245,158,11,0.08)",
-    red: "rgba(239,68,68,0.08)",
-    gray: "rgba(107,114,128,0.06)"
+    blue: 'rgba(245,158,11,0.08)',
+    green: 'rgba(16,185,129,0.08)',
+    orange: 'rgba(245,158,11,0.08)',
+    red: 'rgba(239,68,68,0.08)',
+    gray: 'rgba(107,114,128,0.06)'
   }
   const iconBgDark = {
-    blue: "rgba(251,191,36,0.12)",
-    green: "rgba(52,211,153,0.12)",
-    orange: "rgba(251,191,36,0.12)",
-    red: "rgba(248,113,113,0.12)",
-    gray: "rgba(156,163,175,0.08)"
+    blue: 'rgba(251,191,36,0.12)',
+    green: 'rgba(52,211,153,0.12)',
+    orange: 'rgba(251,191,36,0.12)',
+    red: 'rgba(248,113,113,0.12)',
+    gray: 'rgba(156,163,175,0.08)'
   }
   const lightMap = {
-    blue: { bgColor: iconBgLight.blue, cardBgColor: "#fef9ee" },
-    green: { bgColor: iconBgLight.green, cardBgColor: "#f0fdf6" },
-    orange: { bgColor: iconBgLight.orange, cardBgColor: "#fef9eb" },
-    red: { bgColor: iconBgLight.red, cardBgColor: "#fef2f2" },
-    gray: { bgColor: iconBgLight.gray, cardBgColor: "#f7f7f8" }
+    blue: { bgColor: iconBgLight.blue, cardBgColor: '#fef9ee' },
+    green: { bgColor: iconBgLight.green, cardBgColor: '#f0fdf6' },
+    orange: { bgColor: iconBgLight.orange, cardBgColor: '#fef9eb' },
+    red: { bgColor: iconBgLight.red, cardBgColor: '#fef2f2' },
+    gray: { bgColor: iconBgLight.gray, cardBgColor: '#f7f7f8' }
   }
   const darkMap = {
-    blue: { bgColor: iconBgDark.blue, cardBgColor: "rgba(251,191,36,0.06)" },
-    green: { bgColor: iconBgDark.green, cardBgColor: "rgba(52,211,153,0.06)" },
-    orange: { bgColor: iconBgDark.orange, cardBgColor: "rgba(251,191,36,0.06)" },
-    red: { bgColor: iconBgDark.red, cardBgColor: "rgba(248,113,113,0.06)" },
-    gray: { bgColor: iconBgDark.gray, cardBgColor: "rgba(156,163,175,0.04)" }
+    blue: { bgColor: iconBgDark.blue, cardBgColor: 'rgba(251,191,36,0.06)' },
+    green: { bgColor: iconBgDark.green, cardBgColor: 'rgba(52,211,153,0.06)' },
+    orange: { bgColor: iconBgDark.orange, cardBgColor: 'rgba(251,191,36,0.06)' },
+    red: { bgColor: iconBgDark.red, cardBgColor: 'rgba(248,113,113,0.06)' },
+    gray: { bgColor: iconBgDark.gray, cardBgColor: 'rgba(156,163,175,0.04)' }
   }
   return isDark.value ? darkMap[colorKey] : lightMap[colorKey]
 }
 
-const blue = statCardColors("blue")
-const green = statCardColors("green")
-const orange = statCardColors("orange")
-const red = statCardColors("red")
-const gray = statCardColors("gray")
+const blue = statCardColors('blue')
+const green = statCardColors('green')
+const orange = statCardColors('orange')
+const red = statCardColors('red')
+const gray = statCardColors('gray')
 
 const systemStats = computed(() => {
   const d = statsData.value.system || {}
   return [
-    { key: "user", label: "\u7528\u6237", value: d.userCount || 0, icon: UserFilled, ...COLORS.STAT_CARD.user, ...blue, link: "/system/user" },
-    { key: "role", label: "\u89d2\u8272", value: d.roleCount || 0, icon: Lock, ...COLORS.STAT_CARD.role, ...green, link: "/system/role" },
-    { key: "menu", label: "\u83dc\u5355", value: d.menuCount || 0, icon: Grid, ...COLORS.STAT_CARD.menu, ...orange, link: "/system/menu" },
-    { key: "dept", label: "\u90e8\u95e8", value: d.deptCount || 0, icon: OfficeBuilding, ...COLORS.STAT_CARD.dept, ...red, link: "/system/dept" },
-    { key: "dict", label: "\u5b57\u5178", value: d.dictTypeCount || 0, icon: EditPen, ...COLORS.STAT_CARD.dict, ...gray, link: "/tool/dict" },
-    { key: "notice", label: "\u516c\u544a", value: d.noticeCount || 0, icon: Reading, ...COLORS.STAT_CARD.notice, ...red, link: "/content/notice" },
-    { key: "log", label: "\u65e5\u5fd7", value: d.logCount || 0, icon: Reading, ...COLORS.STAT_CARD.log, ...blue, link: "/monitor/log" },
-    { key: "online", label: "\u5728\u7ebf", value: d.onlineCount || 0, icon: Monitor, ...COLORS.STAT_CARD.online, ...green, link: "/monitor/online" }
+    {
+      key: 'user',
+      label: '\u7528\u6237',
+      value: d.userCount || 0,
+      icon: UserFilled,
+      ...COLORS.STAT_CARD.user,
+      ...blue,
+      link: '/system/user'
+    },
+    {
+      key: 'role',
+      label: '\u89d2\u8272',
+      value: d.roleCount || 0,
+      icon: Lock,
+      ...COLORS.STAT_CARD.role,
+      ...green,
+      link: '/system/role'
+    },
+    {
+      key: 'menu',
+      label: '\u83dc\u5355',
+      value: d.menuCount || 0,
+      icon: Grid,
+      ...COLORS.STAT_CARD.menu,
+      ...orange,
+      link: '/system/menu'
+    },
+    {
+      key: 'dept',
+      label: '\u90e8\u95e8',
+      value: d.deptCount || 0,
+      icon: OfficeBuilding,
+      ...COLORS.STAT_CARD.dept,
+      ...red,
+      link: '/system/dept'
+    },
+    {
+      key: 'dict',
+      label: '\u5b57\u5178',
+      value: d.dictTypeCount || 0,
+      icon: EditPen,
+      ...COLORS.STAT_CARD.dict,
+      ...gray,
+      link: '/tool/dict'
+    },
+    {
+      key: 'notice',
+      label: '\u516c\u544a',
+      value: d.noticeCount || 0,
+      icon: Reading,
+      ...COLORS.STAT_CARD.notice,
+      ...red,
+      link: '/content/notice'
+    },
+    {
+      key: 'log',
+      label: '\u65e5\u5fd7',
+      value: d.logCount || 0,
+      icon: Reading,
+      ...COLORS.STAT_CARD.log,
+      ...blue,
+      link: '/monitor/log'
+    },
+    {
+      key: 'online',
+      label: '\u5728\u7ebf',
+      value: d.onlineCount || 0,
+      icon: Monitor,
+      ...COLORS.STAT_CARD.online,
+      ...green,
+      link: '/monitor/online'
+    }
   ]
 })
 
 const literatureStats = computed(() => {
   const d = statsData.value.literature || {}
   return [
-    { key: "work", label: "\u6587\u5b66\u4f5c\u54c1", value: d.workCount || 0, icon: Reading, ...COLORS.STAT_CARD.user, ...blue, link: "/classics/literature" },
-    { key: "author", label: "\u4f5c\u8005", value: d.authorCount || 0, icon: EditPen, ...COLORS.STAT_CARD.role, ...green, link: "/classics/literature" },
-    { key: "dynasty", label: "\u671d\u4ee3", value: d.dynastyCount || 0, icon: Collection, ...COLORS.STAT_CARD.menu, ...orange, link: "/classics/literature" },
-    { key: "genre", label: "\u4f53\u88c1", value: d.genreCount || 0, icon: EditPen, ...COLORS.STAT_CARD.dict, ...gray, link: "/classics/literature" },
-    { key: "category", label: "\u5206\u7c7b", value: d.categoryCount || 0, icon: Collection, ...COLORS.STAT_CARD.dept, ...red, link: "/classics/literature" }
+    {
+      key: 'work',
+      label: '\u6587\u5b66\u4f5c\u54c1',
+      value: d.workCount || 0,
+      icon: Reading,
+      ...COLORS.STAT_CARD.user,
+      ...blue,
+      link: '/classics/literature'
+    },
+    {
+      key: 'author',
+      label: '\u4f5c\u8005',
+      value: d.authorCount || 0,
+      icon: EditPen,
+      ...COLORS.STAT_CARD.role,
+      ...green,
+      link: '/classics/literature'
+    },
+    {
+      key: 'dynasty',
+      label: '\u671d\u4ee3',
+      value: d.dynastyCount || 0,
+      icon: Collection,
+      ...COLORS.STAT_CARD.menu,
+      ...orange,
+      link: '/classics/literature'
+    },
+    {
+      key: 'genre',
+      label: '\u4f53\u88c1',
+      value: d.genreCount || 0,
+      icon: EditPen,
+      ...COLORS.STAT_CARD.dict,
+      ...gray,
+      link: '/classics/literature'
+    },
+    {
+      key: 'category',
+      label: '\u5206\u7c7b',
+      value: d.categoryCount || 0,
+      icon: Collection,
+      ...COLORS.STAT_CARD.dept,
+      ...red,
+      link: '/classics/literature'
+    }
   ]
 })
 
@@ -590,33 +851,49 @@ const classicBooks = computed(() => {
   const cls = statsData.value.classics || {}
   return [
     {
-      key: "honglou", title: "\u7ea2\u697c\u68a6", dynasty: "\u6e05\u4ee3", tagType: "danger", link: "/classics/honglou/poems",
+      key: 'honglou',
+      title: '\u7ea2\u697c\u68a6',
+      dynasty: '\u6e05\u4ee3',
+      tagType: 'danger',
+      link: '/classics/honglou/poems',
       stats: [
-        { label: "\u8bd7\u8bcd", value: (cls.honglou && cls.honglou.poemCount) || 0 },
-        { label: "\u4eba\u7269", value: (cls.honglou && cls.honglou.characterCount) || 0 },
-        { label: "\u4eba\u7269\u5173\u7cfb", value: (cls.honglou && cls.honglou.relationCount) || 0 }
+        { label: '\u8bd7\u8bcd', value: (cls.honglou && cls.honglou.poemCount) || 0 },
+        { label: '\u4eba\u7269', value: (cls.honglou && cls.honglou.characterCount) || 0 },
+        { label: '\u4eba\u7269\u5173\u7cfb', value: (cls.honglou && cls.honglou.relationCount) || 0 }
       ]
     },
     {
-      key: "xiyou", title: "\u897f\u6e38\u8bb0", dynasty: "\u660e\u4ee3", tagType: "warning", link: "/classics/xiyou/poems",
+      key: 'xiyou',
+      title: '\u897f\u6e38\u8bb0',
+      dynasty: '\u660e\u4ee3',
+      tagType: 'warning',
+      link: '/classics/xiyou/poems',
       stats: [
-        { label: "\u8bd7\u8bcd", value: (cls.xiyou && cls.xiyou.poemCount) || 0 },
-        { label: "\u4eba\u7269", value: (cls.xiyou && cls.xiyou.characterCount) || 0 },
-        { label: "\u516b\u5341\u4e00\u96be", value: (cls.xiyou && cls.xiyou.eventCount) || 0 }
+        { label: '\u8bd7\u8bcd', value: (cls.xiyou && cls.xiyou.poemCount) || 0 },
+        { label: '\u4eba\u7269', value: (cls.xiyou && cls.xiyou.characterCount) || 0 },
+        { label: '\u516b\u5341\u4e00\u96be', value: (cls.xiyou && cls.xiyou.eventCount) || 0 }
       ]
     },
     {
-      key: "sanguo", title: "\u4e09\u56fd\u6f14\u4e49", dynasty: "\u5143\u672b\u660e\u521d", tagType: "primary", link: "/classics/sanguo/poems",
+      key: 'sanguo',
+      title: '\u4e09\u56fd\u6f14\u4e49',
+      dynasty: '\u5143\u672b\u660e\u521d',
+      tagType: 'primary',
+      link: '/classics/sanguo/poems',
       stats: [
-        { label: "\u8bd7\u8bcd", value: (cls.sanguo && cls.sanguo.poemCount) || 0 },
-        { label: "\u4eba\u7269", value: (cls.sanguo && cls.sanguo.characterCount) || 0 }
+        { label: '\u8bd7\u8bcd', value: (cls.sanguo && cls.sanguo.poemCount) || 0 },
+        { label: '\u4eba\u7269', value: (cls.sanguo && cls.sanguo.characterCount) || 0 }
       ]
     },
     {
-      key: "shuihu", title: "\u6c34\u6d52\u4f20", dynasty: "\u5143\u672b\u660e\u521d", tagType: "success", link: "/classics/shuihu/poems",
+      key: 'shuihu',
+      title: '\u6c34\u6d52\u4f20',
+      dynasty: '\u5143\u672b\u660e\u521d',
+      tagType: 'success',
+      link: '/classics/shuihu/poems',
       stats: [
-        { label: "\u8bd7\u8bcd", value: (cls.shuihu && cls.shuihu.poemCount) || 0 },
-        { label: "\u7ae0\u8282", value: (cls.shuihu && cls.shuihu.chapterCount) || 0 }
+        { label: '\u8bd7\u8bcd', value: (cls.shuihu && cls.shuihu.poemCount) || 0 },
+        { label: '\u7ae0\u8282', value: (cls.shuihu && cls.shuihu.chapterCount) || 0 }
       ]
     }
   ]
@@ -627,38 +904,122 @@ const summaryData = computed(() => {
   const lit = statsData.value.literature || {}
   const cls = statsData.value.classics || {}
   return {
-    totalSystemItems: (sys.userCount||0)+(sys.roleCount||0)+(sys.menuCount||0)+(sys.deptCount||0)+(sys.dictTypeCount||0)+(sys.noticeCount||0)+(sys.logCount||0),
-    totalLiteratureItems: (lit.workCount||0)+(lit.authorCount||0)+(lit.dynastyCount||0)+(lit.genreCount||0)+(lit.categoryCount||0),
-    totalPoems: cls.totalPoems||0,
-    totalClassicChars: cls.totalCharacters||0
+    totalSystemItems:
+      (sys.userCount || 0) +
+      (sys.roleCount || 0) +
+      (sys.menuCount || 0) +
+      (sys.deptCount || 0) +
+      (sys.dictTypeCount || 0) +
+      (sys.noticeCount || 0) +
+      (sys.logCount || 0),
+    totalLiteratureItems:
+      (lit.workCount || 0) +
+      (lit.authorCount || 0) +
+      (lit.dynastyCount || 0) +
+      (lit.genreCount || 0) +
+      (lit.categoryCount || 0),
+    totalPoems: cls.totalPoems || 0,
+    totalClassicChars: cls.totalCharacters || 0
   }
 })
 
 const distributionData = computed(() => {
-  const total = summaryData.value.totalSystemItems + summaryData.value.totalLiteratureItems + summaryData.value.totalPoems + summaryData.value.totalClassicChars || 1
+  const total =
+    summaryData.value.totalSystemItems +
+      summaryData.value.totalLiteratureItems +
+      summaryData.value.totalPoems +
+      summaryData.value.totalClassicChars || 1
   return [
-    { name: "\u7cfb\u7edf\u7ba1\u7406", count: summaryData.value.totalSystemItems, color: COLORS.STATUS.PRIMARY, percent: Math.round(summaryData.value.totalSystemItems/total*100) },
-    { name: "\u7ecf\u5178\u6587\u5b66", count: summaryData.value.totalLiteratureItems, color: COLORS.STATUS.WARNING, percent: Math.round(summaryData.value.totalLiteratureItems/total*100) },
-    { name: "\u540d\u8457\u8bd7\u8bcd", count: summaryData.value.totalPoems, color: COLORS.STATUS.SUCCESS, percent: Math.round(summaryData.value.totalPoems/total*100) },
-    { name: "\u540d\u8457\u4eba\u7269", count: summaryData.value.totalClassicChars, color: COLORS.STATUS.DANGER, percent: Math.round(summaryData.value.totalClassicChars/total*100) }
+    {
+      name: '\u7cfb\u7edf\u7ba1\u7406',
+      count: summaryData.value.totalSystemItems,
+      color: COLORS.STATUS.PRIMARY,
+      percent: Math.round((summaryData.value.totalSystemItems / total) * 100)
+    },
+    {
+      name: '\u7ecf\u5178\u6587\u5b66',
+      count: summaryData.value.totalLiteratureItems,
+      color: COLORS.STATUS.WARNING,
+      percent: Math.round((summaryData.value.totalLiteratureItems / total) * 100)
+    },
+    {
+      name: '\u540d\u8457\u8bd7\u8bcd',
+      count: summaryData.value.totalPoems,
+      color: COLORS.STATUS.SUCCESS,
+      percent: Math.round((summaryData.value.totalPoems / total) * 100)
+    },
+    {
+      name: '\u540d\u8457\u4eba\u7269',
+      count: summaryData.value.totalClassicChars,
+      color: COLORS.STATUS.DANGER,
+      percent: Math.round((summaryData.value.totalClassicChars / total) * 100)
+    }
   ]
 })
 
 const techblogStats = computed(() => {
   const d = statsData.value.techblog || {}
   return [
-    { key: "articles", label: "\u603b\u6587\u7ae0\u6570", value: d.totalArticles||0, icon: Reading, ...COLORS.STAT_CARD.log, ...blue, link: {name: "TechBlogIndex"} },
-    { key: "views", label: "\u603b\u6d4f\u89c8\u91cf", value: d.totalViews||0, icon: View, ...COLORS.STAT_CARD.online, ...green, link: {name: "TechBlogIndex"} }
+    {
+      key: 'articles',
+      label: '\u603b\u6587\u7ae0\u6570',
+      value: d.totalArticles || 0,
+      icon: Reading,
+      ...COLORS.STAT_CARD.log,
+      ...blue,
+      link: { name: 'TechBlogIndex' }
+    },
+    {
+      key: 'views',
+      label: '\u603b\u6d4f\u89c8\u91cf',
+      value: d.totalViews || 0,
+      icon: View,
+      ...COLORS.STAT_CARD.online,
+      ...green,
+      link: { name: 'TechBlogIndex' }
+    }
   ]
 })
 
 const musicStats = computed(() => {
   const d = statsData.value.music || {}
   return [
-    { key: "songs", label: "\u6b4c\u66f2\u6570", value: d.totalSongs||0, icon: Headset, ...COLORS.STAT_CARD.user, ...blue, link: {name: "ToolMusicPlayer"} },
-    { key: "albums", label: "\u4e13\u8f91\u6570", value: d.totalAlbums||0, icon: Collection, ...COLORS.STAT_CARD.role, ...green, link: {name: "ToolMusicPlayer"} },
-    { key: "plays", label: "\u603b\u64ad\u653e\u6b21\u6570", value: d.totalPlays||0, icon: MagicStick, ...COLORS.STAT_CARD.dept, ...red, link: {name: "ToolMusicPlayer"} },
-    { key: "artists", label: "\u827a\u672f\u5bb6\u6570", value: d.totalArtists||0, icon: UserFilled, ...COLORS.STAT_CARD.menu, ...orange, link: {name: "ToolMusicPlayer"} }
+    {
+      key: 'songs',
+      label: '\u6b4c\u66f2\u6570',
+      value: d.totalSongs || 0,
+      icon: Headset,
+      ...COLORS.STAT_CARD.user,
+      ...blue,
+      link: { name: 'ToolMusicPlayer' }
+    },
+    {
+      key: 'albums',
+      label: '\u4e13\u8f91\u6570',
+      value: d.totalAlbums || 0,
+      icon: Collection,
+      ...COLORS.STAT_CARD.role,
+      ...green,
+      link: { name: 'ToolMusicPlayer' }
+    },
+    {
+      key: 'plays',
+      label: '\u603b\u64ad\u653e\u6b21\u6570',
+      value: d.totalPlays || 0,
+      icon: MagicStick,
+      ...COLORS.STAT_CARD.dept,
+      ...red,
+      link: { name: 'ToolMusicPlayer' }
+    },
+    {
+      key: 'artists',
+      label: '\u827a\u672f\u5bb6\u6570',
+      value: d.totalArtists || 0,
+      icon: UserFilled,
+      ...COLORS.STAT_CARD.menu,
+      ...orange,
+      link: { name: 'ToolMusicPlayer' }
+    }
   ]
 })
 
@@ -667,9 +1028,19 @@ const colorPalette = COLORS.CHART
 function darkEchartStyle() {
   if (!isDark.value) return {}
   return {
-    legend: { textStyle: { color: "#a3a6ad" } },
-    xAxis: { axisLine: { lineStyle: { color: "#4c4d4f" } }, axisTick: { lineStyle: { color: "#4c4d4f" } }, axisLabel: { color: "#a3a6ad" }, splitLine: { lineStyle: { color: "#363637" } } },
-    yAxis: { axisLine: { lineStyle: { color: "#4c4d4f" } }, axisTick: { lineStyle: { color: "#4c4d4f" } }, axisLabel: { color: "#a3a6ad" }, splitLine: { lineStyle: { color: "#363637" } } }
+    legend: { textStyle: { color: '#a3a6ad' } },
+    xAxis: {
+      axisLine: { lineStyle: { color: '#4c4d4f' } },
+      axisTick: { lineStyle: { color: '#4c4d4f' } },
+      axisLabel: { color: '#a3a6ad' },
+      splitLine: { lineStyle: { color: '#363637' } }
+    },
+    yAxis: {
+      axisLine: { lineStyle: { color: '#4c4d4f' } },
+      axisTick: { lineStyle: { color: '#4c4d4f' } },
+      axisLabel: { color: '#a3a6ad' },
+      splitLine: { lineStyle: { color: '#363637' } }
+    }
   }
 }
 
@@ -684,15 +1055,34 @@ function initOrUpdateChart(refEl, getOption) {
     // 使用赛博朋克主题初始化
     chart = echarts.init(refEl, getCyberTheme())
   }
-  chart.setOption({ textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' }, ...getOption() }, { notMerge: true })
+  chart.setOption(
+    { textStyle: { fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif' }, ...getOption() },
+    { notMerge: true }
+  )
   return chart
 }
 
 function disposeAllCharts() {
-  [dynastyChart, genreChart, difficultyChart, viewRankChart, classicsChart, authorRankChart, loginTrendChart, operationTopChart].forEach(c => { if (c) c.dispose() })
-  dynastyChart = null; genreChart = null; difficultyChart = null
-  viewRankChart = null; classicsChart = null; authorRankChart = null
-  loginTrendChart = null; operationTopChart = null
+  ;[
+    dynastyChart,
+    genreChart,
+    difficultyChart,
+    viewRankChart,
+    classicsChart,
+    authorRankChart,
+    loginTrendChart,
+    operationTopChart
+  ].forEach((c) => {
+    if (c) c.dispose()
+  })
+  dynastyChart = null
+  genreChart = null
+  difficultyChart = null
+  viewRankChart = null
+  classicsChart = null
+  authorRankChart = null
+  loginTrendChart = null
+  operationTopChart = null
 }
 
 function renderAllCharts() {
@@ -708,44 +1098,87 @@ function renderAllCharts() {
 }
 
 function renderDynastyChart() {
-  const list = (statsData.value.literature?.dynastyStats || []).slice().sort((a, b) => (b.workCount + b.authorCount) - (a.workCount + a.authorCount)).slice(0, 12)
+  const list = (statsData.value.literature?.dynastyStats || [])
+    .slice()
+    .sort((a, b) => b.workCount + b.authorCount - (a.workCount + a.authorCount))
+    .slice(0, 12)
   if (!list.length || !dynastyChartRef.value) return
   const ds = darkEchartStyle()
   dynastyChart = initOrUpdateChart(dynastyChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
-    legend: { data: ["作品数", "作者数"], bottom: 0, textStyle: { fontSize: 12, ...(ds.legend?.textStyle || {}) } },
-    grid: { left: "3%", right: "8%", top: 8, bottom: 40, containLabel: true },
-    xAxis: { type: "category", data: list.map(i => i.dynastyName), axisLabel: { rotate: 30, fontSize: 11, ...(ds.xAxis?.axisLabel || {}) }, ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {}) },
-    yAxis: { type: "value", minInterval: 1, ...(ds.yAxis || {}) },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['作品数', '作者数'], bottom: 0, textStyle: { fontSize: 12, ...(ds.legend?.textStyle || {}) } },
+    grid: { left: '3%', right: '8%', top: 8, bottom: 40, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: list.map((i) => i.dynastyName),
+      axisLabel: { rotate: 30, fontSize: 11, ...(ds.xAxis?.axisLabel || {}) },
+      ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {})
+    },
+    yAxis: { type: 'value', minInterval: 1, ...(ds.yAxis || {}) },
     series: [
-      { name: "作品数", type: "bar", data: list.map(i => i.workCount), itemStyle: { color: colorPalette[0], borderRadius: [4, 4, 0, 0] }, barMaxWidth: 28, emphasis: { itemStyle: { color: colorPalette[0] } } },
-      { name: "作者数", type: "bar", data: list.map(i => i.authorCount), itemStyle: { color: colorPalette[3], borderRadius: [4, 4, 0, 0] }, barMaxWidth: 28, emphasis: { itemStyle: { color: colorPalette[3] } } }
+      {
+        name: '作品数',
+        type: 'bar',
+        data: list.map((i) => i.workCount),
+        itemStyle: { color: colorPalette[0], borderRadius: [4, 4, 0, 0] },
+        barMaxWidth: 28,
+        emphasis: { itemStyle: { color: colorPalette[0] } }
+      },
+      {
+        name: '作者数',
+        type: 'bar',
+        data: list.map((i) => i.authorCount),
+        itemStyle: { color: colorPalette[3], borderRadius: [4, 4, 0, 0] },
+        barMaxWidth: 28,
+        emphasis: { itemStyle: { color: colorPalette[3] } }
+      }
     ]
   }))
 }
 
 function renderGenreChart() {
   const lit = statsData.value.literature || {}
-  let list = (lit.genreStats || []).slice().sort((a, b) => (b.workCount || b.count || 0) - (a.workCount || a.count || 0))
+  let list = (lit.genreStats || [])
+    .slice()
+    .sort((a, b) => (b.workCount || b.count || 0) - (a.workCount || a.count || 0))
   const top = list.slice(0, 9)
   const rest = list.slice(9).reduce((s, i) => s + (i.workCount || i.count || 0), 0)
-  const data = top.map(i => ({ name: i.genreName || i.name, value: i.workCount || i.count }))
-  if (rest > 0) data.push({ name: "其他", value: rest })
+  const data = top.map((i) => ({ name: i.genreName || i.name, value: i.workCount || i.count }))
+  if (rest > 0) data.push({ name: '其他', value: rest })
   if (!data.length || !genreChartRef.value) return
   const ds = darkEchartStyle()
   genreChart = initOrUpdateChart(genreChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "item", formatter: "{b}: {c} 篇 ({d}%)" },
-    legend: { type: "scroll", orient: "vertical", right: 5, top: 5, bottom: 5, textStyle: { fontSize: 11, ...(ds.legend?.textStyle || {}) } },
-    series: [{
-      type: "pie", radius: ["48%", "75%"], center: ["38%", "50%"],
-      avoidLabelOverlap: false,
-      itemStyle: { borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 },
-      label: { show: false },
-      emphasis: { label: { show: true, fontSize: 14, fontWeight: "bold" } },
-      data: data.map((i, idx) => ({ ...i, itemStyle: { color: colorPalette[idx % colorPalette.length], borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 } }))
-    }]
+    tooltip: { trigger: 'item', formatter: '{b}: {c} 篇 ({d}%)' },
+    legend: {
+      type: 'scroll',
+      orient: 'vertical',
+      right: 5,
+      top: 5,
+      bottom: 5,
+      textStyle: { fontSize: 11, ...(ds.legend?.textStyle || {}) }
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['48%', '75%'],
+        center: ['38%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: { borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 },
+        label: { show: false },
+        emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
+        data: data.map((i, idx) => ({
+          ...i,
+          itemStyle: {
+            color: colorPalette[idx % colorPalette.length],
+            borderRadius: 4,
+            borderColor: pieBorderColor(),
+            borderWidth: 2
+          }
+        }))
+      }
+    ]
   }))
 }
 
@@ -755,14 +1188,27 @@ function renderDifficultyChart() {
   const ds = darkEchartStyle()
   difficultyChart = initOrUpdateChart(difficultyChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "item", formatter: "{b}: {c} 篇 ({d}%)" },
+    tooltip: { trigger: 'item', formatter: '{b}: {c} 篇 ({d}%)' },
     legend: { bottom: 0, textStyle: { fontSize: 11, ...(ds.legend?.textStyle || {}) } },
-    series: [{
-      type: "pie", radius: ["45%", "72%"], center: ["50%", "45%"],
-      itemStyle: { borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 },
-      label: { formatter: "{b}\n{d}%", fontSize: 11 },
-      data: list.map((i, idx) => ({ name: i.label, value: i.workCount, itemStyle: { color: colorPalette[idx % colorPalette.length], borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 } }))
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['45%', '72%'],
+        center: ['50%', '45%'],
+        itemStyle: { borderRadius: 4, borderColor: pieBorderColor(), borderWidth: 2 },
+        label: { formatter: '{b}\n{d}%', fontSize: 11 },
+        data: list.map((i, idx) => ({
+          name: i.label,
+          value: i.workCount,
+          itemStyle: {
+            color: colorPalette[idx % colorPalette.length],
+            borderRadius: 4,
+            borderColor: pieBorderColor(),
+            borderWidth: 2
+          }
+        }))
+      }
+    ]
   }))
 }
 
@@ -772,41 +1218,73 @@ function renderViewRankChart() {
   const ds = darkEchartStyle()
   viewRankChart = initOrUpdateChart(viewRankChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, formatter: (p) => `${p[0].name}<br/>${"浏览量"} ${p[0].value}` },
-    grid: { left: "2%", right: "8%", top: 5, bottom: 5 },
-    xAxis: { type: "value", name: "次", ...(ds.xAxis || {}) },
-    yAxis: { type: "category", data: list.map(i => i.title).reverse(), axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) }, inverse: true, ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {}) },
-    series: [{
-      type: "bar", data: list.map(i => i.viewCount).reverse(),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: COLORS.CHART_GRADIENTS.DANGER.from }, { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.DANGER.toDark : COLORS.CHART_GRADIENTS.DANGER.to }]) },
-      barMaxWidth: 24, label: { show: true, position: "right", fontSize: 10 }
-    }]
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (p) => `${p[0].name}<br/>${'浏览量'} ${p[0].value}`
+    },
+    grid: { left: '2%', right: '8%', top: 5, bottom: 5 },
+    xAxis: { type: 'value', name: '次', ...(ds.xAxis || {}) },
+    yAxis: {
+      type: 'category',
+      data: list.map((i) => i.title).reverse(),
+      axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) },
+      inverse: true,
+      ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {})
+    },
+    series: [
+      {
+        type: 'bar',
+        data: list.map((i) => i.viewCount).reverse(),
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            { offset: 0, color: COLORS.CHART_GRADIENTS.DANGER.from },
+            { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.DANGER.toDark : COLORS.CHART_GRADIENTS.DANGER.to }
+          ])
+        },
+        barMaxWidth: 24,
+        label: { show: true, position: 'right', fontSize: 10 }
+      }
+    ]
   }))
 }
 
 function renderClassicsChart() {
   const cls = statsData.value.classics || {}
   const books = [
-    { key: "honglou", name: "红楼梦", color: COLORS.CLASSIC_BOOKS.honglou, data: cls.honglou || {} },
-    { key: "xiyou", name: "西游记", color: COLORS.CLASSIC_BOOKS.xiyou, data: cls.xiyou || {} },
-    { key: "sanguo", name: "三国演义", color: COLORS.CLASSIC_BOOKS.sanguo, data: cls.sanguo || {} },
-    { key: "shuihu", name: "水浒传", color: COLORS.CLASSIC_BOOKS.shuihu, data: cls.shuihu || {} }
+    { key: 'honglou', name: '红楼梦', color: COLORS.CLASSIC_BOOKS.honglou, data: cls.honglou || {} },
+    { key: 'xiyou', name: '西游记', color: COLORS.CLASSIC_BOOKS.xiyou, data: cls.xiyou || {} },
+    { key: 'sanguo', name: '三国演义', color: COLORS.CLASSIC_BOOKS.sanguo, data: cls.sanguo || {} },
+    { key: 'shuihu', name: '水浒传', color: COLORS.CLASSIC_BOOKS.shuihu, data: cls.shuihu || {} }
   ]
-  const categories = ["诗词数", "人物数", "关系数", "事件数", "章节数"]
-  const catKeyMap = { "诗词数": "poemCount", "人物数": "characterCount", "关系数": "relationCount", "事件数": "eventCount", "章节数": "chapterCount" }
+  const categories = ['诗词数', '人物数', '关系数', '事件数', '章节数']
+  const catKeyMap = {
+    诗词数: 'poemCount',
+    人物数: 'characterCount',
+    关系数: 'relationCount',
+    事件数: 'eventCount',
+    章节数: 'chapterCount'
+  }
   if (!classicsChartRef.value) return
   const ds = darkEchartStyle()
   classicsChart = initOrUpdateChart(classicsChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
-    legend: { data: books.map(b => b.name), bottom: 0, textStyle: { fontSize: 12, ...(ds.legend?.textStyle || {}) } },
-    grid: { left: "3%", right: "5%", top: 12, bottom: 36 },
-    xAxis: { type: "category", data: categories, axisLabel: { fontSize: 12 }, ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {}) },
-    yAxis: { type: "value", minInterval: 1, ...(ds.yAxis || {}) },
-    series: books.map(book => ({
-      name: book.name, type: "bar",
-      data: categories.map(cat => book.data[catKeyMap[cat]] || 0),
-      itemStyle: { color: book.color, borderRadius: [4, 4, 0, 0] }, barMaxWidth: 24
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: books.map((b) => b.name), bottom: 0, textStyle: { fontSize: 12, ...(ds.legend?.textStyle || {}) } },
+    grid: { left: '3%', right: '5%', top: 12, bottom: 36 },
+    xAxis: {
+      type: 'category',
+      data: categories,
+      axisLabel: { fontSize: 12 },
+      ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {})
+    },
+    yAxis: { type: 'value', minInterval: 1, ...(ds.yAxis || {}) },
+    series: books.map((book) => ({
+      name: book.name,
+      type: 'bar',
+      data: categories.map((cat) => book.data[catKeyMap[cat]] || 0),
+      itemStyle: { color: book.color, borderRadius: [4, 4, 0, 0] },
+      barMaxWidth: 24
     }))
   }))
 }
@@ -817,40 +1295,73 @@ function renderAuthorRankChart() {
   const ds = darkEchartStyle()
   authorRankChart = initOrUpdateChart(authorRankChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, formatter: (p) => `${p[0].name}<br/>${"作品数"} ${p[0].value}` },
-    grid: { left: "2%", right: "8%", top: 5, bottom: 5 },
-    xAxis: { type: "value", minInterval: 1, ...(ds.xAxis || {}) },
-    yAxis: { type: "category", data: list.map(i => i.authorName).reverse(), axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) }, inverse: true, ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {}) },
-    series: [{
-      type: "bar", data: list.map(i => i.workCount).reverse(),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: COLORS.CHART_GRADIENTS.AMBER.from }, { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.AMBER.toDark : COLORS.CHART_GRADIENTS.AMBER.to }]) },
-      barMaxWidth: 24, label: { show: true, position: "right", fontSize: 10 }
-    }]
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (p) => `${p[0].name}<br/>${'作品数'} ${p[0].value}`
+    },
+    grid: { left: '2%', right: '8%', top: 5, bottom: 5 },
+    xAxis: { type: 'value', minInterval: 1, ...(ds.xAxis || {}) },
+    yAxis: {
+      type: 'category',
+      data: list.map((i) => i.authorName).reverse(),
+      axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) },
+      inverse: true,
+      ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {})
+    },
+    series: [
+      {
+        type: 'bar',
+        data: list.map((i) => i.workCount).reverse(),
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            { offset: 0, color: COLORS.CHART_GRADIENTS.AMBER.from },
+            { offset: 1, color: isDark.value ? COLORS.CHART_GRADIENTS.AMBER.toDark : COLORS.CHART_GRADIENTS.AMBER.to }
+          ])
+        },
+        barMaxWidth: 24,
+        label: { show: true, position: 'right', fontSize: 10 }
+      }
+    ]
   }))
 }
 
 function renderLoginTrendChart() {
   const trend = loginStats.value.trend || {}
   const dates = Object.keys(trend).sort()
-  const values = dates.map(d => trend[d] || 0)
+  const values = dates.map((d) => trend[d] || 0)
   if (!dates.length || !loginTrendChartRef.value) return
   const ds = darkEchartStyle()
   loginTrendChart = initOrUpdateChart(loginTrendChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis" },
-    grid: { left: "3%", right: "6%", top: 10, bottom: 5, containLabel: true },
-    xAxis: { type: "category", data: dates.map(d => d.substring(5)), axisLabel: { fontSize: 11 }, ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {}) },
-    yAxis: { type: "value", minInterval: 1, ...(ds.yAxis || {}) },
-    series: [{
-      name: "登录次数", type: "line",
-      data: values,
-      smooth: true,
-      lineStyle: { color: COLORS.PRIMARY, width: 2 },
-      itemStyle: { color: COLORS.PRIMARY },
-      areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "rgba(64,158,255,0.3)" }, { offset: 1, color: "rgba(64,158,255,0.02)" }]) },
-      symbol: "circle", symbolSize: 6,
-      label: { show: true, position: "top", fontSize: 11, color: COLORS.PRIMARY }
-    }]
+    tooltip: { trigger: 'axis' },
+    grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: dates.map((d) => d.substring(5)),
+      axisLabel: { fontSize: 11 },
+      ...(ds.xAxis ? { axisLine: ds.xAxis.axisLine, axisTick: ds.xAxis.axisTick } : {})
+    },
+    yAxis: { type: 'value', minInterval: 1, ...(ds.yAxis || {}) },
+    series: [
+      {
+        name: '登录次数',
+        type: 'line',
+        data: values,
+        smooth: true,
+        lineStyle: { color: COLORS.PRIMARY, width: 2 },
+        itemStyle: { color: COLORS.PRIMARY },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(64,158,255,0.3)' },
+            { offset: 1, color: 'rgba(64,158,255,0.02)' }
+          ])
+        },
+        symbol: 'circle',
+        symbolSize: 6,
+        label: { show: true, position: 'top', fontSize: 11, color: COLORS.PRIMARY }
+      }
+    ]
   }))
 }
 
@@ -860,20 +1371,50 @@ function renderOperationTopChart() {
   const ds = darkEchartStyle()
   operationTopChart = initOrUpdateChart(operationTopChartRef.value, () => ({
     ...ds,
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, formatter: (p) => `${p[0].name}<br/>${"操作次数"} ${p[0].value}` },
-    grid: { left: "2%", right: "8%", top: 5, bottom: 5 },
-    xAxis: { type: "value", minInterval: 1, ...(ds.xAxis || {}) },
-    yAxis: { type: "category", data: list.map(i => i.operation || "未知").reverse(), axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) }, inverse: true, ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {}) },
-    series: [{
-      type: "bar", data: list.map(i => i.count || 0).reverse(),
-      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: "#f56c6c" }, { offset: 1, color: isDark.value ? "#5a2a2a" : "#fab6b6" }]) },
-      barMaxWidth: 24, label: { show: true, position: "right", fontSize: 10 }
-    }]
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (p) => `${p[0].name}<br/>${'操作次数'} ${p[0].value}`
+    },
+    grid: { left: '2%', right: '8%', top: 5, bottom: 5 },
+    xAxis: { type: 'value', minInterval: 1, ...(ds.xAxis || {}) },
+    yAxis: {
+      type: 'category',
+      data: list.map((i) => i.operation || '未知').reverse(),
+      axisLabel: { fontSize: 11, ...(ds.yAxis?.axisLabel || {}) },
+      inverse: true,
+      ...(ds.yAxis ? { axisLine: ds.yAxis.axisLine, axisTick: ds.yAxis.axisTick, splitLine: ds.yAxis.splitLine } : {})
+    },
+    series: [
+      {
+        type: 'bar',
+        data: list.map((i) => i.count || 0).reverse(),
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            { offset: 0, color: '#f56c6c' },
+            { offset: 1, color: isDark.value ? '#5a2a2a' : '#fab6b6' }
+          ])
+        },
+        barMaxWidth: 24,
+        label: { show: true, position: 'right', fontSize: 10 }
+      }
+    ]
   }))
 }
 
 function onResize() {
-  [dynastyChart, genreChart, difficultyChart, viewRankChart, classicsChart, authorRankChart, loginTrendChart, operationTopChart].forEach(c => { if (c) c.resize() })
+  ;[
+    dynastyChart,
+    genreChart,
+    difficultyChart,
+    viewRankChart,
+    classicsChart,
+    authorRankChart,
+    loginTrendChart,
+    operationTopChart
+  ].forEach((c) => {
+    if (c) c.resize()
+  })
 }
 
 async function fetchStats() {
@@ -900,8 +1441,21 @@ async function fetchEnhancedStats() {
     renderLoginTrendChart()
     renderOperationTopChart()
   } catch (e) {
-    logWarn("获取增强仪表盘数据失败:", e)
+    logWarn('获取增强仪表盘数据失败:', e)
   }
+}
+
+async function fetchTodayCalendar() {
+  try {
+    const res = await getTodayEventsApi()
+    todayEvents.value = res.data || []
+  } catch {
+    todayEvents.value = []
+  }
+}
+
+function goToCalendar() {
+  router.push('/calendar/index')
 }
 
 async function fetchNoticeAndHealthStats() {
@@ -938,7 +1492,7 @@ async function fetchNoticeAndHealthStats() {
       healthStats.value.gcTime = Math.round((gcRes.data?.totalTimeSeconds || 0) * 10) / 10
     }
   } catch (e) {
-      logWarn("获取通知与健康数据失败:", e)
+    logWarn('获取通知与健康数据失败:', e)
   }
 }
 
@@ -948,19 +1502,22 @@ function startSse() {
   stopSse()
   try {
     const token = tokenStore.get()
-    const url = token ? API.SYS.NOTIFICATION.STREAM + "?Authorization=" + encodeURIComponent(token) : API.SYS.NOTIFICATION.STREAM
+    const url = token
+      ? API.SYS.NOTIFICATION.STREAM + '?Authorization=' + encodeURIComponent(token)
+      : API.SYS.NOTIFICATION.STREAM
     sseEventSource = new EventSource(url)
-    sseEventSource.addEventListener("stats", (event) => {
+    sseEventSource.addEventListener('stats', (event) => {
       try {
         const parsed = JSON.parse(event.data)
         if (parsed.code === 200 && parsed.data) {
           statsData.value = parsed.data
           renderAllCharts()
         }
-      } catch (e) { logWarn("SSE parse error:", e) }
-      fetchNoticeAndHealthStats()
+      } catch (e) {
+        logWarn('SSE parse error:', e)
+      }
     })
-    sseEventSource.addEventListener("enhanced", (event) => {
+    sseEventSource.addEventListener('enhanced', (event) => {
       try {
         const parsed = JSON.parse(event.data)
         if (parsed.code === 200 && parsed.data) {
@@ -971,9 +1528,11 @@ function startSse() {
           renderLoginTrendChart()
           renderOperationTopChart()
         }
-      } catch (e) { logWarn("SSE enhanced parse error:", e) }
+      } catch (e) {
+        logWarn('SSE enhanced parse error:', e)
+      }
     })
-    sseEventSource.addEventListener("health", (event) => {
+    sseEventSource.addEventListener('health', (event) => {
       try {
         const parsed = JSON.parse(event.data)
         if (parsed.code === 200 && parsed.data) {
@@ -986,31 +1545,47 @@ function startSse() {
             diskTotal: Math.round(h.disk?.total || 0)
           }
         }
-      } catch (e) { logWarn("SSE health parse error:", e) }
+      } catch (e) {
+        logWarn('SSE health parse error:', e)
+      }
     })
-    sseEventSource.addEventListener("gc", (event) => {
+    sseEventSource.addEventListener('gc', (event) => {
       try {
         const parsed = JSON.parse(event.data)
         if (parsed.code === 200 && parsed.data) {
           healthStats.value.gcCount = parsed.data.totalCount || 0
           healthStats.value.gcTime = Math.round((parsed.data.totalTimeSeconds || 0) * 10) / 10
         }
-      } catch (e) { logWarn("SSE gc parse error:", e) }
+      } catch (e) {
+        logWarn('SSE gc parse error:', e)
+      }
     })
-    sseEventSource.onerror = () => { stopSse() }
-  } catch (e) { logWarn("SSE init error:", e) }
+    sseEventSource.onerror = () => {
+      stopSse()
+    }
+  } catch (e) {
+    logWarn('SSE init error:', e)
+  }
 }
 
 function stopSse() {
-  if (sseEventSource) { sseEventSource.close(); sseEventSource = null }
+  if (sseEventSource) {
+    sseEventSource.close()
+    sseEventSource = null
+  }
 }
 
-onBeforeUnmount(() => { stopSse() })
+onBeforeUnmount(() => {
+  stopSse()
+})
 
 onMounted(() => {
-  fetchStats().then(() => fetchEnhancedStats()).then(() => fetchNoticeAndHealthStats())
+  fetchTodayCalendar()
+  fetchStats()
+    .then(() => fetchEnhancedStats())
+    .then(() => fetchNoticeAndHealthStats())
   startSse()
-  window.addEventListener("resize", onResize)
+  window.addEventListener('resize', onResize)
 })
 </script>
 
@@ -1106,14 +1681,30 @@ html.dark .section-card {
 }
 
 // 卡片入场交错动画
-.stat-item:nth-child(1) { animation-delay: 0.04s; }
-.stat-item:nth-child(2) { animation-delay: 0.08s; }
-.stat-item:nth-child(3) { animation-delay: 0.12s; }
-.stat-item:nth-child(4) { animation-delay: 0.16s; }
-.stat-item:nth-child(5) { animation-delay: 0.2s; }
-.stat-item:nth-child(6) { animation-delay: 0.24s; }
-.stat-item:nth-child(7) { animation-delay: 0.28s; }
-.stat-item:nth-child(8) { animation-delay: 0.32s; }
+.stat-item:nth-child(1) {
+  animation-delay: 0.04s;
+}
+.stat-item:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.stat-item:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.stat-item:nth-child(4) {
+  animation-delay: 0.16s;
+}
+.stat-item:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.stat-item:nth-child(6) {
+  animation-delay: 0.24s;
+}
+.stat-item:nth-child(7) {
+  animation-delay: 0.28s;
+}
+.stat-item:nth-child(8) {
+  animation-delay: 0.32s;
+}
 
 .stat-item:hover {
   transform: translateY(-4px);
@@ -1128,7 +1719,10 @@ html.dark .section-card {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
 
   :deep(.el-icon) {
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
@@ -1142,7 +1736,10 @@ html.dark .section-card {
 .stat-item:hover .stat-icon {
   transform: scale(1.08);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
 
   :deep(.el-icon) {
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
@@ -1193,10 +1790,18 @@ html.dark .section-card {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.classic-card:nth-child(1) { border-top-color: var(--el-color-danger); }
-.classic-card:nth-child(2) { border-top-color: var(--el-color-warning); }
-.classic-card:nth-child(3) { border-top-color: var(--el-color-primary); }
-.classic-card:nth-child(4) { border-top-color: var(--el-color-success); }
+.classic-card:nth-child(1) {
+  border-top-color: var(--el-color-danger);
+}
+.classic-card:nth-child(2) {
+  border-top-color: var(--el-color-warning);
+}
+.classic-card:nth-child(3) {
+  border-top-color: var(--el-color-primary);
+}
+.classic-card:nth-child(4) {
+  border-top-color: var(--el-color-success);
+}
 
 .classic-card :deep(.el-card__header) {
   padding: 16px 20px;
@@ -1300,10 +1905,18 @@ html.dark .classic-card {
   color: var(--color-white);
 }
 
-.overview-circle.primary { background: linear-gradient(135deg, var(--el-color-primary), var(--el-color-primary-light-3)); }
-.overview-circle.warning { background: linear-gradient(135deg, var(--el-color-warning), var(--rx-primary-light)); }
-.overview-circle.danger  { background: linear-gradient(135deg, var(--el-color-danger), var(--rx-primary-light)); }
-.overview-circle.success { background: linear-gradient(135deg, var(--el-color-success), var(--rx-primary-light)); }
+.overview-circle.primary {
+  background: linear-gradient(135deg, var(--el-color-primary), var(--el-color-primary-light-3));
+}
+.overview-circle.warning {
+  background: linear-gradient(135deg, var(--el-color-warning), var(--rx-primary-light));
+}
+.overview-circle.danger {
+  background: linear-gradient(135deg, var(--el-color-danger), var(--rx-primary-light));
+}
+.overview-circle.success {
+  background: linear-gradient(135deg, var(--el-color-success), var(--rx-primary-light));
+}
 
 .distribution-list {
   display: flex;
@@ -1348,5 +1961,81 @@ html.dark .classic-card {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 日历组件样式 */
+.today-calendar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.today-date-section {
+  flex-shrink: 0;
+  text-align: center;
+  min-width: 180px;
+}
+
+.today-solar {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, var(--el-text-color-primary));
+  margin-bottom: 4px;
+}
+
+.today-lunar {
+  font-size: 13px;
+  color: var(--color-text-secondary, var(--el-text-color-secondary));
+  margin-bottom: 4px;
+}
+
+.today-holiday {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.calendar-divider {
+  height: 80px;
+}
+
+.today-event-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.today-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.today-event-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.today-event-item .event-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.today-event-item .event-title {
+  font-size: 13px;
+  color: var(--color-text-primary, var(--el-text-color-primary));
+}
+
+.today-event-item .event-time {
+  font-size: 12px;
+  color: var(--color-text-secondary, var(--el-text-color-secondary));
+  margin-left: auto;
+}
+
+.view-full-link {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 </style>

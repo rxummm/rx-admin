@@ -39,7 +39,18 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册 Font Awesome 图标
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette, faVideo, faFilm, faCode } from '@fortawesome/free-solid-svg-icons'
+import {
+  faGlobe,
+  faExpand,
+  faCompress,
+  faShuffle,
+  faRepeat,
+  faList,
+  faPalette,
+  faVideo,
+  faFilm,
+  faCode
+} from '@fortawesome/free-solid-svg-icons'
 library.add(faGlobe, faExpand, faCompress, faShuffle, faRepeat, faList, faPalette, faVideo, faFilm, faCode)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 
@@ -77,7 +88,7 @@ if (import.meta.env.DEV) {
   import('./composables/usePerformanceMonitor').then(({ usePerformanceMonitor }) => {
     const { start } = usePerformanceMonitor()
     start()
-    console.log('📊 性能监控已启动')
+    // noop
   })
 }
 

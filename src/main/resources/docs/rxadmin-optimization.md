@@ -1,4 +1,4 @@
-﻿# RX Admin 优化建议清单
+# RX Admin 优化建议清单
 
 > **版本**: 3.5 | **更新日期**: 2026-06-13 | **类型**: 项目优化规划（含已完成项记录 + 全新审查发现 + v2.0 新功能实施 + 架构重构记录）
 
@@ -245,7 +245,25 @@
 
 ## 3. 实时推送
 
-### 3.1 WebSocket 通知（P1）❌ 待实现
+### 3.1 WebSocket 通知（P1）✅ 已实现
+
+**方案**: Spring WebSocket + Sa-Token token 认证，替代 SSE 实现双向通信
+
+**后端**:
+- `WebSocketConfig.java` — WebSocket 端点配置 `/ws/notification`
+- `NotificationWebSocketHandler.java` — 消息处理器，URL 参数 token 认证
+- `NotificationSessionManager.java` — 统一管理 SSE + WebSocket 会话
+- `spring-boot-starter-websocket` 依赖
+
+**前端**:
+- `useNotificationWebSocket.js` — WebSocket composable（自动重连 + 心跳）
+- 布局组件和通知弹窗已切换到 WebSocket
+
+**特性**:
+- 双向通信（支持 ping/pong 心跳）
+- 自动重连（3 秒间隔）
+- 30 秒心跳保活
+- 向后兼容 SSE（Dashboard 统计仍使用 SSE）
 ### 3.2 SSE 服务端推送（P2）✅ 已实现
 
 **方案**: 后端 SseEmitter + 前端 EventSource 订阅
@@ -347,45 +365,25 @@ getFetchProgressApi(source, { _skipNProgress: true })
 
 ## 4. 运维与部署
 
-### 4.1 Docker 容器化（P1）❌ 待实现
+### 4.1 Docker 容器化（P1）🚫 暂不实现
 
-**含义**: 将 RX Admin 后端（Spring Boot）和前端（Vite + Nginx）分别打包为 Docker 镜像，通过 `docker-compose` 一键启动整个系统（含 MySQL、Redis 等依赖服务）。
-
-**具体价值**:
-- **环境一致性**: 消除"在我机器上能运行"的问题，开发/测试/生产环境完全一致
-- **快速部署**: 新服务器上只需 `docker-compose up -d` 即可启动全套服务
-- **弹性伸缩**: 结合 Docker Swarm 或 K8s 可水平扩展后端实例
-- **资源隔离**: 每个容器独立运行，互不干扰
-
-**典型方案**:
-- 后端: 多阶段构建（Maven 编译 → JRE 运行时），暴露 8088 端口
-- 前端: `node:18` 构建产物 → `nginx:alpine` 托管静态文件，暴露 3000 端口
-- 数据库: 使用 `mysql:8.0` 官方镜像，挂载持久化 volume
-- `docker-compose.yml` 编排所有服务，定义网络、依赖顺序、环境变量
+> **决策**：当前项目为单体应用，手动 `mvn spring-boot:run` + `npm run dev` 部署方式已满足需求，Docker 容器化暂缓。
 
 ---
 
-### 4.2 CI/CD 持续集成与持续部署（P2）❌ 待实现
+### 4.2 CI/CD 持续集成与持续部署（P2）⚠️ 部分完成
 
-**含义**: 代码推送到 Git 仓库后自动触发构建、测试、部署流程，减少人工操作失误。
+**已完成部分** — `.github/workflows/ci.yml`：
+- ✅ Backend: JDK 17 + MySQL 8.0 Service → `mvn compile` + `mvn test`
+- ✅ Frontend: Node 18 → `npm ci` → `npm run lint` → `npm run build`
+- ✅ 触发条件: push/PR 到 master/main/develop 分支
 
-**具体价值**:
-- **自动化回归**: 每次提交自动运行单元测试和集成测试，提前发现破坏性变更
-- **快速反馈**: 开发者提交代码后几分钟内就能知道是否通过编译和测试
-- **减少人工**: 省去手动打包、上传、停服、替换、重启等重复操作
-- **版本可追溯**: 每次部署对应一个 Git commit，回滚到任一历史版本
-
-**典型方案（GitHub Actions）**:
-- `push` / `pull_request` 触发工作流
-- Step 1: Checkout 代码
-- Step 2: JDK 17 + Maven 编译后端，`npm ci && npm run build` 构建前端
-- Step 3: 运行后端单元测试
-- Step 4: 构建 Docker 镜像并推送到镜像仓库（Docker Hub / 私有 Harbor）
-- Step 5: SSH 登录服务器执行部署脚本（拉取新镜像 → 重启容器）
+**待补充部分**:
+- ❌ 自动部署步骤（构建镜像 → 推送仓库 → SSH 部署），需根据实际部署环境定制
 
 ---
 
-### 4.3 健康检查（P2）❌ 待实现
+### 4.3 健康检查（P2）✅ 已实现
 
 **含义**: 提供 HTTP 端点供负载均衡器、容器编排平台（Docker/K8s）或外部监控系统周期性检查应用是否存活、依赖是否可用。
 
@@ -404,22 +402,20 @@ getFetchProgressApi(source, { _skipNProgress: true })
 
 ---
 
-### 4.4 日志聚合（P3）❌ 待实现
+### 4.4 日志聚合（P3）✅ 已完成（结构化日志输出）
 
-**含义**: 将分散在多个服务器/容器中的日志集中收集、存储、搜索和分析，替代 SSH 登录每台机器 `tail -f` 的原始方式。
+**方案**: `logback-spring.xml` 已配置 `JSON_FILE` appender，使用 `LogstashEncoder` 输出结构化 JSON 日志到 `logs/backend.json`，可直接被 ELK / Grafana Loki 采集。
 
-**具体价值**:
-- **集中检索**: 一个界面搜索所有服务的日志，按时间、级别、关键字过滤
-- **链路追踪**: 跨多个微服务（若有）追踪一条请求的完整日志
-- **告警联动**: 发现 ERROR 日志或特定模式时自动触发告警通知
-- **长期归档**: 日志压缩存储，满足审计合规要求
+**已实现**:
+- JSON 日志输出（`backend.json`，按天滚动，保留 30 天）
+- 异步写入（`ASYNC_JSON` appender，队列 512）
+- 兼容 Logstash / Filebeat / Promtail 采集
 
-**典型方案（ELK / EFK）**:
-- Filebeat（日志采集）: 部署在每个节点上，Tail Spring Boot 的 `logs/app.log`
-- Logstash / Fluentd（日志处理）: 解析日志格式（JSON 或 pattern），过滤敏感信息
-- Elasticsearch（日志存储）: 全文索引，支持快速搜索
-- Kibana（日志可视化）: Web 界面查询日志、创建仪表盘、设置告警
-- Spring Boot 配置 `logback-spring.xml` 输出结构化 JSON 日志，便于 Logstash 解析
+**如需完整 ELK 部署**（可选扩展）:
+- Filebeat 采集 `logs/backend.json`
+- Logstash 解析 + 过滤敏感信息
+- Elasticsearch 索引存储
+- Kibana 可视化查询
 
 ---
 
@@ -456,11 +452,20 @@ getFetchProgressApi(source, { _skipNProgress: true })
 - Docker 启动 Prometheus + Grafana 即可接入可视化
 ---
 
-### 4.6 SkyWalking 分布式追踪（P3）❌ 待实现
+### 4.6 SkyWalking 分布式追踪（P3）✅ 已配置
 
-**含义**: 基于字节码增强的全链路追踪，适合于需要精确到每一次方法调用耗时的场景。
+**方案**: SkyWalking Java Agent 方式，按需启用
 
-**备注**: 与 Prometheus 互补，前者侧重指标聚合，后者侧重调用链排查。当前暂不实现。
+**已配置**:
+- `skywalking-agent.config` — Agent 配置文件
+- `start-backend.ps1` — 支持 `SW_HOME` 环境变量启用 Agent
+- 忽略路径：静态资源、健康检查、SSE/WebSocket
+
+**使用方式**:
+1. 下载 SkyWalking: https://skywalking.apache.org/downloads/
+2. 设置环境变量: `$env:SW_HOME = "C:\path\to\apache-skywalking-java-agent"`
+3. 启动后端: `.\start-backend.ps1`
+4. 部署 SkyWalking OAP Server + UI
 
 ---
 ## 5. 功能增强
@@ -756,15 +761,15 @@ public Result<?> add(@RequestBody @Validated SysMenu menu) {
 
 ---
 
-### 6.8 工具链缺失（P2）❌ 待优化
+### 6.8 工具链缺失（P2）⚠️ 部分完成
 
-| 项目 | 说明 |
-|------|------|
-| **ESLint + Prettier** | 缺少代码规范检查工具，无法自动发现未使用变量、硬编码颜色等问题 |
-| **TypeScript 迁移** | 渐进式迁移方案：API 层 → Store 层 → 组件层，可减少运行时类型错误 |
-| **单元测试（后端 JUnit）** | AuthService、SysUserService 等核心服务缺少单元测试 |
-| **单元测试（前端 Vitest）** | useUserStore、useTablePage 等缺少测试 |
-| **E2E 测试** | Playwright 指南已编写，待实施 |
+| 项目 | 说明 | 状态 |
+|------|------|------|
+| **ESLint + Prettier** | `eslint.config.js`（flat config）+ `.prettierrc` 已配置 | ✅ 已完成 |
+| **TypeScript 迁移** | 渐进式迁移方案：API 层 → Store 层 → 组件层 | ❌ 未开始 |
+| **单元测试（后端 JUnit）** | AuthService、SysUserService、CalendarEventService 已有测试 | ⚠️ 覆盖不足 |
+| **单元测试（前端 Vitest）** | useUserStore、useTablePage 等缺少测试 | ❌ 未开始 |
+| **E2E 测试** | `e2e.spec.js` + `e2e-full.spec.js` 已存在 | ⚠️ 覆盖不足 |
 
 **优化建议**:
 1. **短期**（0.5 天）：安装 ESLint + Prettier 配置，修复现有 lint 错误
@@ -784,9 +789,9 @@ public Result<?> add(@RequestBody @Validated SysMenu menu) {
 | 6.5 | 后端 CRUD 基类抽取 | P2 | 1-2 天 | 代码质量 | ✅ 已完成（创建BaseCrudController.java、PageConstants.java） |
 | 6.6 | 硬编码配置外置 | P2 | 0.5 天 | 代码质量 | ✅ 已完成（application.yml添加app.menu/slow-query/as400配置；SysMenuService和SysSlowQueryService改用@Value注入） |
 | 6.7 | 未用导入清理 | P3 | 0.5 天 | 代码质量 | ⚠️ 已验证（monitor页面导入均在使用中，无需清理） |
-| 6.8 | 工具链（ESLint/TS/测试） | P2 | 3-5 天 | 工程化 | ❌ 待优化 |
+| 6.8 | 工具链（ESLint/TS/测试） | P2 | 3-5 天 | 工程化 | ⚠️ 部分完成（ESLint+Prettier 已配置，错误 443→104；TS/测试覆盖不足） |
 | 6.9 | antvX6 FlowChart Bug 修复 | P2 | 0.5 天 | Bug修复 | ✅ 已完成（补齐缺失的Vue导入、修复initGraph括号语法错误、shapes.js注册加try-catch防KeepAlive重复注册） |
-| 6.11 | 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入 | P1 | 3-5 天 | 架构 | ✅ 已完成（2026-06-13，新增 40+ DTO/17+ VO/16+ Convert，framework/ 模块化，构造器注入统一，Spring Boot 3.5.15 升级，文档体系重构） |
+| 6.11 | 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入 | P1 | 3-5 天 | 架构 | ✅ 已完成（2026-06-13，新增 40+ DTO/17+ VO/16+ Convert，framework/ 模块化，构造器注入统一，Spring Boot 3.5.16，文档体系重构） |
 
 ---
 
@@ -905,7 +910,9 @@ public class SysUserController extends BaseCrudController<SysUserService, SysUse
 }
 ```
 
-#### 5. Spring Boot 3.5.15 升级
+#### 5. Spring Boot 3.5.16 版本
+
+当前版本：**3.5.16**（3.x 系列最终版本）。OSS 支持已于 2026-06-30 到期，但项目运行正常，暂不升级到 4.x。后续如需商业支持或 4.x 生态稳定后再考虑升级。
 
 - 适配 Jakarta EE 命名空间
 - 解决 MapStruct 与最新 Spring Boot 的兼容性
@@ -1097,16 +1104,16 @@ onMounted(fetchConfig)
 | 2.5 | Dashboard N+1 优化 | P1 | 性能 | ✅ 已完成 |
 | 2.6 | 高频数据缓存策略 | P1 | 性能 | ✅ 已完成（Caffeine 本地缓存） |
 | 2.7 | SSE 线程池泄漏 | P2 | 性能 | ✅ 已完成 |
-| 3.1 | WebSocket 通知 | P1 | 实时 | ❌ 待实现 |
+| 3.1 | WebSocket 通知 | P1 | 实时 | ✅ 已实现 |
 | `3.2 | SSE 服务端推送 | P2 | 实时 | `✅ 已实现 |
 | 3.3 | 后台轮询跳过进度条 | P2 | 实时 | ✅ 已完成 |
 | 3.4 | 全量魔法数字消除 | P2 | 实时 | ✅ 已完成 |
-| 4.1 | Docker 容器化 | P1 | 运维 | ❌ 待实现 |
-| 4.2 | CI/CD | P2 | 运维 | ❌ 待实现 |
+| 4.1 | Docker 容器化 | P1 | 运维 | 🚫 暂不实现（手动部署已满足） |
+| 4.2 | CI/CD | P2 | 运维 | ⚠️ 部分完成（CI 已就绪，自动部署待补充） |
 | 4.3 | 健康检查 | P2 | 运维 | ✅ 已实现（系统健康监控 + Actuator） |
-| 4.4 | 日志聚合 | P3 | 运维 | ❌ 待实现 |
+| 4.4 | 日志聚合 | P3 | 运维 | ✅ 已完成（logback JSON 输出 + LogstashEncoder） |
 | 4.5 | APM 监控（Prometheus + Grafana） | P3 | 运维 | ✅ 已实现 |
-| 4.6 | SkyWalking 分布式追踪 | P3 | 运维 | ❌ 待实现 |
+| 4.6 | SkyWalking 分布式追踪 | P3 | 运维 | ✅ 已配置（Java Agent 按需启用） |
 | 5.1 | 通知公告增强 | P1 | 功能 | ✅ 已实现 |
 | 5.2 | 系统配置管理 | P1 | 功能 | ✅ 已实现 |
 | 5.3 | 定时任务管理 | P1 | 功能 | ✅ 已实现 |
@@ -1122,7 +1129,7 @@ onMounted(fetchConfig)
 | 6.5 | 后端 CRUD 基类抽取 | P2 | 质量 | ✅ 已完成 |
 | 6.6 | 硬编码配置外置 | P2 | 质量 | ✅ 已完成 |
 | 6.7 | 未用导入清理 | P3 | 质量 | ⚠️ 已验证 |
-| 6.8 | 工具链（ESLint/TS/测试） | P2 | 质量 | ❌ 待优化 |
+| 6.8 | 工具链（ESLint/TS/测试） | P2 | 质量 | ⚠️ 部分完成（ESLint+Prettier 已配置，错误从 443 降至 104；TS/测试覆盖不足） |
 | 6.9 | antvX6 FlowChart Bug 修复 | P2 | Bug修复 | ✅ 已完成 |
 | 6.11 | 架构重构：DTO/VO/Convert + MapStruct + 模块化 + 构造器注入 | P1 | 架构 | ✅ 已完成 |
 | 7.8 | 数据导出系统（双模式） | P1 | 新增 | ✅ 已完成 |
@@ -1146,6 +1153,219 @@ onMounted(fetchConfig)
 | 7.9 | v2.0 API 调试面板 | P2 | 新增 | ✅ 已完成 |
 | 7.9 | v2.0 数据库备份与恢复 | P2 | 新增 | ✅ 已完成 |
 | 7.9 | v2.0 多主题色系统 | P2 | 新增 | ✅ 已完成 |
+| 9.1.1-9.1.3 | 安全漏洞修复（权限校验+路径遍历） | P0 | 安全 | ✅ 已修复 |
+| 9.2 | 性能优化（N+1 查询） | P1 | 性能 | ✅ 已优化 |
+| 9.3.1 | 静默 catch 块添加日志 | P2 | 质量 | ✅ 已修复 |
+| 10.1 | 工作流引擎 | P1 | 新增 | ✅ 已实现 |
+| 10.2 | Webhook 管理 | P1 | 新增 | ✅ 已实现 |
+| 10.3 | 数据归档 | P2 | 新增 | ✅ 已实现 |
+| 10.4 | 通知偏好设置 | P2 | 新增 | ✅ 已实现 |
+| 10.5 | API 密钥管理 | P2 | 新增 | ✅ 已实现 |
+| 10.6 | 邮件模板管理 | P2 | 新增 | ✅ 已实现 |
+| 10.7 | 数据版本追踪 | P2 | 新增 | ✅ 已实现 |
+| 10.8 | 用户活动热力图 | P2 | 新增 | ✅ 已实现 |
+| 10.9 | 看板管理 | P2 | 新增 | ✅ 已实现 |
+| 10.10 | 甘特图 | P2 | 新增 | ✅ 已实现 |
+| 10.11 | 知识库/Wiki | P2 | 新增 | ✅ 已实现 |
+| 10.12 | 多语言管理 | P2 | 新增 | ✅ 已实现 |
+| 10.13 | 性能分析 | P2 | 新增 | ✅ 已实现 |
+| 10.14 | 数据库 Schema Diff | P3 | 新增 | ✅ 已实现 |
+
+---
+
+## 10. v3.0 新增功能模块（2026-07-10）
+
+以下 14 个功能模块在 v3.0 中完成开发，覆盖工作流、外部集成、数据分析、协作工具等领域。
+
+### 10.1 工作流引擎（P1）✅ 已实现
+
+**方案**: 完整的审批流程引擎，支持流程定义、流程实例、任务审批/转办。
+
+**数据库表**:
+- `wf_process_definition` — 流程定义（名称、编码、表单配置、流程节点配置）
+- `wf_process_instance` — 流程实例（发起人、当前节点、表单数据、状态）
+- `wf_task` — 任务（审批人、审批意见、状态、截止时间）
+
+**后端模块**: `modules/workflow/` (definition/instance/task 三个子模块)
+- `WfProcessDefinitionController`: `/wf/definition` — CRUD
+- `WfProcessInstanceController`: `/wf/instance` — 分页 + 发起 + 取消
+- `WfTaskController`: `/wf/task` — 分页 + 我的待办 + 审批 + 转办
+
+**前端页面**:
+- `workflow/definition/index.vue` — 流程定义管理
+- `workflow/instance/index.vue` — 流程实例列表
+- `workflow/task/index.vue` — 我的待办任务
+
+### 10.2 Webhook 管理（P1）✅ 已实现
+
+**方案**: 事件驱动的外部系统集成，支持配置回调 URL、触发事件、签名密钥、重试策略。
+
+**数据库表**:
+- `sys_webhook` — Webhook 配置（URL、事件、密钥、重试次数、超时）
+- `sys_webhook_log` — 投递日志（请求体、响应、状态、错误信息）
+
+**后端模块**: `modules/tool/webhook/`
+- `SysWebhookController`: `/tool/webhook` — CRUD + 启用/禁用
+
+**前端页面**:
+- `tool/webhook/index.vue` — Webhook 配置管理
+
+### 10.3 数据归档（P2）✅ 已实现
+
+**方案**: 自动归档过期记录，支持配置归档条件、保留天数、批量大小。
+
+**数据库表**:
+- `sys_archive_config` — 归档配置（源表、目标表、条件字段、保留天数）
+- `sys_archive_log` — 归档日志（归档条数、执行时间、状态）
+
+**后端模块**: `modules/tool/archive/`
+- `SysArchiveConfigController`: `/tool/archive` — CRUD
+
+### 10.4 通知偏好设置（P2）✅ 已实现
+
+**方案**: 每个用户可配置接收通知的方式（邮件/WebSocket/浏览器）和免打扰时段。
+
+**数据库表**: `sys_notification_preference` — 通知偏好（事件类型、渠道开关、免打扰时段）
+
+**后端模块**: `modules/system/notificationPref/`
+- `SysNotificationPreferenceController`: `/system/notification-pref` — 查询 + 更新
+
+### 10.5 API 密钥管理（P2）✅ 已实现
+
+**方案**: 为外部系统集成提供 API 密钥管理，支持权限范围、速率限制、IP 白名单。
+
+**数据库表**: `sys_api_key` — API 密钥（密钥、权限、速率限制、使用次数、过期时间）
+
+**后端模块**: `modules/tool/apiKey/`
+- `SysApiKeyController`: `/tool/api-key` — 生成 + 列表 + 启用/禁用 + 删除
+
+### 10.6 邮件模板管理（P2）✅ 已实现
+
+**方案**: 邮件模板的 CRUD 管理，支持变量替换和模板分类。
+
+**数据库表**: `sys_email_template` — 邮件模板（主题、正文 HTML、变量列表、分类）
+
+**后端模块**: `modules/tool/emailTemplate/`
+- `SysEmailTemplateController`: `/tool/email-template` — CRUD
+
+### 10.7 数据版本追踪（P2）✅ 已实现
+
+**方案**: 关键记录的变更历史追踪，支持查看变更前后的 JSON Diff。
+
+**数据库表**: `sys_data_version` — 数据版本（表名、记录ID、版本号、操作类型、差异数据）
+
+**后端模块**: `modules/monitor/dataVersion/`
+- `SysDataVersionController`: `/monitor/data-version` — 分页查询
+
+### 10.8 用户活动热力图（P2）✅ 已实现
+
+**方案**: 可视化用户操作频率，支持按日期/小时/活动类型统计。
+
+**数据库表**: `sys_user_activity` — 用户活动（活动类型、模块、日期、小时）
+
+**后端模块**: `modules/monitor/activity/`
+- `SysUserActivityController`: `/monitor/activity` — 热力图数据
+
+**前端页面**: `monitor/activityHeatmap/index.vue` — ECharts 热力图 + 类型统计 + Top 用户
+
+### 10.9 看板管理（P2）✅ 已实现
+
+**方案**: 拖拽式任务管理，支持多看板、多列、卡片优先级和指派。
+
+**数据库表**:
+- `kanban_board` — 看板（名称、描述、负责人）
+- `kanban_column` — 列（颜色、排序、在制品限制）
+- `kanban_card` — 卡片（标题、优先级、指派人、截止日期、标签）
+
+**后端模块**: `modules/tool/kanban/`
+- `KanbanController`: `/tool/kanban` — CRUD + 创建卡片 + 移动卡片
+
+**前端页面**: `tool/kanban/index.vue` — 看板列表 + 创建
+
+### 10.10 甘特图（P2）✅ 已实现
+
+**方案**: 项目时间线可视化，支持任务层级、进度跟踪、负责人指派。
+
+**数据库表**:
+- `gantt_project` — 项目（名称、开始/结束日期、状态）
+- `gantt_task` — 任务（父任务、进度、优先级、负责人）
+
+**后端模块**: `modules/tool/gantt/`
+- `GanttController`: `/tool/gantt` — 项目 CRUD + 任务 CRUD + 进度更新
+
+**前端页面**: `tool/gantt/index.vue` — 项目列表 + 创建
+
+### 10.11 知识库/Wiki（P2）✅ 已实现
+
+**方案**: 内部文档系统，支持空间管理、页面层级、版本控制、浏览计数。
+
+**数据库表**:
+- `wiki_space` — 知识库空间（名称、可见性、负责人）
+- `wiki_page` — 页面（标题、Markdown 内容、发布状态、浏览次数）
+- `wiki_page_version` — 页面版本（版本号、内容快照）
+
+**后端模块**: `modules/tool/wiki/`
+- `WikiController`: `/tool/wiki` — 空间 CRUD + 页面 CRUD
+
+**前端页面**:
+- `tool/wiki/index.vue` — 空间列表
+- `tool/wiki/page.vue` — 页面编辑（树形导航 + 内容编辑）
+
+### 10.12 多语言管理（P2）✅ 已实现
+
+**方案**: 翻译管理界面，支持语言管理、翻译键管理、在线编辑翻译。
+
+**数据库表**:
+- `sys_i18n_locale` — 语言（代码、名称、是否默认）
+- `sys_i18n_key` — 翻译键（键路径、模块、描述）
+- `sys_i18n_translation` — 翻译（翻译键ID、语言代码、翻译内容）
+
+**后端模块**: `modules/system/i18n/`
+- `SysI18nController`: `/sys/i18n` — 语言列表 + 翻译键 CRUD + 翻译保存
+
+**前端页面**: `system/i18n/index.vue` — 翻译管理（在线编辑）
+
+### 10.13 性能分析（P2）✅ 已实现
+
+**方案**: 方法级性能追踪，支持慢方法统计、每日调用趋势。
+
+**数据库表**: `sys_profile_record` — 性能记录（类名、方法名、执行时间、线程名）
+
+**后端模块**: `modules/monitor/profiling/`
+- `SysProfileRecordController`: `/monitor/profiling` — 统计数据
+
+**前端页面**: `monitor/profiling/index.vue` — 慢方法列表
+
+### 10.14 数据库 Schema Diff（P3）✅ 已实现
+
+**方案**: 对比不同表的结构差异，支持查看列差异和公共列。
+
+**后端模块**: `modules/tool/schemaDiff/`
+- `SchemaDiffController`: `/tool/schema-diff` — 表列表 + Schema 查询 + 对比
+
+**前端页面**: `tool/schemaDiff/index.vue` — 选择两张表对比
+
+### 10.15 新增文件清单
+
+**数据库**: `v3_features_init.sql` (14 张新表) + `v3_features_menu.sql` (14 个菜单模块 + 权限)
+
+**后端 (100+ 个文件)**:
+- 14 个 Entity + 14 个 Mapper + 28 个 DTO + 14 个 VO + 14 个 Convert
+- 14 个 Service 接口 + 14 个 ServiceImpl + 14 个 Controller
+
+**前端 (20+ 个文件)**:
+- 18 个 Vue 页面 + routes.js 更新 + componentMap.js 更新
+
+### 10.16 启动前检查清单
+
+| # | 检查项 | 说明 |
+|---|--------|------|
+| 1 | **执行 `v3_features_init.sql`** | 在目标 MySQL 库中手动执行，创建 14 张新表（`IF NOT EXISTS`，可重复执行） |
+| 2 | **执行 `v3_features_menu.sql`** | 插入 14 个菜单模块及对应按钮权限（`INSERT IGNORE`，可重复执行） |
+| 3 | **重启后端服务** | 新表创建后 MyBatis Plus 实体映射才能生效 |
+| 4 | **清除浏览器 localStorage** | 清除 `rx_admin_menus` key 的旧菜单缓存，重新登录触发完整菜单拉取 |
+
+> **脚本可安全重复执行**：两个 SQL 脚本均已使用 `CREATE TABLE IF NOT EXISTS` / `INSERT IGNORE INTO`，可重复执行。
 
 ---
 
@@ -1279,3 +1499,49 @@ CREATE TABLE `sys_message` (
 3. 执行前也可手动清理重复记录：`DELETE FROM sys_role_menu WHERE menu_id IN (SELECT id FROM sys_menu WHERE menu_name IN ('IP黑白名单','消息中心','健康监控','日志分析','代码生成','批量导入','API调试','数据备份'));`
 
 > 💡 **提示**: 此错误说明菜单记录实际可能已在数据库中，只是因为部分执行导致角色关联不完整。执行最新版 `INSERT IGNORE` 脚本即可补全。
+
+---
+
+## 9. 项目审查发现（2026-07-09）
+
+以下问题在全面代码审查中发现，按优先级排列：
+
+### 9.1 安全问题
+
+| 编号 | 问题 | 严重程度 | 位置 | 说明 |
+|------|------|---------|------|------|
+| 9.1.1 | 缺少权限校验的接口 | **高** | `AnnouncementController.getPopupAnnouncements()` | 无 `@SaCheckPermission`，匿名用户可读取公告 |
+| 9.1.2 | 缺少权限校验的接口 | **高** | `BackupController.download()` | 无 `@SaCheckPermission`，匿名用户可下载备份文件 |
+| 9.1.3 | 路径遍历风险 | **高** | `BackupController:96-98` | `@PathVariable filename` 直接拼接到 `Path.of()`，未校验 `..` |
+| 9.1.4 | SQL 拼接模式 | 中 | `GenController:34-35,44-45,72-73` | 字符串拼接 SQL（当前 `tableSchema` 来自 `@Value` 非用户输入，但模式危险） |
+| 9.1.5 | 命令注入风险 | 中 | `BackupController:77-78` | 数据库密码直接传入 ProcessBuilder 命令参数 |
+| 9.1.6 | 硬编码本地路径 | 低 | `application.yml:211,215,219,143` | Windows 特定路径应使用环境变量 |
+
+### 9.2 性能问题
+
+| 编号 | 问题 | 位置 | 状态 |
+|------|------|------|------|
+| 9.2.1 | N+1 查询 | `LiteraryWorkService.fillAssociations()` | ✅ 已优化（使用 `selectBatchIds` 批量查询） |
+| 9.2.2 | N+1 查询 | `IServiceCategoryService.fillItemDetails()` | ✅ 无需优化（单条记录查询） |
+| 9.2.3 | 循环查询 | `LogAnalysisController.trend()` | ✅ 已优化（改为 `GROUP BY` SQL 查询） |
+| 9.2.4 | 全量加载 | `LiteraryWorkService.sumViewCount()` | ✅ 已优化（改为 SQL `SUM()`） |
+
+### 9.3 代码质量
+
+| 编号 | 问题 | 位置 | 状态 |
+|------|------|------|------|
+| 9.3.1 | 静默吞异常 | `OcrService`、`WhisperEngine`、`As400AnalysisService`、`PdfOcrExtractor`、`As400Service` | ✅ 已修复（添加 `log.debug()`） |
+| 9.3.2 | SNAPSHOT 依赖 | `pom.xml:112-113` | ⚠️ 待发布正式版本后替换 |
+| 9.3.3 | ESLint 未使用变量 | 前端 | ✅ 已修复（错误从 443 降至 104） |
+
+### 9.4 修复建议优先级
+
+| 优先级 | 编号 | 修复方案 |
+|--------|------|---------|
+| **立即修复** | 9.1.1, 9.1.2 | 给 `AnnouncementController.getPopupAnnouncements()` 和 `BackupController.download()` 添加 `@SaCheckPermission` |
+| **立即修复** | 9.1.3 | `BackupController.download()` 中对 `filename` 做路径安全校验（禁止 `..`、`/`、`\`） |
+| **短期** | 9.2.1-9.2.4 | 优化 N+1 查询，改用批量查询或 SQL 聚合 |
+| **短期** | 9.3.1 | 静默 catch 块添加 `log.debug()` |
+| **中期** | 9.1.4, 9.1.5 | SQL 拼接改为参数化查询；ProcessBuilder 参数列表化 |
+| **中期** | 9.3.2 | `as400-parser-core` 发布正式版本后替换 SNAPSHOT |
+| **低** | 9.1.6, 9.3.3 | 硬编码路径外部化；ESLint 未使用变量清理 |

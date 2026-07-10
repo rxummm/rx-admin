@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { componentMap } from './componentMap'
 import { useRouterGuard } from '@/composables/useRouterGuard'
 
-
 // Layout 组件
 import LoginView from '@/views/login/index.vue'
 const Layout = () => import('@/layout/index.vue')
@@ -77,7 +76,7 @@ const BUILTIN_ROUTE_NAMES = new Set(['Profile', 'PermissionRequest', 'TechBlogDe
 
 export function generateDynamicRoutes(menuTree) {
   function walk(menus) {
-    menus.forEach(menu => {
+    menus.forEach((menu) => {
       // 只处理有 component 且映射表中存在的菜单项
       const mapEntry = menu.component && componentMap[menu.component]
       if (mapEntry) {
@@ -107,11 +106,13 @@ export function generateDynamicRoutes(menuTree) {
 export function resetDynamicRoutes() {
   for (const name of registeredRouteNames) {
     if (!BUILTIN_ROUTE_NAMES.has(name)) {
-      try { router.removeRoute(name) } catch {}
+      try {
+        router.removeRoute(name)
+      } catch {}
     }
   }
   registeredRouteNames.clear()
-  BUILTIN_ROUTE_NAMES.forEach(n => registeredRouteNames.add(n))
+  BUILTIN_ROUTE_NAMES.forEach((n) => registeredRouteNames.add(n))
 }
 
 useRouterGuard(router)

@@ -13,8 +13,8 @@ const i18n = createI18n({
   globalInjection: true, // 全局注入 $t
   messages: {
     'zh-CN': zhCN,
-    'en-US': enUS,
-  },
+    'en-US': enUS
+  }
 })
 
 export default i18n

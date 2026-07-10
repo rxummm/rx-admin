@@ -64,7 +64,16 @@ public class SysDictDataController {
     @SaCheckPermission(PermissionConstants.Dict.DELETE)
     @OperateLog(module = "字典管理", operation = "删除字典数据")
     public Result<Void> delete(@PathVariable Long id) {
-        sysDictDataService.removeById(id);
+        sysDictDataService.deleteDictData(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "批量删除字典数据")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Dict.DELETE)
+    @OperateLog(module = "字典管理", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        sysDictDataService.deleteDictDataBatch(ids);
         return Result.ok();
     }
 }

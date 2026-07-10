@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useStorage } from './useStorage'
 import { COLORS } from '@/config/colors'
 import { invalidateCyberTheme } from '@/utils/echartsTheme'
@@ -33,7 +33,10 @@ export function useLayoutSettings() {
   const themeOptions = COLORS.THEME_OPTIONS
 
   return {
-    currentTheme, setTheme, themeOptions,
-    currentSidebarStyle, setSidebarStyle
+    currentTheme,
+    setTheme,
+    themeOptions,
+    currentSidebarStyle,
+    setSidebarStyle
   }
 }

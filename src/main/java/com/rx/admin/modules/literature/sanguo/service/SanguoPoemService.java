@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-@SuppressWarnings("null")
 public class SanguoPoemService extends ServiceImpl<SanguoPoemMapper, SanguoPoem> {
 
     public PageResult<SanguoPoem> pageQuery(int page, int size, String keyword) {

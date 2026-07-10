@@ -39,8 +39,7 @@ public class SysUserController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<SysUser> pr = userService.pageQuery(page, size, keyword);
-        List<UserVO> voList = pr.getRecords().stream().map(userConvert::toVO).toList();
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(userConvert.toPageResult(pr));
     }
 
     @Operation(summary = "新增用户")

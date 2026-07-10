@@ -43,7 +43,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implemen
         return roles;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addRole(RoleCreateDTO dto) {
         long count = count(new LambdaQueryWrapper<SysRole>().eq(SysRole::getRoleCode, dto.getRoleCode()));
         if (count > 0) {
@@ -65,7 +65,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implemen
         evictAllRouterCaches();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateRole(RoleUpdateDTO dto) {
         SysRole role = new SysRole();
         role.setId(dto.getId());
@@ -86,7 +86,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implemen
         evictAllRouterCaches();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteRole(Long id) {
         roleMenuMapper.deleteByRoleId(id);
         removeById(id);
@@ -107,6 +107,13 @@ public class SysRoleService extends ServiceImpl<SysRoleMapper, SysRole> implemen
             }
         } catch (Exception e) {
             log.warn("清除菜单缓存失败（不影响主流程）", e);
+        }
+    }
+
+    @Override
+    public void deleteRoleBatch(List<Long> ids) {
+        for (Long id : ids) {
+            deleteRole(id);
         }
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
-@SuppressWarnings("null")
 public class GenreService extends ServiceImpl<GenreMapper, Genre> {
 
     public PageResult<Genre> pageQuery(int page, int size, String keyword) {

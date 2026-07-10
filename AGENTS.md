@@ -1,6 +1,6 @@
 # AGENTS.md — RX Admin
 
-Spring Boot 3.5.15 (Java 17) + Vue 3 (Node 18) 后台管理系统。双 MySQL 数据源，Sa-Token 内存模式，无 Redis。
+Spring Boot 3.5.16 (Java 17) + Vue 3 (Node 18) 后台管理系统。双 MySQL 数据源，Sa-Token 内存模式，无 Redis。
 
 ## Quick start
 
@@ -90,7 +90,7 @@ Implemented in `StpInterfaceImpl.java` via `Sa-Token StpInterface`.
 ### Key behaviors
 - `@SaCheckPermission("module:entity:op")` guards every API endpoint — no method-level exemption (except the excludes list in Sa-Token config).
 - `@OperateLog` is **always** paired with write operations but is purely audit-logging; it does **not** affect access control.
-- `selectAllValidPerms()` exists on `SysUserMapper` but is **no longer used** — it was replaced by the admin `"*"` wildcard approach.
+- Admin `"*"` wildcard approach: admin role bypasses all `@SaCheckPermission` checks. Non-admin users get permissions merged from `sys_role_menu` and `sys_user_menu`.
 - `is-concurrent: false` + `is-share: false` in Sa-Token config: one device per login, later login kicks earlier one.
 
 ## Key restrictions
@@ -102,6 +102,12 @@ Implemented in `StpInterfaceImpl.java` via `Sa-Token StpInterface`.
 - ❌ No hardcoded colors, Chinese strings, magic numbers, or `localStorage` direct calls
 - ❌ No Entity exposure in Controller params/returns (use DTO/VO)
 - ❌ No `BeanUtils.copyProperties` (use MapStruct)
+
+## File encoding
+
+- **Java 文件必须使用 UTF-8 编码保存**（无 BOM），确保中文字符不被损坏
+- 编辑器保存文件时需确认编码为 UTF-8，否则中文字符会变成 `�?` 乱码序列导致编译错误
+- 如遇编码损坏，从 git 恢复：`git restore src/.../<file>.java`
 
 ## 凭据管理
 

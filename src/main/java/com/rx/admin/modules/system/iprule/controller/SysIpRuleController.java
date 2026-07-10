@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "IP黑白名单管理")
@@ -40,7 +40,7 @@ public class SysIpRuleController {
             @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword, @RequestParam(required = false) String ruleType) {
         PageResult<SysIpRule> pr = ipRuleService.pageQuery(page, size, keyword, ruleType);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), ipRuleConvert.toVOList(pr.getRecords())));
+        return Result.ok(ipRuleConvert.toPageResult(pr));
     }
 
     @Operation(summary = "根据ID查询IP规则")
@@ -74,6 +74,15 @@ public class SysIpRuleController {
     @SaCheckPermission(PermissionConstants.IpRule.DELETE)
     public Result<Void> delete(@PathVariable Long id) {
         ipRuleService.removeById(id);
+        return Result.ok();
+    }
+
+    @OperateLog(module = "IP黑白名单", operation = "批量删除")
+    @Operation(summary = "批量删除IP规则")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.IpRule.DELETE)
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        ipRuleService.deleteIpRuleBatch(ids);
         return Result.ok();
     }
 

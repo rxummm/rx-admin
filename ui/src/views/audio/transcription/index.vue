@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('audio.transcription.keyword')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('audio.transcription.keyword')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="language" :placeholder="$t('audio.transcription.language')" clearable style="width: 120px">
         <el-option label="中文" value="zh" />
         <el-option label="English" value="en" />
@@ -14,18 +20,42 @@
       <el-button type="primary" @click="handleUpload" v-if="userStore.hasPerm('audio:transcription:upload')">
         <el-icon><Upload /></el-icon> {{ $t('audio.transcription.upload') }}
       </el-button>
-      <el-button type="success" :icon="isRecording ? 'CircleClose' : 'Mic'" @click="toggleRecording" :disabled="isRecording && !canStopRecording" v-if="userStore.hasPerm('audio:transcription:upload')">
+      <el-button
+        type="success"
+        :icon="isRecording ? 'CircleClose' : 'Mic'"
+        @click="toggleRecording"
+        :disabled="isRecording && !canStopRecording"
+        v-if="userStore.hasPerm('audio:transcription:upload')"
+      >
         {{ isRecording ? '停止录音' : '麦克风录音' }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('audio:transcription:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('audio:transcription:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
     </div>
 
     <div class="table-container">
-      <el-table :data="tableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange" row-key="id">
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        row-key="id"
+      >
         <el-table-column type="selection" width="45" />
-        <el-table-column prop="fileName" :label="$t('audio.transcription.fileName')" min-width="200" show-overflow-tooltip />
+        <el-table-column
+          prop="fileName"
+          :label="$t('audio.transcription.fileName')"
+          min-width="200"
+          show-overflow-tooltip
+        />
         <el-table-column prop="language" :label="$t('audio.transcription.language')" width="100">
           <template #default="{ row }">
             <el-tag size="small">{{ row.language === 'zh' ? '中文' : 'English' }}</el-tag>
@@ -47,22 +77,56 @@
         <el-table-column prop="createdAt" :label="$t('common.createTime')" width="170" />
         <el-table-column :label="$t('common.operation')" width="240" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" :disabled="transcribingIds.includes(row.id)" @click="showModelSelectDialog(row)" v-if="userStore.hasPerm('audio:transcription:upload')">{{ transcribingIds.includes(row.id) ? '转写中...' : (row.status === 1 && row.fullText ? '重新转写' : '转写') }}</el-button>
-            <el-button link type="primary" size="small" @click="handleView(row)" v-if="userStore.hasPerm('audio:transcription:view')">{{ $t('common.view') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('audio:transcription:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              :disabled="transcribingIds.includes(row.id)"
+              @click="showModelSelectDialog(row)"
+              v-if="userStore.hasPerm('audio:transcription:upload')"
+              >{{
+                transcribingIds.includes(row.id) ? '转写中...' : row.status === 1 && row.fullText ? '重新转写' : '转写'
+              }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleView(row)"
+              v-if="userStore.hasPerm('audio:transcription:view')"
+              >{{ $t('common.view') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('audio:transcription:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
-    <el-dialog v-model="uploadDialogVisible" :title="$t('audio.transcription.upload')" width="600px" :close-on-click-modal="false" draggable>
+    <el-dialog
+      v-model="uploadDialogVisible"
+      :title="$t('audio.transcription.upload')"
+      width="600px"
+      :close-on-click-modal="false"
+      draggable
+    >
       <el-upload
         ref="uploadRef"
         :before-upload="beforeUpload"
@@ -96,11 +160,7 @@
           <span class="detail-label">{{ $t('audio.transcription.fileName') }}：</span>
           <template v-if="editingFileName">
             <div class="file-name-edit-group">
-              <el-input
-                v-model="editFileNameValue"
-                class="file-name-input"
-                @keyup.enter="saveFileName"
-              />
+              <el-input v-model="editFileNameValue" class="file-name-input" @keyup.enter="saveFileName" />
               <el-button size="small" type="primary" @click="saveFileName">保存</el-button>
               <el-button size="small" @click="cancelEditFileName">取消</el-button>
             </div>
@@ -138,15 +198,17 @@
       </div>
     </el-dialog>
 
-    <el-dialog v-model="modelSelectDialogVisible" title="选择模型" width="400px" :close-on-click-modal="false" draggable>
+    <el-dialog
+      v-model="modelSelectDialogVisible"
+      title="选择模型"
+      width="400px"
+      :close-on-click-modal="false"
+      draggable
+    >
       <div class="model-select-content">
         <div class="model-select-tip">请选择用于转写的 Whisper 模型：</div>
         <div class="model-options">
-          <div
-            class="model-option"
-            :class="{ selected: selectedModel === 'tiny' }"
-            @click="selectedModel = 'tiny'"
-          >
+          <div class="model-option" :class="{ selected: selectedModel === 'tiny' }" @click="selectedModel = 'tiny'">
             <div class="option-radio">
               <span v-if="selectedModel === 'tiny'" class="radio-inner"></span>
             </div>
@@ -155,11 +217,7 @@
               <span class="model-desc">速度快、CPU占用低，精度较低</span>
             </div>
           </div>
-          <div
-            class="model-option"
-            :class="{ selected: selectedModel === 'small' }"
-            @click="selectedModel = 'small'"
-          >
+          <div class="model-option" :class="{ selected: selectedModel === 'small' }" @click="selectedModel = 'small'">
             <div class="option-radio">
               <span v-if="selectedModel === 'small'" class="radio-inner"></span>
             </div>
@@ -176,17 +234,24 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="transcribingDialogVisible" title="正在转写" width="420px" :close-on-click-modal="false" :show-close="false" draggable>
+    <el-dialog
+      v-model="transcribingDialogVisible"
+      title="正在转写"
+      width="420px"
+      :close-on-click-modal="false"
+      :show-close="false"
+      draggable
+    >
       <div class="transcribing-content">
         <div class="transcribing-icon">
           <svg viewBox="0 0 100 100" class="audio-wave">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/>
-            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5"/>
-            <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
-            <rect x="47" y="5" width="6" height="10" fill="currentColor" class="wave-bar wave-1"/>
-            <rect x="47" y="85" width="6" height="10" fill="currentColor" class="wave-bar wave-2"/>
-            <rect x="5" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-3"/>
-            <rect x="85" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-4"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3" />
+            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5" />
+            <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7" />
+            <rect x="47" y="5" width="6" height="10" fill="currentColor" class="wave-bar wave-1" />
+            <rect x="47" y="85" width="6" height="10" fill="currentColor" class="wave-bar wave-2" />
+            <rect x="5" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-3" />
+            <rect x="85" y="47" width="10" height="6" fill="currentColor" class="wave-bar wave-4" />
           </svg>
         </div>
         <div class="transcribing-info">
@@ -203,20 +268,32 @@
       </div>
     </el-dialog>
 
-    <el-dialog v-model="permissionGuideVisible" title="麦克风权限" width="400px" :close-on-click-modal="false" draggable>
+    <el-dialog
+      v-model="permissionGuideVisible"
+      title="麦克风权限"
+      width="400px"
+      :close-on-click-modal="false"
+      draggable
+    >
       <div class="permission-guide-content">
         <div class="permission-icon">
           <svg viewBox="0 0 64 64" class="mic-icon">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2" opacity="0.2"/>
-            <path d="M32 16v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            <path d="M24 24v-6a8 8 0 0 1 16 0v6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            <ellipse cx="32" cy="44" rx="12" ry="8" fill="currentColor" opacity="0.3"/>
-            <ellipse cx="32" cy="48" rx="8" ry="5" fill="currentColor"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2" opacity="0.2" />
+            <path d="M32 16v8" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            <path
+              d="M24 24v-6a8 8 0 0 1 16 0v6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <ellipse cx="32" cy="44" rx="12" ry="8" fill="currentColor" opacity="0.3" />
+            <ellipse cx="32" cy="48" rx="8" ry="5" fill="currentColor" />
           </svg>
         </div>
         <div class="permission-title">需要麦克风权限</div>
         <div class="permission-desc">
-          为了进行语音转写，我们需要访问您的麦克风来录制音频。<br/>
+          为了进行语音转写，我们需要访问您的麦克风来录制音频。<br />
           录制的音频仅用于转写，不会保存或上传到其他地方。
         </div>
         <div class="permission-tip">
@@ -241,7 +318,7 @@ import request from '@/utils/request'
 import { useTranscriptionPolling } from '@/utils/useTranscriptionPolling'
 import { API } from '@/api/routes'
 
-const { polling, startPolling, stopPolling } = useTranscriptionPolling()
+const { polling: _polling, startPolling, stopPolling } = useTranscriptionPolling()
 
 const userStore = useUserStore()
 
@@ -323,7 +400,7 @@ async function fetchData() {
     })
     tableData.value = res.data.records
     total.value = res.data.total
-  } catch (e) {
+  } catch {
   } finally {
     loading.value = false
   }
@@ -337,7 +414,7 @@ function resetSearch() {
 }
 
 function handleSelectionChange(val) {
-  selectedIds.value = val.map(item => item.id)
+  selectedIds.value = val.map((item) => item.id)
 }
 
 function handleUpload() {
@@ -369,11 +446,11 @@ function beforeUpload(file) {
 }
 
 function handleFileChange(file, fileList) {
-  pendingFiles.value = fileList.map(f => f.raw || f).filter(Boolean)
+  pendingFiles.value = fileList.map((f) => f.raw || f).filter(Boolean)
 }
 
 function handleFileRemove(file, fileList) {
-  pendingFiles.value = fileList.map(f => f.raw || f).filter(Boolean)
+  pendingFiles.value = fileList.map((f) => f.raw || f).filter(Boolean)
 }
 
 function cancelUpload() {
@@ -412,7 +489,7 @@ async function submitUpload() {
           data: formData
         })
         successCount++
-      } catch (error) {
+      } catch {
         failCount++
       }
     }
@@ -467,19 +544,21 @@ async function handleTranscribeWithModel() {
     transcribingBackground.value = true
     fetchData()
 
-    startPolling(row.id, API.AUDIO.TRANSCRIPTION.BASE).then(record => {
-      ElMessage.success('转写成功')
-      transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
-      fetchData()
-      if (detailDialogVisible.value && detailData.value && detailData.value.id === row.id) {
-        handleView(row)
-      }
-    }).catch(error => {
-      ElMessage.error('转写失败: ' + (error.message || '未知错误'))
-      transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
-    })
+    startPolling(row.id, API.AUDIO.TRANSCRIPTION.BASE)
+      .then((_record) => {
+        ElMessage.success('转写成功')
+        transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
+        fetchData()
+        if (detailDialogVisible.value && detailData.value && detailData.value.id === row.id) {
+          handleView(row)
+        }
+      })
+      .catch((error) => {
+        ElMessage.error('转写失败: ' + (error.message || '未知错误'))
+        transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
+      })
 
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    await new Promise((resolve) => setTimeout(resolve, 3000))
   } catch (error) {
     ElMessage.error('转写失败: ' + (error.message || '未知错误'))
   } finally {
@@ -489,7 +568,7 @@ async function handleTranscribeWithModel() {
     }
     transcribingDialogVisible.value = false
     transcribing.value = false
-    transcribingIds.value = transcribingIds.value.filter(id => id !== row.id)
+    transcribingIds.value = transcribingIds.value.filter((id) => id !== row.id)
   }
 }
 
@@ -541,7 +620,7 @@ async function startRecording(stream) {
       const blob = new Blob(audioChunks, { type: 'audio/webm' })
       const fileName = `recording_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`
 
-      stream.getTracks().forEach(track => track.stop())
+      stream.getTracks().forEach((track) => track.stop())
 
       transcribingFileName.value = fileName
       transcribingStartTime.value = Date.now()
@@ -571,7 +650,7 @@ async function startRecording(stream) {
 
         ElMessage.success('录音转写成功')
         fetchData()
-      } catch (error) {
+      } catch {
       } finally {
         if (transcribingTimer) {
           clearInterval(transcribingTimer)
@@ -591,9 +670,7 @@ async function startRecording(stream) {
     }, 1000)
 
     ElMessage.success('开始录音...')
-
-  } catch (e) {
-  }
+  } catch {}
 }
 
 function stopRecording() {
@@ -631,7 +708,7 @@ function handleView(row) {
   request({
     url: API.AUDIO.TRANSCRIPTION.BY_ID(row.id),
     method: 'get'
-  }).then(data => {
+  }).then((data) => {
     detailData.value = data.data
     editingFileName.value = false
     detailDialogVisible.value = true
@@ -674,17 +751,19 @@ async function saveFileName() {
     editFileNameValue.value = ''
     ElMessage.success('文件名修改成功')
     fetchData()
-  } catch (error) {
+  } catch {
     ElMessage.error('文件名修改失败')
   }
 }
 
 function handleDelete(row) {
   ElMessageBox.confirm('确定删除该转写记录？', '提示', { type: 'warning' })
-    .then(() => request({
-      url: API.AUDIO.TRANSCRIPTION.BY_ID(row.id),
-      method: 'delete'
-    }))
+    .then(() =>
+      request({
+        url: API.AUDIO.TRANSCRIPTION.BY_ID(row.id),
+        method: 'delete'
+      })
+    )
     .then(() => {
       ElMessage.success('删除成功')
       fetchData()
@@ -693,10 +772,12 @@ function handleDelete(row) {
 
 function handleBatchDelete() {
   ElMessageBox.confirm('确定删除选中的转写记录？', '提示', { type: 'warning' })
-    .then(() => request({
-      url: API.AUDIO.TRANSCRIPTION.BATCH_DELETE(selectedIds.value.join(',')),
-      method: 'delete'
-    }))
+    .then(() =>
+      request({
+        url: API.AUDIO.TRANSCRIPTION.BATCH_DELETE(selectedIds.value.join(',')),
+        method: 'delete'
+      })
+    )
     .then(() => {
       ElMessage.success('批量删除成功')
       selectedIds.value = []
@@ -824,22 +905,39 @@ onMounted(() => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .wave-bar {
   animation: wave 1.5s ease-in-out infinite;
 }
 
-.wave-1 { animation-delay: 0s; }
-.wave-2 { animation-delay: 0.375s; }
-.wave-3 { animation-delay: 0.75s; }
-.wave-4 { animation-delay: 1.125s; }
+.wave-1 {
+  animation-delay: 0s;
+}
+.wave-2 {
+  animation-delay: 0.375s;
+}
+.wave-3 {
+  animation-delay: 0.75s;
+}
+.wave-4 {
+  animation-delay: 1.125s;
+}
 
 @keyframes wave {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .transcribing-info {
@@ -874,8 +972,15 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.6; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
 }
 
 .transcribing-time {

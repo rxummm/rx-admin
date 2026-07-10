@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @Tag(name = "定时任务管理")
 @RestController
@@ -38,7 +39,7 @@ public class SysJobController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer status) {
         PageResult<SysJob> pr = jobService.pageQuery(page, size, keyword, status);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), jobConvert.toVOList(pr.getRecords())));
+        return Result.ok(jobConvert.toPageResult(pr));
     }
 
     @Operation(summary = "新增定时任务")
@@ -65,6 +66,15 @@ public class SysJobController {
     @OperateLog(module = "定时任务管理", operation = "删除定时任务")
     public Result<Void> delete(@PathVariable Long id) {
         jobService.removeById(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "批量删除定时任务")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Monitor.JOB_DELETE)
+    @OperateLog(module = "定时任务管理", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        jobService.deleteJobBatch(ids);
         return Result.ok();
     }
 

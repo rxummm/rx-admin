@@ -22,10 +22,31 @@
 
     <div class="table-container">
       <el-table :data="deptTree" row-key="id" border stripe v-loading="loading" default-expand-all>
-        <el-table-column v-if="visibleColumns.includes('deptName')" prop="deptName" :label="$t('system.dept.deptName')" min-width="200" />
-        <el-table-column v-if="visibleColumns.includes('leader')" prop="leader" :label="$t('system.dept.leader')" width="120" />
-        <el-table-column v-if="visibleColumns.includes('phone')" prop="phone" :label="$t('system.dept.phone')" width="140" />
-        <el-table-column v-if="visibleColumns.includes('email')" prop="email" :label="$t('system.dept.email')" width="180" show-overflow-tooltip />
+        <el-table-column
+          v-if="visibleColumns.includes('deptName')"
+          prop="deptName"
+          :label="$t('system.dept.deptName')"
+          min-width="200"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('leader')"
+          prop="leader"
+          :label="$t('system.dept.leader')"
+          width="120"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('phone')"
+          prop="phone"
+          :label="$t('system.dept.phone')"
+          width="140"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('email')"
+          prop="email"
+          :label="$t('system.dept.email')"
+          width="180"
+          show-overflow-tooltip
+        />
         <el-table-column v-if="visibleColumns.includes('sort')" prop="sort" :label="$t('common.sort')" width="70" />
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" :label="$t('common.status')" width="80">
           <template #default="{ row }">
@@ -34,12 +55,38 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createTime')" prop="createTime" :label="$t('common.createTime')" width="170" />
+        <el-table-column
+          v-if="visibleColumns.includes('createTime')"
+          prop="createTime"
+          :label="$t('common.createTime')"
+          width="170"
+        />
         <el-table-column :label="$t('common.operation')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleAdd(row)" v-if="userStore.hasPerm('sys:dept:add')">{{ $t('system.dept.addChild') }}</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('sys:dept:edit')">{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('sys:dept:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleAdd(row)"
+              v-if="userStore.hasPerm('sys:dept:add')"
+              >{{ $t('system.dept.addChild') }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('sys:dept:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('sys:dept:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -115,7 +162,7 @@ const columnOptions = [
   { key: 'status', label: t('common.status') },
   { key: 'createTime', label: t('common.createTime') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -179,7 +226,9 @@ function handleEdit(row) {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.deptName }), t('common.tip'), { type: 'warning' })
+    await ElMessageBox.confirm(t('common.confirmDeleteItem', { name: row.deptName }), t('common.tip'), {
+      type: 'warning'
+    })
     await deleteDeptApi(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     fetchData()

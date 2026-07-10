@@ -64,9 +64,7 @@ const shortcutGroups = ref([
   },
   {
     title: '🎨 外观类',
-    items: [
-      { keys: ['Ctrl', 'D'], description: '切换暗色/亮色主题' }
-    ]
+    items: [{ keys: ['Ctrl', 'D'], description: '切换暗色/亮色主题' }]
   },
   {
     title: '🔄 操作类',
@@ -93,14 +91,14 @@ const filteredGroups = computed(() => {
 
   const keyword = searchKeyword.value.toLowerCase()
   return shortcutGroups.value
-    .map(group => ({
+    .map((group) => ({
       ...group,
-      items: group.items.filter(item =>
-        item.description.toLowerCase().includes(keyword) ||
-        item.keys.some(k => k.toLowerCase().includes(keyword))
+      items: group.items.filter(
+        (item) =>
+          item.description.toLowerCase().includes(keyword) || item.keys.some((k) => k.toLowerCase().includes(keyword))
       )
     }))
-    .filter(group => group.items.length > 0)
+    .filter((group) => group.items.length > 0)
 })
 
 // 打开对话框
@@ -125,7 +123,7 @@ defineExpose({ open })
 .shortcuts-content {
   .search-input {
     margin: 16px;
-    
+
     :deep(.el-input__wrapper) {
       border-radius: var(--radius-sm);
     }

@@ -1,15 +1,16 @@
 package com.rx.admin.modules.system.favorite.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-/** 收藏创建请求 */
 @Data
 public class FavoriteCreateDTO {
-    @NotNull(message = "菜单ID不能为空")
-    private Long menuId;
+    @NotBlank(message = "名称不能为空")
     private String name;
+    @NotBlank(message = "路径不能为空")
     private String path;
     private String icon;
-    private Integer sortOrder;
+    @NotNull(message = "菜单ID不能为空")
+    private Long menuId;
 }

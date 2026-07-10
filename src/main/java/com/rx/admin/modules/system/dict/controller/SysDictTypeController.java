@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Tag(name = "字典类型管理")
@@ -38,7 +37,7 @@ public class SysDictTypeController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<SysDictType> pr = sysDictTypeService.pageQuery(page, size, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), dictConvert.toTypeVOList(pr.getRecords())));
+        return Result.ok(dictConvert.toTypePageResult(pr));
     }
 
     @Operation(summary = "查询所有字典类型")
@@ -72,6 +71,15 @@ public class SysDictTypeController {
     @OperateLog(module = "字典管理", operation = "删除字典类型")
     public Result<Void> delete(@PathVariable Long id) {
         sysDictTypeService.removeById(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "批量删除字典类型")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Dict.DELETE)
+    @OperateLog(module = "字典管理", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        sysDictTypeService.deleteDictTypeBatch(ids);
         return Result.ok();
     }
 

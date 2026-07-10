@@ -10,14 +10,12 @@
           :class="{ active: isActive(tag) }"
           @contextmenu.prevent="openContextMenu($event, tag)"
         >
-          <el-icon v-if="tagIconInfo(tag).type === 'el'" class="tags-item-icon"><component :is="tagIconInfo(tag).component" /></el-icon>
+          <el-icon v-if="tagIconInfo(tag).type === 'el'" class="tags-item-icon"
+            ><component :is="tagIconInfo(tag).component"
+          /></el-icon>
           <FontAwesomeIcon v-else :icon="tagIconInfo(tag).icon" class="tags-item-icon fa-icon" />
           <span class="tags-item-title">{{ tMenu(tag.meta?.title || tag.name) }}</span>
-          <el-icon
-            v-if="!isAffix(tag)"
-            class="tags-item-close"
-            @click.prevent.stop="handleClose(tag)"
-          >
+          <el-icon v-if="!isAffix(tag)" class="tags-item-close" @click.prevent.stop="handleClose(tag)">
             <Close />
           </el-icon>
         </router-link>
@@ -66,7 +64,13 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { toggleFavoriteApi } from '@/api/favorite'
 import { useFavEvents } from '@/composables/useFavEvents'
-import { useStorage, STORAGE_KEYS, useNamespacedKey, getKeysByPrefix, removeKeysByPrefix } from '@/composables/useStorage'
+import {
+  useStorage,
+  STORAGE_KEYS,
+  useNamespacedKey,
+  getKeysByPrefix,
+  removeKeysByPrefix
+} from '@/composables/useStorage'
 
 const { t } = useI18n()
 const { tMenu } = useMenuI18n()
@@ -151,7 +155,7 @@ function handleCloseOthers() {
 async function handleCloseAll() {
   tagsStore.removeAllViews()
   // 如果当前标签被关闭，跳转第一个剩余标签或dashboard
-  const stillExists = visitedViews.value.some(v => v.path === route.path)
+  const stillExists = visitedViews.value.some((v) => v.path === route.path)
   if (!stillExists) {
     const target = visitedViews.value.length > 0 ? visitedViews.value[0].path : '/dashboard'
     await router.push(target)
@@ -176,7 +180,7 @@ const syncFavSet = () => {
   const favStore = useStorage(STORAGE_KEYS.FAVORITES)
   const centralized = favStore.get()
   if (Array.isArray(centralized) && centralized.length > 0) {
-    centralized.forEach(p => set.add(p))
+    centralized.forEach((p) => set.add(p))
     favSet.value = set
     return
   }
@@ -227,7 +231,9 @@ async function handleToggleFavorite() {
     }
     syncFavSet()
     triggerRefresh()
-  } catch (e) { console.error('[ToggleFavorite]', e) }
+  } catch (e) {
+    console.error('[ToggleFavorite]', e)
+  }
   closeContextMenu()
 }
 
@@ -364,7 +370,7 @@ onUnmounted(() => {
   // 不要用 var() 单独一行写，曾经因此被列标题/tab 下划线盖住。
   z-index: 99999;
   z-index: var(--z-teleport, 99999);
-  isolation: isolate;  // 创建独立 stacking context，避免被父级 transform 干扰
+  isolation: isolate; // 创建独立 stacking context，避免被父级 transform 干扰
   min-width: 140px;
   background: var(--context-menu-bg);
   border-radius: var(--radius-sm);

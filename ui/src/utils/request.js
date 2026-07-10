@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import NProgress from 'nprogress'
-import router from '@/router'
 import { formatResponseData } from './index'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import { getActivePinia } from 'pinia'
@@ -41,7 +40,7 @@ const request = axios.create({
 
 // 请求拦截器
 request.interceptors.request.use(
-  config => {
+  (config) => {
     if (config._skipCancel) {
       if (!config._skipNProgress) {
         NProgress.start()
@@ -58,7 +57,7 @@ request.interceptors.request.use(
     }
 
     performanceRequestInterceptor(config)
-    
+
     const token = tokenStore.get()
     if (token) {
       config.headers['Authorization'] = token
@@ -68,12 +67,14 @@ request.interceptors.request.use(
         config.headers['X-Timestamp'] = String(Date.now())
       }
       if (!config.headers['X-Nonce']) {
-        config.headers['X-Nonce'] = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15)
+        config.headers['X-Nonce'] = crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).substring(2, 15)
       }
     }
     return config
   },
-  error => {
+  (error) => {
     NProgress.done()
     return Promise.reject(error)
   }
@@ -99,7 +100,7 @@ function clearAuthData() {
         userStore.menus = []
       }
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
 }
@@ -139,9 +140,7 @@ function showKickOutOverlay() {
 
   function updateText() {
     // 使用 i18n 检测，但优先用中文硬编码保证可靠
-    countdown.textContent = seconds > 0
-      ? `${seconds} 秒后返回登录页面`
-      : '正在返回登录页面...'
+    countdown.textContent = seconds > 0 ? `${seconds} 秒后返回登录页面` : '正在返回登录页面...'
   }
   updateText()
 
@@ -165,14 +164,14 @@ function showKickOutOverlay() {
 
 // 响应拦截器
 request.interceptors.response.use(
-  response => {
+  (response) => {
     if (!response.config._skipCancel) {
       const key = generateRequestKey(response.config)
       pendingRequests.delete(key)
     }
-    
+
     performanceResponseSuccessInterceptor(response)
-    
+
     NProgress.done()
     // blob 类型响应（文件下载、导出等）直接透传，不做 JSON 校验
     if (response.config.responseType === 'blob' || response.config.responseType === 'arraybuffer') {
@@ -202,14 +201,14 @@ request.interceptors.response.use(
     // 自动格式化时间字段（去掉 ISO 时间中的 T 分隔符）
     return formatResponseData(res)
   },
-  error => {
+  (error) => {
     if (!error.config?._skipCancel && error.config) {
       const key = generateRequestKey(error.config)
       pendingRequests.delete(key)
     }
-    
+
     performanceResponseErrorInterceptor(error)
-    
+
     NProgress.done()
     const status = error.response?.status
     const data = error.response?.data
@@ -229,7 +228,6 @@ request.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
 
 /** 会话心跳定时器 */
 let heartbeatTimer = null

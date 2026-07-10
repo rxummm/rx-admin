@@ -11,7 +11,7 @@ export const useTagsStore = defineStore('tags', () => {
 
   // 添加标签（affix 标签始终排在最前面）
   function addView(view) {
-    if (visitedViews.value.some(v => v.path === view.path)) return
+    if (visitedViews.value.some((v) => v.path === view.path)) return
     const newView = { ...view }
     if (newView.meta?.affix) {
       // 找到最后一个 affix 标签的位置，插入到它后面
@@ -33,7 +33,7 @@ export const useTagsStore = defineStore('tags', () => {
 
   // 删除标签
   function removeView(view) {
-    const index = visitedViews.value.findIndex(v => v.path === view.path)
+    const index = visitedViews.value.findIndex((v) => v.path === view.path)
     if (index > -1) {
       visitedViews.value.splice(index, 1)
       // 同步移除缓存
@@ -49,28 +49,24 @@ export const useTagsStore = defineStore('tags', () => {
   // 删除其他标签
   function removeOtherViews(view) {
     // 保留当前标签和affix标签
-    const keepNames = visitedViews.value
-      .filter(v => v.path === view.path || v.meta?.affix)
-      .map(v => v.name)
+    const keepNames = visitedViews.value.filter((v) => v.path === view.path || v.meta?.affix).map((v) => v.name)
     // 清理被删除标签的refreshKeys
-    Object.keys(refreshKeys.value).forEach(key => {
+    Object.keys(refreshKeys.value).forEach((key) => {
       if (!keepNames.includes(key)) {
         delete refreshKeys.value[key]
       }
     })
-    visitedViews.value = visitedViews.value.filter(
-      v => v.path === view.path || v.meta?.affix
-    )
-    cachedViews.value = visitedViews.value.map(v => v.name)
+    visitedViews.value = visitedViews.value.filter((v) => v.path === view.path || v.meta?.affix)
+    cachedViews.value = visitedViews.value.map((v) => v.name)
   }
 
   // 删除所有标签
   function removeAllViews() {
-    visitedViews.value = visitedViews.value.filter(v => v.meta?.affix)
-    cachedViews.value = visitedViews.value.map(v => v.name)
+    visitedViews.value = visitedViews.value.filter((v) => v.meta?.affix)
+    cachedViews.value = visitedViews.value.map((v) => v.name)
     // 清理被删除标签的refreshKeys
-    const keepNames = visitedViews.value.map(v => v.name)
-    Object.keys(refreshKeys.value).forEach(key => {
+    const keepNames = visitedViews.value.map((v) => v.name)
+    Object.keys(refreshKeys.value).forEach((key) => {
       if (!keepNames.includes(key)) {
         delete refreshKeys.value[key]
       }
@@ -79,7 +75,7 @@ export const useTagsStore = defineStore('tags', () => {
 
   // 关闭当前标签（需要返回下一个要激活的路径）
   function closeView(view) {
-    const index = visitedViews.value.findIndex(v => v.path === view.path)
+    const index = visitedViews.value.findIndex((v) => v.path === view.path)
     removeView(view)
     // 返回下一个标签路径用于跳转
     if (view.path === getActivePath()) {
@@ -114,7 +110,7 @@ export const useTagsStore = defineStore('tags', () => {
 
   // 根据路由查找对应的标签信息
   function findViewByRoute(route) {
-    return visitedViews.value.find(v => v.path === route.path)
+    return visitedViews.value.find((v) => v.path === route.path)
   }
 
   return {

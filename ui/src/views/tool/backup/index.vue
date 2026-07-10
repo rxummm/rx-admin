@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <span style="font-size: 16px; font-weight: 600;">数据库备份与恢复</span>
+      <span style="font-size: 16px; font-weight: 600">数据库备份与恢复</span>
       <div style="flex: 1" />
       <el-button type="primary" @click="doBackup" :loading="backingUp">
         <el-icon><FolderOpened /></el-icon> 立即备份
@@ -41,14 +41,27 @@ const backingUp = ref(false)
 
 const fetchList = async () => {
   loading.value = true
-  try { const res = await getBackupListApi(); backupList.value = res.data || [] }
-  catch (e) { /* */ } finally { loading.value = false }
+  try {
+    const res = await getBackupListApi()
+    backupList.value = res.data || []
+  } catch {
+    /* */
+  } finally {
+    loading.value = false
+  }
 }
 
 const doBackup = async () => {
   backingUp.value = true
-  try { await createBackupApi(); ElMessage.success('备份成功!'); fetchList() }
-  catch (e) { ElMessage.error('备份失败'); } finally { backingUp.value = false }
+  try {
+    await createBackupApi()
+    ElMessage.success('备份成功!')
+    fetchList()
+  } catch {
+    ElMessage.error('备份失败')
+  } finally {
+    backingUp.value = false
+  }
 }
 
 const doDownload = async (filename) => {
@@ -66,8 +79,13 @@ const doDownload = async (filename) => {
 }
 
 const doDelete = async (filename) => {
-  try { await deleteBackupApi(filename); ElMessage.success('删除成功'); fetchList() }
-  catch (e) { ElMessage.error('删除失败') }
+  try {
+    await deleteBackupApi(filename)
+    ElMessage.success('删除成功')
+    fetchList()
+  } catch {
+    ElMessage.error('删除失败')
+  }
 }
 
 onMounted(fetchList)

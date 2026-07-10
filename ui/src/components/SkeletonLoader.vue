@@ -52,9 +52,8 @@
 
 <script setup>
 defineOptions({ name: 'SkeletonLoader' })
-import { computed } from 'vue'
 
-const props = defineProps({
+const _props = defineProps({
   type: {
     type: String,
     default: 'paragraph', // chart | table | card | list | paragraph
@@ -93,7 +92,8 @@ const props = defineProps({
 }
 
 @keyframes skeleton-loading {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -104,12 +104,7 @@ const props = defineProps({
 // 通用骨架样式
 .skeleton-text {
   height: 16px;
-  background: linear-gradient(
-    90deg,
-    var(--bg-hover) 25%,
-    var(--bg-active) 50%,
-    var(--bg-hover) 75%
-  );
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
   background-size: 200% 100%;
   border-radius: var(--radius-xs);
   margin-bottom: 8px;
@@ -138,48 +133,38 @@ const props = defineProps({
 // 图表骨架屏
 .skeleton-chart {
   padding: 16px;
-  
+
   .skeleton-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    
+
     .skeleton-title {
       width: 120px;
       height: 20px;
-      background: linear-gradient(
-        90deg,
-        var(--bg-hover) 25%,
-        var(--bg-active) 50%,
-        var(--bg-hover) 75%
-      );
+      background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
       background-size: 200% 100%;
       border-radius: var(--radius-xs);
       margin-bottom: 8px;
       animation: skeleton-shimmer 2s ease-in-out infinite;
     }
-    
+
     .skeleton-actions {
       display: flex;
       gap: 8px;
-      
+
       .skeleton-btn {
         width: 32px;
         height: 32px;
         border-radius: var(--radius-sm);
-        background: linear-gradient(
-          90deg,
-          var(--bg-hover) 25%,
-          var(--bg-active) 50%,
-          var(--bg-hover) 75%
-        );
+        background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
         background-size: 200% 100%;
         animation: skeleton-shimmer 2s ease-in-out infinite;
       }
     }
   }
-  
+
   .skeleton-chart-body {
     height: 200px;
     display: flex;
@@ -187,7 +172,7 @@ const props = defineProps({
     justify-content: space-around;
     gap: 8px;
     padding: 16px 0;
-    
+
     .skeleton-bar {
       flex: 1;
       max-width: 60px;
@@ -207,21 +192,16 @@ const props = defineProps({
     padding: 12px;
     border-bottom: 1px solid var(--border-light);
   }
-  
+
   .skeleton-table-header {
     background: var(--bg-hover);
     font-weight: 600;
   }
-  
+
   .skeleton-cell {
     flex: 1;
     height: 16px;
-    background: linear-gradient(
-      90deg,
-      var(--bg-hover) 25%,
-      var(--bg-active) 50%,
-      var(--bg-hover) 75%
-    );
+    background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
     background-size: 200% 100%;
     border-radius: var(--radius-xs);
     margin-bottom: 8px;
@@ -233,18 +213,13 @@ const props = defineProps({
 .skeleton-card {
   padding: 20px;
   text-align: center;
-  
+
   .skeleton-avatar {
     width: 64px;
     height: 64px;
     border-radius: 50%;
     margin: 0 auto 16px;
-    background: linear-gradient(
-      90deg,
-      var(--bg-hover) 25%,
-      var(--bg-active) 50%,
-      var(--bg-hover) 75%
-    );
+    background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 2s ease-in-out infinite;
   }
@@ -258,26 +233,21 @@ const props = defineProps({
     gap: 12px;
     padding: 12px;
     border-bottom: 1px solid var(--border-light);
-    
+
     &:last-child {
       border-bottom: none;
     }
-    
+
     .skeleton-avatar-small {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       flex-shrink: 0;
-      background: linear-gradient(
-        90deg,
-        var(--bg-hover) 25%,
-        var(--bg-active) 50%,
-        var(--bg-hover) 75%
-      );
+      background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
       background-size: 200% 100%;
       animation: skeleton-shimmer 2s ease-in-out infinite;
     }
-    
+
     .skeleton-list-content {
       flex: 1;
     }

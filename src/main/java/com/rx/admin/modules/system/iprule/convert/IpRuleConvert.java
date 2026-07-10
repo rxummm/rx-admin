@@ -1,5 +1,6 @@
 package com.rx.admin.modules.system.iprule.convert;
 
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
 import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
 import com.rx.admin.modules.system.iprule.vo.IpRuleVO;
@@ -17,4 +18,8 @@ public interface IpRuleConvert {
     void updateEntity(IpRuleUpdateDTO dto, @MappingTarget SysIpRule entity);
     IpRuleVO toVO(SysIpRule entity);
     List<IpRuleVO> toVOList(List<SysIpRule> list);
+
+    default PageResult<IpRuleVO> toPageResult(PageResult<SysIpRule> pageResult) {
+        return pageResult.map(this::toVO);
+    }
 }

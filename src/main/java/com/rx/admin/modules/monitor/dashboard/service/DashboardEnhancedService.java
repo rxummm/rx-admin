@@ -20,7 +20,6 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class DashboardEnhancedService {
 
     private final SysLoginLogMapper loginLogMapper;

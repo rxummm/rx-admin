@@ -42,7 +42,7 @@ public class ChinaRegionController {
             @RequestParam(required = false) Integer level,
             @RequestParam(required = false) String parentCode) {
         PageResult<ChinaRegion> pr = chinaRegionService.pageQuery(page, size, keyword, level, parentCode);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), chinaRegionConvert.toVOList(pr.getRecords())));
+        return Result.ok(chinaRegionConvert.toPageResult(pr));
     }
 
     @Operation(summary = "查询下级行政区划")

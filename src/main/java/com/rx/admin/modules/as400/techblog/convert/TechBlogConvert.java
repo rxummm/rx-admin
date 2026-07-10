@@ -1,5 +1,6 @@
 package com.rx.admin.modules.as400.techblog.convert;
 
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.as400.techblog.dto.TechBlogCreateDTO;
 import com.rx.admin.modules.as400.techblog.dto.TechBlogUpdateDTO;
 import com.rx.admin.modules.as400.techblog.vo.TechBlogVO;
@@ -23,4 +24,8 @@ public interface TechBlogConvert {
 
     TechBlogVO toVO(TechBlogArticle entity);
     List<TechBlogVO> toVOList(List<TechBlogArticle> list);
+
+    default PageResult<TechBlogVO> toPageResult(PageResult<TechBlogArticle> pageResult) {
+        return pageResult.map(this::toVO);
+    }
 }

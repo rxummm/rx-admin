@@ -19,7 +19,10 @@ const TABLE_PADDING = Number(import.meta.env.VITE_TABLE_PADDING) || 120
 
 function parsePageSizes(envValue, fallback) {
   if (envValue) {
-    return envValue.split(',').map(Number).filter(n => !isNaN(n) && n > 0)
+    return envValue
+      .split(',')
+      .map(Number)
+      .filter((n) => !isNaN(n) && n > 0)
   }
   return fallback
 }
@@ -30,11 +33,12 @@ export function useTablePage(fetchApi, options = {}) {
     defaultSize = Number(import.meta.env.VITE_DEFAULT_PAGE_SIZE) || 10,
     enableResize = true,
     pageSizes = parsePageSizes(import.meta.env.VITE_PAGE_SIZE_OPTIONS, [10, 20, 50, 100]),
-    transformResponse = null, // (data) => transformedData
+    transformResponse = null // (data) => transformedData
   } = options
 
   const tableData = ref([])
   const loading = ref(false)
+  const initialLoading = ref(true)
   const keyword = ref('')
   const page = ref(1)
   const size = ref(defaultSize)
@@ -45,7 +49,7 @@ export function useTablePage(fetchApi, options = {}) {
 
   // 列配置
   const columnOptions = columns
-  const visibleColumns = ref(columnOptions.map(c => c.key))
+  const visibleColumns = ref(columnOptions.map((c) => c.key))
 
   function toggleColumn(key) {
     const idx = visibleColumns.value.indexOf(key)
@@ -79,7 +83,7 @@ export function useTablePage(fetchApi, options = {}) {
   }
 
   function handleSelectionChange(selection) {
-    selectedIds.value = selection.map(item => item.id)
+    selectedIds.value = selection.map((item) => item.id)
   }
 
   // 表格高度自适应
@@ -124,8 +128,11 @@ export function useTablePage(fetchApi, options = {}) {
   }
 
   // 数据获取
+  let firstFetchDone = false
+
   async function fetchData(extraParams = {}) {
     loading.value = true
+    initialLoading.value = !firstFetchDone
     try {
       const params = {
         page: page.value,
@@ -138,6 +145,8 @@ export function useTablePage(fetchApi, options = {}) {
       tableData.value = data.records || []
       total.value = data.total || 0
       selectedIds.value = []
+      firstFetchDone = true
+      initialLoading.value = false
     } catch (error) {
       console.error('Table data fetch failed:', error)
       if (!error.message?.includes('canceled')) {
@@ -145,6 +154,8 @@ export function useTablePage(fetchApi, options = {}) {
       }
       tableData.value = []
       total.value = 0
+      firstFetchDone = true
+      initialLoading.value = false
     } finally {
       loading.value = false
     }
@@ -183,19 +194,33 @@ export function useTablePage(fetchApi, options = {}) {
 
   return {
     // 数据
-    tableData, loading, keyword, page, size, total,
+    tableData,
+    loading,
+    initialLoading,
+    keyword,
+    page,
+    size,
+    total,
     // 排序
-    sortedTableData, handleSortChange,
+    sortedTableData,
+    handleSortChange,
     // 选择
-    selectedIds, handleSelectionChange,
+    selectedIds,
+    handleSelectionChange,
     // 列配置
-    visibleColumns, columnOptions, toggleColumn,
+    visibleColumns,
+    columnOptions,
+    toggleColumn,
     // 数据获取
-    fetchData, handleSearch, resetSearch,
-    handlePageChange, handleSizeChange,
+    fetchData,
+    handleSearch,
+    resetSearch,
+    handlePageChange,
+    handleSizeChange,
     // 表格高度
-    tableMaxHeight, calcTableMaxHeight,
+    tableMaxHeight,
+    calcTableMaxHeight,
     // 分页配置
-    pageSizes,
+    pageSizes
   }
 }

@@ -46,7 +46,7 @@ public class NotifyCenterController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String name) {
         PageResult<SysMessageTemplate> pr = templateService.pageQuery(page, size, name);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), templateConvert.toVOList(pr.getRecords())));
+        return Result.ok(templateConvert.toPageResult(pr));
     }
 
     @Operation(summary = "新增模板")
@@ -104,7 +104,7 @@ public class NotifyCenterController {
             @RequestParam(required = false) String channel,
             @RequestParam(required = false) Integer status) {
         PageResult<SysNotifyRecord> pr = recordService.pageQuery(page, size, channel, status);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), recordConvert.toVOList(pr.getRecords())));
+        return Result.ok(recordConvert.toPageResult(pr));
     }
 
     @Operation(summary = "删除记录")

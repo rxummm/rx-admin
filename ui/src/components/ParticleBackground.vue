@@ -21,9 +21,9 @@ const config = {
   mouseDistance: 150,
   baseSpeed: 0.5,
   colors: {
-    primary: 'rgba(88, 166, 255, 0.5)',    // 电光蓝
-    secondary: 'rgba(63, 185, 80, 0.4)',   // 荧光绿
-    accent: 'rgba(210, 153, 34, 0.3)'      // 琥珀黄
+    primary: 'rgba(88, 166, 255, 0.5)', // 电光蓝
+    secondary: 'rgba(63, 185, 80, 0.4)', // 荧光绿
+    accent: 'rgba(210, 153, 34, 0.3)' // 琥珀黄
   }
 }
 
@@ -87,7 +87,7 @@ function initParticles() {
   if (!canvas) return
 
   const ctx = canvas.getContext('2d')
-  
+
   // 设置画布尺寸
   resizeHandler = () => {
     canvas.width = window.innerWidth
@@ -117,9 +117,9 @@ function initParticles() {
   // 动画循环
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    
+
     // 更新和绘制粒子
-    particles.forEach(particle => {
+    particles.forEach((particle) => {
       particle.update()
       particle.draw(ctx)
     })
@@ -140,7 +140,7 @@ function connectParticles(ctx) {
       let distance = Math.sqrt(dx * dx + dy * dy)
 
       if (distance < config.connectionDistance) {
-        let opacity = 1 - (distance / config.connectionDistance)
+        let opacity = 1 - distance / config.connectionDistance
         ctx.strokeStyle = `rgba(88, 166, 255, ${opacity * 0.2})`
         ctx.lineWidth = 1
         ctx.beginPath()

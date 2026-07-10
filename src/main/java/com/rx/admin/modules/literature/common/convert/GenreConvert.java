@@ -13,7 +13,6 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-@SuppressWarnings("null")
 public interface GenreConvert {
 
     Genre toEntity(GenreCreateDTO dto);
@@ -28,6 +27,10 @@ public interface GenreConvert {
         List<GenreVO> voList = page.getRecords().stream()
                 .map(this::toVO)
                 .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(this::toVO);
+    }
+
+    default PageResult<GenreVO> toPageResult(PageResult<Genre> pageResult) {
+        return pageResult.map(this::toVO);
     }
 }

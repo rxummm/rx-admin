@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
-@SuppressWarnings("null")
 public class DynastyService extends ServiceImpl<DynastyMapper, Dynasty> {
 
     public PageResult<Dynasty> pageQuery(int page, int size, String keyword) {

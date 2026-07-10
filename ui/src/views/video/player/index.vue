@@ -4,8 +4,16 @@
       <div class="video-list-panel" :class="{ collapsed: listCollapsed }">
         <div class="list-toolbar">
           <div class="toolbar-left">
-            <el-tooltip :content="listCollapsed ? $t('tool.videoPlayer.expandList') : $t('tool.videoPlayer.collapseList')" placement="right">
-              <el-button :icon="listCollapsed ? DArrowRight : DArrowLeft" text size="small" @click="listCollapsed = !listCollapsed" />
+            <el-tooltip
+              :content="listCollapsed ? $t('tool.videoPlayer.expandList') : $t('tool.videoPlayer.collapseList')"
+              placement="right"
+            >
+              <el-button
+                :icon="listCollapsed ? DArrowRight : DArrowLeft"
+                text
+                size="small"
+                @click="listCollapsed = !listCollapsed"
+              />
             </el-tooltip>
             <template v-if="!listCollapsed">
               <span class="brand-icon">🎬</span>
@@ -36,65 +44,71 @@
             </div>
           </div>
 
-        <div class="list-header">
-          <span class="col-play"></span>
-          <span class="col-index">#</span>
-          <span class="col-title">{{ $t('tool.videoPlayer.title') }}</span>
-          <span class="col-type">{{ $t('tool.videoPlayer.format') }}</span>
-          <span class="col-duration">{{ $t('tool.videoPlayer.duration') }}</span>
-        </div>
+          <div class="list-header">
+            <span class="col-play"></span>
+            <span class="col-index">#</span>
+            <span class="col-title">{{ $t('tool.videoPlayer.title') }}</span>
+            <span class="col-type">{{ $t('tool.videoPlayer.format') }}</span>
+            <span class="col-duration">{{ $t('tool.videoPlayer.duration') }}</span>
+          </div>
 
-        <div class="video-list" ref="videoListRef">
-          <div
-            v-for="(video, idx) in videos"
-            :key="video.id"
-            class="video-row"
-            :class="{ active: currentVideo?.id === video.id }"
-            @click="selectVideo(video)"
-          >
-            <span class="col-play">
-              <el-button
-                :icon="currentVideo?.id === video.id && isPlaying ? VideoPause : VideoPlay"
-                text
-                size="small"
-                class="row-play-btn"
-                @click.stop="togglePlay(video)"
-              />
-            </span>
-            <span class="col-index">
-              <span v-if="currentVideo?.id === video.id && isPlaying" class="playing-bars"><i></i><i></i><i></i></span>
-              <span v-else>{{ idx + 1 }}</span>
-            </span>
-            <span class="col-title">
-              <span class="title-text">{{ video.title }}</span>
-            </span>
-            <span class="col-type">
-              <el-tag size="small" type="info">{{ video.videoType?.toUpperCase() }}</el-tag>
-            </span>
-            <span class="col-duration">{{ video.duration > 0 ? formatTime(video.duration) : '--:--' }}</span>
+          <div class="video-list" ref="videoListRef">
+            <div
+              v-for="(video, idx) in videos"
+              :key="video.id"
+              class="video-row"
+              :class="{ active: currentVideo?.id === video.id }"
+              @click="selectVideo(video)"
+            >
+              <span class="col-play">
+                <el-button
+                  :icon="currentVideo?.id === video.id && isPlaying ? VideoPause : VideoPlay"
+                  text
+                  size="small"
+                  class="row-play-btn"
+                  @click.stop="togglePlay(video)"
+                />
+              </span>
+              <span class="col-index">
+                <span v-if="currentVideo?.id === video.id && isPlaying" class="playing-bars"
+                  ><i></i><i></i><i></i
+                ></span>
+                <span v-else>{{ idx + 1 }}</span>
+              </span>
+              <span class="col-title">
+                <span class="title-text">{{ video.title }}</span>
+              </span>
+              <span class="col-type">
+                <el-tag size="small" type="info">{{ video.videoType?.toUpperCase() }}</el-tag>
+              </span>
+              <span class="col-duration">{{ video.duration > 0 ? formatTime(video.duration) : '--:--' }}</span>
+            </div>
+            <el-empty
+              v-if="videos.length === 0 && !loading"
+              :description="$t('tool.videoPlayer.noVideos')"
+              :image-size="80"
+            />
+            <div v-if="loading" class="loading-mask">
+              <el-icon class="is-loading" :size="24"><Refresh /></el-icon>
+              <span>{{ $t('tool.videoPlayer.loadingText') }}</span>
+            </div>
           </div>
-          <el-empty v-if="videos.length === 0 && !loading" :description="$t('tool.videoPlayer.noVideos')" :image-size="80" />
-          <div v-if="loading" class="loading-mask">
-            <el-icon class="is-loading" :size="24"><Refresh /></el-icon>
-            <span>{{ $t('tool.videoPlayer.loadingText') }}</span>
-          </div>
-        </div>
 
-        <div class="video-info" v-if="currentVideo">
-          <div class="info-row">
-            <span class="info-label">{{ $t('tool.videoPlayer.fileName') }}:</span>
-            <span class="info-value">{{ currentVideo.fileName }}</span>
+          <div class="video-info" v-if="currentVideo">
+            <div class="info-row">
+              <span class="info-label">{{ $t('tool.videoPlayer.fileName') }}:</span>
+              <span class="info-value">{{ currentVideo.fileName }}</span>
+            </div>
+            <div class="info-row" v-if="currentVideo.fileSize">
+              <span class="info-label">{{ $t('tool.videoPlayer.fileSize') }}:</span>
+              <span class="info-value">{{ formatFileSize(currentVideo.fileSize) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ $t('tool.videoPlayer.playCount') }}:</span>
+              <span class="info-value">{{ currentVideo.playCount || 0 }}</span>
+            </div>
           </div>
-          <div class="info-row" v-if="currentVideo.fileSize">
-            <span class="info-label">{{ $t('tool.videoPlayer.fileSize') }}:</span>
-            <span class="info-value">{{ formatFileSize(currentVideo.fileSize) }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">{{ $t('tool.videoPlayer.playCount') }}:</span>
-            <span class="info-value">{{ currentVideo.playCount || 0 }}</span>
-          </div>
-        </div>
-      </template>
+        </template>
       </div>
 
       <div class="detail-panel">
@@ -122,7 +136,9 @@
               </el-button>
             </div>
             <div class="url-hints">
-              <el-tag size="small" type="info" v-for="hint in urlHints" :key="hint" class="url-hint-tag">{{ hint }}</el-tag>
+              <el-tag size="small" type="info" v-for="hint in urlHints" :key="hint" class="url-hint-tag">{{
+                hint
+              }}</el-tag>
             </div>
           </div>
         </div>
@@ -159,17 +175,19 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Refresh, DataAnalysis, VideoPlay, VideoPause, Link, DArrowLeft, DArrowRight } from '@element-plus/icons-vue'
+import {
+  Search,
+  Refresh,
+  DataAnalysis,
+  VideoPlay,
+  VideoPause,
+  Link,
+  DArrowLeft,
+  DArrowRight
+} from '@element-plus/icons-vue'
 import Artplayer from 'artplayer'
 import Hls from 'hls.js'
-import {
-  scanVideoApi,
-  getVideoListApi,
-  getVideoDetailApi,
-  recordVideoPlayApi,
-  getVideoStatsApi,
-  getVideoRecentApi
-} from '@/api/video'
+import { scanVideoApi, getVideoListApi, recordVideoPlayApi, getVideoStatsApi, getVideoRecentApi } from '@/api/video'
 import { API } from '@/api/routes'
 
 defineOptions({ name: 'VideoPlayer' })
@@ -212,18 +230,10 @@ onBeforeUnmount(() => {
 
 function destroyArt() {
   if (artInstance) {
-    try { artInstance.destroy() } catch {}
+    try {
+      artInstance.destroy()
+    } catch {}
     artInstance = null
-  }
-}
-
-async function loadVideos() {
-  loading.value = true
-  try {
-    const res = await getVideoListApi()
-    videos.value = res.data || []
-  } finally {
-    loading.value = false
   }
 }
 
@@ -305,9 +315,11 @@ function playUrl() {
 }
 
 function isDirectVideoUrl(url) {
-  return /\.(mp4|webm|ogg|mkv|avi|flv|mov|m3u8|m4v|ts)(\?|$)/i.test(url)
-    || url.includes('.m3u8')
-    || url.includes('video.m3u8')
+  return (
+    /\.(mp4|webm|ogg|mkv|avi|flv|mov|m3u8|m4v|ts)(\?|$)/i.test(url) ||
+    url.includes('.m3u8') ||
+    url.includes('video.m3u8')
+  )
 }
 
 function isBilibiliUrl(url) {
@@ -417,7 +429,7 @@ function initArtPlayer(url) {
     artInstance.on('video:ended', () => {
       isPlaying.value = false
       if (currentVideo.value) {
-        const idx = videos.value.findIndex(v => v.id === currentVideo.value.id)
+        const idx = videos.value.findIndex((v) => v.id === currentVideo.value.id)
         if (idx >= 0 && idx < videos.value.length - 1) {
           playVideo(videos.value[idx + 1])
         }
@@ -569,11 +581,28 @@ function formatDateTime(dt) {
   background: var(--bg-page);
 }
 
-.col-play { width: 36px; text-align: center; }
-.col-index { width: 36px; text-align: center; }
-.col-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.col-type { width: 60px; text-align: center; }
-.col-duration { width: 60px; text-align: right; }
+.col-play {
+  width: 36px;
+  text-align: center;
+}
+.col-index {
+  width: 36px;
+  text-align: center;
+}
+.col-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.col-type {
+  width: 60px;
+  text-align: center;
+}
+.col-duration {
+  width: 60px;
+  text-align: right;
+}
 
 .video-list {
   flex: 1;
@@ -624,13 +653,27 @@ function formatDateTime(dt) {
   animation: barBounce 0.8s ease-in-out infinite;
 }
 
-.playing-bars i:nth-child(1) { height: 60%; animation-delay: 0s; }
-.playing-bars i:nth-child(2) { height: 100%; animation-delay: 0.15s; }
-.playing-bars i:nth-child(3) { height: 40%; animation-delay: 0.3s; }
+.playing-bars i:nth-child(1) {
+  height: 60%;
+  animation-delay: 0s;
+}
+.playing-bars i:nth-child(2) {
+  height: 100%;
+  animation-delay: 0.15s;
+}
+.playing-bars i:nth-child(3) {
+  height: 40%;
+  animation-delay: 0.3s;
+}
 
 @keyframes barBounce {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.4); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.4);
+  }
 }
 
 .detail-panel {

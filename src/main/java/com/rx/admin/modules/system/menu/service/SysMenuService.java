@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@SuppressWarnings("null")
 public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
     private final CacheManager cacheManager;
@@ -130,7 +129,7 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> implemen
         );
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addMenu(MenuCreateDTO dto) {
         log.info("新增菜单，参数：menuName={}, parentId={}", dto.getMenuName(), dto.getParentId());
         try {
@@ -154,7 +153,7 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> implemen
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateMenu(MenuUpdateDTO dto) {
         log.info("更新菜单，参数：id={}", dto.getId());
         try {
@@ -183,7 +182,13 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> implemen
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMenuBatch(List<Long> ids) {
+        removeByIds(ids);
+        clearMenuCache();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void removeMenu(Long id) {
         log.info("删除菜单，参数：id={}", id);
         try {

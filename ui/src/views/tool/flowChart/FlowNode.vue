@@ -1,12 +1,5 @@
 <template>
-  <div
-    class="flow-node"
-    :class="[
-      `flow-node--${type}`,
-      { 'flow-node--selected': selected }
-    ]"
-    :style="nodeStyle"
-  >
+  <div class="flow-node" :class="[`flow-node--${type}`, { 'flow-node--selected': selected }]" :style="nodeStyle">
     <div class="flow-node__content">
       {{ data.label || placeholder }}
     </div>
@@ -27,12 +20,12 @@ const props = defineProps({
   id: { type: String, required: true },
   data: { type: Object, default: () => ({}) },
   selected: { type: Boolean, default: false },
-  type: { type: String, default: 'rect' },
+  type: { type: String, default: 'rect' }
 })
 
 const nodeStyle = computed(() => ({
   borderColor: props.data.color || '#409EFF',
-  fontSize: (props.data.fontSize || 14) + 'px',
+  fontSize: (props.data.fontSize || 14) + 'px'
 }))
 
 const placeholder = computed(() => {
@@ -40,7 +33,7 @@ const placeholder = computed(() => {
     rect: '矩形',
     diamond: '菱形',
     roundRect: '圆角矩形',
-    ellipse: '椭圆',
+    ellipse: '椭圆'
   }
   return map[props.type] || ''
 })
@@ -54,7 +47,7 @@ const placeholder = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #409EFF;
+  border: 2px solid #409eff;
   border-radius: 4px;
   background: #fff;
   padding: 10px 16px;
@@ -68,7 +61,7 @@ const placeholder = computed(() => {
 }
 
 .flow-node--selected {
-  box-shadow: 0 0 0 2px #409EFF;
+  box-shadow: 0 0 0 2px #409eff;
 }
 
 /* 菱形 */

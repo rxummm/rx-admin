@@ -96,17 +96,15 @@
             <div class="result-meta">
               <el-tag type="success" size="small">{{ $t('ocr.result.engine') }}: {{ result.ocrEngine }}</el-tag>
               <el-tag size="small">{{ $t('ocr.result.chars') }}: {{ result.charCount }}</el-tag>
-              <el-tag size="small">{{ $t('ocr.result.duration') }}: {{ (result.durationMs / 1000).toFixed(1) }}s</el-tag>
-              <el-tag v-if="result.confidence" size="small">{{ $t('ocr.result.confidence') }}: {{ result.confidence.toFixed(1) }}%</el-tag>
+              <el-tag size="small"
+                >{{ $t('ocr.result.duration') }}: {{ (result.durationMs / 1000).toFixed(1) }}s</el-tag
+              >
+              <el-tag v-if="result.confidence" size="small"
+                >{{ $t('ocr.result.confidence') }}: {{ result.confidence.toFixed(1) }}%</el-tag
+              >
             </div>
 
-            <el-input
-              v-model="resultText"
-              type="textarea"
-              :rows="18"
-              :readonly="true"
-              class="result-text"
-            />
+            <el-input v-model="resultText" type="textarea" :rows="18" :readonly="true" class="result-text" />
 
             <div class="result-actions">
               <el-button @click="handleCopy">
@@ -131,13 +129,7 @@
       <template #header>
         <div class="card-header">
           <span>{{ $t('ocr.history.title') }}</span>
-          <el-button
-            v-if="historyList.length > 0"
-            type="danger"
-            link
-            size="small"
-            @click="handleDeleteAll"
-          >
+          <el-button v-if="historyList.length > 0" type="danger" link size="small" @click="handleDeleteAll">
             <el-icon><Delete /></el-icon>
             {{ $t('ocr.history.deleteAll') }}
           </el-button>
@@ -155,7 +147,10 @@
             </div>
             <div class="history-item-row history-item-meta">
               <span>{{ $t('ocr.history.chars') }}: {{ row.charCount }}</span>
-              <span>{{ $t('ocr.result.duration') }}: {{ row.durationMs ? (row.durationMs / 1000).toFixed(1) + 's' : '-' }}</span>
+              <span
+                >{{ $t('ocr.result.duration') }}:
+                {{ row.durationMs ? (row.durationMs / 1000).toFixed(1) + 's' : '-' }}</span
+              >
               <span>{{ formatTime(row.createTime) }}</span>
             </div>
           </div>
@@ -190,7 +185,9 @@
           <el-descriptions-item :label="$t('ocr.history.fileName')">{{ detailData.fileName }}</el-descriptions-item>
           <el-descriptions-item :label="$t('ocr.result.engine')">{{ detailData.ocrEngine }}</el-descriptions-item>
           <el-descriptions-item :label="$t('ocr.result.chars')">{{ detailData.charCount }}</el-descriptions-item>
-          <el-descriptions-item :label="$t('ocr.result.duration')">{{ (detailData.durationMs / 1000).toFixed(1) }}s</el-descriptions-item>
+          <el-descriptions-item :label="$t('ocr.result.duration')"
+            >{{ (detailData.durationMs / 1000).toFixed(1) }}s</el-descriptions-item
+          >
         </el-descriptions>
         <el-input
           :model-value="detailData.resultText"
@@ -316,11 +313,11 @@ function handleReset() {
 
 async function handleDelete(row) {
   try {
-    await ElMessageBox.confirm(
-      t('ocr.history.confirmDelete', { name: row.fileName }),
-      t('common.confirm'),
-      { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    )
+    await ElMessageBox.confirm(t('ocr.history.confirmDelete', { name: row.fileName }), t('common.confirm'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    })
     await deleteOcrApi(row.id)
     ElMessage.success(t('common.deleteSuccess'))
     fetchHistory()
@@ -333,11 +330,11 @@ async function handleDelete(row) {
 
 async function handleDeleteAll() {
   try {
-    await ElMessageBox.confirm(
-      t('ocr.history.confirmDeleteAll'),
-      t('common.confirm'),
-      { confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning' }
-    )
+    await ElMessageBox.confirm(t('ocr.history.confirmDeleteAll'), t('common.confirm'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    })
     await deleteAllOcrApi()
     ElMessage.success(t('common.deleteSuccess'))
     fetchHistory()
@@ -353,7 +350,7 @@ async function fetchHistory() {
     const res = await getOcrPageApi({ page: historyPage.value, size: pageSize })
     historyList.value = res.data.records || []
     historyTotal.value = res.data.total || 0
-  } catch (e) {
+  } catch {
     // ignore
   }
 }
@@ -381,7 +378,10 @@ function formatFileSize(bytes) {
   const units = ['B', 'KB', 'MB', 'GB']
   let i = 0
   let size = bytes
-  while (size >= 1024 && i < units.length - 1) { size /= 1024; i++ }
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024
+    i++
+  }
   return size.toFixed(1) + ' ' + units[i]
 }
 

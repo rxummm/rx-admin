@@ -5,8 +5,8 @@
 
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { getUserPage } from '@/api/user'
-import { getRolePage } from '@/api/role'
+import { getUserPageApi } from '@/api/user'
+import { getRoleListApi } from '@/api/role'
 import { getConfigPage } from '@/api/config'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 
@@ -77,7 +77,7 @@ function searchMenus(keyword, menus) {
   const lowerKeyword = keyword.toLowerCase()
 
   function traverse(menuList) {
-    menuList.forEach(menu => {
+    menuList.forEach((menu) => {
       const nameMatch = menu.name?.toLowerCase().includes(lowerKeyword)
       const pathMatch = menu.path?.toLowerCase().includes(lowerKeyword)
 
@@ -107,13 +107,13 @@ function searchMenus(keyword, menus) {
  * 搜索用户（API 搜索）
  */
 async function searchUsers(keyword) {
-  const res = await getUserPage({
+  const res = await getUserPageApi({
     page: 1,
     pageSize: 10,
     keyword: keyword
   })
 
-  return (res.data?.records || []).map(user => ({
+  return (res.data?.records || []).map((user) => ({
     type: SEARCH_TYPES.USER,
     id: user.id,
     name: user.nickname || user.username,
@@ -128,13 +128,13 @@ async function searchUsers(keyword) {
  * 搜索角色（API 搜索）
  */
 async function searchRoles(keyword) {
-  const res = await getRolePage({
+  const res = await getRoleListApi({
     page: 1,
     pageSize: 10,
     roleName: keyword
   })
 
-  return (res.data?.records || []).map(role => ({
+  return (res.data?.records || []).map((role) => ({
     type: SEARCH_TYPES.ROLE,
     id: role.id,
     name: role.roleName,
@@ -155,7 +155,7 @@ async function searchConfigs(keyword) {
     configName: keyword
   })
 
-  return (res.data?.records || []).map(config => ({
+  return (res.data?.records || []).map((config) => ({
     type: SEARCH_TYPES.CONFIG,
     id: config.id,
     name: config.configName,
@@ -186,17 +186,15 @@ function calculateScore(text, keyword) {
 
   // 分词匹配
   const words = lowerKeyword.split(/\s+/)
-  const matchCount = words.filter(word => lowerText.includes(word)).length
+  const matchCount = words.filter((word) => lowerText.includes(word)).length
   return matchCount * 20
 }
 
 /**
  * 按分数排序结果
  */
-function sortResults(results, keyword) {
-  return results
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 20) // 最多返回 20 条结果
+function sortResults(results, _keyword) {
+  return results.sort((a, b) => b.score - a.score).slice(0, 20) // 最多返回 20 条结果
 }
 
 /**

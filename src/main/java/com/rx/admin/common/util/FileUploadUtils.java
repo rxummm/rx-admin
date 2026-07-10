@@ -10,7 +10,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Slf4j
-@SuppressWarnings("null")
 public class FileUploadUtils {
 
     private FileUploadUtils() {}

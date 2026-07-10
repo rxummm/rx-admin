@@ -14,7 +14,7 @@ const FILE_EXT_COLORS = {
   png: '#67C23A',
   gif: '#67C23A',
   txt: '#909399',
-  csv: '#67C23A',
+  csv: '#67C23A'
 }
 
 export function getFileIconColor(fileName) {

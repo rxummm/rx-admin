@@ -13,12 +13,7 @@
 import { ref } from 'vue'
 
 export function useModal(options = {}) {
-  const {
-    onOpen = null,
-    onClose = null,
-    onBeforeOpen = null,
-    onBeforeClose = null
-  } = options
+  const { onOpen = null, onClose = null, onBeforeOpen = null, onBeforeClose = null } = options
 
   const visible = ref(false)
 
@@ -71,12 +66,7 @@ export function useModal(options = {}) {
  * })
  */
 export function useDialog(options = {}) {
-  const {
-    onConfirm = null,
-    onCancel = null,
-    confirmText = '确定',
-    cancelText = '取消'
-  } = options
+  const { onConfirm = null, onCancel = null, confirmText = '确定', cancelText = '取消' } = options
 
   const showDialog = ref(false)
   const loading = ref(false)
@@ -94,8 +84,6 @@ export function useDialog(options = {}) {
         await onConfirm()
       }
       showDialog.value = false
-    } catch (error) {
-      throw error
     } finally {
       loading.value = false
     }

@@ -6,26 +6,44 @@
         <span class="toolbar-title">流程图编辑器</span>
         <el-divider direction="vertical" />
         <el-button size="small" @click="addNode('default')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1" />
+          </svg>
           矩形
         </el-button>
         <el-button size="small" @click="addNode('diamond')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           菱形
         </el-button>
         <el-button size="small" @click="addNode('roundRect')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <rect
+              x="1"
+              y="3"
+              width="14"
+              height="10"
+              rx="5"
+              ry="5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
           圆角矩形
         </el-button>
         <el-button size="small" @click="addNode('ellipse')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           椭圆
         </el-button>
         <el-divider direction="vertical" />
         <el-color-picker v-model="nodeColor" size="small" :predefine="predefineColors" />
         <el-divider direction="vertical" />
-        <el-select v-model="fontSize" size="small" style="width:70px">
-          <el-option v-for="s in [12,14,16,18,20,24]" :key="s" :label="s+'px'" :value="s" />
+        <el-select v-model="fontSize" size="small" style="width: 70px">
+          <el-option v-for="s in [12, 14, 16, 18, 20, 24]" :key="s" :label="s + 'px'" :value="s" />
         </el-select>
       </div>
       <div class="toolbar-right">
@@ -84,30 +102,15 @@
         </template>
 
         <template #node-diamond="nodeProps">
-          <FlowNode
-            :id="nodeProps.id"
-            :data="nodeProps.data"
-            :selected="nodeProps.selected"
-            type="diamond"
-          />
+          <FlowNode :id="nodeProps.id" :data="nodeProps.data" :selected="nodeProps.selected" type="diamond" />
         </template>
 
         <template #node-roundRect="nodeProps">
-          <FlowNode
-            :id="nodeProps.id"
-            :data="nodeProps.data"
-            :selected="nodeProps.selected"
-            type="roundRect"
-          />
+          <FlowNode :id="nodeProps.id" :data="nodeProps.data" :selected="nodeProps.selected" type="roundRect" />
         </template>
 
         <template #node-ellipse="nodeProps">
-          <FlowNode
-            :id="nodeProps.id"
-            :data="nodeProps.data"
-            :selected="nodeProps.selected"
-            type="ellipse"
-          />
+          <FlowNode :id="nodeProps.id" :data="nodeProps.data" :selected="nodeProps.selected" type="ellipse" />
         </template>
       </VueFlow>
     </div>
@@ -124,8 +127,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, markRaw, h, nextTick } from 'vue'
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { ref, reactive } from 'vue'
+import { VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -155,7 +158,7 @@ const defaultEdgeOptions = {
   type: 'smoothstep',
   animated: false,
   style: { stroke: '#909399', strokeWidth: 2 },
-  markerEnd: MarkerType.ArrowClosed,
+  markerEnd: MarkerType.ArrowClosed
 }
 
 // 撤销重做
@@ -170,11 +173,11 @@ const contextNodeId = ref(null)
 
 // ==================== 添加节点 ====================
 function addNode(shape) {
-  const colors = {
+  const _colors = {
     rect: '#409EFF',
     diamond: '#E6A23C',
     roundRect: '#67C23A',
-    ellipse: '#8B5CF6',
+    ellipse: '#8B5CF6'
   }
 
   const nodeType = shape === 'default' || shape === 'rect' ? 'default' : shape
@@ -187,8 +190,8 @@ function addNode(shape) {
       label: '',
       shape: shape === 'default' ? 'rect' : shape,
       color: nodeColor.value,
-      fontSize: fontSize.value,
-    },
+      fontSize: fontSize.value
+    }
   }
   nodes.value.push(newNode)
   saveHistory()
@@ -205,7 +208,7 @@ function onConnect(connection) {
     type: 'smoothstep',
     animated: false,
     style: { stroke: nodeColor.value, strokeWidth: 2 },
-    markerEnd: MarkerType.ArrowClosed,
+    markerEnd: MarkerType.ArrowClosed
   })
   saveHistory()
 }
@@ -218,7 +221,7 @@ function onNodeDblClick({ node }) {
 }
 
 function confirmEditText() {
-  const node = nodes.value.find(n => n.id === editDialog.targetId)
+  const node = nodes.value.find((n) => n.id === editDialog.targetId)
   if (node) {
     node.data = { ...node.data, label: editDialog.text }
     saveHistory()
@@ -246,7 +249,7 @@ function onPaneClick() {
 function saveHistory() {
   const snapshot = {
     nodes: JSON.parse(JSON.stringify(nodes.value)),
-    edges: JSON.parse(JSON.stringify(edges.value)),
+    edges: JSON.parse(JSON.stringify(edges.value))
   }
   history.value = history.value.slice(0, historyIndex.value + 1)
   history.value.push(snapshot)
@@ -291,7 +294,7 @@ function exportImage() {
     }
 
     // 用 transform 信息计算导出区域
-    const transform = viewport.style.transform
+    const _transform = viewport.style.transform
     // 简单方案：用 html2canvas 或直接用 canvas
     const flowPane = document.querySelector('.vue-flow__pane')
     if (!flowPane) return
@@ -308,7 +311,10 @@ function exportImage() {
     const padding = 20
     svgClone.setAttribute('width', bbox.width + padding * 2)
     svgClone.setAttribute('height', bbox.height + padding * 2)
-    svgClone.setAttribute('viewBox', `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`)
+    svgClone.setAttribute(
+      'viewBox',
+      `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`
+    )
 
     const svgData = new XMLSerializer().serializeToString(svgClone)
     const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })

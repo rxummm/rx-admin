@@ -37,7 +37,7 @@ public class SysLogController {
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime) {
         PageResult<SysLog> pr = logService.pageQuery(page, size, keyword, status, startTime, endTime);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), logConvert.toVOList(pr.getRecords())));
+        return Result.ok(logConvert.toPageResult(pr));
     }
 
     @Operation(summary = "删除日志")

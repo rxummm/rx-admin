@@ -36,22 +36,10 @@
         style="width: 320px"
         :prefix-icon="Search"
       />
-      <el-select
-        v-model="typeFilter"
-        placeholder="服务类型"
-        clearable
-        style="width: 180px"
-      >
-        <el-option
-          v-for="t in serviceTypes"
-          :key="t.value"
-          :label="t.label"
-          :value="t.value"
-        />
+      <el-select v-model="typeFilter" placeholder="服务类型" clearable style="width: 180px">
+        <el-option v-for="t in serviceTypes" :key="t.value" :label="t.label" :value="t.value" />
       </el-select>
-      <el-tag type="info" size="small">
-        共 {{ filteredItems.length }} 项服务
-      </el-tag>
+      <el-tag type="info" size="small"> 共 {{ filteredItems.length }} 项服务 </el-tag>
     </div>
 
     <!-- 服务列表 -->
@@ -113,7 +101,7 @@
                 <h4 class="section-title">
                   调用语法
                   <el-tooltip content="点击复制" placement="top">
-                    <el-button text size="small" type="primary" style="margin-left:8px" @click.stop="copySyntax(row)">
+                    <el-button text size="small" type="primary" style="margin-left: 8px" @click.stop="copySyntax(row)">
                       复制
                     </el-button>
                   </el-tooltip>
@@ -219,11 +207,7 @@
               <!-- 示例代码 -->
               <div v-if="row._detail.examples?.length" class="detail-section">
                 <h4 class="section-title">使用示例 (Examples)</h4>
-                <div
-                  v-for="(ex, idx) in row._detail.examples"
-                  :key="idx"
-                  class="example-block"
-                >
+                <div v-for="(ex, idx) in row._detail.examples" :key="idx" class="example-block">
                   <div v-if="ex.description" class="example-desc">{{ ex.description }}</div>
                   <el-input
                     :model-value="ex.sqlCode"
@@ -286,11 +270,11 @@ const serviceTypes = [
   { label: 'Procedure', value: 'PROCEDURE' },
   { label: 'Scalar Function', value: 'SCALAR FUNCTION' },
   { label: 'Table', value: 'TABLE' },
-  { label: 'Global Variable', value: 'GLOBAL VARIABLE' },
+  { label: 'Global Variable', value: 'GLOBAL VARIABLE' }
 ]
 
 const currentCategory = computed(() => {
-  return categories.value.find(c => c.id === activeCategory.value) || null
+  return categories.value.find((c) => c.id === activeCategory.value) || null
 })
 
 const currentItems = computed(() => {
@@ -302,13 +286,13 @@ const filteredItems = computed(() => {
   if (keyword.value) {
     const kw = keyword.value.toLowerCase()
     items = items.filter(
-      item =>
+      (item) =>
         item.serviceName.toLowerCase().includes(kw) ||
         (item.briefDescription && item.briefDescription.toLowerCase().includes(kw))
     )
   }
   if (typeFilter.value) {
-    items = items.filter(item => item.serviceType === typeFilter.value)
+    items = items.filter((item) => item.serviceType === typeFilter.value)
   }
   return items
 })
@@ -335,12 +319,12 @@ function getParams(name) {
 
 function getTypeTag(type) {
   const map = {
-    'VIEW': 'success',
-    'PROCEDURE': 'warning',
+    VIEW: 'success',
+    PROCEDURE: 'warning',
     'TABLE FUNCTION': 'primary',
     'SCALAR FUNCTION': 'info',
-    'TABLE': 'info',
-    'GLOBAL VARIABLE': 'danger',
+    TABLE: 'info',
+    'GLOBAL VARIABLE': 'danger'
   }
   return map[type] || 'info'
 }
@@ -351,11 +335,13 @@ function getCallSyntax(row) {
   const type = row.serviceType
   const params = row._detail?.parameters || []
   // 只取 IN 方向参数生成示例
-  const inParams = params.filter(p => !p.paramDirection || p.paramDirection === 'IN' || p.paramDirection === 'INOUT')
-  const args = inParams.map(p => {
-    const val = p.defaultValue ? p.defaultValue.replace(/^'|'$/g, '') : `/* ${p.paramType || 'value'} */`
-    return `${p.paramName} => ${val}`
-  }).join(', ')
+  const inParams = params.filter((p) => !p.paramDirection || p.paramDirection === 'IN' || p.paramDirection === 'INOUT')
+  const args = inParams
+    .map((p) => {
+      const val = p.defaultValue ? p.defaultValue.replace(/^'|'$/g, '') : `/* ${p.paramType || 'value'} */`
+      return `${p.paramName} => ${val}`
+    })
+    .join(', ')
 
   // 去掉服务名中可能包含的 ()
   const cleanName = name.replace(/\(\)$/, '')
@@ -381,11 +367,14 @@ function getCallSyntax(row) {
 /** 复制语法到剪贴板 */
 function copySyntax(row) {
   const text = getCallSyntax(row)
-  navigator.clipboard.writeText(text).then(() => {
-    ElMessage.success('已复制调用语法')
-  }).catch(() => {
-    ElMessage.warning('复制失败，请手动复制')
-  })
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      ElMessage.success('已复制调用语法')
+    })
+    .catch(() => {
+      ElMessage.warning('复制失败，请手动复制')
+    })
 }
 
 /** 将 \n 和枚举值格式化 */
@@ -422,7 +411,7 @@ async function handleExpandChange(row, expandedRows) {
       row._detail = res.data
       loadedDetails.value[row.id] = res.data
     }
-  } catch (e) {
+  } catch {
     ElMessage.error('加载服务详情失败')
   } finally {
     detailLoading.value = false
@@ -443,7 +432,7 @@ async function handleRowClick(row) {
       row._detail = res.data
       loadedDetails.value[row.id] = res.data
     }
-  } catch (e) {
+  } catch {
     ElMessage.error('加载服务详情失败')
   } finally {
     detailLoading.value = false

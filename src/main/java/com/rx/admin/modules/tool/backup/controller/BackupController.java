@@ -102,9 +102,14 @@ public class BackupController {
         }
     }
 
+    @SaCheckPermission("tool:backup:query")
     @Operation(summary = "下载备份文件")
     @GetMapping("/download/{filename}")
     public void download(@PathVariable String filename, jakarta.servlet.http.HttpServletResponse response) throws IOException {
+        if (filename.contains("..") || filename.contains("/") || filename.contains("\\")) {
+            response.sendError(400);
+            return;
+        }
         File file = new File(BACKUP_DIR, filename);
         if (!file.exists()) { response.sendError(404); return; }
         response.setContentType("application/octet-stream");

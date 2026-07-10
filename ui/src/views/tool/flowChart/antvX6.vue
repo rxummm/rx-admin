@@ -6,26 +6,34 @@
         <span class="toolbar-title">X6 流程图</span>
         <el-divider direction="vertical" />
         <el-button size="small" @click="addNode('rect')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1" />
+          </svg>
           矩形
         </el-button>
         <el-button size="small" @click="addNode('diamond')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           菱形
         </el-button>
         <el-button size="small" @click="addNode('circle')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           圆形
         </el-button>
         <el-button size="small" @click="addNode('ellipse')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           椭圆
         </el-button>
         <el-divider direction="vertical" />
         <el-color-picker v-model="nodeColor" size="small" :predefine="predefineColors" />
         <el-divider direction="vertical" />
-        <el-select v-model="fontSize" size="small" style="width:70px">
-          <el-option v-for="s in [12,14,16,18,20,24]" :key="s" :label="s+'px'" :value="s" />
+        <el-select v-model="fontSize" size="small" style="width: 70px">
+          <el-option v-for="s in [12, 14, 16, 18, 20, 24]" :key="s" :label="s + 'px'" :value="s" />
         </el-select>
       </div>
       <div class="toolbar-right">
@@ -84,8 +92,7 @@ const historyIndex = ref(-1)
 const editDialog = reactive({ visible: false, text: '', targetNodeId: null })
 
 // graph 是否已初始化
-const graphReady = computed(() => !!graph.value)
-
+const _graphReady = computed(() => !!graph.value)
 
 // ==================== 初始化 X6 ====================
 let initTimer = null
@@ -117,7 +124,7 @@ function initGraph() {
     grid: {
       size: 20,
       type: 'dot',
-      args: { color: '#e0e0e0', thickness: 1 },
+      args: { color: '#e0e0e0', thickness: 1 }
     },
     snapline: true,
     mousewheel: true,
@@ -127,29 +134,29 @@ function initGraph() {
       connectionPoint: 'boundary',
       router: 'manhattan',
       connector: 'rounded',
-      style: { stroke: '#909399', strokeWidth: 2 },
+      style: { stroke: '#909399', strokeWidth: 2 }
     },
     defaultNode: {
       attrs: {
         body: { stroke: '#409EFF', strokeWidth: 2, fill: '#ffffff' },
-        label: { fontSize: 14, fill: '#303133' },
+        label: { fontSize: 14, fill: '#303133' }
       },
       router: 'manhattan',
-      connector: 'rounded',
+      connector: 'rounded'
     },
     defaultEdge: {
       attrs: {
         line: {
           stroke: '#909399',
           strokeWidth: 2,
-          targetMarker: { name: 'classic', size: 8 },
-        },
+          targetMarker: { name: 'classic', size: 8 }
+        }
       },
       router: 'manhattan',
-      connector: 'rounded',
+      connector: 'rounded'
     },
     keyboard: { enabled: true },
-    clipboard: { enabled: true },
+    clipboard: { enabled: true }
   })
 
   graph.value.on('node:doubleclick', ({ cell }) => {
@@ -198,22 +205,48 @@ function addNode(type) {
   const y = centerY + (Math.random() - 0.5) * 150
 
   const nodeMap = {
-    rect: () => graph.value.addNode({
-      id, x: x - 50, y: y - 25, width: 100, height: 50,
-      attrs: { body: { stroke: color, fill: '#ffffff' }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } },
-    }),
-    diamond: () => graph.value.addNode({
-      id, x: x - 50, y: y - 30, width: 100, height: 60, shape: 'diamond-shape',
-      attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } },
-    }),
-    circle: () => graph.value.addNode({
-      id, x: x - 35, y: y - 35, width: 70, height: 70, shape: 'circle-shape',
-      attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } },
-    }),
-    ellipse: () => graph.value.addNode({
-      id, x: x - 60, y: y - 30, width: 120, height: 60, shape: 'ellipse-shape',
-      attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } },
-    }),
+    rect: () =>
+      graph.value.addNode({
+        id,
+        x: x - 50,
+        y: y - 25,
+        width: 100,
+        height: 50,
+        attrs: {
+          body: { stroke: color, fill: '#ffffff' },
+          label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' }
+        }
+      }),
+    diamond: () =>
+      graph.value.addNode({
+        id,
+        x: x - 50,
+        y: y - 30,
+        width: 100,
+        height: 60,
+        shape: 'diamond-shape',
+        attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } }
+      }),
+    circle: () =>
+      graph.value.addNode({
+        id,
+        x: x - 35,
+        y: y - 35,
+        width: 70,
+        height: 70,
+        shape: 'circle-shape',
+        attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } }
+      }),
+    ellipse: () =>
+      graph.value.addNode({
+        id,
+        x: x - 60,
+        y: y - 30,
+        width: 120,
+        height: 60,
+        shape: 'ellipse-shape',
+        attrs: { body: { stroke: color }, label: { text: typeLabels[type], fontSize: fontSize.value, fill: '#303133' } }
+      })
   }
 
   nodeMap[type]?.()

@@ -18,4 +18,6 @@ public interface ISysRoleService extends IService<SysRole> {
     void updateRole(RoleUpdateDTO dto);
 
     void deleteRole(Long id);
+
+    void deleteRoleBatch(List<Long> ids);
 }

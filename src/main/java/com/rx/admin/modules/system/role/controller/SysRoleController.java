@@ -62,6 +62,15 @@ public class SysRoleController {
         return Result.ok();
     }
 
+    @Operation(summary = "批量删除角色")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Role.DELETE)
+    @OperateLog(module = "角色管理", operation = "批量删除角色")
+    public Result<?> deleteBatch(@RequestBody List<Long> ids) {
+        roleService.deleteRoleBatch(ids);
+        return Result.ok();
+    }
+
     @Operation(summary = "获取角色详情")
     @GetMapping("/{id}")
     @SaCheckPermission(PermissionConstants.Role.QUERY)

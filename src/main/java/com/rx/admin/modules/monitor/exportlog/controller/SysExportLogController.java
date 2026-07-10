@@ -36,6 +36,6 @@ public class SysExportLogController {
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime) {
         PageResult<SysExportLog> pr = exportLogService.pageQuery(page, size, username, exportType, startTime, endTime);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), exportLogConvert.toVOList(pr.getRecords())));
+        return Result.ok(exportLogConvert.toPageResult(pr));
     }
 }

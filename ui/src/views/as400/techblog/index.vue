@@ -31,16 +31,13 @@
           style="width: 200px"
           @change="handleSearch"
         >
-          <el-option
-            v-for="cat in categories"
-            :key="cat"
-            :label="cat"
-            :value="cat"
-          />
+          <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
         </el-select>
       </div>
       <div class="toolbar-actions">
-        <el-button v-if="userStore.hasPerm('techblog:add')" type="primary" size="small" @click="openCreate">新增文章</el-button>
+        <el-button v-if="userStore.hasPerm('techblog:add')" type="primary" size="small" @click="openCreate"
+          >新增文章</el-button
+        >
         <div v-if="userStore.hasPerm('techblog:sync')" class="sync-toggle" @click="showSyncPanel = !showSyncPanel">
           <span class="sync-toggle-label">数据同步</span>
           <el-icon class="sync-arrow" :class="{ expanded: showSyncPanel }"><ArrowDown /></el-icon>
@@ -61,11 +58,7 @@
             <span class="source-name">{{ src.label }}</span>
           </div>
           <div class="source-progress" v-if="fetchStatus[src.key] >= 0 && fetchStatus[src.key] < 100">
-            <el-progress
-              :percentage="fetchStatus[src.key]"
-              :stroke-width="6"
-              style="width: 120px"
-            />
+            <el-progress :percentage="fetchStatus[src.key]" :stroke-width="6" style="width: 120px" />
           </div>
           <div class="source-progress done" v-else-if="fetchStatus[src.key] === 100">
             <el-icon color="#67C23A"><CircleCheckFilled /></el-icon>
@@ -102,24 +95,18 @@
           <el-button text size="small" @click="showLogs = null">收起</el-button>
         </div>
         <div class="logs-content">
-          <div v-for="(log, idx) in (fetchLogs[showLogs] || [])" :key="idx" class="log-line">{{ log }}</div>
+          <div v-for="(log, idx) in fetchLogs[showLogs] || []" :key="idx" class="log-line">{{ log }}</div>
         </div>
       </div>
     </div>
 
     <!-- 批量操作栏 -->
     <div v-if="selectedIds.length > 0 && userStore.hasPerm('techblog:batchDelete')" class="batch-bar">
-      <el-checkbox
-        :model-value="isAllSelected"
-        :indeterminate="isIndeterminate"
-        @change="toggleSelectAll"
-      >
+      <el-checkbox :model-value="isAllSelected" :indeterminate="isIndeterminate" @change="toggleSelectAll">
         全选
       </el-checkbox>
       <span class="batch-count">已选 {{ selectedIds.length }} 篇</span>
-      <el-button type="danger" size="small" @click="handleBatchDelete" :loading="batchDeleting">
-        批量删除
-      </el-button>
+      <el-button type="danger" size="small" @click="handleBatchDelete" :loading="batchDeleting"> 批量删除 </el-button>
       <el-button size="small" @click="clearSelection">取消选择</el-button>
     </div>
 
@@ -135,7 +122,11 @@
         :class="['article-card', { selected: selectedIds.includes(article.id) }]"
       >
         <div class="card-main" @click="goDetail(article.id)">
-          <div class="card-checkbox" v-if="userStore.hasPerm('techblog:batchDelete')" @click.stop="toggleSelect(article.id)">
+          <div
+            class="card-checkbox"
+            v-if="userStore.hasPerm('techblog:batchDelete')"
+            @click.stop="toggleSelect(article.id)"
+          >
             <el-checkbox :model-value="selectedIds.includes(article.id)" />
           </div>
           <div class="card-cover" v-if="article.coverImage">
@@ -174,8 +165,14 @@
           <el-button text type="primary" size="small" @click="goDetail(article.id)">
             阅读全文 <el-icon><ArrowRight /></el-icon>
           </el-button>
-          <el-button v-if="userStore.hasPerm('techblog:edit')" text size="small" @click.stop="openEdit(article)">编辑</el-button>
-          <el-popconfirm v-if="userStore.hasPerm('techblog:delete')" title="确认删除该文章?" @confirm="handleDelete(article.id)">
+          <el-button v-if="userStore.hasPerm('techblog:edit')" text size="small" @click.stop="openEdit(article)"
+            >编辑</el-button
+          >
+          <el-popconfirm
+            v-if="userStore.hasPerm('techblog:delete')"
+            title="确认删除该文章?"
+            @confirm="handleDelete(article.id)"
+          >
             <template #reference>
               <el-button text type="danger" size="small" @click.stop>删除</el-button>
             </template>
@@ -268,7 +265,16 @@ import { Search, Calendar, User, View, ArrowRight, ArrowDown, CircleCheckFilled 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
-import { getArticlesApi, getCategoriesApi, startFetchApi, getFetchProgressApi, updateArticleApi, deleteArticleApi, batchDeleteArticlesApi, createArticleApi } from '@/api/techBlog'
+import {
+  getArticlesApi,
+  getCategoriesApi,
+  startFetchApi,
+  getFetchProgressApi,
+  updateArticleApi,
+  deleteArticleApi,
+  batchDeleteArticlesApi,
+  createArticleApi
+} from '@/api/techBlog'
 import { useUserStore } from '@/stores/user'
 import { useTheme } from '@/composables/useTheme'
 
@@ -339,16 +345,52 @@ const formData = ref({
 })
 // md-editor-v3 toolbar config
 const toolbars = [
-  'bold', 'italic', 'strikethrough', 'title', '-',
-  'unorderedList', 'orderedList', 'checkedList', '-',
-  'code', 'codeRow', 'quote', 'link', 'image', 'table', '-',
-  'preview', 'fullscreen'
+  'bold',
+  'italic',
+  'strikethrough',
+  'title',
+  '-',
+  'unorderedList',
+  'orderedList',
+  'checkedList',
+  '-',
+  'code',
+  'codeRow',
+  'quote',
+  'link',
+  'image',
+  'table',
+  '-',
+  'preview',
+  'fullscreen'
 ]
 
 // 自定义 HTML 消毒函数：保留图片等安全标签，防止 XSS
 function customSanitize(html) {
   // 允许的安全标签列表
-  const allowedTags = ['img', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'figure', 'figcaption', 'div', 'span', 'br', 'hr', 'pre', 'sup', 'sub', 'kbd', 'abbr', 'mark', 'details', 'summary']
+  const _allowedTags = [
+    'img',
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'td',
+    'th',
+    'figure',
+    'figcaption',
+    'div',
+    'span',
+    'br',
+    'hr',
+    'pre',
+    'sup',
+    'sub',
+    'kbd',
+    'abbr',
+    'mark',
+    'details',
+    'summary'
+  ]
   // 移除危险的 script/iframe/object/embed 等
   html = html.replace(/<script[\s\S]*?<\/script>/gi, '')
   html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
@@ -360,19 +402,19 @@ function customSanitize(html) {
 }
 
 // 初始化各来源状态
-sourceList.forEach(s => {
+sourceList.forEach((s) => {
   fetchStatus.value[s.key] = -1
   fetchLogs.value[s.key] = []
 })
 
 // 计算属性
-const currentSourceInfo = computed(() => sourceList.find(s => s.key === currentSource.value) || sourceList[0])
-const currentSourceTitle = computed(() => currentSourceInfo.value.label + ' Blog')
-const currentSourceUrl = computed(() => currentSourceInfo.value.url)
+const currentSourceInfo = computed(() => sourceList.find((s) => s.key === currentSource.value) || sourceList[0])
+const _currentSourceTitle = computed(() => currentSourceInfo.value.label + ' Blog')
+const _currentSourceUrl = computed(() => currentSourceInfo.value.url)
 const emptyHint = computed(() => `暂无文章，请从 ${currentSourceInfo.value.label} 博客抓取内容`)
 
 function sourceLabel(key) {
-  const s = sourceList.find(i => i.key === key)
+  const s = sourceList.find((i) => i.key === key)
   return s ? s.label : key
 }
 
@@ -385,7 +427,10 @@ function statusClass(key) {
 
 function splitCats(cats) {
   if (!cats) return []
-  return cats.split(',').map(c => c.trim()).filter(Boolean)
+  return cats
+    .split(',')
+    .map((c) => c.trim())
+    .filter(Boolean)
 }
 
 // 数据加载
@@ -403,7 +448,7 @@ async function loadArticles() {
       articles.value = res.data.records || []
       total.value = res.data.total || 0
     }
-  } catch (e) {
+  } catch {
     ElMessage.error('加载文章失败')
   } finally {
     loading.value = false
@@ -416,7 +461,9 @@ async function loadCategories() {
     if (res.code === 200) {
       categories.value = res.data || []
     }
-  } catch (e) { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function handleSearch() {
@@ -443,7 +490,7 @@ function toggleSelect(id) {
 
 function toggleSelectAll(val) {
   if (val) {
-    selectedIds.value = articles.value.map(a => a.id)
+    selectedIds.value = articles.value.map((a) => a.id)
   } else {
     selectedIds.value = []
   }
@@ -458,9 +505,9 @@ async function handleDelete(id) {
   try {
     await deleteArticleApi(id)
     ElMessage.success('删除成功')
-    selectedIds.value = selectedIds.value.filter(i => i !== id)
+    selectedIds.value = selectedIds.value.filter((i) => i !== id)
     loadArticles()
-  } catch (e) {
+  } catch {
     ElMessage.error('删除失败')
   }
 }
@@ -478,7 +525,7 @@ async function handleBatchDelete() {
     ElMessage.success(`已删除 ${selectedIds.value.length} 篇`)
     selectedIds.value = []
     loadArticles()
-  } catch (e) {
+  } catch {
     ElMessage.error('批量删除失败')
   } finally {
     batchDeleting.value = false
@@ -561,7 +608,7 @@ async function submitForm() {
     }
     formVisible.value = false
     loadArticles()
-  } catch (e) {
+  } catch {
     ElMessage.error(formMode.value === 'create' ? '创建失败' : '保存失败')
   } finally {
     formSaving.value = false
@@ -588,7 +635,7 @@ async function handleFetchSource(source) {
 
     // 为每个 source 启动独立轮询
     startPolling(source)
-  } catch (e) {
+  } catch {
     ElMessage.error(`[${sourceLabel(source)}] 启动抓取失败`)
   } finally {
     fetchingSource.value = null
@@ -597,29 +644,34 @@ async function handleFetchSource(source) {
 
 function startPolling(source) {
   if (timers[source]) clearInterval(timers[source])
-  timers[source] = setInterval(async () => {
-    try {
-      const pRes = await getFetchProgressApi(source, { _skipNProgress: true })
-      if (pRes.code === 200 && pRes.data) {
-        const progress = pRes.data.progress
-        fetchStatus.value[source] = progress
-        if (pRes.data.logs) {
-          fetchLogs.value[source] = pRes.data.logs
-        }
-        if (progress >= 100 || progress < 0) {
-          clearInterval(timers[source])
-          timers[source] = null
-          if (progress >= 100) {
-            ElMessage.success(`[${sourceLabel(source)}] 同步完成！`)
-            if (source === currentSource.value) {
-              loadArticles()
-              loadCategories()
+  timers[source] = setInterval(
+    async () => {
+      try {
+        const pRes = await getFetchProgressApi(source, { _skipNProgress: true })
+        if (pRes.code === 200 && pRes.data) {
+          const progress = pRes.data.progress
+          fetchStatus.value[source] = progress
+          if (pRes.data.logs) {
+            fetchLogs.value[source] = pRes.data.logs
+          }
+          if (progress >= 100 || progress < 0) {
+            clearInterval(timers[source])
+            timers[source] = null
+            if (progress >= 100) {
+              ElMessage.success(`[${sourceLabel(source)}] 同步完成！`)
+              if (source === currentSource.value) {
+                loadArticles()
+                loadCategories()
+              }
             }
           }
         }
+      } catch {
+        /* ignore */
       }
-    } catch (e) { /* ignore */ }
-  }, Number(import.meta.env.VITE_FETCH_PROGRESS_POLL_INTERVAL) || 2000)
+    },
+    Number(import.meta.env.VITE_FETCH_PROGRESS_POLL_INTERVAL) || 2000
+  )
 }
 
 onMounted(() => {
@@ -628,7 +680,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  Object.values(timers).forEach(t => t && clearInterval(t))
+  Object.values(timers).forEach((t) => t && clearInterval(t))
 })
 </script>
 
@@ -783,13 +835,25 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.source-status-dot.idle { background: var(--el-text-color-placeholder); }
-.source-status-dot.syncing { background: var(--el-color-warning); animation: pulse 1s infinite; }
-.source-status-dot.done { background: #67C23A; }
+.source-status-dot.idle {
+  background: var(--el-text-color-placeholder);
+}
+.source-status-dot.syncing {
+  background: var(--el-color-warning);
+  animation: pulse 1s infinite;
+}
+.source-status-dot.done {
+  background: #67c23a;
+}
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .source-name {
@@ -807,7 +871,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #67C23A;
+  color: #67c23a;
 }
 
 .source-progress.idle {
@@ -962,7 +1026,9 @@ onUnmounted(() => {
   margin-bottom: 10px;
 }
 
-.meta-date, .meta-author, .meta-views {
+.meta-date,
+.meta-author,
+.meta-views {
   display: inline-flex;
   align-items: center;
   gap: 4px;

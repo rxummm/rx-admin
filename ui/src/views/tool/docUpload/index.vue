@@ -21,13 +21,9 @@
             multiple
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              将文件拖到此处，或<em>点击上传</em>
-            </div>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             <template #tip>
-              <div class="el-upload__tip">
-                支持任意格式文件，单文件最大50MB，可同时选择多个文件
-              </div>
+              <div class="el-upload__tip">支持任意格式文件，单文件最大50MB，可同时选择多个文件</div>
             </template>
           </el-upload>
         </div>
@@ -35,15 +31,8 @@
         <div class="upload-config">
           <div class="config-item">
             <label>存储目录：</label>
-            <el-input
-              v-model="targetDir"
-              placeholder="输入存储目录路径"
-              size="default"
-              clearable
-            />
-            <el-button @click="loadDefaultDir" :loading="loadingDir">
-              默认路径
-            </el-button>
+            <el-input v-model="targetDir" placeholder="输入存储目录路径" size="default" clearable />
+            <el-button @click="loadDefaultDir" :loading="loadingDir"> 默认路径 </el-button>
           </div>
           <div class="selected-files" v-if="selectedFiles.length > 0">
             <el-tag
@@ -92,13 +81,7 @@
         </div>
       </template>
 
-      <el-table
-        :data="fileList"
-        border
-        stripe
-        v-loading="loading"
-        style="width: 100%"
-      >
+      <el-table :data="fileList" border stripe v-loading="loading" style="width: 100%">
         <el-table-column type="index" label="序号" width="55" align="center" />
         <el-table-column prop="fileName" label="文件名" min-width="200" show-overflow-tooltip>
           <template #default="{ row }">
@@ -198,7 +181,7 @@ function handleFileChange(file) {
 }
 
 function handleRemoveFile(uploadFile) {
-  const idx = selectedFiles.value.findIndex(f => f.name === uploadFile.name && f.size === uploadFile.size)
+  const idx = selectedFiles.value.findIndex((f) => f.name === uploadFile.name && f.size === uploadFile.size)
   if (idx >= 0) selectedFiles.value.splice(idx, 1)
 }
 
@@ -214,7 +197,7 @@ async function handleBatchUpload() {
   }
   uploading.value = true
   let success = 0
-  let fail = 0
+  let _fail = 0
   try {
     for (const file of selectedFiles.value) {
       try {
@@ -249,7 +232,7 @@ async function fetchList() {
     const data = res.data || res
     fileList.value = data.records || []
     total.value = data.total || 0
-  } catch (error) {
+  } catch {
     ElMessage.error('获取文件列表失败')
   } finally {
     loading.value = false

@@ -6,26 +6,34 @@
         <span class="toolbar-title">LogicFlow 流程图</span>
         <el-divider direction="vertical" />
         <el-button size="small" @click="addNode('rect')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <rect x="1" y="3" width="14" height="10" fill="none" stroke="currentColor" stroke-width="1.5" rx="1" />
+          </svg>
           矩形
         </el-button>
         <el-button size="small" @click="addNode('diamond')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <polygon points="8,0 16,8 8,16 0,8" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           菱形
         </el-button>
         <el-button size="small" @click="addNode('circle')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           圆形
         </el-button>
         <el-button size="small" @click="addNode('ellipse')">
-          <svg width="14" height="14" viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16">
+            <ellipse cx="8" cy="8" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
           椭圆
         </el-button>
         <el-divider direction="vertical" />
         <el-color-picker v-model="nodeColor" size="small" :predefine="predefineColors" />
         <el-divider direction="vertical" />
-        <el-select v-model="fontSize" size="small" style="width:70px">
-          <el-option v-for="s in [12,14,16,18,20,24]" :key="s" :label="s+'px'" :value="s" />
+        <el-select v-model="fontSize" size="small" style="width: 70px">
+          <el-option v-for="s in [12, 14, 16, 18, 20, 24]" :key="s" :label="s + 'px'" :value="s" />
         </el-select>
       </div>
       <div class="toolbar-right">
@@ -97,41 +105,41 @@ function initLF() {
       rect: {
         width: 100,
         height: 50,
-        radius: 4,
+        radius: 4
       },
       diamond: {
         width: 100,
-        height: 60,
+        height: 60
       },
       ellipse: {
         rx: 60,
-        ry: 35,
+        ry: 35
       },
       circle: {
-        r: 35,
+        r: 35
       },
       nodeText: {
         fontSize: 14,
         color: '#303133',
         overflowMode: 'autoWrap',
-        lineHeight: 20,
-      },
+        lineHeight: 20
+      }
     },
     background: {
-      backgroundColor: '#fafafa',
+      backgroundColor: '#fafafa'
     },
     grid: {
       type: 'dot',
       size: 20,
       config: {
         color: '#e0e0e0',
-        thickness: 1,
-      },
+        thickness: 1
+      }
     },
     keyboard: {
-      enabled: true,
+      enabled: true
     },
-    snapline: true,
+    snapline: true
   })
 
   // 双击节点编辑文字
@@ -174,20 +182,20 @@ function addNode(type) {
     properties: {
       text: typeLabels[type],
       color: nodeColor.value,
-      fontSize: fontSize.value,
+      fontSize: fontSize.value
     },
     text: {
       x: Math.round(x),
       y: Math.round(y),
-      value: typeLabels[type],
-    },
+      value: typeLabels[type]
+    }
   }
 
   const nodeModel = lf.addNode(nodeData)
   if (nodeModel) {
     nodeModel.setStyle({
       stroke: nodeColor.value,
-      strokeWidth: 2,
+      strokeWidth: 2
     })
   }
 }
@@ -220,10 +228,10 @@ function redo() {
 function clearCanvas() {
   if (!lf) return
   const graphData = lf.getGraphData()
-  const allEdgeIds = graphData.edges.map(e => e.id)
-  const allNodeIds = graphData.nodes.map(n => n.id)
-  allEdgeIds.forEach(id => lf.deleteEdge(id))
-  allNodeIds.forEach(id => lf.deleteNode(id))
+  const allEdgeIds = graphData.edges.map((e) => e.id)
+  const allNodeIds = graphData.nodes.map((n) => n.id)
+  allEdgeIds.forEach((id) => lf.deleteEdge(id))
+  allNodeIds.forEach((id) => lf.deleteNode(id))
   nodeIdCounter = 1
 }
 

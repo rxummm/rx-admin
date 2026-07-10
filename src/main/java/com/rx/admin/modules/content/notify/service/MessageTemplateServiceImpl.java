@@ -12,7 +12,6 @@ import com.rx.admin.modules.content.notify.dto.MessageTemplateUpdateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuppressWarnings("null")
 public class MessageTemplateServiceImpl extends ServiceImpl<SysMessageTemplateMapper, SysMessageTemplate>
         implements MessageTemplateService {
 
@@ -24,7 +23,7 @@ public class MessageTemplateServiceImpl extends ServiceImpl<SysMessageTemplateMa
         }
         wrapper.orderByDesc(SysMessageTemplate::getCreateTime);
         Page<SysMessageTemplate> result = page(new Page<>(page, size), wrapper);
-        return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+        return PageResult.of(result);
     }
 
     @Override

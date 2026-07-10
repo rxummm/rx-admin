@@ -1,4 +1,4 @@
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, nextTick } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -47,7 +47,7 @@ export function useMarkdownRenderer() {
   function extractToc() {
     if (!contentRef.value) return
     const headings = contentRef.value.querySelectorAll('h1, h2, h3')
-    tocItems.value = Array.from(headings).map(h => ({
+    tocItems.value = Array.from(headings).map((h) => ({
       id: h.id,
       text: h.textContent,
       level: parseInt(h.tagName[1])
@@ -57,7 +57,7 @@ export function useMarkdownRenderer() {
   function setupHeadingLinks() {
     if (!contentRef.value) return
     const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6')
-    headings.forEach(h => {
+    headings.forEach((h) => {
       h.addEventListener('click', () => {
         history.pushState(null, '', `#${h.id}`)
       })

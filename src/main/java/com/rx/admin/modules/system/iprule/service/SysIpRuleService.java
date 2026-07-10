@@ -10,7 +10,10 @@ import com.rx.admin.modules.system.iprule.mapper.SysIpRuleMapper;
 import com.rx.admin.modules.system.iprule.dto.IpRuleCreateDTO;
 import com.rx.admin.modules.system.iprule.dto.IpRuleUpdateDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Service
 @SuppressWarnings("null")
@@ -24,12 +27,13 @@ public class SysIpRuleService extends ServiceImpl<SysIpRuleMapper, SysIpRule> {
             w.eq(SysIpRule::getRuleType, ruleType);
         w.orderByDesc(SysIpRule::getCreateTime);
         IPage<SysIpRule> p = page(new Page<>(page, size), w);
-        return PageResult.of(p.getTotal(), p.getCurrent(), p.getSize(), p.getRecords());
+        return PageResult.of(p);
     }
 
     /**
      * 新增 IP 规则
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addIpRule(IpRuleCreateDTO dto) {
         long count = count(new LambdaQueryWrapper<SysIpRule>()
                 .eq(SysIpRule::getIpAddress, dto.getIpAddress())
@@ -48,6 +52,7 @@ public class SysIpRuleService extends ServiceImpl<SysIpRuleMapper, SysIpRule> {
     /**
      * 更新 IP 规则
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateIpRule(IpRuleUpdateDTO dto) {
         SysIpRule rule = getById(dto.getId());
         if (rule == null) {
@@ -58,5 +63,9 @@ public class SysIpRuleService extends ServiceImpl<SysIpRuleMapper, SysIpRule> {
         if (StringUtils.hasText(dto.getDescription())) rule.setDescription(dto.getDescription());
         if (dto.getStatus() != null) rule.setStatus(dto.getStatus());
         updateById(rule);
+    }
+
+    public void deleteIpRuleBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

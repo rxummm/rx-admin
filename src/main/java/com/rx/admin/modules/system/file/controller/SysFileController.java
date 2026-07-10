@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 @ApiVersion(1)
 @RequestMapping("/sys/file")
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class SysFileController {
 
     private final SysFileService fileService;
@@ -52,7 +51,7 @@ public class SysFileController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String keyword) {
         PageResult<SysFile> pr = fileService.pageQuery(page, size, category, keyword);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), fileConvert.toVOList(pr.getRecords())));
+        return Result.ok(fileConvert.toPageResult(pr));
     }
 
     @Operation(summary = "上传文件")

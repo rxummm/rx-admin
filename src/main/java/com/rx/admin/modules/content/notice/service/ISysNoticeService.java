@@ -25,4 +25,6 @@ public interface ISysNoticeService extends IService<SysNotice> {
     void markRead(Long userId, Long noticeId);
 
     void markAllRead(Long userId);
+
+    void deleteNoticeBatch(List<Long> ids);
 }

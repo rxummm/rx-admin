@@ -53,7 +53,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public VideoTranscriptionVO transcribe(File videoFile, String originalName, String language) {
         String effectiveLanguage = resolveLanguage(language);
         String modelName = resolveModelName(null);
@@ -129,7 +129,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public VideoTranscriptionVO uploadOnly(File videoFile, String originalName, String language) {
         String effectiveLanguage = resolveLanguage(language);
         Path storageDir = getStorageDir();
@@ -153,7 +153,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public VideoTranscriptionVO transcribeById(Long id, String model) {
         VideoTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription == null) {
@@ -281,14 +281,11 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
         LambdaQueryWrapper<VideoTranscription> wrapper = buildQueryWrapper(query);
         IPage<VideoTranscription> page = new Page<>(query.getPage(), query.getSize());
         page = transcriptionMapper.selectPage(page, wrapper);
-        List<VideoTranscriptionVO> voList = page.getRecords().stream()
-            .map(videoConvert::toVO)
-            .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(videoConvert::toVO);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         VideoTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription != null) {
@@ -301,7 +298,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBatch(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             return;
@@ -320,7 +317,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public VideoTranscriptionVO updateFileName(Long id, String fileName) {
         VideoTranscription transcription = transcriptionMapper.selectById(id);
         if (transcription == null) {
@@ -335,7 +332,7 @@ public class VideoTranscriptionService implements IVideoTranscriptionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public VideoTranscriptionVO updateSpeakerName(Long id, String speakerLabel, String speakerName) {
         if (speakerLabel == null || speakerLabel.trim().isEmpty()) {
             throw new RuntimeException("说话人标签不能为空");

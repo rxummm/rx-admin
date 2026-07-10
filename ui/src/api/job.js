@@ -48,7 +48,6 @@ export function toggleJobStatusApi(id) {
 export function runOnceApi(id) {
   return request({
     url: API.MONITOR.JOB.RUN_ONCE(id),
-    method: "put"
+    method: 'put'
   })
 }
-

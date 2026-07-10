@@ -7,7 +7,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component
-@SuppressWarnings("null")
 public class As400HealthIndicator implements HealthIndicator {
 
     @Value("${as400.host:}")

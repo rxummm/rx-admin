@@ -64,15 +64,24 @@ public class PermissionConstants {
         public static final String ONLINE_KICK = "monitor:online:kick";
         public static final String LOG_ANALYSIS_LIST = "monitor:log-analysis:list";
         public static final String LOG_QUERY = "monitor:log:query";
+        public static final String LOG_DELETE = "monitor:log:delete";
         public static final String LOGIN_LOG_QUERY = "monitor:loginLog:query";
+        public static final String LOGIN_LOG_DELETE = "monitor:loginLog:delete";
         public static final String JOB_QUERY = "monitor:job:query";
         public static final String JOB_ADD = "monitor:job:add";
         public static final String JOB_EDIT = "monitor:job:edit";
         public static final String JOB_DELETE = "monitor:job:delete";
         public static final String JOB_RUN = "monitor:job:run";
+        public static final String JOB_LOG_QUERY = "monitor:job-log:query";
+        public static final String JOB_LOG_DELETE = "monitor:job-log:delete";
         public static final String HEALTH_QUERY = "monitor:health:query";
         public static final String CACHE_QUERY = "monitor:cache:query";
         public static final String CACHE_DELETE = "monitor:cache:delete";
+        public static final String DASHBOARD_QUERY = "monitor:dashboard:query";
+        public static final String NOTIFICATION_QUERY = "monitor:notification:query";
+        public static final String SLOW_QUERY_QUERY = "monitor:slow-query:query";
+        public static final String SLOW_QUERY_DELETE = "monitor:slow-query:delete";
+        public static final String EXPORT_LOG_QUERY = "monitor:export-log:query";
     }
 
     // ==================== 内容模块 ====================
@@ -84,6 +93,7 @@ public class PermissionConstants {
         public static final String MESSAGE_QUERY = "content:message:query";
         public static final String MESSAGE_SEND = "content:message:send";
         public static final String MESSAGE_DELETE = "content:message:delete";
+        public static final String ANNOUNCEMENT_READ = "content:announcement:read";
     }
 
     // ==================== 经典文学模块 ====================
@@ -129,11 +139,6 @@ public class PermissionConstants {
         public static final String RELATION_DELETE = "classics:honglou:relation:delete";
     }
 
-    // ==================== AS400 模块 ====================
-    public static class As400 {
-        public static final String OBJECTS_QUERY = "as400:objects:query";
-    }
-
     // ==================== 工具模块 ====================
     public static class Tool {
         public static final String GEN_QUERY = "tool:gen:query";
@@ -146,12 +151,31 @@ public class PermissionConstants {
         public static final String BACKUP_DELETE = "tool:backup:delete";
         public static final String DB_TOOL_QUERY = "tool:dbTool:query";
         public static final String DB_TOOL_EXECUTE = "tool:dbTool:execute";
+        public static final String DB_CONSOLE_EXECUTE = "tool:db-console:execute";
         public static final String IMPORT_LIST = "tool:import:list";
         public static final String API_DEBUG_LIST = "tool:api-debug:list";
         public static final String REGION_QUERY = "tool:region:query";
         public static final String REGION_ADD = "tool:region:add";
         public static final String REGION_EDIT = "tool:region:edit";
         public static final String REGION_DELETE = "tool:region:delete";
+    }
+
+    // ==================== 视频模块 ====================
+    public static class Video {
+        public static final String PLAYER_SCAN = "video:player:scan";
+        public static final String PLAYER_LIST = "video:player:list";
+        public static final String PLAYER_VIEW = "video:player:view";
+    }
+
+    // ==================== AS400 模块 ====================
+    public static class As400 {
+        public static final String OBJECTS_QUERY = "as400:objects:query";
+        public static final String ISERVICE_QUERY = "as400:iservice:query";
+    }
+
+    // ==================== 系统权限管理 ====================
+    public static class Permission {
+        public static final String MANAGE = "system:permission:manage";
     }
 
     // ==================== IP 规则模块 ====================
@@ -218,5 +242,13 @@ public class PermissionConstants {
         public static final String LIST = "ocr:recognition:list";
         public static final String VIEW = "ocr:recognition:view";
         public static final String DELETE = "ocr:recognition:delete";
+    }
+
+    // ==================== 日历管理模块 ====================
+    public static class Calendar {
+        public static final String LIST = "tool:calendar:list";
+        public static final String ADD = "tool:calendar:add";
+        public static final String EDIT = "tool:calendar:edit";
+        public static final String DELETE = "tool:calendar:delete";
     }
 }

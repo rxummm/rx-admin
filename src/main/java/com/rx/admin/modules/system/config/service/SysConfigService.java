@@ -9,6 +9,7 @@ import com.rx.admin.modules.system.config.dto.ConfigUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     /**
      * 新增配置
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addConfig(ConfigCreateDTO dto) {
         long count = count(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getConfigKey, dto.getConfigKey()));
         if (count > 0) {
@@ -87,6 +89,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     /**
      * 更新配置
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateConfig(ConfigUpdateDTO dto) {
         SysConfig config = getById(dto.getId());
         if (config == null) {
@@ -106,5 +109,10 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
      */
     public boolean isCaptchaEnabled() {
         return "true".equals(getValue("captcha.enabled"));
+    }
+
+    @Override
+    public void deleteConfigBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

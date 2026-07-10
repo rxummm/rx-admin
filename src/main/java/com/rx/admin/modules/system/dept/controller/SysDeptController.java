@@ -62,6 +62,15 @@ public class SysDeptController {
         return Result.ok();
     }
 
+    @Operation(summary = "批量删除部门")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Dept.DELETE)
+    @OperateLog(module = "部门管理", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        sysDeptService.deleteDeptBatch(ids);
+        return Result.ok();
+    }
+
     @Operation(summary = "根据ID查询部门")
     @GetMapping("/{id}")
     @SaCheckPermission(PermissionConstants.Dept.QUERY)

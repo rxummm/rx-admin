@@ -39,7 +39,7 @@ public class SysLoginLogController {
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime) {
         PageResult<SysLoginLog> pr = loginLogService.pageQuery(page, size, username, status, startTime, endTime);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), loginLogConvert.toVOList(pr.getRecords())));
+        return Result.ok(loginLogConvert.toPageResult(pr));
     }
 
     @Operation(summary = "删除登录日志")

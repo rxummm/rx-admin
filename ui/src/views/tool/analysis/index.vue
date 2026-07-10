@@ -120,7 +120,9 @@
         <!-- Tab 5: 前端组件 -->
         <el-tab-pane label="前端组件" name="frontend">
           <el-descriptions :column="1" border>
-            <el-descriptions-item label="组件名">{{ analysisData.frontendStructure?.componentName }}</el-descriptions-item>
+            <el-descriptions-item label="组件名">{{
+              analysisData.frontendStructure?.componentName
+            }}</el-descriptions-item>
             <el-descriptions-item label="文件路径">{{ analysisData.frontendStructure?.filePath }}</el-descriptions-item>
             <el-descriptions-item label="技术栈">{{ analysisData.frontendStructure?.techStack }}</el-descriptions-item>
           </el-descriptions>
@@ -128,11 +130,15 @@
           <ul class="section-list">
             <li v-for="(s, i) in analysisData.frontendStructure?.sections" :key="i">{{ s }}</li>
           </ul>
-          <el-divider v-if="analysisData.frontendStructure?.stateFlow?.length" content-position="left">数据状态流转</el-divider>
+          <el-divider v-if="analysisData.frontendStructure?.stateFlow?.length" content-position="left"
+            >数据状态流转</el-divider
+          >
           <ul class="section-list">
             <li v-for="(s, i) in analysisData.frontendStructure?.stateFlow" :key="i">{{ s }}</li>
           </ul>
-          <el-divider v-if="analysisData.frontendStructure?.permissionControls?.length" content-position="left">权限控制</el-divider>
+          <el-divider v-if="analysisData.frontendStructure?.permissionControls?.length" content-position="left"
+            >权限控制</el-divider
+          >
           <ul class="section-list">
             <li v-for="(s, i) in analysisData.frontendStructure?.permissionControls" :key="i">{{ s }}</li>
           </ul>
@@ -150,13 +156,7 @@
           <div class="mermaid-wrapper" v-if="diagramType === 'flowchart'">
             <pre class="mermaid-code">{{ analysisData.mermaidDiagrams?.flowchart }}</pre>
           </div>
-          <el-alert
-            title="提示"
-            type="info"
-            :closable="false"
-            show-icon
-            style="margin-top: 12px"
-          >
+          <el-alert title="提示" type="info" :closable="false" show-icon style="margin-top: 12px">
             <template #default>
               复制上方 Mermaid 代码到支持 Mermaid 的工具中即可渲染为图形（如 GitHub、Typora、Notion、语雀等）。
               或点击「导出 Markdown」按钮下载完整文档。
@@ -203,7 +203,7 @@ onMounted(async () => {
   // 预加载菜单列表用于自动补全
   try {
     const res = await getAnalysisMenusApi()
-    allMenus.value = res.data.map(m => m.name)
+    allMenus.value = res.data.map((m) => m.name)
   } catch {}
 })
 
@@ -211,8 +211,8 @@ const allMenus = ref([])
 
 function searchMenus(queryString, cb) {
   const results = queryString
-    ? allMenus.value.filter(m => m.includes(queryString)).map(m => ({ value: m }))
-    : allMenus.value.map(m => ({ value: m }))
+    ? allMenus.value.filter((m) => m.includes(queryString)).map((m) => ({ value: m }))
+    : allMenus.value.map((m) => ({ value: m }))
   cb(results)
 }
 
@@ -233,7 +233,7 @@ async function handleAnalyze() {
     analysisData.value = res.data
     activeTab.value = 'flow'
     ElMessage.success('分析完成')
-  } catch (e) {
+  } catch {
     ElMessage.error('分析失败，请检查菜单名称')
   } finally {
     loading.value = false
@@ -247,7 +247,7 @@ function methodTagType(method) {
 
 const permTableData = computed(() => {
   if (!analysisData.value?.permissions) return []
-  return analysisData.value.permissions.map(p => {
+  return analysisData.value.permissions.map((p) => {
     const [perm, ...rest] = p.split(' - ')
     return { perm, desc: rest.join(' - ') }
   })

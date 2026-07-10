@@ -17,8 +17,12 @@ export function useNotificationSse() {
         ? '/api/v1/notification/stream?Authorization=' + encodeURIComponent(token)
         : '/api/v1/notification/stream'
       eventSource = new EventSource(url)
-      eventSource.onopen = () => { connected.value = true }
-      eventSource.onerror = () => { connected.value = false }
+      eventSource.onopen = () => {
+        connected.value = true
+      }
+      eventSource.onerror = () => {
+        connected.value = false
+      }
     } catch (e) {
       console.warn('SSE init error:', e)
     }

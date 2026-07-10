@@ -56,8 +56,7 @@ public class XiyouController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<XiyouPoem> pr = poemService.pageQuery(page, size, keyword);
-        List<XiyouPoemVO> voList = poemConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(poemConvert.toPageResult(pr));
     }
 
     @Operation(summary = "XiyouPoem详情")
@@ -121,8 +120,7 @@ public class XiyouController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<XiyouCharacter> pr = characterService.pageQuery(page, size, keyword);
-        List<XiyouCharacterVO> voList = characterConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(characterConvert.toPageResult(pr));
     }
 
     @Operation(summary = "XiyouCharacter详情")
@@ -192,8 +190,7 @@ public class XiyouController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<XiyouEvent> pr = eventService.pageQuery(page, size, keyword);
-        List<XiyouEventVO> voList = eventConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(eventConvert.toPageResult(pr));
     }
 
     @Operation(summary = "XiyouEvent详情")

@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@SuppressWarnings("null")
 public class SseSessionManager {
 
     private final Map<Long, List<SseEmitter>> userEmitters = new ConcurrentHashMap<>();

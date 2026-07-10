@@ -23,4 +23,6 @@ public interface ISysConfigService extends IService<SysConfig> {
     void updateConfig(ConfigUpdateDTO dto);
 
     boolean isCaptchaEnabled();
+
+    void deleteConfigBatch(List<Long> ids);
 }

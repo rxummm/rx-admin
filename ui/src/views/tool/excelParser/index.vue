@@ -19,13 +19,9 @@
         accept=".xlsx,.xls"
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          将Excel文件拖到此处，或<em>点击上传</em>
-        </div>
+        <div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
         <template #tip>
-          <div class="el-upload__tip">
-            支持 .xlsx 和 .xls 格式，文件大小不超过 50MB
-          </div>
+          <div class="el-upload__tip">支持 .xlsx 和 .xls 格式，文件大小不超过 50MB</div>
         </template>
       </el-upload>
 
@@ -35,7 +31,7 @@
         </el-button>
         <span class="file-info">
           当前文件：{{ currentFile.name }}
-          <el-tag size="small" type="info" style="margin-left:8px">{{ formatFileSize(currentFile.size) }}</el-tag>
+          <el-tag size="small" type="info" style="margin-left: 8px">{{ formatFileSize(currentFile.size) }}</el-tag>
         </span>
       </div>
     </el-card>
@@ -63,14 +59,7 @@
         </div>
       </template>
 
-      <el-table
-        :data="pagedData"
-        border
-        stripe
-        style="width: 100%"
-        max-height="500"
-        v-loading="parsing"
-      >
+      <el-table :data="pagedData" border stripe style="width: 100%" max-height="500" v-loading="parsing">
         <el-table-column type="index" label="序号" width="60" align="center" />
         <el-table-column
           v-for="col in columns"
@@ -127,8 +116,8 @@ const pageSize = ref(20)
 const filteredData = computed(() => {
   if (!searchKeyword.value) return tableData.value
   const kw = searchKeyword.value.toLowerCase()
-  return tableData.value.filter(row => {
-    return Object.values(row).some(v => String(v).toLowerCase().includes(kw))
+  return tableData.value.filter((row) => {
+    return Object.values(row).some((v) => String(v).toLowerCase().includes(kw))
   })
 })
 
@@ -139,7 +128,9 @@ const pagedData = computed(() => {
 })
 
 // 监听搜索关键词变化，重置分页
-const resetPage = () => { currentPage.value = 1 }
+const resetPage = () => {
+  currentPage.value = 1
+}
 
 // 文件变化
 function handleFileChange(file) {
@@ -189,8 +180,8 @@ function exportToCSV() {
   if (filteredData.value.length === 0) return
   const headers = columns.value
   let csv = '\uFEFF' + headers.join(',') + '\n'
-  filteredData.value.forEach(row => {
-    const rowData = headers.map(h => {
+  filteredData.value.forEach((row) => {
+    const rowData = headers.map((h) => {
       let val = String(row[h] ?? '')
       if (val.includes(',') || val.includes('"') || val.includes('\n')) {
         val = '"' + val.replace(/"/g, '""') + '"'

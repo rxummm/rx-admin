@@ -1,7 +1,13 @@
 <template>
   <div class="notice-page">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('common.search') + $t('content.notice.noticeTitle')" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('common.search') + $t('content.notice.noticeTitle')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
@@ -10,7 +16,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('content:notice:add')">
         <el-icon><Plus /></el-icon> {{ $t('common.add') + $t('content.notice.title') }}
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('content:notice:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('content:notice:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> {{ $t('common.batchDelete') }}
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -29,41 +40,97 @@
     </div>
 
     <div class="notice-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%" @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
-        <el-table-column v-if="visibleColumns.includes('title')" prop="title" :label="$t('content.notice.noticeTitle')" min-width="240" show-overflow-tooltip sortable />
-        <el-table-column v-if="visibleColumns.includes('noticeType')" prop="noticeType" :label="$t('content.notice.type')" width="100">
+        <el-table-column
+          v-if="visibleColumns.includes('title')"
+          prop="title"
+          :label="$t('content.notice.noticeTitle')"
+          min-width="240"
+          show-overflow-tooltip
+          sortable
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('noticeType')"
+          prop="noticeType"
+          :label="$t('content.notice.type')"
+          width="100"
+        >
           <template #default="{ row }">
             <el-tag :type="row.noticeType === '1' ? 'primary' : 'warning'" size="small">
-              {{ row.noticeType === '1' ? $t('content.notice.typeOptions.notice') : $t('content.notice.typeOptions.announcement') }}
+              {{
+                row.noticeType === '1'
+                  ? $t('content.notice.typeOptions.notice')
+                  : $t('content.notice.typeOptions.announcement')
+              }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" :label="$t('common.status')" width="80">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">
-              {{ row.status === 1 ? $t('content.notice.statusOptions.normal') : $t('content.notice.statusOptions.closed') }}
+              {{
+                row.status === 1 ? $t('content.notice.statusOptions.normal') : $t('content.notice.statusOptions.closed')
+              }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createByName')" prop="createByName" :label="$t('content.notice.creator')" width="100" />
-        <el-table-column v-if="visibleColumns.includes('createTime')" prop="createTime" :label="$t('common.createTime')" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createByName')"
+          prop="createByName"
+          :label="$t('content.notice.creator')"
+          width="100"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('createTime')"
+          prop="createTime"
+          :label="$t('common.createTime')"
+          width="170"
+          sortable
+        />
         <el-table-column :label="$t('common.operation')" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">{{ $t('common.detail') }}</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('content:notice:edit')">{{ $t('common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('content:notice:delete')">{{ $t('common.delete') }}</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('content:notice:edit')"
+              >{{ $t('common.edit') }}</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('content:notice:delete')"
+              >{{ $t('common.delete') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <el-empty v-if="!loading && sortedTableData.length === 0" />
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="notice-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -83,7 +150,12 @@
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item :label="$t('common.remark')" prop="content">
-          <el-input v-model="form.content" type="textarea" :rows="8" :placeholder="$t('common.input') + $t('common.remark')" />
+          <el-input
+            v-model="form.content"
+            type="textarea"
+            :rows="8"
+            :placeholder="$t('common.input') + $t('common.remark')"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -94,14 +166,21 @@
 
     <!-- 查看弹窗 -->
     <el-dialog v-model="viewVisible" :title="$t('content.notice.title') + $t('common.detail')" width="700px">
-      <h3 style="margin-bottom: 16px;">{{ viewData.title }}</h3>
-      <div style="margin-bottom: 12px; color: var(--text-secondary); font-size: 13px;">
-        <span>{{ $t('content.notice.type') }}: <el-tag :type="viewData.noticeType === '1' ? 'primary' : 'warning'" size="small">{{ viewData.noticeType === '1' ? $t('content.notice.typeOptions.notice') : $t('content.notice.typeOptions.announcement') }}</el-tag></span>
-        <span style="margin-left: 16px;">{{ $t('content.notice.creator') }}: {{ viewData.createByName }}</span>
-        <span style="margin-left: 16px;">{{ $t('common.createTime') }}: {{ viewData.createTime }}</span>
+      <h3 style="margin-bottom: 16px">{{ viewData.title }}</h3>
+      <div style="margin-bottom: 12px; color: var(--text-secondary); font-size: 13px">
+        <span
+          >{{ $t('content.notice.type') }}:
+          <el-tag :type="viewData.noticeType === '1' ? 'primary' : 'warning'" size="small">{{
+            viewData.noticeType === '1'
+              ? $t('content.notice.typeOptions.notice')
+              : $t('content.notice.typeOptions.announcement')
+          }}</el-tag></span
+        >
+        <span style="margin-left: 16px">{{ $t('content.notice.creator') }}: {{ viewData.createByName }}</span>
+        <span style="margin-left: 16px">{{ $t('common.createTime') }}: {{ viewData.createTime }}</span>
       </div>
       <el-divider />
-      <div style="line-height: 1.8; min-height: 120px;" v-html="sanitizeHtml(viewData.content)"></div>
+      <div style="line-height: 1.8; min-height: 120px" v-html="sanitizeHtml(viewData.content)"></div>
     </el-dialog>
   </div>
 </template>
@@ -137,7 +216,7 @@ const columnOptions = [
   { key: 'createByName', label: t('content.notice.creator') },
   { key: 'createTime', label: t('common.createTime') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -173,7 +252,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态计算表格最大高度：约20行数据 + 表头
@@ -284,8 +363,12 @@ async function handleDelete(row) {
 async function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   try {
-    await ElMessageBox.confirm(t('common.confirmBatchDelete', { count: selectedIds.value.length }), t('common.batchDelete'), { type: 'warning' })
-    await Promise.all(selectedIds.value.map(id => deleteNoticeApi(id)))
+    await ElMessageBox.confirm(
+      t('common.confirmBatchDelete', { count: selectedIds.value.length }),
+      t('common.batchDelete'),
+      { type: 'warning' }
+    )
+    await Promise.all(selectedIds.value.map((id) => deleteNoticeApi(id)))
     ElMessage.success(t('common.batchDeleteSuccess'))
     selectedIds.value = []
     fetchData()

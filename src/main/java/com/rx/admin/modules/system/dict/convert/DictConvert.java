@@ -1,5 +1,6 @@
 package com.rx.admin.modules.system.dict.convert;
 
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.system.dict.dto.DictDataCreateDTO;
 import com.rx.admin.modules.system.dict.dto.DictDataUpdateDTO;
 import com.rx.admin.modules.system.dict.dto.DictTypeCreateDTO;
@@ -24,9 +25,17 @@ public interface DictConvert {
     DictTypeVO toTypeVO(SysDictType entity);
     List<DictTypeVO> toTypeVOList(List<SysDictType> list);
 
+    default PageResult<DictTypeVO> toTypePageResult(PageResult<SysDictType> pageResult) {
+        return pageResult.map(this::toTypeVO);
+    }
+
     // 字典数据
     SysDictData toDataEntity(DictDataCreateDTO dto);
     void updateDataEntity(DictDataUpdateDTO dto, @MappingTarget SysDictData entity);
     DictDataVO toDataVO(SysDictData entity);
     List<DictDataVO> toDataVOList(List<SysDictData> list);
+
+    default PageResult<DictDataVO> toDataPageResult(PageResult<SysDictData> pageResult) {
+        return pageResult.map(this::toDataVO);
+    }
 }

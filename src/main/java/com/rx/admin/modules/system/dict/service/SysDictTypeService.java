@@ -11,6 +11,8 @@ import com.rx.admin.modules.system.dict.dto.DictTypeUpdateDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 @Service
 @SuppressWarnings("null")
 public class SysDictTypeService extends ServiceImpl<SysDictTypeMapper, SysDictType> implements ISysDictTypeService {
@@ -57,5 +59,10 @@ public class SysDictTypeService extends ServiceImpl<SysDictTypeMapper, SysDictTy
         if (dto.getStatus() != null) entity.setStatus(dto.getStatus());
         if (StringUtils.hasText(dto.getRemark())) entity.setRemark(dto.getRemark());
         updateById(entity);
+    }
+
+    @Override
+    public void deleteDictTypeBatch(List<Long> ids) {
+        removeByIds(ids);
     }
 }

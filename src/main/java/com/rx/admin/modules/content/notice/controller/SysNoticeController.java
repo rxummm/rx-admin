@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +84,15 @@ public class SysNoticeController {
         return Result.ok();
     }
 
+    @Operation(summary = "批量删除通知")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Content.NOTICE_DELETE)
+    @OperateLog(module = "通知公告", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        sysNoticeService.deleteNoticeBatch(ids);
+        return Result.ok();
+    }
+
     @Operation(summary = "根据ID查询通知")
     @GetMapping("/{id}")
     public Result<SysNotice> getById(@PathVariable Long id) {
@@ -99,6 +107,7 @@ public class SysNoticeController {
 
     @Operation(summary = "标记通知为已读")
     @PostMapping("/read/{id}")
+    @OperateLog(module = "通知公告", operation = "标记已读")
     public Result<Void> markRead(@PathVariable Long id) {
         sysNoticeService.markRead(StpUtil.getLoginIdAsLong(), id);
         return Result.ok();
@@ -106,6 +115,7 @@ public class SysNoticeController {
 
     @Operation(summary = "标记所有通知为已读")
     @PostMapping("/read-all")
+    @OperateLog(module = "通知公告", operation = "全部已读")
     public Result<Void> markAllRead() {
         sysNoticeService.markAllRead(StpUtil.getLoginIdAsLong());
         return Result.ok();

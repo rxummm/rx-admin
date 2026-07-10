@@ -75,4 +75,11 @@ public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> implemen
         }
         removeById(id);
     }
+
+    @Override
+    public void deleteDeptBatch(List<Long> ids) {
+        for (Long id : ids) {
+            deleteDept(id);
+        }
+    }
 }

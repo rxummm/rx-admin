@@ -16,4 +16,8 @@ public interface ISysDictDataService extends IService<SysDictData> {
     void addDictData(DictDataCreateDTO dto);
 
     void updateDictData(DictDataUpdateDTO dto);
+
+    void deleteDictData(Long id);
+
+    void deleteDictDataBatch(List<Long> ids);
 }

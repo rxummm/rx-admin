@@ -89,5 +89,18 @@ export const useUserStore = defineStore('user', () => {
     return perms.value.includes(perm) || roles.value.includes('admin')
   }
 
-  return { token, userInfo, roles, perms, menus, login, fetchUserInfo, fetchRouters, refreshRouters, logout, hasRole, hasPerm }
+  return {
+    token,
+    userInfo,
+    roles,
+    perms,
+    menus,
+    login,
+    fetchUserInfo,
+    fetchRouters,
+    refreshRouters,
+    logout,
+    hasRole,
+    hasPerm
+  }
 })

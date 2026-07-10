@@ -21,14 +21,28 @@
               :default-expand-all="true"
               @check="handleTreeCheck"
             >
-              <template #default="{ node, data }">
+              <template #default="{ node: _node, data }">
                 <span class="tree-node">
-                  <el-icon v-if="getIconComponent(data.icon)" style="margin-right:6px"><component :is="getIconComponent(data.icon)" /></el-icon>
+                  <el-icon v-if="getIconComponent(data.icon)" style="margin-right: 6px"
+                    ><component :is="getIconComponent(data.icon)"
+                  /></el-icon>
                   <span>{{ data.menuName }}</span>
-                  <el-tag size="small" :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'" style="margin-left:8px">
-                    {{ data.menuType === 1 ? $t('system.menu.typeOptions.dir') : data.menuType === 2 ? $t('system.menu.typeOptions.menu') : $t('system.menu.typeOptions.button') }}
+                  <el-tag
+                    size="small"
+                    :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'"
+                    style="margin-left: 8px"
+                  >
+                    {{
+                      data.menuType === 1
+                        ? $t('system.menu.typeOptions.dir')
+                        : data.menuType === 2
+                          ? $t('system.menu.typeOptions.menu')
+                          : $t('system.menu.typeOptions.button')
+                    }}
                   </el-tag>
-                  <span v-if="data.perms" style="color:#909399;font-size:11px;margin-left:4px">({{ data.perms }})</span>
+                  <span v-if="data.perms" style="color: #909399; font-size: 11px; margin-left: 4px"
+                    >({{ data.perms }})</span
+                  >
                 </span>
               </template>
             </el-tree>
@@ -42,19 +56,27 @@
           <template #header>
             <div class="card-header">
               <span>{{ $t('permission.request.selectedMenus') }}</span>
-              <el-button type="primary" size="small" @click="handleSubmit" :loading="submitLoading" :disabled="selectedMenuIds.length === 0">
+              <el-button
+                type="primary"
+                size="small"
+                @click="handleSubmit"
+                :loading="submitLoading"
+                :disabled="selectedMenuIds.length === 0"
+              >
                 <el-icon><Upload /></el-icon> {{ $t('permission.request.submitApply') }}
               </el-button>
             </div>
           </template>
           <el-scrollbar max-height="200px">
-            <div v-if="selectedMenuIds.length === 0" class="empty-hint">{{ $t('permission.request.noSelectHint') }}</div>
+            <div v-if="selectedMenuIds.length === 0" class="empty-hint">
+              {{ $t('permission.request.noSelectHint') }}
+            </div>
             <el-tag
               v-for="menu in selectedMenuTags"
               :key="menu.id"
               closable
               :type="menu.menuType === 1 ? 'info' : menu.menuType === 2 ? 'success' : 'warning'"
-              style="margin:4px"
+              style="margin: 4px"
               @close="removeMenu(menu)"
             >
               {{ menu.menuName }}
@@ -63,7 +85,7 @@
         </el-card>
 
         <!-- 我的申请记录 -->
-        <el-card shadow="never" style="margin-top:16px">
+        <el-card shadow="never" style="margin-top: 16px">
           <template #header>
             <div class="card-header">
               <span>{{ $t('permission.request.myRequests') }}</span>
@@ -78,35 +100,62 @@
               <div class="request-header">
                 <span class="request-menus">{{ req.menuNames }}</span>
                 <el-tag :type="req.status === 0 ? 'warning' : req.status === 1 ? 'success' : 'danger'" size="small">
-                  {{ req.status === 0 ? $t('permission.request.statusPending') : req.status === 1 ? $t('permission.request.statusApproved') : $t('permission.request.statusRejected') }}
+                  {{
+                    req.status === 0
+                      ? $t('permission.request.statusPending')
+                      : req.status === 1
+                        ? $t('permission.request.statusApproved')
+                        : $t('permission.request.statusRejected')
+                  }}
                 </el-tag>
               </div>
               <div class="request-time">{{ req.createTime }}</div>
-              <div v-if="req.auditRemark" class="request-remark">{{ $t('permission.request.remark') }}：{{ req.auditRemark }}</div>
-              <div v-if="req.status === 0 || req.status === 1" style="font-size:12px;color:#e6a23c;margin-top:4px">
+              <div v-if="req.auditRemark" class="request-remark">
+                {{ $t('permission.request.remark') }}：{{ req.auditRemark }}
+              </div>
+              <div v-if="req.status === 0 || req.status === 1" style="font-size: 12px; color: #e6a23c; margin-top: 4px">
                 <el-icon><WarningFilled /></el-icon>
-                {{ req.status === 1 ? $t('permission.request.reloginHintApproved') : $t('permission.request.reloginHint') }}
+                {{
+                  req.status === 1 ? $t('permission.request.reloginHintApproved') : $t('permission.request.reloginHint')
+                }}
               </div>
             </div>
           </el-scrollbar>
         </el-card>
 
         <!-- 邮件申请弹窗 -->
-        <el-dialog v-model="emailDialogVisible" :title="$t('permission.request.emailApplyTitle')" width="480px" :close-on-click-modal="false">
-          <el-alert type="info" :closable="false" show-icon style="margin-bottom:16px">
+        <el-dialog
+          v-model="emailDialogVisible"
+          :title="$t('permission.request.emailApplyTitle')"
+          width="480px"
+          :close-on-click-modal="false"
+        >
+          <el-alert type="info" :closable="false" show-icon style="margin-bottom: 16px">
             {{ $t('permission.request.emailApplyHint') }}
           </el-alert>
           <el-form ref="emailFormRef" :model="emailForm" :rules="emailFormRules" label-width="100px">
             <el-form-item :label="$t('permission.request.emailApplyMenus')" prop="menus">
-              <el-input v-model="emailForm.menus" :placeholder="$t('permission.request.emailApplyMenusPlaceholder')" type="textarea" :rows="2" />
+              <el-input
+                v-model="emailForm.menus"
+                :placeholder="$t('permission.request.emailApplyMenusPlaceholder')"
+                type="textarea"
+                :rows="2"
+              />
             </el-form-item>
             <el-form-item :label="$t('permission.request.emailApplyReason')" prop="description">
-              <el-input v-model="emailForm.description" :placeholder="$t('permission.request.emailApplyReasonPlaceholder')" type="textarea" :rows="3" />
+              <el-input
+                v-model="emailForm.description"
+                :placeholder="$t('permission.request.emailApplyReasonPlaceholder')"
+                type="textarea"
+                :rows="3"
+              />
             </el-form-item>
           </el-form>
           <template #footer>
             <el-button @click="emailDialogVisible = false">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" :loading="emailLoading" @click="handleEmailSubmit">{{ $t('common.confirm') }}</el-button>
+            <el-button type="primary" :loading="emailLoading" @click="handleEmailSubmit">{{
+              $t('common.confirm')
+            }}</el-button>
           </template>
         </el-dialog>
       </el-col>
@@ -121,7 +170,12 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { getRequestableMenusApi, submitPermissionRequestApi, getMyRequestsApi, emailPermissionRequestApi } from '@/api/permission'
+import {
+  getRequestableMenusApi,
+  submitPermissionRequestApi,
+  getMyRequestsApi,
+  emailPermissionRequestApi
+} from '@/api/permission'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -141,7 +195,7 @@ const myRequests = ref([])
 const allMenuIds = computed(() => {
   const ids = []
   function collect(menus) {
-    menus.forEach(m => {
+    menus.forEach((m) => {
       ids.push(m.id)
       if (m.children) collect(m.children)
     })
@@ -154,7 +208,7 @@ const allMenuIds = computed(() => {
 const selectedMenuTags = computed(() => {
   const result = []
   function collect(menus) {
-    menus.forEach(m => {
+    menus.forEach((m) => {
       if (selectedMenuIds.value.includes(m.id)) {
         result.push(m)
       }
@@ -171,7 +225,7 @@ function handleTreeCheck(curNode, checkedState) {
 
 function removeMenu(menu) {
   treeRef.value.setChecked(menu.id, false, true)
-  selectedMenuIds.value = selectedMenuIds.value.filter(id => id !== menu.id)
+  selectedMenuIds.value = selectedMenuIds.value.filter((id) => id !== menu.id)
 }
 
 async function fetchMenuTree() {
@@ -188,7 +242,7 @@ async function fetchMyRequests() {
     const res = await getMyRequestsApi({ page: 1, size: 50 })
     const records = res.data?.records || []
     // 尝试解析 JSON 格式的 menuNames
-    records.forEach(r => {
+    records.forEach((r) => {
       try {
         const names = JSON.parse(r.menuNames)
         r.menuNames = Array.isArray(names) ? names.join('、') : r.menuNames
@@ -203,17 +257,13 @@ async function fetchMyRequests() {
 async function handleSubmit() {
   if (selectedMenuIds.value.length === 0) return
   try {
-    await ElMessageBox.confirm(
-      t('permission.request.submitConfirm'),
-      t('common.tip'),
-      { type: 'warning' }
-    )
+    await ElMessageBox.confirm(t('permission.request.submitConfirm'), t('common.tip'), { type: 'warning' })
   } catch {
     return
   }
   submitLoading.value = true
   try {
-    const menuNames = selectedMenuTags.value.map(m => m.menuName)
+    const menuNames = selectedMenuTags.value.map((m) => m.menuName)
     await submitPermissionRequestApi({
       menuIds: selectedMenuIds.value,
       menuNames: menuNames

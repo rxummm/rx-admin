@@ -14,7 +14,7 @@ const requestStartTime = new Map()
 export function performanceRequestInterceptor(config) {
   // 记录请求开始时间
   requestStartTime.set(config.url, Date.now())
-  
+
   return config
 }
 
@@ -25,13 +25,13 @@ export function performanceResponseSuccessInterceptor(response) {
   const url = response.config.url
   const method = response.config.method?.toUpperCase() || 'GET'
   const startTime = requestStartTime.get(url)
-  
+
   if (startTime) {
     const endTime = Date.now()
     recordAPIRequest(url, method, startTime, endTime, response.status)
     requestStartTime.delete(url)
   }
-  
+
   return response
 }
 
@@ -42,13 +42,13 @@ export function performanceResponseErrorInterceptor(error) {
   const url = error.config?.url
   const method = error.config?.method?.toUpperCase() || 'GET'
   const startTime = requestStartTime.get(url)
-  
+
   if (startTime) {
     const endTime = Date.now()
     const status = error.response?.status || 0
     recordAPIRequest(url, method, startTime, endTime, status, error.message)
     requestStartTime.delete(url)
   }
-  
+
   return Promise.reject(error)
 }

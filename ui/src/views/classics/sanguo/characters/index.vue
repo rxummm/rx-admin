@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索姓名 / 字 / 绰号 / 事迹" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索姓名 / 字 / 绰号 / 事迹"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterCountry" placeholder="国家筛选" clearable style="width: 140px" @change="fetchData">
         <el-option v-for="c in countryOptions" :key="c" :label="c" :value="c" />
       </el-select>
@@ -13,7 +19,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:sanguo:character:add')">
         <el-icon><Plus /></el-icon> 新增人物
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:sanguo:character:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:sanguo:character:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -32,8 +43,16 @@
     </div>
 
     <div class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
         <el-table-column v-if="visibleColumns.includes('name')" prop="name" label="姓名" width="110" sortable>
@@ -41,12 +60,35 @@
             <el-button link type="primary" @click="handleView(row)">{{ row.name }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('courtesyName')" prop="courtesyName" label="字" width="100" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('nickname')" prop="nickname" label="绰号" width="110" show-overflow-tooltip />
+        <el-table-column
+          v-if="visibleColumns.includes('courtesyName')"
+          prop="courtesyName"
+          label="字"
+          width="100"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('nickname')"
+          prop="nickname"
+          label="绰号"
+          width="110"
+          show-overflow-tooltip
+        />
         <el-table-column v-if="visibleColumns.includes('country')" prop="country" label="国家" width="80">
           <template #default="{ row }">
-            <el-tag v-if="row.country" size="small"
-              :type="row.country === '蜀' ? 'success' : row.country === '魏' ? 'danger' : row.country === '吴' ? 'warning' : 'info'">
+            <el-tag
+              v-if="row.country"
+              size="small"
+              :type="
+                row.country === '蜀'
+                  ? 'success'
+                  : row.country === '魏'
+                    ? 'danger'
+                    : row.country === '吴'
+                      ? 'warning'
+                      : 'info'
+              "
+            >
               {{ row.country }}
             </el-tag>
           </template>
@@ -56,28 +98,69 @@
             <el-tag v-if="row.role" size="small" type="info">{{ row.role }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('position')" prop="position" label="官职" min-width="120" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('weapon')" prop="weapon" label="武器" width="110" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('notableEvents')" label="著名事迹" min-width="180" show-overflow-tooltip>
+        <el-table-column
+          v-if="visibleColumns.includes('position')"
+          prop="position"
+          label="官职"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('weapon')"
+          prop="weapon"
+          label="武器"
+          width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('notableEvents')"
+          label="著名事迹"
+          min-width="180"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             {{ (row.notableEvents || '-').slice(0, 50) }}
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:sanguo:character:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:sanguo:character:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:sanguo:character:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:sanguo:character:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -119,7 +202,12 @@
           <el-input v-model="form.hometown" placeholder="如：涿郡涿县" />
         </el-form-item>
         <el-form-item label="外貌描述">
-          <el-input v-model="form.appearanceDescription" type="textarea" :rows="2" placeholder="如：身长八尺，面如冠玉" />
+          <el-input
+            v-model="form.appearanceDescription"
+            type="textarea"
+            :rows="2"
+            placeholder="如：身长八尺，面如冠玉"
+          />
         </el-form-item>
         <el-form-item label="性格特点">
           <el-input v-model="form.personalityTraits" type="textarea" :rows="2" placeholder="如：忠义无双、智勇双全" />
@@ -140,9 +228,22 @@
     <!-- 查看弹窗 -->
     <el-dialog v-model="viewVisible" title="人物详情" width="700px">
       <div v-if="viewData" class="character-detail">
-        <h3 class="character-name">{{ viewData.name }}
-          <el-tag v-if="viewData.country" style="margin-left: 8px" size="small"
-            :type="viewData.country === '蜀' ? 'success' : viewData.country === '魏' ? 'danger' : viewData.country === '吴' ? 'warning' : 'info'">
+        <h3 class="character-name">
+          {{ viewData.name }}
+          <el-tag
+            v-if="viewData.country"
+            style="margin-left: 8px"
+            size="small"
+            :type="
+              viewData.country === '蜀'
+                ? 'success'
+                : viewData.country === '魏'
+                  ? 'danger'
+                  : viewData.country === '吴'
+                    ? 'warning'
+                    : 'info'
+            "
+          >
             {{ viewData.country }}
           </el-tag>
         </h3>
@@ -187,7 +288,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
   getSanguoCharacterPageApi,
-  getSanguoCharacterDetailApi,
   addSanguoCharacterApi,
   updateSanguoCharacterApi,
   deleteSanguoCharacterApi,
@@ -221,7 +321,7 @@ const columnOptions = [
   { key: 'notableEvents', label: '著名事迹' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -254,7 +354,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -307,11 +407,11 @@ async function fetchData() {
     const res = await getSanguoCharacterPageApi(params)
     let records = res.data.records
     if (filterCountry.value) {
-      records = records.filter(r => r.country === filterCountry.value)
+      records = records.filter((r) => r.country === filterCountry.value)
     }
     tableData.value = records
     total.value = res.data.total
-    const countries = new Set(records.map(r => r.country).filter(Boolean))
+    const countries = new Set(records.map((r) => r.country).filter(Boolean))
     countryOptions.value = [...countries]
   } finally {
     loading.value = false

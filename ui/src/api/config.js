@@ -60,9 +60,8 @@ export async function getConfigPage(params = {}) {
   let filtered = allConfigs
   if (params.configName) {
     const kw = params.configName.toLowerCase()
-    filtered = allConfigs.filter(c =>
-      (c.configName || '').toLowerCase().includes(kw) ||
-      (c.configKey || '').toLowerCase().includes(kw)
+    filtered = allConfigs.filter(
+      (c) => (c.configName || '').toLowerCase().includes(kw) || (c.configKey || '').toLowerCase().includes(kw)
     )
   }
   return {

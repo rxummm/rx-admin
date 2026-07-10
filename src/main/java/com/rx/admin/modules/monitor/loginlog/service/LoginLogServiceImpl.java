@@ -34,7 +34,7 @@ public class LoginLogServiceImpl extends ServiceImpl<SysLoginLogMapper, SysLogin
         }
         wrapper.orderByDesc(SysLoginLog::getLoginTime);
         Page<SysLoginLog> result = page(new Page<>(page, size), wrapper);
-        return PageResult.of(result.getTotal(), result.getCurrent(), result.getSize(), result.getRecords());
+        return PageResult.of(result);
     }
 
     @Override

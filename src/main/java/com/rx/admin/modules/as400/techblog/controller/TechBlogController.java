@@ -49,7 +49,7 @@ public class TechBlogController {
             @RequestParam(required = false) String source) {
         PageResult<TechBlogArticle> pageResult = articleService.pageQuery(page, size, keyword, category, source);
         List<TechBlogVO> voList = techBlogConvert.toVOList(pageResult.getRecords());
-        return Result.ok(PageResult.of(pageResult.getTotal(), pageResult.getPage(), pageResult.getSize(), voList));
+        return Result.ok(techBlogConvert.toPageResult(pageResult));
     }
 
     @Operation(summary = "获取文章详情")

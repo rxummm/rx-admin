@@ -5,7 +5,7 @@
       <div class="particles">
         <div v-for="i in 20" :key="i" class="particle" :style="getParticleStyle(i)" />
       </div>
-      
+
       <!-- 错误内容 -->
       <div class="error-content">
         <!-- 404 错误 -->
@@ -17,7 +17,7 @@
             </el-icon>
           </div>
         </div>
-        
+
         <!-- 500 错误 -->
         <div v-else-if="errorCode === 500" class="error-visual">
           <div class="error-code-large">500</div>
@@ -27,7 +27,7 @@
             </el-icon>
           </div>
         </div>
-        
+
         <!-- 403 错误 -->
         <div v-else-if="errorCode === 403" class="error-visual">
           <div class="error-code-large">403</div>
@@ -37,7 +37,7 @@
             </el-icon>
           </div>
         </div>
-        
+
         <!-- 其他错误 -->
         <div v-else class="error-visual">
           <div class="error-code-large">{{ errorCode }}</div>
@@ -47,11 +47,11 @@
             </el-icon>
           </div>
         </div>
-        
+
         <!-- 错误信息 -->
         <h1 class="error-title">{{ errorTitle }}</h1>
         <p class="error-description">{{ errorDescription }}</p>
-        
+
         <!-- 建议操作 -->
         <div class="error-suggestions">
           <h3>您可以尝试：</h3>
@@ -62,7 +62,7 @@
             </li>
           </ul>
         </div>
-        
+
         <!-- 操作按钮 -->
         <div class="error-actions">
           <el-button type="primary" size="large" @click="handleGoBack">
@@ -78,7 +78,7 @@
             刷新页面
           </el-button>
         </div>
-        
+
         <!-- 技术支持 -->
         <div class="support-info">
           <el-divider />
@@ -143,42 +143,26 @@ const errorDescription = computed(() => {
 
 // 建议操作
 const suggestions = computed(() => {
-  const commonSuggestions = [
-    '检查网址是否正确',
-    '清除浏览器缓存后重试',
-    '联系网站管理员'
-  ]
-  
+  const commonSuggestions = ['检查网址是否正确', '清除浏览器缓存后重试', '联系网站管理员']
+
   const specificSuggestions = {
-    404: [
-      '确认链接地址是否正确',
-      '从首页重新导航到目标页面',
-      ...commonSuggestions
-    ],
-    500: [
-      '稍等片刻后刷新页面',
-      '尝试清除浏览器缓存',
-      ...commonSuggestions
-    ],
-    403: [
-      '确认您是否有访问权限',
-      '联系管理员申请权限',
-      ...commonSuggestions
-    ]
+    404: ['确认链接地址是否正确', '从首页重新导航到目标页面', ...commonSuggestions],
+    500: ['稍等片刻后刷新页面', '尝试清除浏览器缓存', ...commonSuggestions],
+    403: ['确认您是否有访问权限', '联系管理员申请权限', ...commonSuggestions]
   }
-  
+
   return specificSuggestions[errorCode.value] || commonSuggestions
 })
 
 /**
  * 生成粒子样式
  */
-function getParticleStyle(index) {
+function getParticleStyle(_index) {
   const size = Math.random() * 6 + 2
   const left = Math.random() * 100
   const delay = Math.random() * 5
   const duration = Math.random() * 10 + 10
-  
+
   return {
     width: `${size}px`,
     height: `${size}px`,
@@ -219,7 +203,7 @@ function handleReload() {
   background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-container) 100%);
   position: relative;
   overflow: hidden;
-  
+
   .particles {
     position: absolute;
     top: 0;
@@ -227,14 +211,14 @@ function handleReload() {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    
+
     .particle {
       position: absolute;
       bottom: -10px;
       background: rgba(56, 139, 253, 0.3);
       border-radius: 50%;
       animation: float-up linear infinite;
-      
+
       @keyframes float-up {
         0% {
           transform: translateY(0) rotate(0deg);
@@ -253,7 +237,7 @@ function handleReload() {
       }
     }
   }
-  
+
   .error-container {
     position: relative;
     z-index: var(--z-decor, 1);
@@ -261,10 +245,10 @@ function handleReload() {
     padding: 60px 40px;
     text-align: center;
   }
-  
+
   .error-content {
     animation: fade-in 0.6s ease-out;
-    
+
     @keyframes fade-in {
       from {
         opacity: 0;
@@ -276,11 +260,11 @@ function handleReload() {
       }
     }
   }
-  
+
   .error-visual {
     margin-bottom: 40px;
     position: relative;
-    
+
     .error-code-large {
       font-size: 120px;
       font-weight: 700;
@@ -290,17 +274,18 @@ function handleReload() {
       margin-bottom: -40px;
       user-select: none;
     }
-    
+
     .error-icon-wrapper {
       position: relative;
       z-index: var(--z-decor, 1);
-      
+
       .error-icon {
         color: var(--color-primary);
         animation: pulse 2s ease-in-out infinite;
-        
+
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             transform: scale(1);
           }
           50% {
@@ -310,21 +295,21 @@ function handleReload() {
       }
     }
   }
-  
+
   .error-title {
     font-size: 32px;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 16px;
   }
-  
+
   .error-description {
     font-size: 16px;
     color: var(--text-secondary);
     line-height: 1.8;
     margin-bottom: 32px;
   }
-  
+
   .error-suggestions {
     background: var(--bg-container);
     border: 1px solid var(--border-color);
@@ -332,18 +317,18 @@ function handleReload() {
     padding: 24px;
     margin-bottom: 32px;
     text-align: left;
-    
+
     h3 {
       font-size: 16px;
       color: var(--text-primary);
       margin-bottom: 16px;
     }
-    
+
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
-      
+
       li {
         display: flex;
         align-items: center;
@@ -351,14 +336,14 @@ function handleReload() {
         padding: 8px 0;
         color: var(--text-secondary);
         font-size: 14px;
-        
+
         .el-icon {
           color: #3fb950;
         }
       }
     }
   }
-  
+
   .error-actions {
     display: flex;
     gap: 16px;
@@ -366,11 +351,11 @@ function handleReload() {
     flex-wrap: wrap;
     margin-bottom: 40px;
   }
-  
+
   .support-info {
     color: var(--text-tertiary);
     font-size: 14px;
-    
+
     p {
       display: flex;
       align-items: center;
@@ -378,7 +363,7 @@ function handleReload() {
       gap: 8px;
       margin: 8px 0;
     }
-    
+
     .contact-email {
       color: var(--color-primary);
       font-weight: 500;

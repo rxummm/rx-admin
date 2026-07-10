@@ -3,9 +3,17 @@
     <!-- 顶部工具栏 -->
     <div class="graph-toolbar">
       <div class="toolbar-left">
-        <el-input v-model="searchKeyword" placeholder="搜索人物..." clearable style="width: 200px"
-          @keyup.enter="searchCharacter" @clear="clearSearch">
-          <template #prefix><el-icon><Search /></el-icon></template>
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索人物..."
+          clearable
+          style="width: 200px"
+          @keyup.enter="searchCharacter"
+          @clear="clearSearch"
+        >
+          <template #prefix
+            ><el-icon><Search /></el-icon
+          ></template>
         </el-input>
         <el-button type="primary" @click="searchCharacter">搜索</el-button>
         <el-select v-model="filterRole" placeholder="角色筛选" clearable style="width: 130px" @change="onFilterChange">
@@ -30,8 +38,15 @@
     </div>
 
     <!-- Canvas 画布 -->
-    <div class="canvas-wrapper" ref="canvasWrapper" @wheel.prevent="onWheel" @mousedown="onMouseDown"
-      @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
+    <div
+      class="canvas-wrapper"
+      ref="canvasWrapper"
+      @wheel.prevent="onWheel"
+      @mousedown="onMouseDown"
+      @mousemove="onMouseMove"
+      @mouseup="onMouseUp"
+      @mouseleave="onMouseUp"
+    >
       <canvas ref="canvasRef" @click="onCanvasClick"></canvas>
       <div v-if="loading" class="canvas-loading">
         <el-icon class="is-loading"><Loading /></el-icon> 加载关系数据...
@@ -39,15 +54,17 @@
 
       <!-- 图例 -->
       <div class="graph-legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#e74c3c"></span>主角</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#f39c12"></span>重要配角</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#3498db"></span>一般角色</div>
+        <div class="legend-item"><span class="legend-dot" style="background: #e74c3c"></span>主角</div>
+        <div class="legend-item"><span class="legend-dot" style="background: #f39c12"></span>重要配角</div>
+        <div class="legend-item"><span class="legend-dot" style="background: #3498db"></span>一般角色</div>
       </div>
 
       <!-- 悬浮提示 -->
       <div v-if="tooltip.visible" class="graph-tooltip" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
         <strong>{{ tooltip.name }}</strong>
-        <span v-if="tooltip.role" class="tooltip-role" :style="{ color: getRoleColor(tooltip.role) }">{{ tooltip.role }}</span>
+        <span v-if="tooltip.role" class="tooltip-role" :style="{ color: getRoleColor(tooltip.role) }">{{
+          tooltip.role
+        }}</span>
         <p v-if="tooltip.desc">{{ tooltip.desc }}</p>
       </div>
     </div>
@@ -67,23 +84,35 @@
         </div>
 
         <div class="detail-section" v-if="selectedCharacter.appearanceDescription">
-          <h4><el-icon><Brush /></el-icon> 外貌描述</h4>
+          <h4>
+            <el-icon><Brush /></el-icon> 外貌描述
+          </h4>
           <p>{{ selectedCharacter.appearanceDescription }}</p>
         </div>
         <div class="detail-section" v-if="selectedCharacter.personalityTraits">
-          <h4><el-icon><MagicStick /></el-icon> 性格特点</h4>
+          <h4>
+            <el-icon><MagicStick /></el-icon> 性格特点
+          </h4>
           <p>{{ selectedCharacter.personalityTraits }}</p>
         </div>
         <div class="detail-section" v-if="selectedCharacter.fateSummary">
-          <h4><el-icon><Sunny /></el-icon> 命运概述</h4>
+          <h4>
+            <el-icon><Sunny /></el-icon> 命运概述
+          </h4>
           <p>{{ selectedCharacter.fateSummary }}</p>
         </div>
 
         <div class="detail-section">
-          <h4><el-icon><Connection /></el-icon> 直接关系 ({{ relatedCharacters.length }})</h4>
+          <h4>
+            <el-icon><Connection /></el-icon> 直接关系 ({{ relatedCharacters.length }})
+          </h4>
           <div v-if="relatedCharacters.length > 0" class="relation-tags">
-            <div v-for="r in relatedCharacters" :key="r.id" class="relation-tag-item"
-              @click="focusCharacter(r.character.id)">
+            <div
+              v-for="r in relatedCharacters"
+              :key="r.id"
+              class="relation-tag-item"
+              @click="focusCharacter(r.character.id)"
+            >
               <el-tag size="small" type="warning">{{ r.relationType }}</el-tag>
               <span class="relation-target">{{ r.character.name }}</span>
               <span class="relation-desc">{{ r.relationDesc }}</span>
@@ -98,7 +127,7 @@
 
 <script setup>
 defineOptions({ name: 'ClassicsHonglouRelations' })
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getAllHonglouCharactersApi, getAllHonglouRelationsApi } from '@/api/honglou'
 import { COLORS } from '@/config/colors'
@@ -144,20 +173,19 @@ const tooltip = reactive({ visible: false, x: 0, y: 0, name: '', role: '', desc:
 // ---- 计算属性 ----
 const filteredNodes = computed(() => {
   let result = allCharacters.value
-  if (filterRole.value) result = result.filter(c => c.role === filterRole.value)
+  if (filterRole.value) result = result.filter((c) => c.role === filterRole.value)
   if (searchKeyword.value) {
     const kw = searchKeyword.value.toLowerCase()
-    result = result.filter(c =>
-      (c.name && c.name.toLowerCase().includes(kw)) ||
-      (c.nickname && c.nickname.toLowerCase().includes(kw))
+    result = result.filter(
+      (c) => (c.name && c.name.toLowerCase().includes(kw)) || (c.nickname && c.nickname.toLowerCase().includes(kw))
     )
   }
   return result
 })
 
 const filteredLinks = computed(() => {
-  const nodeIds = new Set(filteredNodes.value.map(n => n.id))
-  return allRelations.value.filter(r => nodeIds.has(r.fromCharacterId) && nodeIds.has(r.toCharacterId))
+  const nodeIds = new Set(filteredNodes.value.map((n) => n.id))
+  return allRelations.value.filter((r) => nodeIds.has(r.fromCharacterId) && nodeIds.has(r.toCharacterId))
 })
 
 // ---- 详情抽屉 ----
@@ -167,12 +195,14 @@ const selectedCharacter = ref(null)
 const relatedCharacters = computed(() => {
   if (!selectedCharacter.value) return []
   const cid = selectedCharacter.value.id
-  const rels = allRelations.value.filter(r => r.fromCharacterId === cid || r.toCharacterId === cid)
-  return rels.map(r => {
+  const rels = allRelations.value.filter((r) => r.fromCharacterId === cid || r.toCharacterId === cid)
+  return rels.map((r) => {
     const otherId = r.fromCharacterId === cid ? r.toCharacterId : r.fromCharacterId
-    const otherChar = allCharacters.value.find(c => c.id === otherId)
+    const otherChar = allCharacters.value.find((c) => c.id === otherId)
     return {
-      id: r.id, relationType: r.relationType, relationDesc: r.relationDesc,
+      id: r.id,
+      relationType: r.relationType,
+      relationDesc: r.relationDesc,
       character: otherChar || { id: otherId, name: '未知人物' }
     }
   })
@@ -180,17 +210,17 @@ const relatedCharacters = computed(() => {
 
 // ---- 工具函数 ----
 function getRoleColor(role) {
-  const map = { '主角': COLORS.DANGER, '重要配角': COLORS.WARNING, '一般角色': COLORS.PRIMARY }
+  const map = { 主角: COLORS.DANGER, 重要配角: COLORS.WARNING, 一般角色: COLORS.PRIMARY }
   return map[role] || COLORS.TEXT_SECONDARY
 }
 
 function getRoleTagType(role) {
-  const map = { '主角': 'danger', '重要配角': 'warning', '一般角色': 'info' }
+  const map = { 主角: 'danger', 重要配角: 'warning', 一般角色: 'info' }
   return map[role] || 'info'
 }
 
 function getNodeRadius(role) {
-  const map = { '主角': 22, '重要配角': 17, '一般角色': 13 }
+  const map = { 主角: 22, 重要配角: 17, 一般角色: 13 }
   return map[role] || 12
 }
 
@@ -206,10 +236,7 @@ function lightenColor(hex, factor) {
 async function loadData() {
   loading.value = true
   try {
-    const [charRes, relRes] = await Promise.all([
-      getAllHonglouCharactersApi(),
-      getAllHonglouRelationsApi()
-    ])
+    const [charRes, relRes] = await Promise.all([getAllHonglouCharactersApi(), getAllHonglouRelationsApi()])
     allCharacters.value = charRes.data || []
     allRelations.value = relRes.data || []
     buildSimulation()
@@ -222,26 +249,33 @@ async function loadData() {
 
 // ---- 构建模拟 ----
 function buildSimulation() {
-  const validLinks = filteredLinks.value.filter(l => {
-    const hasSource = filteredNodes.value.some(n => n.id === l.fromCharacterId)
-    const hasTarget = filteredNodes.value.some(n => n.id === l.toCharacterId)
+  const validLinks = filteredLinks.value.filter((l) => {
+    const hasSource = filteredNodes.value.some((n) => n.id === l.fromCharacterId)
+    const hasTarget = filteredNodes.value.some((n) => n.id === l.toCharacterId)
     return hasSource && hasTarget
   })
 
-  simulationNodes = filteredNodes.value.map(c => ({
-    id: c.id, name: c.name, nickname: c.nickname, role: c.role,
-    appearanceDescription: c.appearanceDescription, personalityTraits: c.personalityTraits,
-    fateSummary: c.fateSummary, radius: getNodeRadius(c.role),
+  simulationNodes = filteredNodes.value.map((c) => ({
+    id: c.id,
+    name: c.name,
+    nickname: c.nickname,
+    role: c.role,
+    appearanceDescription: c.appearanceDescription,
+    personalityTraits: c.personalityTraits,
+    fateSummary: c.fateSummary,
+    radius: getNodeRadius(c.role),
     x: Math.random() * canvasW * 0.6 + canvasW * 0.2,
     y: Math.random() * canvasH * 0.6 + canvasH * 0.2,
-    vx: 0, vy: 0
+    vx: 0,
+    vy: 0
   }))
 
-  simulationLinks = validLinks.map(l => ({
+  simulationLinks = validLinks.map((l) => ({
     id: l.id,
-    source: simulationNodes.find(n => n.id === l.fromCharacterId),
-    target: simulationNodes.find(n => n.id === l.toCharacterId),
-    relationType: l.relationType, relationDesc: l.relationDesc
+    source: simulationNodes.find((n) => n.id === l.fromCharacterId),
+    target: simulationNodes.find((n) => n.id === l.toCharacterId),
+    relationType: l.relationType,
+    relationDesc: l.relationDesc
   }))
 
   nodes.value = simulationNodes
@@ -252,44 +286,58 @@ function buildSimulation() {
 
 // ---- 力导向迭代 ----
 function tick() {
-  const alpha = 0.3
+  const _alpha = 0.3
   const repulsion = 8000
   const attraction = 0.005
   const damping = 0.85
 
   for (let i = 0; i < simulationNodes.length; i++) {
     for (let j = i + 1; j < simulationNodes.length; j++) {
-      const a = simulationNodes[i], b = simulationNodes[j]
-      let dx = b.x - a.x, dy = b.y - a.y
+      const a = simulationNodes[i],
+        b = simulationNodes[j]
+      let dx = b.x - a.x,
+        dy = b.y - a.y
       let dist = Math.sqrt(dx * dx + dy * dy) || 1
       const minDist = a.radius + b.radius + 20
       if (dist < minDist) dist = minDist
       const force = repulsion / (dist * dist)
-      const fx = (dx / dist) * force, fy = (dy / dist) * force
-      a.vx -= fx; a.vy -= fy
-      b.vx += fx; b.vy += fy
+      const fx = (dx / dist) * force,
+        fy = (dy / dist) * force
+      a.vx -= fx
+      a.vy -= fy
+      b.vx += fx
+      b.vy += fy
     }
   }
 
   for (const link of simulationLinks) {
-    const s = link.source, t = link.target
-    let dx = t.x - s.x, dy = t.y - s.y
+    const s = link.source,
+      t = link.target
+    let dx = t.x - s.x,
+      dy = t.y - s.y
     const dist = Math.sqrt(dx * dx + dy * dy) || 1
     const restDist = s.radius + t.radius + 50
     const force = (dist - restDist) * attraction
-    const fx = (dx / dist) * force, fy = (dy / dist) * force
-    s.vx += fx; s.vy += fy
-    t.vx -= fx; t.vy -= fy
+    const fx = (dx / dist) * force,
+      fy = (dy / dist) * force
+    s.vx += fx
+    s.vy += fy
+    t.vx -= fx
+    t.vy -= fy
   }
 
-  const cx = canvasW / 2, cy = canvasH / 2
+  const cx = canvasW / 2,
+    cy = canvasH / 2
   for (const node of simulationNodes) {
     node.vx += (cx - node.x) * 0.0001
     node.vy += (cy - node.y) * 0.0001
     node.vx *= damping
     node.vy *= damping
     const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy)
-    if (speed > 10) { node.vx = (node.vx / speed) * 10; node.vy = (node.vy / speed) * 10 }
+    if (speed > 10) {
+      node.vx = (node.vx / speed) * 10
+      node.vy = (node.vy / speed) * 10
+    }
     node.x += node.vx
     node.y += node.vy
     node.x = Math.max(node.radius, Math.min(canvasW - node.radius, node.x))
@@ -321,7 +369,8 @@ function draw() {
 
   // 连线
   for (const link of simulationLinks) {
-    const s = link.source, t = link.target
+    const s = link.source,
+      t = link.target
     const dimmed = isHighlighted && !(highlightedSet.has(s.id) && highlightedSet.has(t.id))
     ctx.beginPath()
     ctx.moveTo(s.x, s.y)
@@ -332,12 +381,14 @@ function draw() {
 
     const label = link.relationType || link.relationDesc
     if (label && (!dimmed || highlightedSet.size <= 2)) {
-      const mx = (s.x + t.x) / 2, my = (s.y + t.y) / 2
+      const mx = (s.x + t.x) / 2,
+        my = (s.y + t.y) / 2
       const fontSize = Math.max(9, 11 / scaleVal)
       ctx.save()
       ctx.font = `${fontSize}px sans-serif`
       const metrics = ctx.measureText(label)
-      const tw = metrics.width + 6, th = 16 / scaleVal
+      const tw = metrics.width + 6,
+        th = 16 / scaleVal
       ctx.fillStyle = dimmed ? 'rgba(250,250,250,0.3)' : 'rgba(255,255,255,0.85)'
       ctx.fillRect(mx - tw / 2, my - th / 2, tw, th)
       ctx.fillStyle = dimmed ? 'rgba(150,150,150,0.4)' : '#8B7355'
@@ -370,7 +421,7 @@ function draw() {
     gradient.addColorStop(1, dimmed ? '#999' : color)
     ctx.fillStyle = gradient
     ctx.fill()
-    ctx.strokeStyle = dimmed ? '#aaa' : (isSelected ? '#fff' : 'rgba(255,255,255,0.6)')
+    ctx.strokeStyle = dimmed ? '#aaa' : isSelected ? '#fff' : 'rgba(255,255,255,0.6)'
     ctx.lineWidth = isSelected ? 3 : 1.5
     ctx.stroke()
 
@@ -393,7 +444,8 @@ function screenToWorld(sx, sy) {
 function findNodeAt(wx, wy) {
   for (let i = simulationNodes.length - 1; i >= 0; i--) {
     const n = simulationNodes[i]
-    const dx = wx - n.x, dy = wy - n.y
+    const dx = wx - n.x,
+      dy = wy - n.y
     if (Math.sqrt(dx * dx + dy * dy) <= n.radius + 4) return n
   }
   return null
@@ -410,7 +462,8 @@ function onMouseDown(e) {
   const node = findNodeAt(world.x, world.y)
   if (node) {
     dragNode = node
-    node.vx = 0; node.vy = 0
+    node.vx = 0
+    node.vy = 0
   } else {
     isDragging = true
     dragStartX = e.clientX - offsetX
@@ -425,14 +478,14 @@ function onMouseMove(e) {
   if (dragNode) {
     dragNode.x = world.x
     dragNode.y = world.y
-    draw()  // 拖拽节点时立即重绘，消除拖影
+    draw() // 拖拽节点时立即重绘，消除拖影
     return
   }
 
   if (isDragging) {
     offsetX = e.clientX - dragStartX
     offsetY = e.clientY - dragStartY
-    draw()  // 平移画布时立即重绘，消除拖影
+    draw() // 平移画布时立即重绘，消除拖影
     return
   }
 
@@ -480,7 +533,8 @@ function onWheel(e) {
   const delta = e.deltaY > 0 ? 0.9 : 1.1
   const newScale = Math.max(0.2, Math.min(3, scaleVal * delta))
   const rect = canvasRef.value.getBoundingClientRect()
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top
+  const mx = e.clientX - rect.left,
+    my = e.clientY - rect.top
   offsetX = mx - (mx - offsetX) * (newScale / scaleVal)
   offsetY = my - (my - offsetY) * (newScale / scaleVal)
   scaleVal = newScale
@@ -494,7 +548,10 @@ function fitView() {
     scaleVal = 1.5
     return
   }
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity
   for (const n of simulationNodes) {
     minX = Math.min(minX, n.x - n.radius)
     minY = Math.min(minY, n.y - n.radius)
@@ -504,19 +561,22 @@ function fitView() {
   const graphW = maxX - minX + 100
   const graphH = maxY - minY + 100
   scaleVal = Math.min(canvasW / graphW, canvasH / graphH, 1.5)
-  offsetX = canvasW / 2 - (minX + maxX) / 2 * scaleVal
-  offsetY = canvasH / 2 - (minY + maxY) / 2 * scaleVal
+  offsetX = canvasW / 2 - ((minX + maxX) / 2) * scaleVal
+  offsetY = canvasH / 2 - ((minY + maxY) / 2) * scaleVal
 }
 
-function zoomIn() { scaleVal = Math.min(3, scaleVal * 1.2) }
-function zoomOut() { scaleVal = Math.max(0.2, scaleVal / 1.2) }
+function zoomIn() {
+  scaleVal = Math.min(3, scaleVal * 1.2)
+}
+function zoomOut() {
+  scaleVal = Math.max(0.2, scaleVal / 1.2)
+}
 
 function searchCharacter() {
   if (!searchKeyword.value) return
   const kw = searchKeyword.value.toLowerCase()
-  const found = simulationNodes.find(n =>
-    (n.name && n.name.toLowerCase().includes(kw)) ||
-    (n.nickname && n.nickname.toLowerCase().includes(kw))
+  const found = simulationNodes.find(
+    (n) => (n.name && n.name.toLowerCase().includes(kw)) || (n.nickname && n.nickname.toLowerCase().includes(kw))
   )
   if (found) {
     selectedNodeId.value = found.id
@@ -535,7 +595,9 @@ function clearSearch() {
   fitView()
 }
 
-function onFilterChange() { buildSimulation() }
+function onFilterChange() {
+  buildSimulation()
+}
 
 function resetAll() {
   searchKeyword.value = ''
@@ -546,7 +608,7 @@ function resetAll() {
 }
 
 function focusCharacter(characterId) {
-  const node = simulationNodes.find(n => n.id === characterId)
+  const node = simulationNodes.find((n) => n.id === characterId)
   if (node) {
     selectedNodeId.value = node.id
     openDetail(node)
@@ -556,7 +618,7 @@ function focusCharacter(characterId) {
 }
 
 function openDetail(node) {
-  const char = allCharacters.value.find(c => c.id === node.id)
+  const char = allCharacters.value.find((c) => c.id === node.id)
   if (char) {
     selectedCharacter.value = char
     detailTitle.value = `${char.name} - 人物关系`

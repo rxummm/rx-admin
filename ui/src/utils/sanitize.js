@@ -6,13 +6,45 @@ import DOMPurify from 'dompurify'
 
 /** 允许的安全 HTML 标签（白名单） */
 const ALLOWED_TAGS = [
-  'p', 'div', 'span', 'br', 'hr',
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'ul', 'ol', 'li', 'dl', 'dt', 'dd',
-  'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
-  'code', 'pre', 'blockquote',
-  'strong', 'em', 'b', 'i', 'u', 's', 'del', 'sub', 'sup',
-  'mark', 'small',
+  'p',
+  'div',
+  'span',
+  'br',
+  'hr',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'ul',
+  'ol',
+  'li',
+  'dl',
+  'dt',
+  'dd',
+  'a',
+  'img',
+  'table',
+  'thead',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+  'code',
+  'pre',
+  'blockquote',
+  'strong',
+  'em',
+  'b',
+  'i',
+  'u',
+  's',
+  'del',
+  'sub',
+  'sup',
+  'mark',
+  'small'
 ]
 
 /** 允许的安全属性 */
@@ -27,7 +59,7 @@ export function sanitizeHtml(html) {
   if (!html) return ''
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS,
-    ALLOWED_ATTR,
+    ALLOWED_ATTR
   })
 }
 

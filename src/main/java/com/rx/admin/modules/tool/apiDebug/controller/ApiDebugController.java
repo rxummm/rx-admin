@@ -18,7 +18,6 @@ import java.util.*;
 @RestController
 @ApiVersion(1)
 @RequestMapping("/tool/api-debug")
-@SuppressWarnings("null")
 public class ApiDebugController {
 
     private final RequestMappingHandlerMapping handlerMapping;

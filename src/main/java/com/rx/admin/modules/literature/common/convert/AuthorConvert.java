@@ -13,7 +13,6 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-@SuppressWarnings("null")
 public interface AuthorConvert {
 
     Author toEntity(AuthorCreateDTO dto);
@@ -25,9 +24,10 @@ public interface AuthorConvert {
     List<AuthorVO> toVOList(List<Author> list);
 
     default PageResult<AuthorVO> toPageResult(Page<Author> page) {
-        List<AuthorVO> voList = page.getRecords().stream()
-                .map(this::toVO)
-                .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(this::toVO);
+    }
+
+    default PageResult<AuthorVO> toPageResult(PageResult<Author> pageResult) {
+        return pageResult.map(this::toVO);
     }
 }

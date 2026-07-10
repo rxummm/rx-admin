@@ -1,8 +1,8 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <span style="font-size:16px;font-weight:600">缓存管理 (Caffeine)</span>
-      <div style="flex:1" />
+      <span style="font-size: 16px; font-weight: 600">缓存管理 (Caffeine)</span>
+      <div style="flex: 1" />
       <el-button type="danger" @click="handleClearAll">清除全部缓存</el-button>
       <el-button @click="fetchCaches">刷新</el-button>
     </div>
@@ -29,19 +29,41 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCacheListApi, clearCacheApi, clearAllCacheApi } from '@/api/cacheManage'
 
-const caches = ref([]); const loading = ref(false)
+const caches = ref([])
+const loading = ref(false)
 async function fetchCaches() {
   loading.value = true
-  try { const res = await getCacheListApi(); caches.value = res.data || [] } 
-  catch { ElMessage.error('获取缓存信息失败') } finally { loading.value = false }
+  try {
+    const res = await getCacheListApi()
+    caches.value = res.data || []
+  } catch {
+    ElMessage.error('获取缓存信息失败')
+  } finally {
+    loading.value = false
+  }
 }
 async function clearCache(name) {
-  try { await ElMessageBox.confirm(`确认清除缓存 "${name}"？`,'提示',{type:'warning'}) } catch { return }
-  await clearCacheApi(name); ElMessage.success(`缓存 ${name} 已清除`); fetchCaches()
+  try {
+    await ElMessageBox.confirm(`确认清除缓存 "${name}"？`, '提示', { type: 'warning' })
+  } catch {
+    return
+  }
+  await clearCacheApi(name)
+  ElMessage.success(`缓存 ${name} 已清除`)
+  fetchCaches()
 }
 async function handleClearAll() {
-  try { await ElMessageBox.confirm('确认清除所有缓存？','警告',{type:'warning',confirmButtonClass:'el-button--danger'}) } catch { return }
-  await clearAllCacheApi(); ElMessage.success('所有缓存已清除'); fetchCaches()
+  try {
+    await ElMessageBox.confirm('确认清除所有缓存？', '警告', {
+      type: 'warning',
+      confirmButtonClass: 'el-button--danger'
+    })
+  } catch {
+    return
+  }
+  await clearAllCacheApi()
+  ElMessage.success('所有缓存已清除')
+  fetchCaches()
 }
 onMounted(fetchCaches)
 </script>

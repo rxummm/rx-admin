@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <el-container class="layout-container">
     <!-- 侧边栏 -->
     <el-aside :width="isCollapse ? '64px' : '220px'" class="layout-aside">
@@ -58,7 +58,10 @@
           <!-- 通知公告 / 待办事项 -->
           <NoticePopover ref="noticePopoverRef" />
           <!-- 全屏 -->
-          <el-tooltip :content="isFullscreen ? $t('layout.exitFullscreen') : $t('layout.fullscreen')" placement="bottom">
+          <el-tooltip
+            :content="isFullscreen ? $t('layout.exitFullscreen') : $t('layout.fullscreen')"
+            placement="bottom"
+          >
             <div class="header-action-btn" @click="toggleFullscreen">
               <FontAwesomeIcon :icon="isFullscreen ? 'compress' : 'expand'" />
             </div>
@@ -151,11 +154,11 @@ import { useUserStore } from '@/stores/user'
 import { useTagsStore } from '@/stores/tags'
 import { useTheme } from '@/composables/useTheme'
 import { useMenuI18n } from '@/composables/useMenuI18n'
-import { useKeyboardShortcuts, showShortcutsHelp } from '@/composables/useKeyboardShortcuts'
+import { useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
 import { logoutApi } from '@/api/auth'
 import { useStorage, STORAGE_KEYS } from '@/composables/useStorage'
 import { useLayoutSettings } from '@/composables/useLayoutSettings'
-import { useNotificationSse } from '@/composables/useNotificationSse'
+import { useNotificationWebSocket } from '@/composables/useNotificationWebSocket'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import TagsView from './TagsView.vue'
 import SubMenu from './SubMenu.vue'
@@ -166,7 +169,7 @@ import AnnouncementPopup from '@/components/AnnouncementPopup.vue'
 import FavoritesPanel from '@/components/FavoritesPanel.vue'
 import ShortcutsHelp from '@/components/ShortcutsHelp.vue'
 import PerformancePanel from '@/components/PerformancePanel.vue'
-import { QuestionFilled, Monitor, Loading, Check } from '@element-plus/icons-vue'
+import { QuestionFilled, Monitor, Check } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -174,7 +177,7 @@ const userStore = useUserStore()
 const tagsStore = useTagsStore()
 const { isDark, toggleTheme } = useTheme()
 const { currentTheme, setTheme, themeOptions } = useLayoutSettings()
-const sse = useNotificationSse()
+const notificationWs = useNotificationWebSocket()
 
 const { tMenu } = useMenuI18n()
 const { locale, t } = useI18n()
@@ -215,9 +218,15 @@ function handleToggleLocale() {
 
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().then(() => isFullscreen.value = true).catch(() => {})
+    document.documentElement
+      .requestFullscreen()
+      .then(() => (isFullscreen.value = true))
+      .catch(() => {})
   } else {
-    document.exitFullscreen().then(() => isFullscreen.value = false).catch(() => {})
+    document
+      .exitFullscreen()
+      .then(() => (isFullscreen.value = false))
+      .catch(() => {})
   }
 }
 
@@ -227,8 +236,9 @@ function handleMenuSelect(index) {
   // 防止快速点击造成路由竞争导致标签异常
   if (navigating) return
   navigating = true
-  router.push(index)
-    .catch(err => {
+  router
+    .push(index)
+    .catch((err) => {
       // 动态 import 失败 / 路由不存在时，打印但不抛出，避免 unhandledrejection 把整个 SPA 弄退化
       // （退化表现：keep-alive 卸载、标签页看似丢失）
       console.warn('[router.push failed]', index, err)
@@ -245,18 +255,18 @@ onMounted(() => {
     name: 'Dashboard',
     meta: { title: t('layout.dashboard'), affix: true, icon: 'DataAnalysis' }
   })
-  
+
   // 监听快捷键帮助事件
   window.addEventListener('show-shortcuts-help', () => {
     shortcutsHelpRef.value?.open()
   })
 
-  // 建立统一通知 SSE 连接
-  sse.connect()
+  // 建立统一通知 WebSocket 连接
+  notificationWs.connect()
 })
 
 onUnmounted(() => {
-  sse.disconnect()
+  notificationWs.disconnect()
 })
 
 watch(
@@ -289,7 +299,9 @@ async function handleLogout() {
       cancelButtonText: t('common.cancel'),
       type: 'warning'
     })
-    try { await logoutApi() } catch (e) {}
+    try {
+      await logoutApi()
+    } catch {}
     resetDynamicRoutes()
     userStore.logout()
     tagsStore.removeAllViews()
@@ -335,7 +347,9 @@ async function handleLogout() {
         height: 32px;
         flex-shrink: 0;
         transition: transform var(--transition-base);
-        &:hover { transform: scale(1.1); }
+        &:hover {
+          transform: scale(1.1);
+        }
       }
 
       .logo-title {
@@ -365,7 +379,9 @@ async function handleLogout() {
     }
     :deep(.el-menu-item),
     :deep(.el-sub-menu__title) {
-      transition: background var(--transition-fast), color var(--transition-fast) !important;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast) !important;
       margin: 2px 8px;
       border-radius: var(--radius-sm);
 
@@ -518,7 +534,9 @@ async function handleLogout() {
         border-radius: var(--radius-sm);
         transition: background var(--transition-fast);
 
-        &:hover { background: var(--bg-hover); }
+        &:hover {
+          background: var(--bg-hover);
+        }
 
         .username {
           font-size: 14px;
@@ -558,8 +576,7 @@ async function handleLogout() {
   // ====== 主内容：flex自动填满剩余高度，内容溢出时内部滚动 ======
   .layout-main {
     background: var(--bg-page);
-    background-image:
-      radial-gradient(circle, var(--border-light) 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--border-light) 1px, transparent 1px);
     background-size: 24px 24px;
     padding: 10px;
     flex: 1;
@@ -570,7 +587,9 @@ async function handleLogout() {
 
 // ====== 动画 ======
 .search-dropdown-fade-enter-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
 }
 .search-dropdown-fade-leave-active {
   transition: opacity 0.1s ease;

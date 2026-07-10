@@ -20,14 +20,18 @@ export function checkPasswordStrength(password) {
   // 包含数字
   if (/\d/.test(password)) score += 15
   // 包含特殊字符
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 15
+  if (/[!@#$%^&*()_+\-={}:;'",.<>/?]/.test(password)) score += 15
   // 长度超过8且包含3种以上字符
-  if (password.length >= 8 && [
-    /[a-z]/.test(password),
-    /[A-Z]/.test(password),
-    /\d/.test(password),
-    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
-  ].filter(Boolean).length >= 3) score += 10
+  if (
+    password.length >= 8 &&
+    [
+      /[a-z]/.test(password),
+      /[A-Z]/.test(password),
+      /\d/.test(password),
+      /[!@#$%^&*()_+\-={}:;'",.<>/?]/.test(password)
+    ].filter(Boolean).length >= 3
+  )
+    score += 10
 
   if (score < 30) return { level: 1, label: 'weak', color: 'var(--color-danger)', percent: 25 }
   if (score < 50) return { level: 2, label: 'medium', color: 'var(--color-warning)', percent: 50 }

@@ -12,12 +12,7 @@
         <div class="email-row">
           <label class="email-label">{{ $t('tool.emailSender.from') }}</label>
           <div class="email-input-wrap">
-            <el-input
-              v-model="fromAddress"
-              disabled
-              placeholder="sender@example.com"
-              class="email-input"
-            />
+            <el-input v-model="fromAddress" disabled placeholder="sender@example.com" class="email-input" />
           </div>
         </div>
 
@@ -33,7 +28,8 @@
                 size="small"
                 type="info"
                 @close="toList.splice(idx, 1)"
-              >{{ email }}</el-tag>
+                >{{ email }}</el-tag
+              >
               <input
                 ref="toInputRef"
                 v-model="toInputValue"
@@ -46,8 +42,12 @@
             </div>
           </div>
           <div class="email-cc-toggle">
-            <el-button link type="primary" @click="showCc = !showCc" v-if="!showCc">{{ $t('tool.emailSender.cc') }}</el-button>
-            <el-button link type="primary" @click="showBcc = !showBcc" v-if="!showBcc && showCc" class="bcc-toggle">{{ $t('tool.emailSender.bcc') }}</el-button>
+            <el-button link type="primary" @click="showCc = !showCc" v-if="!showCc">{{
+              $t('tool.emailSender.cc')
+            }}</el-button>
+            <el-button link type="primary" @click="showBcc = !showBcc" v-if="!showBcc && showCc" class="bcc-toggle">{{
+              $t('tool.emailSender.bcc')
+            }}</el-button>
           </div>
         </div>
 
@@ -63,7 +63,8 @@
                 size="small"
                 type="info"
                 @close="ccList.splice(idx, 1)"
-              >{{ email }}</el-tag>
+                >{{ email }}</el-tag
+              >
               <input
                 ref="ccInputRef"
                 v-model="ccInputValue"
@@ -92,7 +93,8 @@
                 size="small"
                 type="info"
                 @close="bccList.splice(idx, 1)"
-              >{{ email }}</el-tag>
+                >{{ email }}</el-tag
+              >
               <input
                 ref="bccInputRef"
                 v-model="bccInputValue"
@@ -110,11 +112,7 @@
         <div class="email-row">
           <label class="email-label">{{ $t('tool.emailSender.subject') }}</label>
           <div class="email-input-wrap">
-            <el-input
-              v-model="subject"
-              :placeholder="$t('tool.emailSender.subjectPlaceholder')"
-              class="email-input"
-            />
+            <el-input v-model="subject" :placeholder="$t('tool.emailSender.subjectPlaceholder')" class="email-input" />
           </div>
         </div>
       </div>
@@ -123,18 +121,10 @@
       <div class="email-toolbar">
         <div class="toolbar-left">
           <el-button-group class="format-toggle">
-            <el-button
-              :type="isHtml ? 'primary' : 'default'"
-              size="small"
-              @click="switchMode(true)"
-            >
+            <el-button :type="isHtml ? 'primary' : 'default'" size="small" @click="switchMode(true)">
               <el-icon><Operation /></el-icon> HTML
             </el-button>
-            <el-button
-              :type="!isHtml ? 'primary' : 'default'"
-              size="small"
-              @click="switchMode(false)"
-            >
+            <el-button :type="!isHtml ? 'primary' : 'default'" size="small" @click="switchMode(false)">
               <el-icon><Document /></el-icon> {{ $t('tool.emailSender.plainText') }}
             </el-button>
           </el-button-group>
@@ -153,17 +143,8 @@
       <div class="email-editor-wrap">
         <!-- HTML 富文本模式 -->
         <div v-if="isHtml" class="rich-editor">
-          <Toolbar
-            :editor="editorRef"
-            :defaultConfig="toolbarConfig"
-            mode="default"
-          />
-          <Editor
-            v-model="htmlContent"
-            :defaultConfig="editorConfig"
-            mode="default"
-            @onCreated="onEditorCreated"
-          />
+          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" mode="default" />
+          <Editor v-model="htmlContent" :defaultConfig="editorConfig" mode="default" @onCreated="onEditorCreated" />
         </div>
         <!-- 纯文本模式 -->
         <el-input
@@ -186,11 +167,7 @@
           </span>
         </div>
         <div class="attachment-list">
-          <div
-            v-for="(att, idx) in attachments"
-            :key="idx"
-            class="attachment-item"
-          >
+          <div v-for="(att, idx) in attachments" :key="idx" class="attachment-item">
             <div class="attachment-info">
               <el-icon class="att-icon" :style="{ color: getFileIconColor(att.fileName) }">
                 <Document />
@@ -201,13 +178,7 @@
             <div class="attachment-progress" v-if="att.uploading">
               <el-progress :percentage="att.progress || 0" :stroke-width="4" :show-text="false" />
             </div>
-            <el-button
-              link
-              type="danger"
-              size="small"
-              class="att-remove"
-              @click="removeAttachment(idx)"
-            >
+            <el-button link type="danger" size="small" class="att-remove" @click="removeAttachment(idx)">
               <el-icon><Close /></el-icon>
             </el-button>
           </div>
@@ -255,11 +226,7 @@
             <label class="signature-label">发件人签名</label>
           </div>
           <div class="signature-editor-wrap" v-if="signatureEnabled">
-            <Toolbar
-              :editor="signatureEditorRef"
-              :defaultConfig="signatureToolbarConfig"
-              mode="simple"
-            />
+            <Toolbar :editor="signatureEditorRef" :defaultConfig="signatureToolbarConfig" mode="simple" />
             <Editor
               v-model="signatureHtml"
               :defaultConfig="signatureEditorConfig"
@@ -281,10 +248,7 @@
 defineOptions({ name: 'ToolEmailSender' })
 import { ref, reactive, onMounted, nextTick, shallowRef } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-  Operation, Document, Sunny, Bell, Paperclip,
-  Close, Promotion, Edit
-} from '@element-plus/icons-vue'
+import { Operation, Document, Sunny, Bell, Paperclip, Close, Promotion, Edit } from '@element-plus/icons-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { sendEmailApi, uploadEmailAttachmentApi, getEmailConfigApi } from '@/api/commonTools'
@@ -305,13 +269,7 @@ const fontFamilies = FONT_FAMILIES
 
 // ── 主编辑器工具栏 ──
 const toolbarConfig = {
-  excludeKeys: [
-    'group-video',
-    'group-image',
-    'fullScreen',
-    'undo',
-    'redo',
-  ]
+  excludeKeys: ['group-video', 'group-image', 'fullScreen', 'undo', 'redo']
 }
 
 // ── 主编辑器配置 ──
@@ -373,7 +331,7 @@ function loadSignature() {
       signatureEnabled.value = data.enabled || false
       signatureHtml.value = data.html || ''
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
 }
@@ -386,7 +344,7 @@ function saveSignature() {
     })
     ElMessage.success('签名已保存')
     showSignatureDialog.value = false
-  } catch (e) {
+  } catch {
     ElMessage.error('签名保存失败')
   }
 }
@@ -401,9 +359,15 @@ const bccInputRef = ref(null)
 
 // ── 邮箱标签操作 ──
 const inputClearMap = {
-  to: () => { toInputValue.value = '' },
-  cc: () => { ccInputValue.value = '' },
-  bcc: () => { bccInputValue.value = '' }
+  to: () => {
+    toInputValue.value = ''
+  },
+  cc: () => {
+    ccInputValue.value = ''
+  },
+  bcc: () => {
+    bccInputValue.value = ''
+  }
 }
 
 function isValidEmail(email) {
@@ -499,7 +463,7 @@ onMounted(async () => {
     if (res?.data?.from) {
       fromAddress.value = res.data.from
     }
-  } catch (e) {
+  } catch {
     // 配置请求失败时静默处理
   }
   loadSignature()
@@ -590,9 +554,7 @@ async function handleSend() {
     return
   }
 
-  let content = isHtml.value
-    ? (getHtmlContent())
-    : (plainTextContent.value || '')
+  let content = isHtml.value ? getHtmlContent() : plainTextContent.value || ''
 
   if (!content.trim() || content === '<p><br></p>') {
     ElMessage.warning('请输入邮件内容')
@@ -607,8 +569,8 @@ async function handleSend() {
   sending.value = true
   try {
     const attachmentPaths = attachments
-      .filter(a => a.filePath && !a.uploading)
-      .map(a => a.filePath)
+      .filter((a) => a.filePath && !a.uploading)
+      .map((a) => a.filePath)
       .join(',')
 
     await sendEmailApi({
@@ -924,7 +886,7 @@ function formatFileSize(bytes) {
 
   &:hover {
     border-color: #c0c4cc;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -969,7 +931,8 @@ function formatFileSize(bytes) {
   background: #fafbfc;
 }
 
-.footer-left, .footer-right {
+.footer-left,
+.footer-right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1055,7 +1018,9 @@ function formatFileSize(bytes) {
   .email-header {
     background: #252627;
 
-    .email-label { color: #c0c4cc; }
+    .email-label {
+      color: #c0c4cc;
+    }
   }
 
   .email-row {
@@ -1070,7 +1035,9 @@ function formatFileSize(bytes) {
         background: transparent;
         color: #e0e0e0;
 
-        &::placeholder { color: #6b6d70; }
+        &::placeholder {
+          color: #6b6d70;
+        }
       }
     }
   }
@@ -1079,10 +1046,14 @@ function formatFileSize(bytes) {
     background: transparent;
     border-radius: 4px;
 
-    :deep(.el-tag) { color: #e0e0e0; }
-    .email-tag-input-inner { 
+    :deep(.el-tag) {
       color: #e0e0e0;
-      &::placeholder { color: #6b6d70; }
+    }
+    .email-tag-input-inner {
+      color: #e0e0e0;
+      &::placeholder {
+        color: #6b6d70;
+      }
     }
   }
 
@@ -1101,7 +1072,9 @@ function formatFileSize(bytes) {
       color: #e0e0e0;
       background: #1d1e1f;
 
-      &::placeholder { color: #6b6d70; }
+      &::placeholder {
+        color: #6b6d70;
+      }
     }
   }
 
@@ -1109,13 +1082,19 @@ function formatFileSize(bytes) {
     background: #252627;
     border-top-color: #3a3b3c;
 
-    .attachment-title { color: #c0c4cc; }
+    .attachment-title {
+      color: #c0c4cc;
+    }
     .attachment-item {
       background: #2d2e30;
       border-color: #3a3b3c;
 
-      .att-name { color: #e0e0e0; }
-      .att-size { color: #909399; }
+      .att-name {
+        color: #e0e0e0;
+      }
+      .att-size {
+        color: #909399;
+      }
     }
   }
 
@@ -1129,7 +1108,9 @@ function formatFileSize(bytes) {
     border-color: #3a3b3c;
   }
 
-  .page-header h3 { color: #e0e0e0; }
+  .page-header h3 {
+    color: #e0e0e0;
+  }
 }
 </style>
 
@@ -1245,7 +1226,7 @@ html.dark .email-sender-page .rich-editor {
     .w-e-bar-item button:hover,
     .w-e-bar-item.active button {
       background-color: #3a3b3c !important;
-      color: var(--rx-primary, #409EFF) !important;
+      color: var(--rx-primary, #409eff) !important;
     }
 
     .w-e-bar-item svg {
@@ -1254,7 +1235,7 @@ html.dark .email-sender-page .rich-editor {
 
     .w-e-bar-item.active svg,
     .w-e-bar-item:hover svg {
-      fill: var(--rx-primary, #409EFF) !important;
+      fill: var(--rx-primary, #409eff) !important;
     }
   }
 
@@ -1273,7 +1254,7 @@ html.dark .email-sender-page .rich-editor {
     .w-e-drop-panel {
       background: #2d2e30 !important;
       border-color: #3a3b3c !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
 
       .w-e-panel-list-item {
         color: #c0c4cc !important;
@@ -1305,7 +1286,9 @@ html.dark .email-sender-page .signature-editor-wrap {
   .w-e-text-container {
     background: #252627 !important;
 
-    [data-slate-editor] { color: #e0e0e0 !important; }
+    [data-slate-editor] {
+      color: #e0e0e0 !important;
+    }
   }
 }
 
@@ -1332,7 +1315,9 @@ html.dark .email-sender-page {
       border-color: #3a3b3c !important;
       color: #c0c4cc !important;
 
-      &:hover { color: #409EFF; }
+      &:hover {
+        color: #409eff;
+      }
     }
   }
 
@@ -1345,7 +1330,9 @@ html.dark .email-sender-page {
       border-color: #3a3b3c !important;
       color: #c0c4cc !important;
 
-      &:hover { color: #409EFF; }
+      &:hover {
+        color: #409eff;
+      }
     }
   }
 }

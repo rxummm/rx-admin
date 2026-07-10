@@ -32,7 +32,7 @@ export function initSentry(app, router) {
       'Loading chunk'
     ],
 
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       if (event.request?.headers?.Authorization) {
         delete event.request.headers.Authorization
       }
@@ -50,7 +50,7 @@ export function initSentry(app, router) {
     }
   })
 
-  console.log('✅ Sentry 错误监控已启动')
+  // noop
 }
 
 export function setSentryUser(userInfo) {

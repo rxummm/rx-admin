@@ -8,7 +8,13 @@
     </el-tabs>
 
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="searchPlaceholder" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="searchPlaceholder"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> 搜索
       </el-button>
@@ -17,14 +23,26 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm(addPerm)">
         <el-icon><Plus /></el-icon> 新增
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm(deletePerm)" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm(deletePerm)"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
     </div>
 
     <div class="table-wrapper">
-      <el-table :data="tableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange">
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="45" />
 
         <!-- 作者列 -->
@@ -92,17 +110,25 @@
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm(editPerm)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm(deletePerm)">删除</el-button>
+            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm(editPerm)"
+              >编辑</el-button
+            >
+            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm(deletePerm)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -236,7 +262,9 @@
             <el-descriptions-item label="创建时间">{{ viewData.createTime }}</el-descriptions-item>
             <el-descriptions-item label="更新时间">{{ viewData.updateTime }}</el-descriptions-item>
             <el-descriptions-item label="标签" :span="2">{{ viewData.tags || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="代表作品" :span="2">{{ viewData.representativeWorks || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="代表作品" :span="2">{{
+              viewData.representativeWorks || '-'
+            }}</el-descriptions-item>
             <el-descriptions-item label="成就" :span="2">{{ viewData.achievement || '-' }}</el-descriptions-item>
             <el-descriptions-item label="简介" :span="2">{{ viewData.biography || '-' }}</el-descriptions-item>
           </el-descriptions>
@@ -284,10 +312,30 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
-  getAuthorPageApi, getAuthorDetailApi, addAuthorApi, updateAuthorApi, deleteAuthorApi, batchDeleteAuthorApi,
-  getDynastyPageApi, getDynastyDetailApi, addDynastyApi, updateDynastyApi, deleteDynastyApi, batchDeleteDynastyApi,
-  getGenrePageApi, getGenreDetailApi, addGenreApi, updateGenreApi, deleteGenreApi, batchDeleteGenreApi,
-  getCategoryPageApi, getCategoryDetailApi, addCategoryApi, updateCategoryApi, deleteCategoryApi, batchDeleteCategoryApi
+  getAuthorPageApi,
+  getAuthorDetailApi,
+  addAuthorApi,
+  updateAuthorApi,
+  deleteAuthorApi,
+  batchDeleteAuthorApi,
+  getDynastyPageApi,
+  getDynastyDetailApi,
+  addDynastyApi,
+  updateDynastyApi,
+  deleteDynastyApi,
+  batchDeleteDynastyApi,
+  getGenrePageApi,
+  getGenreDetailApi,
+  addGenreApi,
+  updateGenreApi,
+  deleteGenreApi,
+  batchDeleteGenreApi,
+  getCategoryPageApi,
+  getCategoryDetailApi,
+  addCategoryApi,
+  updateCategoryApi,
+  deleteCategoryApi,
+  batchDeleteCategoryApi
 } from '@/api/literature'
 
 const userStore = useUserStore()
@@ -295,7 +343,12 @@ const userStore = useUserStore()
 // Tab 状态
 const activeTab = ref('author')
 const searchPlaceholder = computed(() => {
-  const map = { author: '搜索作者姓名 / 字号 / 朝代', dynasty: '搜索朝代名称', genre: '搜索体裁名称', category: '搜索分类名称' }
+  const map = {
+    author: '搜索作者姓名 / 字号 / 朝代',
+    dynasty: '搜索朝代名称',
+    genre: '搜索体裁名称',
+    category: '搜索分类名称'
+  }
   return map[activeTab.value] || '搜索'
 })
 
@@ -331,7 +384,7 @@ function calcTableMaxHeight() {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 弹窗
@@ -342,10 +395,26 @@ const submitLoading = ref(false)
 const formRef = ref(null)
 
 const form = reactive({
-  id: null, name: '', courtesyName: '', pseudonym: '', dynastyId: null,
-  birthYear: null, deathYear: null, birthplace: '', authorType: '', tags: '',
-  representativeWorks: '', achievement: '', biography: '', avatarUrl: '',
-  sortOrder: 0, description: '', code: '', startYear: null, endYear: null, parentId: 0
+  id: null,
+  name: '',
+  courtesyName: '',
+  pseudonym: '',
+  dynastyId: null,
+  birthYear: null,
+  deathYear: null,
+  birthplace: '',
+  authorType: '',
+  tags: '',
+  representativeWorks: '',
+  achievement: '',
+  biography: '',
+  avatarUrl: '',
+  sortOrder: 0,
+  description: '',
+  code: '',
+  startYear: null,
+  endYear: null,
+  parentId: 0
 })
 
 const formRules = {
@@ -359,10 +428,42 @@ const viewData = ref(null)
 // 根据当前 Tab 获取对应的 API 函数
 function getApis() {
   switch (activeTab.value) {
-    case 'author': return { page: getAuthorPageApi, detail: getAuthorDetailApi, add: addAuthorApi, update: updateAuthorApi, del: deleteAuthorApi, batchDel: batchDeleteAuthorApi }
-    case 'dynasty': return { page: getDynastyPageApi, detail: getDynastyDetailApi, add: addDynastyApi, update: updateDynastyApi, del: deleteDynastyApi, batchDel: batchDeleteDynastyApi }
-    case 'genre': return { page: getGenrePageApi, detail: getGenreDetailApi, add: addGenreApi, update: updateGenreApi, del: deleteGenreApi, batchDel: batchDeleteGenreApi }
-    case 'category': return { page: getCategoryPageApi, detail: getCategoryDetailApi, add: addCategoryApi, update: updateCategoryApi, del: deleteCategoryApi, batchDel: batchDeleteCategoryApi }
+    case 'author':
+      return {
+        page: getAuthorPageApi,
+        detail: getAuthorDetailApi,
+        add: addAuthorApi,
+        update: updateAuthorApi,
+        del: deleteAuthorApi,
+        batchDel: batchDeleteAuthorApi
+      }
+    case 'dynasty':
+      return {
+        page: getDynastyPageApi,
+        detail: getDynastyDetailApi,
+        add: addDynastyApi,
+        update: updateDynastyApi,
+        del: deleteDynastyApi,
+        batchDel: batchDeleteDynastyApi
+      }
+    case 'genre':
+      return {
+        page: getGenrePageApi,
+        detail: getGenreDetailApi,
+        add: addGenreApi,
+        update: updateGenreApi,
+        del: deleteGenreApi,
+        batchDel: batchDeleteGenreApi
+      }
+    case 'category':
+      return {
+        page: getCategoryPageApi,
+        detail: getCategoryDetailApi,
+        add: addCategoryApi,
+        update: updateCategoryApi,
+        del: deleteCategoryApi,
+        batchDel: batchDeleteCategoryApi
+      }
   }
 }
 
@@ -435,21 +536,34 @@ async function handleView(row) {
     const res = await apis.detail(row.id)
     viewData.value = res.data
     viewVisible.value = true
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function handleEdit(row) {
   isEdit.value = true
   dialogTitle.value = '编辑'
   Object.assign(form, {
-    id: row.id, name: row.name, courtesyName: row.courtesyName,
-    pseudonym: row.pseudonym, dynastyId: row.dynastyId,
-    birthYear: row.birthYear, deathYear: row.deathYear, birthplace: row.birthplace,
-    authorType: row.authorType, tags: row.tags,
-    representativeWorks: row.representativeWorks, achievement: row.achievement,
-    biography: row.biography, avatarUrl: row.avatarUrl,
-    sortOrder: row.sortOrder ?? 0, description: row.description,
-    code: row.code, startYear: row.startYear, endYear: row.endYear,
+    id: row.id,
+    name: row.name,
+    courtesyName: row.courtesyName,
+    pseudonym: row.pseudonym,
+    dynastyId: row.dynastyId,
+    birthYear: row.birthYear,
+    deathYear: row.deathYear,
+    birthplace: row.birthplace,
+    authorType: row.authorType,
+    tags: row.tags,
+    representativeWorks: row.representativeWorks,
+    achievement: row.achievement,
+    biography: row.biography,
+    avatarUrl: row.avatarUrl,
+    sortOrder: row.sortOrder ?? 0,
+    description: row.description,
+    code: row.code,
+    startYear: row.startYear,
+    endYear: row.endYear,
     parentId: row.parentId ?? 0
   })
   dialogVisible.value = true
@@ -462,7 +576,9 @@ async function handleDelete(row) {
     await apis.del(row.id)
     ElMessage.success('删除成功')
     fetchData()
-  } catch { /* cancel */ }
+  } catch {
+    /* cancel */
+  }
 }
 
 async function handleBatchDelete() {
@@ -474,7 +590,9 @@ async function handleBatchDelete() {
     ElMessage.success('批量删除成功')
     selectedIds.value = []
     fetchData()
-  } catch { /* cancel */ }
+  } catch {
+    /* cancel */
+  }
 }
 
 async function handleSubmit() {

@@ -39,16 +39,16 @@
 
 <script setup>
 defineOptions({ name: 'SearchBox' })
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import { Search } from '@element-plus/icons-vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const emit = defineEmits(['openCommand'])
+const _emit = defineEmits(['openCommand'])
 const router = useRouter()
-const { t } = useI18n()
+const { t: _t } = useI18n()
 const userStore = useUserStore()
 
 const keyword = ref('')
@@ -60,7 +60,7 @@ const showDropdown = ref(false)
 function flattenMenus(menus) {
   const result = []
   function walk(list) {
-    list.forEach(menu => {
+    list.forEach((menu) => {
       if (menu.component) result.push(menu)
       if (menu.children && menu.children.length) walk(menu.children)
     })
@@ -84,8 +84,8 @@ function handleInput() {
     return
   }
   const allMenus = flattenMenus(userStore.menus)
-  results.value = allMenus.filter(item =>
-    item.menuName.toLowerCase().includes(kw) || item.path.toLowerCase().includes(kw)
+  results.value = allMenus.filter(
+    (item) => item.menuName.toLowerCase().includes(kw) || item.path.toLowerCase().includes(kw)
   )
   highlightIndex.value = 0
 }

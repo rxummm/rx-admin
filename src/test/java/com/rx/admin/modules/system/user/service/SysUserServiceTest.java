@@ -7,7 +7,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("null")
 class SysUserServiceTest {
 
     private final SysUserService sysUserService = new SysUserService(null, null, null);

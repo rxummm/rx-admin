@@ -17,17 +17,17 @@ const STORAGE_KEYS = {
   // 集中到 STORAGE_KEYS 后统一带 rx_admin_ 前缀、可观测、可清理。
   ANNOUNCEMENT_DISMISSED: 'rx_admin_announcement_dismissed',
   FAVORITES: 'rx_admin_favorites',
-  FAVORITE_STAR: 'rx_admin_favorite_star',  // 旧 key fav_${path} 的标准化替代
+  FAVORITE_STAR: 'rx_admin_favorite_star', // 旧 key fav_${path} 的标准化替代
   SEARCH_HISTORY: 'rx_admin_searchHistory',
   TAGS_VIEW: 'rx_admin_tagsView',
   EMAIL_DRAFT: 'rx_admin_emailDraft',
   EMAIL_SIGNATURE: 'rx_admin_email_signature',
   EMOJI_RECENT: 'rx_admin_emoji_recent',
-  APP_ERRORS: 'rx_admin_app_errors',
+  APP_ERRORS: 'rx_admin_app_errors'
 }
 
 /** Token 存储时使用的异或密钥（仅防明文泄露，非加密） */
-const TOKEN_XOR_KEY = 0xA3
+const TOKEN_XOR_KEY = 0xa3
 
 /**
  * 对 Token 进行混淆编码（Base64 + XOR）
@@ -35,7 +35,7 @@ const TOKEN_XOR_KEY = 0xA3
 function encodeToken(raw) {
   if (!raw) return raw
   const bytes = new TextEncoder().encode(raw)
-  const xored = bytes.map(b => b ^ TOKEN_XOR_KEY)
+  const xored = bytes.map((b) => b ^ TOKEN_XOR_KEY)
   return btoa(String.fromCharCode(...xored))
 }
 
@@ -45,8 +45,8 @@ function encodeToken(raw) {
 function decodeToken(encoded) {
   if (!encoded) return encoded
   try {
-    const xored = Uint8Array.from(atob(encoded), c => c.charCodeAt(0))
-    const bytes = xored.map(b => b ^ TOKEN_XOR_KEY)
+    const xored = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0))
+    const bytes = xored.map((b) => b ^ TOKEN_XOR_KEY)
     return new TextDecoder().decode(bytes)
   } catch {
     return encoded // 兼容旧版明文 token
@@ -164,7 +164,7 @@ export function getKeysByPrefix(prefix) {
  */
 export function removeKeysByPrefix(prefix) {
   const keys = getKeysByPrefix(prefix)
-  keys.forEach(k => safeRemoveItem(k))
+  keys.forEach((k) => safeRemoveItem(k))
 }
 
 export { STORAGE_KEYS }

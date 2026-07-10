@@ -46,9 +46,18 @@
       </div>
 
       <div v-loading="loading" class="vscroller-wrapper">
-        <RecycleScroller v-if="sortedTableData.length > 0" class="vscroller" :items="sortedTableData" :item-size="44" key-field="tokenId" v-slot="{ item, index }">
+        <RecycleScroller
+          v-if="sortedTableData.length > 0"
+          class="vscroller"
+          :items="sortedTableData"
+          :item-size="44"
+          key-field="tokenId"
+          v-slot="{ item, index }"
+        >
           <div class="vrow" :class="{ even: index % 2 === 1 }">
-            <div class="vc vc-token" v-if="visibleColumns.includes('tokenId')" :title="item.tokenId">{{ item.tokenId }}</div>
+            <div class="vc vc-token" v-if="visibleColumns.includes('tokenId')" :title="item.tokenId">
+              {{ item.tokenId }}
+            </div>
             <div class="vc vc-login" v-if="visibleColumns.includes('loginId')">{{ item.loginId }}</div>
             <div class="vc vc-user" v-if="visibleColumns.includes('username')">{{ item.username }}</div>
             <div class="vc vc-nick" v-if="visibleColumns.includes('nickname')">{{ item.nickname }}</div>
@@ -88,7 +97,7 @@ const columnOptions = [
   { key: 'nickname', label: t('system.user.nickname') },
   { key: 'loginTime', label: t('monitor.online.loginTime') }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -149,19 +158,82 @@ async function handleKickOut(row) {
 <style scoped>
 /* 页面特有样式 - .page-container/.search-bar 在 global.scss 中统一定义 */
 
-.vtable-container { border: 1px solid var(--border-light); border-radius: 4px; width: 100%; overflow-x: auto; }
-.vtable-header { display: flex; align-items: center; background: var(--el-fill-color-light); font-weight: 600; font-size: 13px; color: var(--text-regular); border-bottom: 1px solid var(--border-light); cursor: pointer; min-width: fit-content; }
-.vscroller-wrapper { position: relative; min-height: 200px; width: 100%; overflow: hidden; }
-.vscroller { height: 500px; width: 100%; }
-.sort-arrow { font-size: 10px; margin-left: 2px; }
-.vrow { display: flex; align-items: center; font-size: 13px; border-bottom: 1px solid var(--border-lighter); min-width: fit-content; }
-.vrow.even { background: var(--el-fill-color-lighter); }
-.vrow:hover { background: var(--bg-hover); }
-.vc { padding: 4px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; box-sizing: border-box; }
-.vc-token { flex: 1 1 auto; min-width: 200px; }
-.vc-login { width: 80px; text-align: center; flex-shrink: 0; }
-.vc-user { width: 120px; flex-shrink: 0; }
-.vc-nick { width: 140px; flex-shrink: 0; }
-.vc-time { width: 200px; flex-shrink: 0; }
-.vc-op { width: 120px; text-align: center; flex-shrink: 0; }
+.vtable-container {
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  width: 100%;
+  overflow-x: auto;
+}
+.vtable-header {
+  display: flex;
+  align-items: center;
+  background: var(--el-fill-color-light);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-regular);
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  min-width: fit-content;
+}
+.vscroller-wrapper {
+  position: relative;
+  min-height: 200px;
+  width: 100%;
+  overflow: hidden;
+}
+.vscroller {
+  height: 500px;
+  width: 100%;
+}
+.sort-arrow {
+  font-size: 10px;
+  margin-left: 2px;
+}
+.vrow {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-lighter);
+  min-width: fit-content;
+}
+.vrow.even {
+  background: var(--el-fill-color-lighter);
+}
+.vrow:hover {
+  background: var(--bg-hover);
+}
+.vc {
+  padding: 4px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.vc-token {
+  flex: 1 1 auto;
+  min-width: 200px;
+}
+.vc-login {
+  width: 80px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.vc-user {
+  width: 120px;
+  flex-shrink: 0;
+}
+.vc-nick {
+  width: 140px;
+  flex-shrink: 0;
+}
+.vc-time {
+  width: 200px;
+  flex-shrink: 0;
+}
+.vc-op {
+  width: 120px;
+  text-align: center;
+  flex-shrink: 0;
+}
 </style>

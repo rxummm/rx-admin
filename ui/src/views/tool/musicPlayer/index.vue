@@ -118,7 +118,11 @@
               :key="index"
               class="lyric-line"
               :class="{ active: index === currentLyricIndex }"
-              :ref="el => { if (el) lyricLineRefs[index] = el }"
+              :ref="
+                (el) => {
+                  if (el) lyricLineRefs[index] = el
+                }
+              "
               @click="seekToLyric(line.time)"
             >
               {{ line.text }}
@@ -140,11 +144,17 @@
         </div>
         <div class="footer-song-info">
           <div class="footer-song-title">{{ currentSong ? currentSong.title : '未选择歌曲' }}</div>
-          <div class="footer-song-artist">{{ currentSong ? (currentSong.artist || '-') : '' }}</div>
+          <div class="footer-song-artist">{{ currentSong ? currentSong.artist || '-' : '' }}</div>
         </div>
         <div class="footer-actions" v-if="currentSong">
           <el-tooltip content="收藏" placement="top">
-            <el-button :icon="Star" text size="small" :type="isFavorited ? 'warning' : 'default'" @click="toggleFavorite" />
+            <el-button
+              :icon="Star"
+              text
+              size="small"
+              :type="isFavorited ? 'warning' : 'default'"
+              @click="toggleFavorite"
+            />
           </el-tooltip>
         </div>
       </div>
@@ -172,7 +182,13 @@
             <el-button :icon="DArrowRight" text size="default" class="skip-btn" @click="playNext" />
           </el-tooltip>
           <el-tooltip content="歌词" placement="top">
-            <el-button :icon="Document" text size="small" :type="showLyricPanel ? 'primary' : 'default'" @click="toggleLyricPanel" />
+            <el-button
+              :icon="Document"
+              text
+              size="small"
+              :type="showLyricPanel ? 'primary' : 'default'"
+              @click="toggleLyricPanel"
+            />
           </el-tooltip>
         </div>
         <div class="progress-row">
@@ -195,7 +211,15 @@
             <VideoPause v-if="muted || volume === 0" />
             <VideoPlay v-else />
           </el-icon>
-          <el-slider v-model="volume" :min="0" :max="100" size="small" class="vol-slider" @input="setVolume" :show-tooltip="false" />
+          <el-slider
+            v-model="volume"
+            :min="0"
+            :max="100"
+            size="small"
+            class="vol-slider"
+            @input="setVolume"
+            :show-tooltip="false"
+          />
         </div>
       </div>
     </div>
@@ -239,12 +263,24 @@
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
-  Refresh, Search, VideoPlay, VideoPause, DArrowLeft, DArrowRight,
-  DataAnalysis, Star, Document
+  Refresh,
+  Search,
+  VideoPlay,
+  VideoPause,
+  DArrowLeft,
+  DArrowRight,
+  DataAnalysis,
+  Star,
+  Document
 } from '@element-plus/icons-vue'
 import {
-  scanMusicApi, getSongsApi, getSongDetailApi, recordPlayApi,
-  getStatsApi, getRecentApi, getTopSongsApi
+  scanMusicApi,
+  getSongsApi,
+  getSongDetailApi,
+  recordPlayApi,
+  getStatsApi,
+  getRecentApi,
+  getTopSongsApi
 } from '@/api/music'
 
 defineOptions({ name: 'ToolMusicPlayer' })
@@ -336,7 +372,7 @@ async function handleScan() {
     } else {
       ElMessage.error(res.msg || '扫描失败')
     }
-  } catch (e) {
+  } catch {
     ElMessage.error('扫描失败')
   } finally {
     scanning.value = false
@@ -377,7 +413,7 @@ async function playSong(song) {
       } else {
         lyrics.value = []
       }
-    } catch (e) {
+    } catch {
       lyrics.value = []
     }
   }
@@ -385,20 +421,26 @@ async function playSong(song) {
 
   // 设置音频源
   audio.src = `/api/music/stream/${song.id}`
-  audio.play().then(() => {
-    isPlaying.value = true
-  }).catch(e => {
-    ElMessage.warning('流式播放失败，尝试静态文件')
-    console.warn('流式播放失败，尝试静态路径', e)
-    const fileName = song.title + '.mp3'
-    audio.src = `/shareddocs/${fileName}`
-    audio.play().then(() => {
+  audio
+    .play()
+    .then(() => {
       isPlaying.value = true
-    }).catch(err => {
-      ElMessage.error('无法播放该文件')
-      isPlaying.value = false
     })
-  })
+    .catch((e) => {
+      ElMessage.warning('流式播放失败，尝试静态文件')
+      console.warn('流式播放失败，尝试静态路径', e)
+      const fileName = song.title + '.mp3'
+      audio.src = `/shareddocs/${fileName}`
+      audio
+        .play()
+        .then(() => {
+          isPlaying.value = true
+        })
+        .catch((_err) => {
+          ElMessage.error('无法播放该文件')
+          isPlaying.value = false
+        })
+    })
 }
 
 // 暂停/播放
@@ -411,31 +453,32 @@ function togglePlay() {
     audio.pause()
     isPlaying.value = false
   } else {
-    audio.play().then(() => {
-      isPlaying.value = true
-    }).catch(() => {
-      ElMessage.error('播放失败')
-    })
+    audio
+      .play()
+      .then(() => {
+        isPlaying.value = true
+      })
+      .catch(() => {
+        ElMessage.error('播放失败')
+      })
   }
 }
 
 // 上一首
 function playPrev() {
   if (songs.value.length === 0) return
-  const idx = songs.value.findIndex(s => s.id === currentSong.value?.id)
-  const prevIdx = playMode.value === 2
-    ? Math.floor(Math.random() * songs.value.length)
-    : idx <= 0 ? songs.value.length - 1 : idx - 1
+  const idx = songs.value.findIndex((s) => s.id === currentSong.value?.id)
+  const prevIdx =
+    playMode.value === 2 ? Math.floor(Math.random() * songs.value.length) : idx <= 0 ? songs.value.length - 1 : idx - 1
   playSong(songs.value[prevIdx])
 }
 
 // 下一首
 function playNext() {
   if (songs.value.length === 0) return
-  const idx = songs.value.findIndex(s => s.id === currentSong.value?.id)
-  const nextIdx = playMode.value === 2
-    ? Math.floor(Math.random() * songs.value.length)
-    : idx >= songs.value.length - 1 ? 0 : idx + 1
+  const idx = songs.value.findIndex((s) => s.id === currentSong.value?.id)
+  const nextIdx =
+    playMode.value === 2 ? Math.floor(Math.random() * songs.value.length) : idx >= songs.value.length - 1 ? 0 : idx + 1
   playSong(songs.value[nextIdx])
 }
 
@@ -470,9 +513,14 @@ function seekToLyric(time) {
   if (audio.src) {
     audio.currentTime = time
     if (!isPlaying.value) {
-      audio.play().then(() => { isPlaying.value = true }).catch(() => {
-  ElMessage.error('播放失败')
-})
+      audio
+        .play()
+        .then(() => {
+          isPlaying.value = true
+        })
+        .catch(() => {
+          ElMessage.error('播放失败')
+        })
     }
   }
 }
@@ -548,12 +596,12 @@ function onAudioError() {
 function reportPlay() {
   if (!currentSong.value) return
   recordPlayApi(currentSong.value.id, Math.floor(audio.currentTime)).catch(() => {
-  ElMessage.error('上报播放记录失败')
-})
+    ElMessage.error('上报播放记录失败')
+  })
 }
 
 // 右键菜单
-function showSongMenu(e, song) {
+function showSongMenu(_e, _song) {
   // 预留右键菜单功能
 }
 
@@ -583,9 +631,7 @@ function parseLrc(lrcText) {
 // 加载统计数据
 async function loadStats() {
   try {
-    const [statsRes, topRes, recentRes] = await Promise.all([
-      getStatsApi(), getTopSongsApi(20), getRecentApi(20)
-    ])
+    const [statsRes, topRes, recentRes] = await Promise.all([getStatsApi(), getTopSongsApi(20), getRecentApi(20)])
     if (statsRes.code === 200) stats.value = statsRes.data
     if (topRes.code === 200) topSongs.value = topRes.data || []
     if (recentRes.code === 200) recentPlays.value = recentRes.data || []
@@ -691,15 +737,43 @@ watch(showStats, (val) => {
   background: var(--el-fill-color-extra-light);
   user-select: none;
 }
-.col-play { width: 40px; flex-shrink: 0; text-align: center; }
-.col-index { width: 48px; text-align: center; flex-shrink: 0; }
-.col-title { flex: 1; min-width: 0; }
-.col-artist { width: 120px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.col-duration { width: 56px; text-align: right; flex-shrink: 0; }
+.col-play {
+  width: 40px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.col-index {
+  width: 48px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.col-title {
+  flex: 1;
+  min-width: 0;
+}
+.col-artist {
+  width: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.col-duration {
+  width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+}
 
-.row-play-btn { opacity: 0; transition: opacity 0.15s; }
-.song-row:hover .row-play-btn { opacity: 1; }
-.song-row.active .row-play-btn { opacity: 1; }
+.row-play-btn {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.song-row:hover .row-play-btn {
+  opacity: 1;
+}
+.song-row.active .row-play-btn {
+  opacity: 1;
+}
 
 /* 列表 */
 .song-list {
@@ -707,8 +781,13 @@ watch(showStats, (val) => {
   overflow-y: auto;
   padding: 4px 0;
 }
-.song-list::-webkit-scrollbar { width: 6px; }
-.song-list::-webkit-scrollbar-thumb { background: var(--el-border-color); border-radius: 3px; }
+.song-list::-webkit-scrollbar {
+  width: 6px;
+}
+.song-list::-webkit-scrollbar-thumb {
+  background: var(--el-border-color);
+  border-radius: 3px;
+}
 
 /* 行 */
 .song-row {
@@ -750,11 +829,22 @@ watch(showStats, (val) => {
   animation: bars 0.8s ease-in-out infinite;
   border-radius: 1px;
 }
-.playing-bars i:nth-child(2) { animation-delay: 0.2s; height: 10px; }
-.playing-bars i:nth-child(3) { animation-delay: 0.4s; height: 5px; }
+.playing-bars i:nth-child(2) {
+  animation-delay: 0.2s;
+  height: 10px;
+}
+.playing-bars i:nth-child(3) {
+  animation-delay: 0.4s;
+  height: 5px;
+}
 @keyframes bars {
-  0%, 100% { height: 4px; }
-  50% { height: 14px; }
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 14px;
+  }
 }
 
 .col-title .title-text {
@@ -812,7 +902,9 @@ watch(showStats, (val) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35), 0 0 80px rgba(118, 75, 162, 0.15);
+  box-shadow:
+    0 12px 40px rgba(102, 126, 234, 0.35),
+    0 0 80px rgba(118, 75, 162, 0.15);
   position: relative;
   z-index: var(--z-decor, 1);
   transition: transform 0.3s;
@@ -824,21 +916,25 @@ watch(showStats, (val) => {
   height: 44px;
   background: var(--el-bg-color);
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 2;
 }
 .spinning.cover-disc {
   animation: spin 12s linear infinite;
 }
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .cover-inner {
   width: 78px;
   height: 78px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -861,7 +957,7 @@ watch(showStats, (val) => {
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(102,126,234,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.12) 0%, transparent 70%);
   z-index: var(--z-base, 0);
   pointer-events: none;
 }
@@ -900,7 +996,9 @@ watch(showStats, (val) => {
   overflow-y: auto;
   position: relative;
 }
-.lyric-wrapper::-webkit-scrollbar { width: 0; }
+.lyric-wrapper::-webkit-scrollbar {
+  width: 0;
+}
 .lyric-scroll {
   text-align: center;
   padding: 8px 0;
@@ -968,7 +1066,7 @@ watch(showStats, (val) => {
   position: absolute;
   inset: 0;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .thumb-letter {
   font-size: 16px;
@@ -1012,13 +1110,27 @@ watch(showStats, (val) => {
   gap: 4px;
 }
 .mode-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; cursor: pointer; border-radius: 50%;
-  transition: all 0.2s; color: var(--el-text-color-secondary); font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s;
+  color: var(--el-text-color-secondary);
+  font-size: 15px;
 }
-.mode-icon:hover { color: var(--el-color-primary); background: var(--el-fill-color-light); }
-.mode-icon.active { color: var(--el-color-primary); }
-.skip-btn { font-size: 20px !important; }
+.mode-icon:hover {
+  color: var(--el-color-primary);
+  background: var(--el-fill-color-light);
+}
+.mode-icon.active {
+  color: var(--el-color-primary);
+}
+.skip-btn {
+  font-size: 20px !important;
+}
 .main-play-btn {
   width: 38px !important;
   height: 38px !important;
@@ -1129,10 +1241,12 @@ watch(showStats, (val) => {
   color: var(--el-text-color-secondary);
   margin-top: 4px;
 }
-.top-songs-section, .recent-section {
+.top-songs-section,
+.recent-section {
   margin-top: 16px;
 }
-.top-songs-section h4, .recent-section h4 {
+.top-songs-section h4,
+.recent-section h4 {
   margin: 0 0 8px;
   font-size: 14px;
   color: var(--el-text-color-primary);
@@ -1151,14 +1265,24 @@ watch(showStats, (val) => {
   font-weight: 600;
   color: var(--el-text-color-secondary);
 }
-.top-rank.top-3 { color: var(--el-color-danger); }
-.top-title { flex: 1; }
-.top-count { color: var(--el-text-color-placeholder); font-size: 12px; }
+.top-rank.top-3 {
+  color: var(--el-color-danger);
+}
+.top-title {
+  flex: 1;
+}
+.top-count {
+  color: var(--el-text-color-placeholder);
+  font-size: 12px;
+}
 .recent-item {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
   font-size: 13px;
 }
-.recent-time { color: var(--el-text-color-placeholder); font-size: 12px; }
+.recent-time {
+  color: var(--el-text-color-placeholder);
+  font-size: 12px;
+}
 </style>

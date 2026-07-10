@@ -56,8 +56,7 @@ public class HonglouController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<HonglouPoem> pr = poemService.pageQuery(page, size, keyword);
-        List<HonglouPoemVO> voList = poemConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(poemConvert.toPageResult(pr));
     }
 
     @Operation(summary = "红楼诗词详情")
@@ -115,8 +114,7 @@ public class HonglouController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword) {
         PageResult<HonglouCharacter> pr = characterService.pageQuery(page, size, keyword);
-        List<HonglouCharacterVO> voList = characterConvert.toVOList(pr.getRecords());
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), voList));
+        return Result.ok(characterConvert.toPageResult(pr));
     }
 
     @Operation(summary = "红楼人物详情")

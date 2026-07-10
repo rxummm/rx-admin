@@ -1,6 +1,6 @@
 import NProgress from 'nprogress'
 import { useUserStore } from '@/stores/user'
-import { resetDynamicRoutes, generateDynamicRoutes } from '@/router'
+import { generateDynamicRoutes } from '@/router'
 
 export function useRouterGuard(router) {
   const whiteList = ['/login']
@@ -36,7 +36,7 @@ export function useRouterGuard(router) {
 
       if (to.matched.length <= 1) {
         const now = Date.now()
-        if (to.path === lastRedirectedPath && (now - lastRedirectedTime) < REDIRECT_COOLDOWN) {
+        if (to.path === lastRedirectedPath && now - lastRedirectedTime < REDIRECT_COOLDOWN) {
           next(false)
           NProgress.done()
           return

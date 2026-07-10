@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Component
-@SuppressWarnings("null")
 public class OcrHealthIndicator implements HealthIndicator {
 
     @Value("${app.ocr.enabled:false}")

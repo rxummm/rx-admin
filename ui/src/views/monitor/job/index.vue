@@ -1,8 +1,20 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" :placeholder="$t('common.input')" clearable style="width: 240px" @keyup.enter="handleSearch" />
-      <el-select v-model="statusFilter" :placeholder="$t('common.status')" clearable style="width: 120px" @change="handleSearch">
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('common.input')"
+        clearable
+        style="width: 240px"
+        @keyup.enter="handleSearch"
+      />
+      <el-select
+        v-model="statusFilter"
+        :placeholder="$t('common.status')"
+        clearable
+        style="width: 120px"
+        @change="handleSearch"
+      >
         <el-option :label="$t('common.all')" value="" />
         <el-option :label="$t('common.enable')" :value="1" />
         <el-option :label="$t('common.disable')" :value="0" />
@@ -21,7 +33,15 @@
     </div>
 
     <div class="job-table-wrapper">
-      <el-table :data="tableData" :max-height="tableMaxHeight" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        :data="tableData"
+        :max-height="tableMaxHeight"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column prop="id" label="ID" width="70" />
         <el-table-column prop="jobName" :label="$t('job.jobName')" min-width="150" />
@@ -40,7 +60,12 @@
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleEdit(row)">{{ $t('common.edit') }}</el-button>
             <el-button type="primary" link size="small" @click="handleRunOnce(row)">{{ $t('job.runOnce') }}</el-button>
-            <el-button :type="row.status === 1 ? 'warning' : 'success'" link size="small" @click="handleToggleStatus(row)">
+            <el-button
+              :type="row.status === 1 ? 'warning' : 'success'"
+              link
+              size="small"
+              @click="handleToggleStatus(row)"
+            >
               {{ row.status === 1 ? $t('common.disable') : $t('common.enable') }}
             </el-button>
             <el-button type="danger" link size="small" @click="handleDelete(row)">{{ $t('common.delete') }}</el-button>
@@ -140,7 +165,10 @@ async function fetchData() {
     const res = await getJobPageApi(params)
     tableData.value = res.data.records || []
     total.value = res.data.total || 0
-  } catch {} finally { loading.value = false }
+  } catch {
+  } finally {
+    loading.value = false
+  }
 }
 
 function handleSearch() {
@@ -156,7 +184,7 @@ function resetSearch() {
 }
 
 function handleSelectionChange(selection) {
-  selectedIds.value = selection.map(s => s.id)
+  selectedIds.value = selection.map((s) => s.id)
 }
 
 function handleAdd() {
@@ -193,7 +221,10 @@ async function handleSubmit() {
     }
     dialogVisible.value = false
     fetchData()
-  } catch {} finally { submitLoading.value = false }
+  } catch {
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 async function handleRunOnce(row) {
@@ -225,7 +256,9 @@ async function handleBatchDelete() {
   if (selectedIds.value.length === 0) return
   try {
     await ElMessageBox.confirm(t('common.batchDeleteConfirm'), t('common.tip'), { type: 'warning' })
-    for (const id of selectedIds.value) { await deleteJobApi(id) }
+    for (const id of selectedIds.value) {
+      await deleteJobApi(id)
+    }
     ElMessage.success(t('common.batchDeleteSuccess'))
     fetchData()
   } catch {}
@@ -234,7 +267,10 @@ async function handleBatchDelete() {
 // 模板引用
 const formRef = ref(null)
 
-onMounted(() => { fetchData(); calcTableMaxHeight() })
+onMounted(() => {
+  fetchData()
+  calcTableMaxHeight()
+})
 </script>
 
 <style scoped>

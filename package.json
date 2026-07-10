@@ -1,5 +1,10 @@
 {
   "name": "rx-admin",
   "private": true,
-  "workspaces": ["ui"]
+  "workspaces": [
+    "ui"
+  ],
+  "scripts": {
+    "prepare": "husky"
+  }
 }

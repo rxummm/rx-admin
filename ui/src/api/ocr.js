@@ -36,6 +36,6 @@ export async function deleteAllOcrApi() {
   const res = await request({ url: API.OCR.PAGE, method: 'get', params: { page: 1, size: 10000 } })
   const records = res.data?.records || []
   if (records.length === 0) return
-  const ids = records.map(r => r.id).join(',')
+  const ids = records.map((r) => r.id).join(',')
   return deleteOcrBatchApi(ids)
 }

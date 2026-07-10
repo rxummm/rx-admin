@@ -34,7 +34,7 @@ public class SysSlowQueryController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String queryType) {
         PageResult<SysSlowQuery> pr = slowQueryService.pageQuery(page, size, keyword, queryType);
-        return Result.ok(PageResult.of(pr.getTotal(), pr.getPage(), pr.getSize(), slowQueryConvert.toVOList(pr.getRecords())));
+        return Result.ok(slowQueryConvert.toPageResult(pr));
     }
 
     @Operation(summary = "删除慢查询记录")

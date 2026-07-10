@@ -6,11 +6,23 @@
           <el-icon><Upload /></el-icon> {{ $t('file.upload') }}
         </el-button>
       </el-upload>
-      <el-select v-model="categoryFilter" :placeholder="$t('file.category')" clearable style="width: 140px" @change="fetchData">
+      <el-select
+        v-model="categoryFilter"
+        :placeholder="$t('file.category')"
+        clearable
+        style="width: 140px"
+        @change="fetchData"
+      >
         <el-option :label="$t('common.all')" value="" />
         <el-option v-for="cat in categories" :key="cat" :label="$t('file.categories.' + cat)" :value="cat" />
       </el-select>
-      <el-input v-model="keyword" :placeholder="$t('file.fileName')" clearable style="width: 200px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('file.fileName')"
+        clearable
+        style="width: 200px"
+        @keyup.enter="fetchData"
+      />
       <el-button type="primary" @click="fetchData">
         <el-icon><Search /></el-icon> {{ $t('common.search') }}
       </el-button>
@@ -22,7 +34,14 @@
     </div>
 
     <div class="table-container">
-      <el-table :data="tableData" border stripe v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        v-loading="loading"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column prop="originalName" :label="$t('file.originalName')" min-width="200" show-overflow-tooltip />
         <el-table-column prop="size" :label="$t('file.size')" width="100">
@@ -35,7 +54,9 @@
         <el-table-column prop="createTime" :label="$t('file.uploadTime')" width="170" />
         <el-table-column :label="$t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleDownload(row)">{{ $t('file.download') }}</el-button>
+            <el-button link type="primary" size="small" @click="handleDownload(row)">{{
+              $t('file.download')
+            }}</el-button>
             <el-popconfirm :title="$t('file.deleteConfirm')" @confirm="handleDelete(row.id)">
               <template #reference>
                 <el-button link type="danger" size="small">{{ $t('common.delete') }}</el-button>
@@ -46,7 +67,16 @@
       </el-table>
     </div>
 
-    <el-pagination v-model:current-page="page" v-model:page-size="size" :total="total" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" class="page-pagination" @size-change="fetchData" @current-change="fetchData" />
+    <el-pagination
+      v-model:current-page="page"
+      v-model:page-size="size"
+      :total="total"
+      :page-sizes="[10, 20, 50, 100]"
+      layout="total, sizes, prev, pager, next, jumper"
+      class="page-pagination"
+      @size-change="fetchData"
+      @current-change="fetchData"
+    />
   </div>
 </template>
 
@@ -78,7 +108,9 @@ async function fetchData() {
     const res = await getFilePageApi(params)
     tableData.value = res.data.records
     total.value = res.data.total
-  } finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
 }
 
 function resetSearch() {
@@ -112,7 +144,7 @@ async function handleDelete(id) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 async function handleBatchDelete() {
@@ -133,7 +165,6 @@ function formatSize(bytes) {
 
 onMounted(() => fetchData())
 </script>
-
 
 <style scoped>
 .page-pagination {

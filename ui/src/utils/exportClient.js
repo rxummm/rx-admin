@@ -15,7 +15,7 @@ import { COLORS } from '@/config/colors'
 /** 格式化日期为 YYYYMMDDHHmmss */
 function formatDate() {
   const now = new Date()
-  const pad = n => String(n).padStart(2, '0')
+  const pad = (n) => String(n).padStart(2, '0')
   return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
 }
 
@@ -58,31 +58,35 @@ export async function exportExcelClient({ title, columns, data }) {
   titleRow.alignment = { horizontal: 'center', vertical: 'middle' }
 
   // 表头行
-  const headerRow = sheet.addRow(columns.map(c => c.label))
+  const headerRow = sheet.addRow(columns.map((c) => c.label))
   headerRow.height = 22
-  headerRow.eachCell(cell => {
+  headerRow.eachCell((cell) => {
     cell.font = { bold: true, size: 10, color: { argb: 'FFFFFFFF' } }
     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + COLORS.PRIMARY.replace('#', '') } }
     cell.alignment = { horizontal: 'center', vertical: 'middle' }
     cell.border = {
-      top: { style: 'thin' }, bottom: { style: 'thin' },
-      left: { style: 'thin' }, right: { style: 'thin' }
+      top: { style: 'thin' },
+      bottom: { style: 'thin' },
+      left: { style: 'thin' },
+      right: { style: 'thin' }
     }
   })
 
   // 数据行（斑马纹）
   data.forEach((row, i) => {
-    const dataRow = sheet.addRow(columns.map(c => cellText(row, c.field)))
-    dataRow.eachCell(cell => {
+    const dataRow = sheet.addRow(columns.map((c) => cellText(row, c.field)))
+    dataRow.eachCell((cell) => {
       cell.font = { size: 10 }
       cell.alignment = { vertical: 'middle' }
       cell.border = {
-        top: { style: 'thin' }, bottom: { style: 'thin' },
-        left: { style: 'thin' }, right: { style: 'thin' }
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
       }
     })
     if (i % 2 === 1) {
-      dataRow.eachCell(cell => {
+      dataRow.eachCell((cell) => {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + COLORS.BG_PAGE.replace('#', '') } }
       })
     }
@@ -92,7 +96,7 @@ export async function exportExcelClient({ title, columns, data }) {
   columns.forEach((col, idx) => {
     const colIndex = idx + 1
     let maxLen = col.label.length
-    data.forEach(row => {
+    data.forEach((row) => {
       const txt = cellText(row, col.field)
       // 中文字符按 2 个字符宽度计算
       const len = [...txt].reduce((sum, ch) => sum + (ch.charCodeAt(0) > 255 ? 2.2 : 1), 0)
@@ -131,7 +135,7 @@ export async function exportPdfClient({ title, columns, data }) {
     container.innerHTML = tableHtml
 
     // 等字体渲染完成
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     // 2. html2canvas 截图
     const canvas = await html2canvas(container, {
@@ -157,14 +161,14 @@ export async function exportPdfClient({ title, columns, data }) {
 
     // 首页
     pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight)
-    heightLeft -= (pageHeight - margin * 2)
+    heightLeft -= pageHeight - margin * 2
 
     // 后续页（如果表格很长）
     while (heightLeft > 0) {
       position = margin - (imgHeight - (pageHeight - margin * 2)) + page * (pageHeight - margin * 2)
       pdf.addPage()
       pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight)
-      heightLeft -= (pageHeight - margin * 2)
+      heightLeft -= pageHeight - margin * 2
       page++
     }
 
@@ -178,12 +182,14 @@ export async function exportPdfClient({ title, columns, data }) {
  * 构建导出用的干净 HTML 表格
  */
 function buildTableHtml(title, columns, data) {
-  const headerCells = columns.map(c => `<th>${escHtml(c.label)}</th>`).join('')
-  const dataRows = data.map((row, i) => {
-    const bg = i % 2 === 0 ? COLORS.BG_WHITE : COLORS.BG_PAGE
-    const cells = columns.map(c => `<td>${escHtml(cellText(row, c.field))}</td>`).join('')
-    return `<tr style="background:${bg}">${cells}</tr>`
-  }).join('')
+  const headerCells = columns.map((c) => `<th>${escHtml(c.label)}</th>`).join('')
+  const dataRows = data
+    .map((row, i) => {
+      const bg = i % 2 === 0 ? COLORS.BG_WHITE : COLORS.BG_PAGE
+      const cells = columns.map((c) => `<td>${escHtml(cellText(row, c.field))}</td>`).join('')
+      return `<tr style="background:${bg}">${cells}</tr>`
+    })
+    .join('')
 
   return `
     <style>
@@ -205,5 +211,5 @@ function buildTableHtml(title, columns, data) {
 
 function escHtml(str) {
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }
-  return String(str).replace(/[&<>"]/g, c => map[c] || c)
+  return String(str).replace(/[&<>"]/g, (c) => map[c] || c)
 }

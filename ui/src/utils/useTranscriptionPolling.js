@@ -25,22 +25,24 @@ export function useTranscriptionPolling() {
           url: `/${baseUrl}/${id}`,
           method: 'get',
           _skipNProgress: true
-        }).then(res => {
-          if (stopFlag) return
-          const record = res.data
-          if (record.status === 1) {
-            polling.value = false
-            resolve(record)
-          } else if (record.status === 0) {
-            polling.value = false
-            reject(new Error(record.errorMessage || '转写失败'))
-          } else {
-            timer = setTimeout(poll, interval)
-          }
-        }).catch(err => {
-          polling.value = false
-          reject(err)
         })
+          .then((res) => {
+            if (stopFlag) return
+            const record = res.data
+            if (record.status === 1) {
+              polling.value = false
+              resolve(record)
+            } else if (record.status === 0) {
+              polling.value = false
+              reject(new Error(record.errorMessage || '转写失败'))
+            } else {
+              timer = setTimeout(poll, interval)
+            }
+          })
+          .catch((err) => {
+            polling.value = false
+            reject(err)
+          })
       }
       poll()
     })

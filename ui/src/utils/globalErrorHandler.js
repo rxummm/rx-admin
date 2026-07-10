@@ -16,7 +16,7 @@ const MAX_ERRORS = 3 // 最多显示 3 次错误提示
 const RESET_TIME = 10000 // 10秒后重置计数器
 
 // 上次错误时间
-let lastErrorTime = 0
+let _lastErrorTime = 0
 const ERROR_THROTTLE = 2000 // 2秒内相同错误只显示一次
 
 // 错误消息缓存
@@ -28,14 +28,14 @@ const errorCache = new Map()
 export function initGlobalErrorHandler() {
   // 1. 捕获未处理的 Promise 拒绝
   window.addEventListener('unhandledrejection', handleUnhandledRejection)
-  
+
   // 2. 捕获运行时错误
   window.addEventListener('error', handleRuntimeError, true)
-  
+
   // 3. 捕获资源加载错误
   window.addEventListener('error', handleResourceError, true)
-  
-  console.log('✅ 全局错误处理器已启动')
+
+  // noop
 }
 
 /**
@@ -43,13 +43,13 @@ export function initGlobalErrorHandler() {
  */
 function handleUnhandledRejection(event) {
   event.preventDefault()
-  
+
   const reason = event.reason
   console.error('❌ Unhandled Promise Rejection:', reason)
-  
+
   // 上报错误
   reportError('UnhandledPromiseRejection', reason)
-  
+
   // 显示用户友好的提示
   showUserFriendlyError(reason)
 }
@@ -59,26 +59,26 @@ function handleUnhandledRejection(event) {
  */
 function handleRuntimeError(event) {
   // 忽略资源加载错误（由 handleResourceError 处理）
-  if (event.target && (event.target instanceof HTMLElement)) {
+  if (event.target && event.target instanceof HTMLElement) {
     return
   }
-  
+
   const error = event.error || event.message
-  
+
   // 忽略无害的浏览器警告
   if (shouldIgnoreHarmlessError(error)) {
     return
   }
-  
+
   console.error('❌ Runtime Error:', error)
-  
+
   // 上报错误
   reportError('RuntimeError', error, {
     filename: event.filename,
     lineno: event.lineno,
     colno: event.colno
   })
-  
+
   // 显示用户友好的提示
   showUserFriendlyError(error)
 }
@@ -88,26 +88,26 @@ function handleRuntimeError(event) {
  */
 function handleResourceError(event) {
   const target = event.target
-  
+
   // 只处理元素节点的资源加载错误
   if (!target || !(target instanceof HTMLElement)) {
     return
   }
-  
+
   const tagName = target.tagName.toLowerCase()
   const src = target.src || target.href || ''
-  
+
   // 忽略常见的无害错误
   if (shouldIgnoreResourceError(tagName, src)) {
     return
   }
-  
+
   console.warn('⚠️ Resource Load Error:', {
     tag: tagName,
     src,
     type: target.type
   })
-  
+
   // 上报资源加载错误
   reportError('ResourceLoadError', null, {
     tag: tagName,
@@ -124,12 +124,12 @@ function shouldIgnoreResourceError(tagName, src) {
   if (src.includes('favicon.ico')) {
     return true
   }
-  
+
   // 忽略空 src
   if (!src) {
     return true
   }
-  
+
   // 忽略 data: 和 blob: URL
   if (src.startsWith('data:') || src.startsWith('blob:')) {
     return true
@@ -148,34 +148,34 @@ function shouldIgnoreResourceError(tagName, src) {
  */
 function shouldIgnoreHarmlessError(error) {
   if (!error) return true
-  
-  const errMsg = typeof error === 'string' ? error : (error.message || '')
-  
+
+  const errMsg = typeof error === 'string' ? error : error.message || ''
+
   // ResizeObserver 循环警告（Element Plus 等组件库常见）
   if (errMsg.includes('ResizeObserver loop')) {
     return true
   }
-  
+
   // IntersectionObserver 相关警告
   if (errMsg.includes('IntersectionObserver loop')) {
     return true
   }
-  
+
   // 第三方脚本错误（通常无法控制）
   if (errMsg.includes('Script error.') && !errMsg.includes('http')) {
     return true
   }
-  
+
   // Chrome 扩展程序注入的错误
   if (errMsg.includes('chrome-extension://')) {
     return true
   }
-  
+
   // Webpack HMR 热更新相关警告
   if (errMsg.includes('[HMR]') || errMsg.includes('Hot Module Replacement')) {
     return true
   }
-  
+
   // Vite 开发服务器相关警告
   if (errMsg.includes('[vite]') && errMsg.includes('connected')) {
     return true
@@ -195,34 +195,34 @@ function shouldIgnoreHarmlessError(error) {
  */
 function showUserFriendlyError(error) {
   const now = Date.now()
-  
+
   // 节流：2秒内相同错误只显示一次
   const errorMessage = getErrorMessage(error)
   const cachedTime = errorCache.get(errorMessage)
-  
-  if (cachedTime && (now - cachedTime) < ERROR_THROTTLE) {
+
+  if (cachedTime && now - cachedTime < ERROR_THROTTLE) {
     return
   }
-  
+
   errorCache.set(errorMessage, now)
-  
+
   // 限制错误提示次数
   if (errorCount >= MAX_ERRORS) {
     // 静默记录，不再弹出提示
     return
   }
-  
+
   errorCount++
-  
+
   // 重置计数器
   setTimeout(() => {
     errorCount = 0
     errorCache.clear()
   }, RESET_TIME)
-  
+
   // 根据错误类型显示不同的提示
   const errorType = classifyError(error)
-  
+
   switch (errorType) {
     case 'network':
       ElNotification({
@@ -232,7 +232,7 @@ function showUserFriendlyError(error) {
         duration: 5000
       })
       break
-      
+
     case 'timeout':
       ElNotification({
         title: '请求超时',
@@ -241,7 +241,7 @@ function showUserFriendlyError(error) {
         duration: 5000
       })
       break
-      
+
     case 'permission':
       ElNotification({
         title: '权限不足',
@@ -250,11 +250,11 @@ function showUserFriendlyError(error) {
         duration: 4000
       })
       break
-      
+
     case 'validation':
       ElMessage.warning(errorMessage || '数据验证失败')
       break
-      
+
     default:
       ElNotification({
         title: '发生错误',
@@ -271,19 +271,19 @@ function showUserFriendlyError(error) {
  */
 function getErrorMessage(error) {
   if (!error) return ''
-  
+
   if (typeof error === 'string') {
     return error
   }
-  
+
   if (error.message) {
     return error.message
   }
-  
+
   if (error.statusText) {
     return error.statusText
   }
-  
+
   return String(error)
 }
 
@@ -292,36 +292,34 @@ function getErrorMessage(error) {
  */
 function classifyError(error) {
   if (!error) return 'unknown'
-  
+
   const errMsg = getErrorMessage(error).toLowerCase()
   const statusCode = error.status || error.code
-  
+
   // 网络错误
-  if (errMsg.includes('network error') || 
-      errMsg.includes('failed to fetch') ||
-      errMsg.includes('networkrequesterror')) {
+  if (
+    errMsg.includes('network error') ||
+    errMsg.includes('failed to fetch') ||
+    errMsg.includes('networkrequesterror')
+  ) {
     return 'network'
   }
-  
+
   // 超时错误
   if (errMsg.includes('timeout') || statusCode === 408) {
     return 'timeout'
   }
-  
+
   // 权限错误
-  if (statusCode === 401 || statusCode === 403 || 
-      errMsg.includes('permission') || 
-      errMsg.includes('unauthorized')) {
+  if (statusCode === 401 || statusCode === 403 || errMsg.includes('permission') || errMsg.includes('unauthorized')) {
     return 'permission'
   }
-  
+
   // 验证错误
-  if (errMsg.includes('validation') || 
-      errMsg.includes('invalid') ||
-      statusCode === 422) {
+  if (errMsg.includes('validation') || errMsg.includes('invalid') || statusCode === 422) {
     return 'validation'
   }
-  
+
   return 'unknown'
 }
 
@@ -337,10 +335,10 @@ function reportError(type, error, context = {}) {
     userAgent: navigator.userAgent,
     ...context
   }
-  
+
   // 1. 控制台日志
   console.error('[Error Report]', errorInfo)
-  
+
   // 2. 发送到 Sentry（如果已配置）
   try {
     captureException(error || new Error(type), {
@@ -354,17 +352,17 @@ function reportError(type, error, context = {}) {
     // Sentry 未初始化或上报失败，静默处理
     console.warn('Sentry 上报失败:', e)
   }
-  
+
   // 3. 本地存储（用于后续分析）
   try {
     const errors = errorStore.get() || []
     errors.push(errorInfo)
-    
+
     // 只保留最近 100 条错误
     if (errors.length > 100) {
       errors.splice(0, errors.length - 100)
     }
-    
+
     errorStore.set(errors)
   } catch (e) {
     console.error('本地错误存储失败:', e)
@@ -393,6 +391,6 @@ export function destroyGlobalErrorHandler() {
   window.removeEventListener('unhandledrejection', handleUnhandledRejection)
   window.removeEventListener('error', handleRuntimeError, true)
   window.removeEventListener('error', handleResourceError, true)
-  
-  console.log('🛑 全局错误处理器已停止')
+
+  // noop
 }

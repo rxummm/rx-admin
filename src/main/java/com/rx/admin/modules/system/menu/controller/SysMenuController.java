@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Tag(name = "菜单管理")
@@ -63,6 +62,16 @@ public class SysMenuController {
     @CacheEvict(value = "menu", allEntries = true)
     public Result<?> delete(@PathVariable Long id) {
         menuService.removeMenu(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "批量删除菜单")
+    @DeleteMapping("/batch")
+    @SaCheckPermission(PermissionConstants.Menu.DELETE)
+    @OperateLog(module = "菜单管理", operation = "批量删除")
+    @CacheEvict(value = "menu", allEntries = true)
+    public Result<?> deleteBatch(@RequestBody List<Long> ids) {
+        menuService.deleteMenuBatch(ids);
         return Result.ok();
     }
 

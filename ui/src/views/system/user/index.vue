@@ -288,7 +288,7 @@
               :props="{ label: 'menuName', children: 'children' }"
               @check="handleCurrentPermCheck"
             >
-              <template #default="{ node, data }">
+              <template #default="{ node: _node, data }">
                 <span style="display: flex; align-items: center; gap: 6px">
                   <el-tag
                     :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'"
@@ -342,7 +342,7 @@
               :check-strictly="false"
               :props="{ label: 'menuName', children: 'children' }"
             >
-              <template #default="{ node, data }">
+              <template #default="{ node: _node, data }">
                 <span style="display: flex; align-items: center; gap: 6px">
                   <el-tag
                     :type="data.menuType === 1 ? 'info' : data.menuType === 2 ? 'success' : 'warning'"
@@ -660,7 +660,7 @@ async function refreshPermManageData(keepTab) {
   }
 }
 
-function getCheckedCurrentKeys() {
+function _getCheckedCurrentKeys() {
   return currentPermTreeRef.value?.getCheckedKeys() || []
 }
 

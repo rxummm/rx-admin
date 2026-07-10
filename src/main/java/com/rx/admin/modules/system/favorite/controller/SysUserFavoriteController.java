@@ -5,12 +5,15 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.rx.admin.common.annotation.ApiVersion;
 import com.rx.admin.common.annotation.OperateLog;
 import com.rx.admin.common.result.Result;
+import com.rx.admin.modules.system.favorite.dto.FavoriteCreateDTO;
+import com.rx.admin.modules.system.favorite.dto.FavoriteToggleDTO;
 import com.rx.admin.modules.system.favorite.entity.SysUserFavorite;
 import com.rx.admin.modules.system.favorite.service.SysUserFavoriteService;
 import com.rx.admin.modules.system.favorite.convert.FavoriteConvert;
 import com.rx.admin.modules.system.favorite.vo.FavoriteVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +45,14 @@ public class SysUserFavoriteController {
     @PostMapping
     @Operation(summary = "添加收藏")
     @OperateLog(module = "快捷收藏夹", operation = "添加收藏")
-    public Result<FavoriteVO> add(@RequestBody SysUserFavorite fav) {
+    public Result<FavoriteVO> add(@RequestBody @Valid FavoriteCreateDTO dto) {
         Long userId = StpUtil.getLoginIdAsLong();
+        SysUserFavorite fav = new SysUserFavorite();
         fav.setUserId(userId);
+        fav.setName(dto.getName());
+        fav.setPath(dto.getPath());
+        fav.setIcon(dto.getIcon());
+        fav.setMenuId(dto.getMenuId());
         favoriteService.save(fav);
         return Result.ok(favoriteConvert.toVO(fav));
     }
@@ -53,10 +61,9 @@ public class SysUserFavoriteController {
     @PostMapping("/toggle")
     @Operation(summary = "切换收藏状态")
     @OperateLog(module = "快捷收藏夹", operation = "切换收藏")
-    public Result<Map<String, Object>> toggle(@RequestBody SysUserFavorite fav) {
+    public Result<Map<String, Object>> toggle(@RequestBody @Valid FavoriteToggleDTO dto) {
         Long userId = StpUtil.getLoginIdAsLong();
-        log.info("toggle收藏: userId={}, name={}, path={}, icon={}, menuId={}", userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
-        SysUserFavorite result = favoriteService.toggleFavorite(userId, fav.getName(), fav.getPath(), fav.getIcon(), fav.getMenuId());
+        SysUserFavorite result = favoriteService.toggleFavorite(userId, dto.getName(), dto.getPath(), dto.getIcon(), dto.getMenuId());
         Map<String, Object> data = new HashMap<>();
         data.put("collected", result != null);
         if (result != null) data.put("id", result.getId());
@@ -69,6 +76,15 @@ public class SysUserFavoriteController {
     @OperateLog(module = "快捷收藏夹", operation = "取消收藏")
     public Result<Void> delete(@PathVariable Long id) {
         favoriteService.removeById(id);
+        return Result.ok();
+    }
+
+    @SaCheckLogin
+    @DeleteMapping("/batch")
+    @Operation(summary = "批量删除收藏")
+    @OperateLog(module = "快捷收藏夹", operation = "批量删除")
+    public Result<Void> deleteBatch(@RequestBody List<Long> ids) {
+        favoriteService.deleteFavoriteBatch(ids);
         return Result.ok();
     }
 

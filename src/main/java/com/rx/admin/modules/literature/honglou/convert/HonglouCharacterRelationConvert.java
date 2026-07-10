@@ -13,7 +13,6 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-@SuppressWarnings("null")
 public interface HonglouCharacterRelationConvert {
 
     HonglouCharacterRelation toEntity(HonglouCharacterRelationCreateDTO dto);
@@ -28,6 +27,10 @@ public interface HonglouCharacterRelationConvert {
         List<HonglouCharacterRelationVO> voList = page.getRecords().stream()
                 .map(this::toVO)
                 .toList();
-        return PageResult.of(page.getTotal(), page.getCurrent(), page.getSize(), voList);
+        return PageResult.of(page).map(this::toVO);
+    }
+
+    default PageResult<HonglouCharacterRelationVO> toPageResult(PageResult<HonglouCharacterRelation> pageResult) {
+        return pageResult.map(this::toVO);
     }
 }

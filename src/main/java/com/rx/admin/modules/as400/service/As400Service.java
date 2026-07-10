@@ -149,7 +149,7 @@ public class As400Service {
 
     private static void closeQuietly(AutoCloseable closeable) {
         if (closeable != null) {
-            try { closeable.close(); } catch (Exception ignored) {}
+            try { closeable.close(); } catch (Exception e) { log.debug("资源关闭失败", e); }
         }
     }
 }

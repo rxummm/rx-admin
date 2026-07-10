@@ -1,8 +1,7 @@
 <template>
-  <el-dialog v-model="visible" title="系统公告" width="480px" :close-on-click-modal="false"
-    @closed="showNext">
+  <el-dialog v-model="visible" title="系统公告" width="480px" :close-on-click-modal="false" @closed="showNext">
     <!-- ⚠️ XSS 防护：必须经 sanitizeHtml 过滤后渲染，禁止直接 v-html 用户内容 -->
-    <div v-html="safeContent" style="line-height: 1.8; max-height: 300px; overflow-y: auto;"></div>
+    <div v-html="safeContent" style="line-height: 1.8; max-height: 300px; overflow-y: auto"></div>
     <template #footer>
       <el-button type="primary" @click="dismiss">我知道了</el-button>
     </template>
@@ -31,7 +30,11 @@ const safeContent = computed(() => sanitizeHtml(currentAnnouncement.value?.conte
 const dismiss = async () => {
   const a = currentAnnouncement.value
   if (a) {
-    try { await markAnnouncementReadApi(a.id) } catch (e) { /* */ }
+    try {
+      await markAnnouncementReadApi(a.id)
+    } catch {
+      /* */
+    }
     const dismissed = dismissedStore.get() || []
     dismissed.push(a.id)
     dismissedStore.set(dismissed)
@@ -53,12 +56,14 @@ onMounted(async () => {
     announcements.value = res.data || []
     // 过滤已关闭的
     const dismissed = dismissedStore.get() || []
-    announcements.value = announcements.value.filter(a => !dismissed.includes(a.id))
+    announcements.value = announcements.value.filter((a) => !dismissed.includes(a.id))
 
     if (announcements.value.length > 0) {
       currentAnnouncement.value = announcements.value[0]
       visible.value = true
     }
-  } catch (e) { /* */ }
+  } catch {
+    /* */
+  }
 })
 </script>

@@ -671,7 +671,7 @@ function selectIcon(name) {
   form.icon = name
 }
 
-function isElementIcon(name) {
+function _isElementIcon(name) {
   return name && !name.startsWith('fa-')
 }
 

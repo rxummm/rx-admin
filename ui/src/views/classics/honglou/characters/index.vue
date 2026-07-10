@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索姓名 / 别称" clearable style="width: 220px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索姓名 / 别称"
+        clearable
+        style="width: 220px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterRole" placeholder="角色筛选" clearable style="width: 140px" @change="fetchData">
         <el-option label="主角" value="主角" />
         <el-option label="重要配角" value="重要配角" />
@@ -15,7 +21,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:honglou:character:add')">
         <el-icon><Plus /></el-icon> 新增人物
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:honglou:character:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:honglou:character:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -34,8 +45,16 @@
     </div>
 
     <div class="honglou-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
         <el-table-column v-if="visibleColumns.includes('name')" prop="name" label="姓名" width="110" sortable>
@@ -43,39 +62,84 @@
             <el-button link type="primary" @click="handleView(row)">{{ row.name }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('nickname')" prop="nickname" label="别称" min-width="140" show-overflow-tooltip sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('nickname')"
+          prop="nickname"
+          label="别称"
+          min-width="140"
+          show-overflow-tooltip
+          sortable
+        />
         <el-table-column v-if="visibleColumns.includes('role')" prop="role" label="角色" width="100" sortable>
           <template #default="{ row }">
-            <el-tag v-if="row.role" size="small" :type="row.role === '主角' ? 'danger' : row.role === '重要配角' ? 'warning' : 'info'">
+            <el-tag
+              v-if="row.role"
+              size="small"
+              :type="row.role === '主角' ? 'danger' : row.role === '重要配角' ? 'warning' : 'info'"
+            >
               {{ row.role }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('appearanceDescription')" label="外貌描述" min-width="180" show-overflow-tooltip>
+        <el-table-column
+          v-if="visibleColumns.includes('appearanceDescription')"
+          label="外貌描述"
+          min-width="180"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             {{ (row.appearanceDescription || '-').slice(0, 50) }}
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('personalityTraits')" label="性格特点" min-width="160" show-overflow-tooltip>
+        <el-table-column
+          v-if="visibleColumns.includes('personalityTraits')"
+          label="性格特点"
+          min-width="160"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             {{ (row.personalityTraits || '-').slice(0, 40) }}
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:honglou:character:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:honglou:character:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:honglou:character:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:honglou:character:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -96,7 +160,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="外貌描述">
-          <el-input v-model="form.appearanceDescription" type="textarea" :rows="3" placeholder="如：面若中秋之月，色如春晓之花" />
+          <el-input
+            v-model="form.appearanceDescription"
+            type="textarea"
+            :rows="3"
+            placeholder="如：面若中秋之月，色如春晓之花"
+          />
         </el-form-item>
         <el-form-item label="性格特点">
           <el-input v-model="form.personalityTraits" type="textarea" :rows="3" placeholder="如：多愁善感、才华横溢" />
@@ -114,9 +183,14 @@
     <!-- 查看弹窗 -->
     <el-dialog v-model="viewVisible" title="人物详情" width="700px">
       <div v-if="viewData" class="character-detail">
-        <h3 class="character-name">{{ viewData.name }}
-          <el-tag v-if="viewData.role" style="margin-left: 8px" size="small"
-            :type="viewData.role === '主角' ? 'danger' : viewData.role === '重要配角' ? 'warning' : 'info'">
+        <h3 class="character-name">
+          {{ viewData.name }}
+          <el-tag
+            v-if="viewData.role"
+            style="margin-left: 8px"
+            size="small"
+            :type="viewData.role === '主角' ? 'danger' : viewData.role === '重要配角' ? 'warning' : 'info'"
+          >
             {{ viewData.role }}
           </el-tag>
         </h3>
@@ -193,7 +267,7 @@ const columnOptions = [
   { key: 'personalityTraits', label: '性格特点' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -227,7 +301,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -278,7 +352,7 @@ async function fetchData() {
     let records = res.data.records
     // 前端按角色筛选
     if (filterRole.value) {
-      records = records.filter(r => r.role === filterRole.value)
+      records = records.filter((r) => r.role === filterRole.value)
     }
     tableData.value = records
     total.value = res.data.total

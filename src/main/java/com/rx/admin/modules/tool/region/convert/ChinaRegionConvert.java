@@ -1,5 +1,6 @@
 package com.rx.admin.modules.tool.region.convert;
 
+import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.tool.region.entity.ChinaRegion;
 import com.rx.admin.modules.tool.region.vo.ChinaRegionVO;
 import com.rx.admin.modules.tool.region.dto.ChinaRegionCreateDTO;
@@ -15,4 +16,8 @@ public interface ChinaRegionConvert {
     List<ChinaRegionVO> toVOList(List<ChinaRegion> list);
     ChinaRegion toEntity(ChinaRegionCreateDTO dto);
     void updateEntity(@MappingTarget ChinaRegion entity, ChinaRegionUpdateDTO dto);
+
+    default PageResult<ChinaRegionVO> toPageResult(PageResult<ChinaRegion> pageResult) {
+        return pageResult.map(this::toVO);
+    }
 }

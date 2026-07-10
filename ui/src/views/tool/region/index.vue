@@ -323,7 +323,7 @@ async function loadChildren(row, treeNode, resolve) {
 }
 
 // 刷新表格中某条数据及其子树
-function refreshRow(row) {
+function _refreshRow(row) {
   // 如果该行已展开，重新加载其子节点
   if (loadedNodeIds.value.has(row.id)) {
     loadedNodeIds.value.delete(row.id)

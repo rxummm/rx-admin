@@ -10,7 +10,7 @@
     remark: 'Remark',
     runOnce: 'Run Once',
     statusNormal: 'Normal',
-    statusPaused: 'Paused',
+    statusPaused: 'Paused'
   },
 
   // ==================== File Management ====================
@@ -37,8 +37,8 @@
       document: 'Document',
       video: 'Video',
       audio: 'Audio',
-      other: 'Other',
-    },
+      other: 'Other'
+    }
   },
   // ==================== Common ====================
   common: {
@@ -108,7 +108,7 @@
     deleteConfirm: 'Confirm delete this record?',
     actions: 'Actions',
     loadFail: 'Load failed',
-    retry: 'Retry',
+    retry: 'Retry'
   },
 
   // ==================== Layout ====================
@@ -143,8 +143,8 @@
       closeAll: 'Close All',
       affixWarning: 'Fixed tab cannot be closed',
       addFav: 'Add to Favorites',
-      removeFav: 'Remove from Favorites',
-    },
+      removeFav: 'Remove from Favorites'
+    }
   },
 
   // ==================== Login ====================
@@ -185,18 +185,19 @@
     accountUserTip: 'user / 123456',
     rememberPassword: 'Remember me',
     // Famous quotes
-    quote1: 'Pages full of idle words, penned with hot and bitter tears: All men call the author fool, none his secret message hears.',
+    quote1:
+      'Pages full of idle words, penned with hot and bitter tears: All men call the author fool, none his secret message hears.',
     quote1Dynasty: 'Qing',
     quote1Source: 'Dream of the Red Chamber',
     quote2: 'The endless river eastward flows; with its huge waves are gone all those gallant heroes of bygone years.',
     quote2Dynasty: 'Song',
     quote2Source: 'Charm of a Maiden Singer',
-    quote3: 'The way ahead is long; I see no ending, yet high and low I\'ll search with my will unbending.',
+    quote3: "The way ahead is long; I see no ending, yet high and low I'll search with my will unbending.",
     quote3Dynasty: 'Pre-Qin',
     quote3Source: 'The Lament',
     quote4: 'Many a story of bygone years, into our cups of wine we pour with laughter and tears.',
     quote4Dynasty: 'Ming',
-    quote4Source: 'Immortal at the River',
+    quote4Source: 'Immortal at the River'
   },
 
   // ==================== System Management ====================
@@ -215,7 +216,7 @@
       genderOptions: { male: 'Male', female: 'Female', unknown: 'Unknown' },
       statusOptions: { enable: 'Enabled', disable: 'Disabled' },
       resetPassword: 'Reset Password',
-      assignRole: 'Assign Role',
+      assignRole: 'Assign Role'
     },
     role: {
       title: 'Role Management',
@@ -249,7 +250,7 @@
       rootMenu: 'Root Directory',
       addChild: 'Add Child',
       deleteConfirm: 'Confirm delete menu "{name}"? Sub-menus will also be deleted',
-      iconPicker: 'Click to pick icon',
+      iconPicker: 'Click to pick icon'
     },
     ipRule: {
       title: 'IP Black/Whitelist',
@@ -272,7 +273,7 @@
       modifySuccess: 'Updated',
       addSuccess: 'Added',
       switchModeSuccess: 'Mode switched',
-      pleaseInputIp: 'Please enter IP address',
+      pleaseInputIp: 'Please enter IP address'
     },
     config: {
       title: 'System Config',
@@ -285,7 +286,7 @@
       save: 'Save',
       cancel: 'Cancel',
       systemSettings: 'System Settings',
-      securitySettings: 'Security Settings',
+      securitySettings: 'Security Settings'
     },
     dept: {
       title: 'Department Management',
@@ -297,8 +298,8 @@
       rootDept: 'Root Dept',
       addChild: 'Add Sub Dept',
       selectParentPlaceholder: 'Select parent (empty for root)',
-      statusOptions: { enable: 'Enabled', disable: 'Disabled' },
-    },
+      statusOptions: { enable: 'Enabled', disable: 'Disabled' }
+    }
   },
 
   // ==================== Content Management ====================
@@ -310,7 +311,7 @@
       type: 'Type',
       creator: 'Creator',
       typeOptions: { notice: 'Notice', announcement: 'Announcement' },
-      statusOptions: { normal: 'Normal', closed: 'Closed' },
+      statusOptions: { normal: 'Normal', closed: 'Closed' }
     },
     message: {
       title: 'Message Center',
@@ -330,24 +331,24 @@
       typeNotice: 'Notice',
       typeInfo: 'Info',
       deleteConfirm: 'Are you sure you want to delete this message?',
-      messageType: { all: 'All', system: 'System', notification: 'Notification', private: 'Private' },
+      messageType: { all: 'All', system: 'System', notification: 'Notification', private: 'Private' }
     },
-    messageCenter: 'Notification Center',
+    messageCenter: 'Notification Center'
   },
 
   // ==================== AS400 Management ====================
   as400: {
     _group: 'AS400 Management',
     objects: {
-      title: 'Object List',
+      title: 'Object List'
     },
     techBlog: {
       title: 'Tech Blog',
-      list: 'Articles',
+      list: 'Articles'
     },
     iservice: {
       title: 'i-Service',
-      list: 'Service List',
+      list: 'Service List'
     },
     analysis: {
       title: 'Code Analysis',
@@ -374,7 +375,7 @@
       legIO: 'I/O',
       legOperation: 'Operation',
       legReturn: 'Return',
-      legVariable: 'Variable',
+      legVariable: 'Variable'
     },
     library: 'Library',
     objectName: 'Object Name',
@@ -387,7 +388,7 @@
     totalObjects: 'Total Objects',
     fetchError: 'Failed to fetch AS400 data, please check connection',
     selectLibraryHint: 'Please select a library first',
-    libraryNotFound: 'Library "{library}" does not exist',
+    libraryNotFound: 'Library "{library}" does not exist'
   },
 
   // ==================== Monitoring ====================
@@ -405,14 +406,14 @@
       params: 'Request Params',
       result: 'Result',
       errorMsg: 'Error Message',
-      statusOptions: { success: 'Success', fail: 'Failed' },
+      statusOptions: { success: 'Success', fail: 'Failed' }
     },
     slowQuery: {
       title: 'Slow Query Monitor',
       sql: 'SQL Statement',
       executeTime: 'Execution Time(ms)',
       queryTime: 'Query Time',
-      userName: 'Operator',
+      userName: 'Operator'
     },
     online: {
       title: 'Online Users',
@@ -421,7 +422,7 @@
       loginTime: 'Login Time',
       kickout: 'Kick Out',
       kickoutConfirm: 'Confirm force offline this user?',
-      noOnline: 'No online users',
+      noOnline: 'No online users'
     },
     health: {
       title: 'Health Monitor',
@@ -444,7 +445,7 @@
       autoRefresh: 'Auto-refresh every 10s',
       statusNormal: 'Healthy',
       statusWarning: 'High Load',
-      statusDanger: 'Critical',
+      statusDanger: 'Critical'
     },
     logAnalysis: {
       title: 'Log Analysis',
@@ -456,7 +457,7 @@
       typeDist: 'Operation Type Distribution',
       trend: '7-Day Operation Trend',
       totalOps: 'Total Ops',
-      errorOps: 'Errors',
+      errorOps: 'Errors'
     },
     loginLog: {
       title: 'Login Log',
@@ -473,11 +474,11 @@
       to: 'to',
       start: 'Start',
       end: 'End',
-      loadError: 'Data load error',
+      loadError: 'Data load error'
     },
     exportAudit: { title: 'Export Audit' },
     jobLog: { title: 'Job Execution Log' },
-    cacheManage: { title: 'Cache Management' },
+    cacheManage: { title: 'Cache Management' }
   },
 
   // ==================== Tools ====================
@@ -490,7 +491,7 @@
       dictType: 'Dict Type',
       dictLabel: 'Dict Label',
       dictValue: 'Dict Value',
-      statusOptions: { enable: 'Enabled', disable: 'Disabled' },
+      statusOptions: { enable: 'Enabled', disable: 'Disabled' }
     },
     region: {
       title: 'Regions',
@@ -501,16 +502,16 @@
       shortName: 'Short Name',
       pinyin: 'Pinyin',
       levelOptions: { province: 'Province', city: 'City', district: 'District' },
-      statusOptions: { enable: 'Enabled', disable: 'Disabled' },
+      statusOptions: { enable: 'Enabled', disable: 'Disabled' }
     },
     analysis: {
-      title: 'API Analysis',
+      title: 'API Analysis'
     },
     docs: {
-      title: 'Documentation',
+      title: 'Documentation'
     },
     standards: {
-      title: 'Dev Standards',
+      title: 'Dev Standards'
     },
     excelParser: {
       title: 'Excel Parser',
@@ -520,10 +521,10 @@
       parseFailed: 'Parse failed',
       export: 'Export',
       exportSuccess: 'Export successful',
-      sheet: 'Sheet',
+      sheet: 'Sheet'
     },
     docConverter: {
-      title: 'Doc Converter',
+      title: 'Doc Converter'
     },
     docUpload: {
       title: 'Doc Upload',
@@ -533,12 +534,12 @@
       uploadFailed: 'Upload failed',
       deleteSuccess: 'Deleted successfully',
       download: 'Download',
-      delete: 'Delete',
+      delete: 'Delete'
     },
     flowChart: {
       title: 'Flowchart',
       x6: 'X6 Flowchart',
-      logicFlow: 'LogicFlow',
+      logicFlow: 'LogicFlow'
     },
     musicPlayer: {
       title: 'Music Player',
@@ -580,8 +581,8 @@
       playModes: {
         sequential: 'Sequential',
         singleLoop: 'Single Loop',
-        random: 'Shuffle',
-      },
+        random: 'Shuffle'
+      }
     },
     videoPlayer: {
       title: 'Video Player',
@@ -611,7 +612,7 @@
       totalVideos: 'Total Videos',
       totalPlays: 'Total Plays',
       todayPlays: 'Today Plays',
-      recentPlays: 'Recent Plays',
+      recentPlays: 'Recent Plays'
     },
     emailSender: {
       title: 'Email Sender',
@@ -633,7 +634,7 @@
       send: 'Send',
       reset: 'Clear',
       templateGreeting: 'Greeting',
-      templateNotification: 'Notification',
+      templateNotification: 'Notification'
     },
     gen: {
       title: 'Code Generator',
@@ -650,7 +651,7 @@
       previewFiles: 'File Preview',
       generate: 'Generate',
       generating: 'Generating...',
-      generateSuccess: 'Code generated successfully',
+      generateSuccess: 'Code generated successfully'
     },
     importData: {
       title: 'Data Import',
@@ -671,7 +672,7 @@
       importSuccess: 'Import completed',
       importResult: 'Import Result',
       successCount: 'Success',
-      failCount: 'Failed',
+      failCount: 'Failed'
     },
     apiDebug: {
       title: 'API Debugger',
@@ -691,7 +692,7 @@
       placeholder: 'Enter JSON request body',
       sendSuccess: 'Request sent',
       sendFail: 'Request failed',
-      clearHistory: 'Clear History',
+      clearHistory: 'Clear History'
     },
     backup: {
       title: 'Data Backup',
@@ -710,7 +711,7 @@
       backupSuccess: 'Backup successful',
       restoreSuccess: 'Restore successful',
       noBackup: 'No backup files',
-      totalBackups: 'Total Backups',
+      totalBackups: 'Total Backups'
     },
     devTools: {
       title: 'Dev Tools',
@@ -724,46 +725,139 @@
         time: 'Date & Time',
         codetool: 'Code Tools',
         color: 'Color Tools',
-        imgtool: 'Image Tools',
+        imgtool: 'Image Tools'
       },
       tools: {
-        json: { name: 'JSON Formatter', desc: 'Format JSON strings for readability; compress to compact single-line format.' },
-        jsoneditor: { name: 'JSON Editor', desc: 'Online JSON editor with syntax validation and collapsible tree view.' },
-        jsonconvert: { name: 'JSON Converter', desc: 'Convert between JSON, XML, and CSV formats for cross-system data exchange.' },
-        base64: { name: 'Base64 Codec', desc: 'Encode/decode text to/from Base64. Commonly used for data transfer and image embedding.' },
-        urlcodec: { name: 'URL Codec', desc: 'Encode (encodeURIComponent) or decode (decodeURIComponent) special characters in URLs.' },
-        unicode: { name: 'Unicode Converter', desc: 'Convert between Chinese characters and Unicode escape sequences (e.g. \\u4e2d\\u6587).' },
-        htmlentity: { name: 'HTML Entity Codec', desc: 'Convert between HTML special characters and entity names, e.g. &lt; ↔ &amp;lt;, to prevent XSS.' },
-        radix: { name: 'Radix Converter', desc: 'Convert values between Binary, Octal, Decimal, and Hexadecimal number systems.' },
-        crypto: { name: 'Hash Generator', desc: 'Generate MD5, SHA-1, SHA-256, SHA-512 hashes. Enter text to get hash values.' },
-        jwt: { name: 'JWT Parser', desc: 'Decode JWT tokens and inspect the Header, Payload, and Signature. Supports expiration validation.' },
-        http: { name: 'HTTP Request Tester', desc: 'Online API testing tool supporting GET/POST/PUT/DELETE methods with custom headers and body.' },
-        ipquery: { name: 'IP Lookup', desc: 'Query IP address details including ISP and geographic location. Defaults to your current IP.' },
-        uuid: { name: 'UUID Generator', desc: 'Generate batches of globally unique identifiers, suitable for database keys and distributed systems.' },
-        passgen: { name: 'Password Generator', desc: 'Generate secure random passwords with customizable charset, length, and count.' },
+        json: {
+          name: 'JSON Formatter',
+          desc: 'Format JSON strings for readability; compress to compact single-line format.'
+        },
+        jsoneditor: {
+          name: 'JSON Editor',
+          desc: 'Online JSON editor with syntax validation and collapsible tree view.'
+        },
+        jsonconvert: {
+          name: 'JSON Converter',
+          desc: 'Convert between JSON, XML, and CSV formats for cross-system data exchange.'
+        },
+        base64: {
+          name: 'Base64 Codec',
+          desc: 'Encode/decode text to/from Base64. Commonly used for data transfer and image embedding.'
+        },
+        urlcodec: {
+          name: 'URL Codec',
+          desc: 'Encode (encodeURIComponent) or decode (decodeURIComponent) special characters in URLs.'
+        },
+        unicode: {
+          name: 'Unicode Converter',
+          desc: 'Convert between Chinese characters and Unicode escape sequences (e.g. \\u4e2d\\u6587).'
+        },
+        htmlentity: {
+          name: 'HTML Entity Codec',
+          desc: 'Convert between HTML special characters and entity names, e.g. &lt; ↔ &amp;lt;, to prevent XSS.'
+        },
+        radix: {
+          name: 'Radix Converter',
+          desc: 'Convert values between Binary, Octal, Decimal, and Hexadecimal number systems.'
+        },
+        crypto: {
+          name: 'Hash Generator',
+          desc: 'Generate MD5, SHA-1, SHA-256, SHA-512 hashes. Enter text to get hash values.'
+        },
+        jwt: {
+          name: 'JWT Parser',
+          desc: 'Decode JWT tokens and inspect the Header, Payload, and Signature. Supports expiration validation.'
+        },
+        http: {
+          name: 'HTTP Request Tester',
+          desc: 'Online API testing tool supporting GET/POST/PUT/DELETE methods with custom headers and body.'
+        },
+        ipquery: {
+          name: 'IP Lookup',
+          desc: 'Query IP address details including ISP and geographic location. Defaults to your current IP.'
+        },
+        uuid: {
+          name: 'UUID Generator',
+          desc: 'Generate batches of globally unique identifiers, suitable for database keys and distributed systems.'
+        },
+        passgen: {
+          name: 'Password Generator',
+          desc: 'Generate secure random passwords with customizable charset, length, and count.'
+        },
         qrcode: { name: 'QR Code Generator', desc: 'Convert text or URLs into QR code images. Supports any content.' },
-        regex: { name: 'Regex Tester', desc: 'Test regular expressions online. Supports JavaScript regex syntax with global + multiline matching.' },
-        textstats: { name: 'Text Stats & Cleaner', desc: 'Count words, characters, and lines. Remove blank lines and trim whitespace.' },
-        mdhtml: { name: 'HTML ↔ Markdown', desc: 'Bidirectional conversion between HTML and Markdown, supporting headings, bold, links, lists and more.' },
-        emojipicker: { name: 'Emoji Picker', desc: 'Browse, search and copy emoji. Click to copy, with category filtering and recently used history.' },
-        timestamp: { name: 'Timestamp Converter', desc: 'Bidirectional conversion between Unix timestamps (milliseconds) and date-time.' },
-        datecalc: { name: 'Date Calculator', desc: 'Calculate the interval between two dates, or add/subtract days from a date.' },
-        timezone: { name: 'Timezone Converter', desc: 'Convert times between different time zones. Supports major global time zones.' },
-        cron: { name: 'Cron Expression Builder', desc: 'Visually build Cron expressions with manual editing, reverse parsing, and execution time preview.' },
-        codefmt: { name: 'Code Formatter', desc: 'Format HTML, CSS, JavaScript, and SQL code with consistent indentation for readability.' },
-        cssgradient: { name: 'CSS Gradient Generator', desc: 'Visually generate CSS gradient background code. Supports linear and radial gradients.' },
-        ymlprops: { name: 'YML ↔ Properties', desc: 'Convert between YML/YAML and Properties configuration file formats.' },
-        colortool: { name: 'Color Converter', desc: 'Convert between HEX, RGB, and HSL color formats. Includes a color picker with live preview.' },
-        imgcompress: { name: 'Image Compressor', desc: 'Compress images client-side (JPG/PNG/WebP). Adjust quality and max dimensions with real-time preview.' },
-        imgwatermark: { name: 'Image Watermark', desc: 'Add text watermarks to images with customizable text, position, color, and opacity. Client-side only.' },
-        imgtoico: { name: 'Image to ICO', desc: 'Convert images to ICO format for website favicons and app icons. Supports multiple sizes.' },
-        base64img: { name: 'Base64 Image Codec', desc: 'Bidirectional conversion between images and Base64 encoding. Upload to get Base64 or paste to preview.' },
-        icondesign: { name: 'Icon Designer', desc: 'Quickly design clean app icons with customizable shapes, colors, and text combinations.' },
-      },
+        regex: {
+          name: 'Regex Tester',
+          desc: 'Test regular expressions online. Supports JavaScript regex syntax with global + multiline matching.'
+        },
+        textstats: {
+          name: 'Text Stats & Cleaner',
+          desc: 'Count words, characters, and lines. Remove blank lines and trim whitespace.'
+        },
+        mdhtml: {
+          name: 'HTML ↔ Markdown',
+          desc: 'Bidirectional conversion between HTML and Markdown, supporting headings, bold, links, lists and more.'
+        },
+        emojipicker: {
+          name: 'Emoji Picker',
+          desc: 'Browse, search and copy emoji. Click to copy, with category filtering and recently used history.'
+        },
+        timestamp: {
+          name: 'Timestamp Converter',
+          desc: 'Bidirectional conversion between Unix timestamps (milliseconds) and date-time.'
+        },
+        datecalc: {
+          name: 'Date Calculator',
+          desc: 'Calculate the interval between two dates, or add/subtract days from a date.'
+        },
+        timezone: {
+          name: 'Timezone Converter',
+          desc: 'Convert times between different time zones. Supports major global time zones.'
+        },
+        cron: {
+          name: 'Cron Expression Builder',
+          desc: 'Visually build Cron expressions with manual editing, reverse parsing, and execution time preview.'
+        },
+        codefmt: {
+          name: 'Code Formatter',
+          desc: 'Format HTML, CSS, JavaScript, and SQL code with consistent indentation for readability.'
+        },
+        cssgradient: {
+          name: 'CSS Gradient Generator',
+          desc: 'Visually generate CSS gradient background code. Supports linear and radial gradients.'
+        },
+        ymlprops: {
+          name: 'YML ↔ Properties',
+          desc: 'Convert between YML/YAML and Properties configuration file formats.'
+        },
+        colortool: {
+          name: 'Color Converter',
+          desc: 'Convert between HEX, RGB, and HSL color formats. Includes a color picker with live preview.'
+        },
+        imgcompress: {
+          name: 'Image Compressor',
+          desc: 'Compress images client-side (JPG/PNG/WebP). Adjust quality and max dimensions with real-time preview.'
+        },
+        imgwatermark: {
+          name: 'Image Watermark',
+          desc: 'Add text watermarks to images with customizable text, position, color, and opacity. Client-side only.'
+        },
+        imgtoico: {
+          name: 'Image to ICO',
+          desc: 'Convert images to ICO format for website favicons and app icons. Supports multiple sizes.'
+        },
+        base64img: {
+          name: 'Base64 Image Codec',
+          desc: 'Bidirectional conversion between images and Base64 encoding. Upload to get Base64 or paste to preview.'
+        },
+        icondesign: {
+          name: 'Icon Designer',
+          desc: 'Quickly design clean app icons with customizable shapes, colors, and text combinations.'
+        }
+      }
     },
     officeTools: {
-      _group: 'Office Tools',
-    },
+      _group: 'Office Tools'
+    }
   },
 
   // ==================== Classics ====================
@@ -810,8 +904,8 @@
         categoryDesc: 'Category Description',
         startYear: 'Start Year',
         endYear: 'End Year',
-        orderNum: 'Sort Order',
-      },
+        orderNum: 'Sort Order'
+      }
     },
     xiyouPoems: 'Poems',
     xiyouCharacters: 'Characters',
@@ -826,7 +920,7 @@
     honglouPoems: 'Poems',
     honglouCharacters: 'Characters',
     honglouRelations: 'Relations',
-    honglou: { title: 'Dream of the Red Chamber' },
+    honglou: { title: 'Dream of the Red Chamber' }
   },
 
   // ==================== Profile ====================
@@ -856,13 +950,13 @@
     confirmPasswordPlaceholder: 'Please re-enter new password',
     confirmPasswordRequired: 'Please re-enter new password',
     passwordMismatch: 'Passwords do not match',
-    passwordStrength: { weak: "Weak", medium: "Medium", strong: "Strong", veryStrong: "Very Strong" },
+    passwordStrength: { weak: 'Weak', medium: 'Medium', strong: 'Strong', veryStrong: 'Very Strong' },
     emailInvalid: 'Please enter a valid email',
     phoneInvalid: 'Please enter a valid 11-digit phone number',
     passwordPolicy: 'Password must start with a letter, contain numbers, at least 6 chars',
     passwordSameAsUsername: 'Password cannot be the same as username',
     passwordSameAsNickname: 'Password cannot be the same as nickname',
-    roleOptions: { admin: 'Super Admin', operator: 'Operator', user: 'User' },
+    roleOptions: { admin: 'Super Admin', operator: 'Operator', user: 'User' }
   },
 
   // ==================== Permission Request ====================
@@ -897,34 +991,37 @@
       reloginHintApproved: 'Approval successful. Please re-login to see new menus',
       emailApply: 'Email Apply',
       emailApplyTitle: 'Apply via Email',
-      emailApplyHint: 'To request permissions not listed in the available menus (e.g., new modules), send an email to the admin.',
+      emailApplyHint:
+        'To request permissions not listed in the available menus (e.g., new modules), send an email to the admin.',
       emailApplyMenus: 'Requested Menus/Modules',
       emailApplyMenusPlaceholder: 'Describe the menus or modules you need',
       emailApplyReason: 'Reason',
       emailApplyReasonPlaceholder: 'Explain why you need these permissions',
       emailApplySuccess: 'Request sent to admin via email, please wait for reply',
-      emailApplyFail: 'Failed to send email request',
+      emailApplyFail: 'Failed to send email request'
     },
     manage: {
       title: 'Permission Mgmt',
       currentPerms: 'Current Permissions',
-      currentPermsHint: 'Uncheck permissions to mark for removal (shown with strikethrough). Click "Remove Selected" to apply. Parent-child checkboxes are linked.',
+      currentPermsHint:
+        'Uncheck permissions to mark for removal (shown with strikethrough). Click "Remove Selected" to apply. Parent-child checkboxes are linked.',
       assignPerms: 'Assign Permissions',
-      assignPermsHint: 'Check menu permissions to grant, then click the button below. Parent-child checkboxes are linked.',
+      assignPermsHint:
+        'Check menu permissions to grant, then click the button below. Parent-child checkboxes are linked.',
       removeSelected: 'Remove Selected',
       assignSelected: 'Assign Selected',
       pendingRemove: '{count} permission(s) pending removal',
       removeConfirm: 'Confirm to remove {count} selected permission(s)? It will take effect immediately.',
       removeSuccess: 'Permissions removed',
       addConfirm: 'Confirm to assign selected permissions? It will take effect immediately.',
-      addSuccess: 'Permissions assigned',
-    },
+      addSuccess: 'Permissions assigned'
+    }
   },
 
   // ==================== Pagination ====================
   pagination: {
     total: 'Total {total} items',
-    page: 'Page',
+    page: 'Page'
   },
 
   // ==================== Audio Transcription ====================
@@ -940,8 +1037,8 @@
       supportFormats: 'Supported: mp3, wav, m4a, flac, aac, ogg',
       detail: 'Transcription Detail',
       fullText: 'Full Text',
-      segments: 'Segments',
-    },
+      segments: 'Segments'
+    }
   },
   video: {
     transcription: {
@@ -956,8 +1053,8 @@
       supportFormats: 'Supported: mp4, avi, mkv, flv, mov, webm',
       detail: 'Transcription Detail',
       fullText: 'Full Text',
-      segments: 'Segments',
-    },
+      segments: 'Segments'
+    }
   },
   ocr: {
     title: 'OCR Document Recognition',
@@ -966,10 +1063,10 @@
       title: 'File Upload',
       dragHint: 'Drag file here, or ',
       clickHint: 'click to upload',
-      supportedFormats: 'Supported: pdf, docx, xls, png, jpg, bmp, tiff, txt, md, html, json, sql, etc.',
+      supportedFormats: 'Supported: pdf, docx, xls, png, jpg, bmp, tiff, txt, md, html, json, sql, etc.'
     },
     settings: {
-      language: 'Recognition Language',
+      language: 'Recognition Language'
     },
     action: {
       recognize: 'Start Recognition',
@@ -978,13 +1075,13 @@
       copy: 'Copy Text',
       download: 'Download TXT',
       retry: 'Retry',
-      copySuccess: 'Copied to clipboard',
+      copySuccess: 'Copied to clipboard'
     },
     status: {
       recognizing: 'Recognizing...',
       success: 'Recognition completed',
       failed: 'Recognition failed',
-      cancelled: 'Recognition cancelled',
+      cancelled: 'Recognition cancelled'
     },
     result: {
       title: 'Result',
@@ -992,7 +1089,7 @@
       engine: 'Engine',
       chars: 'Characters',
       duration: 'Duration',
-      confidence: 'Confidence',
+      confidence: 'Confidence'
     },
     history: {
       title: 'History',
@@ -1002,10 +1099,48 @@
       empty: 'No recognition history',
       deleteAll: 'Delete All',
       confirmDelete: 'Confirm delete recognition record "{name}"?',
-      confirmDeleteAll: 'Confirm delete all recognition records? This cannot be undone.',
+      confirmDeleteAll: 'Confirm delete all recognition records? This cannot be undone.'
     },
     detail: {
-      title: 'Recognition Detail',
-    },
+      title: 'Recognition Detail'
+    }
   },
+
+  // ==================== Calendar ====================
+  calendar: {
+    title: 'Calendar',
+    today: 'Today',
+    prevMonth: 'Prev Month',
+    nextMonth: 'Next Month',
+    event: 'Event',
+    addEvent: 'Add Event',
+    editEvent: 'Edit Event',
+    deleteEvent: 'Delete Event',
+    deleteConfirm: 'Are you sure to delete this event?',
+    titleLabel: 'Title',
+    descriptionLabel: 'Description',
+    dateLabel: 'Date',
+    startTime: 'Start Time',
+    endTime: 'End Time',
+    eventType: 'Type',
+    priority: 'Priority',
+    color: 'Color',
+    allDay: 'All Day',
+    status: 'Status',
+    reminder: 'Reminder',
+    todo: 'To-do',
+    lowPriority: 'Low',
+    mediumPriority: 'Medium',
+    highPriority: 'High',
+    typeEvent: 'Event',
+    typeReminder: 'Reminder',
+    typeTodo: 'To-do',
+    pending: 'Pending',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+    noEvents: 'No events',
+    lunar: 'Lunar',
+    viewFullCalendar: 'View Full Calendar',
+    todayEvents: "Today's Events"
+  }
 }

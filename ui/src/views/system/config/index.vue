@@ -1,14 +1,19 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <div style="flex:1" />
+      <div style="flex: 1" />
       <el-button type="primary" @click="fetchData">
         <el-icon><Refresh /></el-icon> {{ $t('common.refresh') }}
       </el-button>
     </div>
 
     <el-tabs v-model="activeGroup" @tab-change="fetchData">
-      <el-tab-pane v-for="(configs, group) in groupedConfigs" :key="group" :label="$t('system.config.' + group + 'Settings') || group" :name="group" />
+      <el-tab-pane
+        v-for="(configs, group) in groupedConfigs"
+        :key="group"
+        :label="$t('system.config.' + group + 'Settings') || group"
+        :name="group"
+      />
     </el-tabs>
 
     <div class="table-container">
@@ -17,16 +22,21 @@
         <el-table-column :label="$t('system.config.configValue')" min-width="300">
           <template #default="{ row }">
             <template v-if="row.configType === 'boolean'">
-              <el-switch :model-value="row.configValue === 'true'" @change="v => updateConfig(row, v ? 'true' : 'false')" />
+              <el-switch
+                :model-value="row.configValue === 'true'"
+                @change="(v) => updateConfig(row, v ? 'true' : 'false')"
+              />
             </template>
             <template v-else-if="editKey === row.configKey">
-              <el-input v-model="editValue" size="small" style="width:200px" />
+              <el-input v-model="editValue" size="small" style="width: 200px" />
               <el-button type="primary" size="small" @click="saveConfig(row)">{{ $t('system.config.save') }}</el-button>
               <el-button size="small" @click="editKey = ''">{{ $t('system.config.cancel') }}</el-button>
             </template>
             <template v-else>
               <span>{{ row.configValue }}</span>
-              <el-button link type="primary" size="small" @click="startEdit(row)">{{ $t('system.config.edit') }}</el-button>
+              <el-button link type="primary" size="small" @click="startEdit(row)">{{
+                $t('system.config.edit')
+              }}</el-button>
             </template>
           </template>
         </el-table-column>
@@ -42,6 +52,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { API } from '@/api/routes'
+import request from '@/utils/request'
 
 const { t } = useI18n()
 

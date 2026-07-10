@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.rx.admin.common.result.PageResult;
 import com.rx.admin.modules.content.message.entity.SysMessage;
 
+import java.util.List;
+
 public interface ISysMessageService extends IService<SysMessage> {
 
     PageResult<SysMessage> pageQuery(int page, int size, Long currentUserId, String messageType, Long targetUserId);
@@ -29,4 +31,6 @@ public interface ISysMessageService extends IService<SysMessage> {
     void deleteMyMessage(Long msgId, Long currentUserId);
 
     void updateMessage(Long id, String title, String content, String messageType, String linkPath);
+
+    void deleteMessageBatch(List<Long> ids);
 }

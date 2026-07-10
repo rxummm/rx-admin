@@ -1,7 +1,13 @@
 <template>
   <div class="page-container">
     <div class="search-bar">
-      <el-input v-model="keyword" placeholder="搜索姓名 / 别名 / 事迹" clearable style="width: 240px" @keyup.enter="fetchData" />
+      <el-input
+        v-model="keyword"
+        placeholder="搜索姓名 / 别名 / 事迹"
+        clearable
+        style="width: 240px"
+        @keyup.enter="fetchData"
+      />
       <el-select v-model="filterRace" placeholder="种族筛选" clearable style="width: 140px" @change="fetchData">
         <el-option v-for="r in raceOptions" :key="r" :label="r" :value="r" />
       </el-select>
@@ -13,7 +19,12 @@
       <el-button type="primary" @click="handleAdd" v-if="userStore.hasPerm('classics:xiyou:character:add')">
         <el-icon><Plus /></el-icon> 新增人物
       </el-button>
-      <el-button type="danger" @click="handleBatchDelete" v-if="userStore.hasPerm('classics:xiyou:character:delete')" :disabled="selectedIds.length === 0">
+      <el-button
+        type="danger"
+        @click="handleBatchDelete"
+        v-if="userStore.hasPerm('classics:xiyou:character:delete')"
+        :disabled="selectedIds.length === 0"
+      >
         <el-icon><Delete /></el-icon> 批量删除
       </el-button>
       <el-dropdown trigger="click" @command="toggleColumn">
@@ -32,8 +43,16 @@
     </div>
 
     <div class="classics-table-wrapper">
-      <el-table :data="sortedTableData" border stripe v-loading="loading" :max-height="tableMaxHeight" style="width: 100%"
-        @selection-change="handleSelectionChange" @sort-change="handleSortChange">
+      <el-table
+        :data="sortedTableData"
+        border
+        stripe
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
+      >
         <el-table-column type="selection" width="45" />
         <el-table-column v-if="visibleColumns.includes('id')" prop="id" label="ID" width="70" sortable />
         <el-table-column v-if="visibleColumns.includes('name')" prop="name" label="姓名" width="110" sortable>
@@ -41,36 +60,90 @@
             <el-button link type="primary" @click="handleView(row)">{{ row.name }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('alias')" prop="alias" label="别名" min-width="140" show-overflow-tooltip sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('alias')"
+          prop="alias"
+          label="别名"
+          min-width="140"
+          show-overflow-tooltip
+          sortable
+        />
         <el-table-column v-if="visibleColumns.includes('race')" prop="race" label="种族" width="100">
           <template #default="{ row }">
-            <el-tag v-if="row.race" size="small" :type="row.race === '妖' ? 'danger' : row.race === '仙' ? 'success' : row.race === '佛' ? 'warning' : 'info'">
+            <el-tag
+              v-if="row.race"
+              size="small"
+              :type="
+                row.race === '妖' ? 'danger' : row.race === '仙' ? 'success' : row.race === '佛' ? 'warning' : 'info'
+              "
+            >
               {{ row.race }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('identity')" prop="identity" label="身份" min-width="140" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('weapon')" prop="weapon" label="武器/法宝" width="140" show-overflow-tooltip />
-        <el-table-column v-if="visibleColumns.includes('mainDeeds')" label="主要事迹" min-width="180" show-overflow-tooltip>
+        <el-table-column
+          v-if="visibleColumns.includes('identity')"
+          prop="identity"
+          label="身份"
+          min-width="140"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('weapon')"
+          prop="weapon"
+          label="武器/法宝"
+          width="140"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('mainDeeds')"
+          label="主要事迹"
+          min-width="180"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             {{ (row.mainDeeds || '-').slice(0, 50) }}
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('createdTime')" prop="createdTime" label="创建时间" width="170" sortable />
+        <el-table-column
+          v-if="visibleColumns.includes('createdTime')"
+          prop="createdTime"
+          label="创建时间"
+          width="170"
+          sortable
+        />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="handleView(row)">查看</el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)" v-if="userStore.hasPerm('classics:xiyou:character:edit')">编辑</el-button>
-            <el-button link type="danger" size="small" @click="handleDelete(row)" v-if="userStore.hasPerm('classics:xiyou:character:delete')">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+              v-if="userStore.hasPerm('classics:xiyou:character:edit')"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+              v-if="userStore.hasPerm('classics:xiyou:character:delete')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="total"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="fetchData" @current-change="fetchData"
+        @size-change="fetchData"
+        @current-change="fetchData"
       />
     </div>
 
@@ -105,9 +178,22 @@
     <!-- 查看弹窗 -->
     <el-dialog v-model="viewVisible" title="人物详情" width="700px">
       <div v-if="viewData" class="character-detail">
-        <h3 class="character-name">{{ viewData.name }}
-          <el-tag v-if="viewData.race" style="margin-left: 8px" size="small"
-            :type="viewData.race === '妖' ? 'danger' : viewData.race === '仙' ? 'success' : viewData.race === '佛' ? 'warning' : 'info'">
+        <h3 class="character-name">
+          {{ viewData.name }}
+          <el-tag
+            v-if="viewData.race"
+            style="margin-left: 8px"
+            size="small"
+            :type="
+              viewData.race === '妖'
+                ? 'danger'
+                : viewData.race === '仙'
+                  ? 'success'
+                  : viewData.race === '佛'
+                    ? 'warning'
+                    : 'info'
+            "
+          >
             {{ viewData.race }}
           </el-tag>
         </h3>
@@ -136,7 +222,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import {
   getXiyouCharacterPageApi,
-  getXiyouCharacterDetailApi,
   addXiyouCharacterApi,
   updateXiyouCharacterApi,
   deleteXiyouCharacterApi,
@@ -168,7 +253,7 @@ const columnOptions = [
   { key: 'mainDeeds', label: '主要事迹' },
   { key: 'createdTime', label: '创建时间' }
 ]
-const visibleColumns = ref(columnOptions.map(c => c.key))
+const visibleColumns = ref(columnOptions.map((c) => c.key))
 
 function toggleColumn(key) {
   const idx = visibleColumns.value.indexOf(key)
@@ -201,7 +286,7 @@ function handleSortChange({ prop, order }) {
 }
 
 function handleSelectionChange(rows) {
-  selectedIds.value = rows.map(r => r.id)
+  selectedIds.value = rows.map((r) => r.id)
 }
 
 // 动态表格高度（通过 useTableHeight 共享模块，.env 可配置行高/表头/最大行数）
@@ -247,11 +332,11 @@ async function fetchData() {
     const res = await getXiyouCharacterPageApi(params)
     let records = res.data.records
     if (filterRace.value) {
-      records = records.filter(r => r.race === filterRace.value)
+      records = records.filter((r) => r.race === filterRace.value)
     }
     tableData.value = records
     total.value = res.data.total
-    const races = new Set(records.map(r => r.race).filter(Boolean))
+    const races = new Set(records.map((r) => r.race).filter(Boolean))
     raceOptions.value = [...races]
   } finally {
     loading.value = false

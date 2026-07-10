@@ -1,10 +1,5 @@
 <template>
-  <el-dropdown
-    v-if="visible"
-    trigger="click"
-    :disabled="exporting || loading"
-    @command="handleExport"
-  >
+  <el-dropdown v-if="visible" trigger="click" :disabled="exporting || loading" @command="handleExport">
     <el-button :loading="exporting" size="default">
       <el-icon><Download /></el-icon>
       {{ exporting ? $t('common.exporting') : $t('common.exportFile') }}
@@ -12,12 +7,7 @@
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item
-          v-for="t in availableTypes"
-          :key="t.value"
-          :command="t.value"
-          :icon="t.icon"
-        >
+        <el-dropdown-item v-for="t in availableTypes" :key="t.value" :command="t.value" :icon="t.icon">
           {{ t.label }}
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -39,7 +29,7 @@ const { t } = useI18n()
 
 // 模块级缓存：跨组件实例共享（keep-alive 重建组件时复用）
 const configCache = new Map() // path → exportTypes[]
-let fetchingPath = ''        // 当前正在请求的 path（简单去重）
+let fetchingPath = '' // 当前正在请求的 path（简单去重）
 
 const props = defineProps({
   /** 表格数据（响应式数组） */
@@ -60,13 +50,16 @@ const exporting = ref(false)
 const exportTypes = ref([])
 
 const typeMap = {
-  excel: { label: t('common.exportToExcel'), icon: Document, mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', ext: '.xlsx' },
-  pdf:    { label: t('common.exportToPdf'),   icon: Tickets,  mime: 'application/pdf', ext: '.pdf' }
+  excel: {
+    label: t('common.exportToExcel'),
+    icon: Document,
+    mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ext: '.xlsx'
+  },
+  pdf: { label: t('common.exportToPdf'), icon: Tickets, mime: 'application/pdf', ext: '.pdf' }
 }
 
-const availableTypes = computed(() =>
-  exportTypes.value.map(t => ({ value: t, ...typeMap[t] })).filter(Boolean)
-)
+const availableTypes = computed(() => exportTypes.value.map((t) => ({ value: t, ...typeMap[t] })).filter(Boolean))
 
 // 首次挂载查询配置（仅一次，keep-alive 缓存后切换标签不重复触发）
 onMounted(fetchConfig)
@@ -175,7 +168,7 @@ function toRawData(arr) {
 
 function formatDate() {
   const now = new Date()
-  const pad = n => String(n).padStart(2, '0')
+  const pad = (n) => String(n).padStart(2, '0')
   return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
 }
 </script>

@@ -1,11 +1,17 @@
 <template>
   <div class="page-container">
-    <el-row :gutter="16" style="flex: 1; min-height: 0;">
+    <el-row :gutter="16" style="flex: 1; min-height: 0">
       <!-- 左侧：字典类型 -->
       <el-col :span="10">
-        <el-card shadow="never" header="字典类型" style="height: 100%; display: flex; flex-direction: column;">
-          <div class="search-bar" style="padding: 0; margin-bottom: 6px; background: transparent;">
-            <el-input v-model="typeKeyword" placeholder="搜索字典名称/类型" clearable size="small" style="width: 180px;" />
+        <el-card shadow="never" header="字典类型" style="height: 100%; display: flex; flex-direction: column">
+          <div class="search-bar" style="padding: 0; margin-bottom: 6px; background: transparent">
+            <el-input
+              v-model="typeKeyword"
+              placeholder="搜索字典名称/类型"
+              clearable
+              size="small"
+              style="width: 180px"
+            />
             <div style="flex: 1" />
             <el-button type="primary" size="small" @click="handleAddType" v-if="userStore.hasPerm('sys:dict:add')">
               <el-icon><Plus /></el-icon> 新增
@@ -24,10 +30,32 @@
               </template>
             </el-dropdown>
           </div>
-          <el-table :data="sortedTypeData" border stripe v-loading="typeLoading" highlight-current-row
-            @row-click="onTypeClick" :row-class-name="typeRowClassName" @sort-change="handleTypeSortChange" style="flex: 1;">
-            <el-table-column v-if="visibleTypeColumns.includes('dictName')" prop="dictName" label="字典名称" min-width="120" sortable />
-            <el-table-column v-if="visibleTypeColumns.includes('dictType')" prop="dictType" label="字典类型" min-width="140" show-overflow-tooltip sortable />
+          <el-table
+            :data="sortedTypeData"
+            border
+            stripe
+            v-loading="typeLoading"
+            highlight-current-row
+            @row-click="onTypeClick"
+            :row-class-name="typeRowClassName"
+            @sort-change="handleTypeSortChange"
+            style="flex: 1"
+          >
+            <el-table-column
+              v-if="visibleTypeColumns.includes('dictName')"
+              prop="dictName"
+              label="字典名称"
+              min-width="120"
+              sortable
+            />
+            <el-table-column
+              v-if="visibleTypeColumns.includes('dictType')"
+              prop="dictType"
+              label="字典类型"
+              min-width="140"
+              show-overflow-tooltip
+              sortable
+            />
             <el-table-column v-if="visibleTypeColumns.includes('status')" prop="status" label="状态" width="70">
               <template #default="{ row }">
                 <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">
@@ -37,24 +65,47 @@
             </el-table-column>
             <el-table-column label="操作" width="120">
               <template #default="{ row }">
-                <el-button link type="primary" size="small" @click.stop="handleEditType(row)" v-if="userStore.hasPerm('sys:dict:edit')">编辑</el-button>
-                <el-button link type="danger" size="small" @click.stop="handleDeleteType(row)" v-if="userStore.hasPerm('sys:dict:delete')">删除</el-button>
+                <el-button
+                  link
+                  type="primary"
+                  size="small"
+                  @click.stop="handleEditType(row)"
+                  v-if="userStore.hasPerm('sys:dict:edit')"
+                  >编辑</el-button
+                >
+                <el-button
+                  link
+                  type="danger"
+                  size="small"
+                  @click.stop="handleDeleteType(row)"
+                  v-if="userStore.hasPerm('sys:dict:delete')"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
           <el-pagination
-            v-model:current-page="typePage" v-model:page-size="typeSize" :total="typeTotal"
-            :page-sizes="[5, 10, 20]" layout="total, prev, pager, next" size="small"
-            style="margin-top: 8px; justify-content: flex-end; flex-shrink: 0;"
-            @size-change="fetchTypeData" @current-change="fetchTypeData"
+            v-model:current-page="typePage"
+            v-model:page-size="typeSize"
+            :total="typeTotal"
+            :page-sizes="[5, 10, 20]"
+            layout="total, prev, pager, next"
+            size="small"
+            style="margin-top: 8px; justify-content: flex-end; flex-shrink: 0"
+            @size-change="fetchTypeData"
+            @current-change="fetchTypeData"
           />
         </el-card>
       </el-col>
 
       <!-- 右侧：字典数据 -->
       <el-col :span="14">
-        <el-card shadow="never" :header="`字典数据${currentType ? ' - ' + currentType.dictName : ''}`" style="height: 100%; display: flex; flex-direction: column;">
-          <div class="search-bar" style="padding: 0; margin-bottom: 6px; background: transparent;" v-if="currentType">
+        <el-card
+          shadow="never"
+          :header="`字典数据${currentType ? ' - ' + currentType.dictName : ''}`"
+          style="height: 100%; display: flex; flex-direction: column"
+        >
+          <div class="search-bar" style="padding: 0; margin-bottom: 6px; background: transparent" v-if="currentType">
             <div style="flex: 1" />
             <el-button type="primary" size="small" @click="handleAddData" v-if="userStore.hasPerm('sys:dict:add')">
               <el-icon><Plus /></el-icon> 新增数据
@@ -73,9 +124,28 @@
               </template>
             </el-dropdown>
           </div>
-          <el-table :data="sortedDataList" border stripe v-loading="dataLoading" style="flex: 1;" @sort-change="handleDataSortChange">
-            <el-table-column v-if="visibleDataColumns.includes('dictLabel')" prop="dictLabel" label="字典标签" width="120" sortable />
-            <el-table-column v-if="visibleDataColumns.includes('dictValue')" prop="dictValue" label="字典键值" width="120" sortable />
+          <el-table
+            :data="sortedDataList"
+            border
+            stripe
+            v-loading="dataLoading"
+            style="flex: 1"
+            @sort-change="handleDataSortChange"
+          >
+            <el-table-column
+              v-if="visibleDataColumns.includes('dictLabel')"
+              prop="dictLabel"
+              label="字典标签"
+              width="120"
+              sortable
+            />
+            <el-table-column
+              v-if="visibleDataColumns.includes('dictValue')"
+              prop="dictValue"
+              label="字典键值"
+              width="120"
+              sortable
+            />
             <el-table-column v-if="visibleDataColumns.includes('sort')" prop="sort" label="排序" width="60" sortable />
             <el-table-column v-if="visibleDataColumns.includes('status')" prop="status" label="状态" width="80">
               <template #default="{ row }">
@@ -84,11 +154,31 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column v-if="visibleDataColumns.includes('remark')" prop="remark" label="备注" min-width="120" show-overflow-tooltip />
+            <el-table-column
+              v-if="visibleDataColumns.includes('remark')"
+              prop="remark"
+              label="备注"
+              min-width="120"
+              show-overflow-tooltip
+            />
             <el-table-column label="操作" width="120">
               <template #default="{ row }">
-                <el-button link type="primary" size="small" @click="handleEditData(row)" v-if="userStore.hasPerm('sys:dict:edit')">编辑</el-button>
-                <el-button link type="danger" size="small" @click="handleDeleteData(row)" v-if="userStore.hasPerm('sys:dict:delete')">删除</el-button>
+                <el-button
+                  link
+                  type="primary"
+                  size="small"
+                  @click="handleEditData(row)"
+                  v-if="userStore.hasPerm('sys:dict:edit')"
+                  >编辑</el-button
+                >
+                <el-button
+                  link
+                  type="danger"
+                  size="small"
+                  @click="handleDeleteData(row)"
+                  v-if="userStore.hasPerm('sys:dict:delete')"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -173,7 +263,7 @@ const typeColumnOptions = [
   { key: 'dictType', label: '字典类型' },
   { key: 'status', label: '状态' }
 ]
-const visibleTypeColumns = ref(typeColumnOptions.map(c => c.key))
+const visibleTypeColumns = ref(typeColumnOptions.map((c) => c.key))
 
 function toggleTypeColumn(key) {
   const idx = visibleTypeColumns.value.indexOf(key)
@@ -231,7 +321,7 @@ const dataColumnOptions = [
   { key: 'status', label: '状态' },
   { key: 'remark', label: '备注' }
 ]
-const visibleDataColumns = ref(dataColumnOptions.map(c => c.key))
+const visibleDataColumns = ref(dataColumnOptions.map((c) => c.key))
 
 function toggleDataColumn(key) {
   const idx = visibleDataColumns.value.indexOf(key)
@@ -314,7 +404,13 @@ function handleAddType() {
 function handleEditType(row) {
   isTypeEdit.value = true
   typeDialogTitle.value = '编辑字典类型'
-  Object.assign(typeForm, { id: row.id, dictName: row.dictName, dictType: row.dictType, remark: row.remark || '', status: row.status })
+  Object.assign(typeForm, {
+    id: row.id,
+    dictName: row.dictName,
+    dictType: row.dictType,
+    remark: row.remark || '',
+    status: row.status
+  })
   typeDialogVisible.value = true
 }
 
@@ -351,14 +447,30 @@ async function handleTypeSubmit() {
 function handleAddData() {
   isDataEdit.value = false
   dataDialogTitle.value = '新增字典数据'
-  Object.assign(dataForm, { id: null, typeId: currentType.value.id, dictLabel: '', dictValue: '', sort: 0, remark: '', status: 1 })
+  Object.assign(dataForm, {
+    id: null,
+    typeId: currentType.value.id,
+    dictLabel: '',
+    dictValue: '',
+    sort: 0,
+    remark: '',
+    status: 1
+  })
   dataDialogVisible.value = true
 }
 
 function handleEditData(row) {
   isDataEdit.value = true
   dataDialogTitle.value = '编辑字典数据'
-  Object.assign(dataForm, { id: row.id, typeId: row.typeId, dictLabel: row.dictLabel, dictValue: row.dictValue, sort: row.sort, remark: row.remark || '', status: row.status })
+  Object.assign(dataForm, {
+    id: row.id,
+    typeId: row.typeId,
+    dictLabel: row.dictLabel,
+    dictValue: row.dictValue,
+    sort: row.sort,
+    remark: row.remark || '',
+    status: row.status
+  })
   dataDialogVisible.value = true
 }
 

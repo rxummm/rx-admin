@@ -80,7 +80,7 @@
 
 <script setup>
 defineOptions({ name: 'MonitorHealth' })
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getCyberTheme } from '@/utils/echartsTheme'
 
@@ -94,9 +94,9 @@ async function loadEcharts() {
   }
   return _echarts
 }
-const logWarn = import.meta.env.DEV ? console.warn : () => {}
+const _logWarn = import.meta.env.DEV ? console.warn : () => {}
 import { getSystemHealthApi, getGcStatsApi } from '@/api/health'
-import { useNotificationSse } from '@/composables/useNotificationSse'
+import { useNotificationWebSocket } from '@/composables/useNotificationWebSocket'
 
 const data = ref({})
 const gcData = ref({})
@@ -227,16 +227,16 @@ const fetchData = async () => {
     data.value = health.data || {}
     gcData.value = gc.data || {}
     nextTick(() => renderGauge())
-  } catch (e) {
+  } catch {
     /* ignore */
   }
 }
 
-const sse = useNotificationSse()
+const notificationWs = useNotificationWebSocket()
 
 onMounted(() => {
   fetchData()
-  sse.on('health', (parsed) => {
+  notificationWs.on('health', (parsed) => {
     if (parsed.code === 200 && parsed.data) {
       data.value = parsed.data
       nextTick(() => renderGauge())

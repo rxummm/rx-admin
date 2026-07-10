@@ -12,8 +12,12 @@
               {{ (userStore.userInfo?.nickname || userStore.userInfo?.username || 'U').charAt(0).toUpperCase() }}
             </el-avatar>
             <h3 class="nickname">{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</h3>
-            <el-tag v-if="userStore.roles.includes('admin')" type="danger" effect="dark">{{ $t('profile.roleOptions.admin') }}</el-tag>
-            <el-tag v-else-if="userStore.roles.includes('operator')" type="warning" effect="dark">{{ $t('profile.roleOptions.operator') }}</el-tag>
+            <el-tag v-if="userStore.roles.includes('admin')" type="danger" effect="dark">{{
+              $t('profile.roleOptions.admin')
+            }}</el-tag>
+            <el-tag v-else-if="userStore.roles.includes('operator')" type="warning" effect="dark">{{
+              $t('profile.roleOptions.operator')
+            }}</el-tag>
             <el-tag v-else type="info" effect="dark">{{ $t('profile.roleOptions.user') }}</el-tag>
           </div>
           <el-divider />
@@ -69,13 +73,28 @@
             <!-- ⚠️ 安全要求：改密码时必须先输入旧密码。
                  防止 token 泄露后被攻击者直接改密码永久接管账号。 -->
             <el-form-item :label="$t('profile.oldPassword')" prop="oldPassword">
-              <el-input v-model="form.oldPassword" type="password" :placeholder="$t('profile.oldPasswordChangePlaceholder')" show-password />
+              <el-input
+                v-model="form.oldPassword"
+                type="password"
+                :placeholder="$t('profile.oldPasswordChangePlaceholder')"
+                show-password
+              />
             </el-form-item>
             <el-form-item :label="$t('profile.newPassword')" prop="newPassword">
-              <el-input v-model="form.newPassword" type="password" :placeholder="$t('common.leaveBlank')" show-password />
+              <el-input
+                v-model="form.newPassword"
+                type="password"
+                :placeholder="$t('common.leaveBlank')"
+                show-password
+              />
             </el-form-item>
             <el-form-item :label="$t('profile.confirmPassword')" prop="confirmPassword">
-              <el-input v-model="form.confirmPassword" type="password" :placeholder="$t('profile.confirmPasswordPlaceholder')" show-password />
+              <el-input
+                v-model="form.confirmPassword"
+                type="password"
+                :placeholder="$t('profile.confirmPasswordPlaceholder')"
+                show-password
+              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" :loading="saving" @click="handleSave">{{ $t('common.save') }}</el-button>
@@ -230,7 +249,7 @@ async function handleSave() {
     form.oldPassword = ''
     form.newPassword = ''
     form.confirmPassword = ''
-  } catch (e) {
+  } catch {
     // 错误已在拦截器中处理
   } finally {
     saving.value = false

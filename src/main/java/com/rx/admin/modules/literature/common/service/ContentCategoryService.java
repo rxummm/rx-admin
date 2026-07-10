@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
-@SuppressWarnings("null")
 public class ContentCategoryService extends ServiceImpl<ContentCategoryMapper, ContentCategory> {
 
     public PageResult<ContentCategory> pageQuery(int page, int size, String keyword) {

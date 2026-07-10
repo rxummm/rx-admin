@@ -19,7 +19,7 @@
     <!-- 语言分布 + 架构层 -->
     <el-row :gutter="20" class="kg-row">
       <el-col :span="10">
-        <el-card shadow="hover" class="section-card" style="height:100%">
+        <el-card shadow="hover" class="section-card" style="height: 100%">
           <template #header>
             <div class="section-header">
               <el-icon :size="20" color="#f59e0b"><PieChart /></el-icon>
@@ -30,7 +30,7 @@
         </el-card>
       </el-col>
       <el-col :span="14">
-        <el-card shadow="hover" class="section-card" style="height:100%">
+        <el-card shadow="hover" class="section-card" style="height: 100%">
           <template #header>
             <div class="section-header">
               <el-icon :size="20" color="#67c23a"><Grid /></el-icon>
@@ -96,8 +96,9 @@
                 size="small"
                 effect="plain"
                 @click="selectFile(nid)"
-                style="cursor:pointer;margin:2px;"
-              >{{ fileNameById(nid) }}</el-tag>
+                style="cursor: pointer; margin: 2px"
+                >{{ fileNameById(nid) }}</el-tag
+              >
             </div>
           </el-card>
         </el-timeline-item>
@@ -112,8 +113,14 @@
           <span>文件检索（共 {{ totalFiles }} 个源文件）</span>
         </div>
       </template>
-      <div style="margin-bottom:12px">
-        <el-input v-model="searchQuery" placeholder="搜索文件名、路径或摘要..." clearable prefix-icon="Search" @input="doSearch" />
+      <div style="margin-bottom: 12px">
+        <el-input
+          v-model="searchQuery"
+          placeholder="搜索文件名、路径或摘要..."
+          clearable
+          prefix-icon="Search"
+          @input="doSearch"
+        />
       </div>
       <div v-if="searchResults.length" class="search-results">
         <div
@@ -131,15 +138,16 @@
           <div class="search-summary" v-if="f.summary">{{ f.summary }}</div>
           <!-- 展开详情 -->
           <div v-if="selectedFile === f.id" class="search-relations">
-            <div v-if="fileRelations[f.id] && fileRelations[f.id].length" style="margin-top:6px;">
-              <span style="font-size:11px;color:#94a3b8;">关联文件：</span>
+            <div v-if="fileRelations[f.id] && fileRelations[f.id].length" style="margin-top: 6px">
+              <span style="font-size: 11px; color: #94a3b8">关联文件：</span>
               <el-tag
                 v-for="rel in fileRelations[f.id]"
                 :key="rel.target"
                 size="small"
-                style="margin:2px;cursor:pointer"
+                style="margin: 2px; cursor: pointer"
                 @click="jumpToFile(rel.target)"
-              >{{ rel.type }}: {{ fileNameById(rel.target) }}</el-tag>
+                >{{ rel.type }}: {{ fileNameById(rel.target) }}</el-tag
+              >
             </div>
           </div>
         </div>
@@ -163,9 +171,7 @@ async function loadEcharts() {
   return _echarts
 }
 const logWarn = import.meta.env.DEV ? console.warn : () => {}
-import {
-  Connection, PieChart, Grid, Link, Collection, Compass, Search
-} from '@element-plus/icons-vue'
+import { Connection, PieChart, Grid, Link, Collection, Compass, Search } from '@element-plus/icons-vue'
 
 const loading = ref(true)
 const graph = ref(null)
@@ -177,27 +183,40 @@ const fileRelations = ref({})
 const langChartRef = ref(null)
 const layerChartRef = ref(null)
 const edgeChartRef = ref(null)
-let langChart = null, layerChart = null, edgeChart = null
+let langChart = null,
+  layerChart = null,
+  edgeChart = null
 
 // Colors
-const colorPalette = ['#f59e0b', '#10b981', '#e6a23c', '#ef4444', '#8b5cf6', '#6b7280', '#38bdf8', '#ec4899', '#14b8a6', '#f97316']
+const colorPalette = [
+  '#f59e0b',
+  '#10b981',
+  '#e6a23c',
+  '#ef4444',
+  '#8b5cf6',
+  '#6b7280',
+  '#38bdf8',
+  '#ec4899',
+  '#14b8a6',
+  '#f97316'
+]
 const timelineColors = ['#f59e0b', '#10b981', '#e6a23c', '#ef4444', '#8b5cf6']
 
 const frameworks = computed(() => graph.value?.project?.frameworks || [])
 const totalFiles = computed(() => {
   if (!graph.value) return 0
-  return graph.value.nodes.filter(n => n.type === 'file').length
+  return graph.value.nodes.filter((n) => n.type === 'file').length
 })
 
 const summaryCards = computed(() => {
   if (!graph.value) return []
   return [
-    { label: '源文件', value: graph.value.nodes.filter(n => n.type === 'file').length },
-    { label: '类/接口', value: graph.value.nodes.filter(n => n.type === 'class').length },
+    { label: '源文件', value: graph.value.nodes.filter((n) => n.type === 'file').length },
+    { label: '类/接口', value: graph.value.nodes.filter((n) => n.type === 'class').length },
     { label: '关系边', value: graph.value.edges.length },
     { label: '架构层', value: graph.value.layers?.length || 0 },
     { label: '导览步骤', value: graph.value.tour?.length || 0 },
-    { label: '编程语言', value: graph.value.project?.languages?.length || 0 },
+    { label: '编程语言', value: graph.value.project?.languages?.length || 0 }
   ]
 })
 
@@ -207,11 +226,12 @@ const searchResults = computed(() => {
   if (!graph.value || !searchQuery.value || searchQuery.value.length < 2) return []
   const q = searchQuery.value.toLowerCase()
   return graph.value.nodes
-    .filter(n => n.type === 'file')
-    .filter(f =>
-      f.name.toLowerCase().includes(q) ||
-      f.filePath.toLowerCase().includes(q) ||
-      (f.summary && f.summary.toLowerCase().includes(q))
+    .filter((n) => n.type === 'file')
+    .filter(
+      (f) =>
+        f.name.toLowerCase().includes(q) ||
+        f.filePath.toLowerCase().includes(q) ||
+        (f.summary && f.summary.toLowerCase().includes(q))
     )
     .slice(0, 50)
 })
@@ -225,7 +245,7 @@ function langClass(fp) {
 }
 
 function fileNameById(id) {
-  const n = graph.value?.nodes.find(x => x.id === id)
+  const n = graph.value?.nodes.find((x) => x.id === id)
   return n ? n.name : id
 }
 
@@ -242,8 +262,8 @@ function jumpToFile(id) {
 }
 
 function buildFileRelations(id) {
-  const edges = graph.value.edges.filter(e => e.source === id || e.target === id)
-  const rels = edges.map(e => ({
+  const edges = graph.value.edges.filter((e) => e.source === id || e.target === id)
+  const rels = edges.map((e) => ({
     type: e.type,
     target: e.source === id ? e.target : e.source,
     direction: e.source === id ? 'out' : 'in'
@@ -258,69 +278,95 @@ function doSearch() {
 // Charts
 async function renderLangChart() {
   if (!langChartRef.value || !graph.value) return
-  const files = graph.value.nodes.filter(n => n.type === 'file')
+  const files = graph.value.nodes.filter((n) => n.type === 'file')
   const langCount = {}
-  files.forEach(f => {
-    const lang = graph.value.project.languages.find(l => f.filePath.endsWith('.' + l)) || 'other'
+  files.forEach((f) => {
+    const lang = graph.value.project.languages.find((l) => f.filePath.endsWith('.' + l)) || 'other'
     langCount[lang] = (langCount[lang] || 0) + 1
   })
   const data = Object.entries(langCount).map(([k, v]) => ({ name: k, value: v }))
   if (!langChart) langChart = (await loadEcharts()).init(langChartRef.value, getCyberTheme())
   langChart.setOption({
     tooltip: { trigger: 'item' },
-    series: [{
-      type: 'pie', radius: ['45%', '72%'], center: ['50%', '50%'],
-      data: data.map((d, i) => ({ ...d, itemStyle: { color: colorPalette[i % colorPalette.length] } })),
-      label: { formatter: '{b}\n{d}%' }
-    }]
+    series: [
+      {
+        type: 'pie',
+        radius: ['45%', '72%'],
+        center: ['50%', '50%'],
+        data: data.map((d, i) => ({ ...d, itemStyle: { color: colorPalette[i % colorPalette.length] } })),
+        label: { formatter: '{b}\n{d}%' }
+      }
+    ]
   })
 }
 
 async function renderLayerChart() {
   if (!layerChartRef.value || !graph.value || !graph.value.layers) return
-  const names = graph.value.layers.map(l => l.name)
-  const counts = graph.value.layers.map(l => l.nodeIds.length)
+  const names = graph.value.layers.map((l) => l.name)
+  const counts = graph.value.layers.map((l) => l.nodeIds.length)
   if (!layerChart) layerChart = (await loadEcharts()).init(layerChartRef.value, getCyberTheme())
   layerChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
     xAxis: { type: 'value', name: '文件数' },
     yAxis: { type: 'category', data: names.reverse(), axisLabel: { fontSize: 11 } },
-    series: [{
-      type: 'bar',
-      data: counts.reverse().map((v, i) => ({ value: v, itemStyle: { color: colorPalette[i % colorPalette.length], borderRadius: [0, 4, 4, 0] } })),
-      barMaxWidth: 28,
-      label: { show: true, position: 'right', fontSize: 11 }
-    }]
+    series: [
+      {
+        type: 'bar',
+        data: counts.reverse().map((v, i) => ({
+          value: v,
+          itemStyle: { color: colorPalette[i % colorPalette.length], borderRadius: [0, 4, 4, 0] }
+        })),
+        barMaxWidth: 28,
+        label: { show: true, position: 'right', fontSize: 11 }
+      }
+    ]
   })
 }
 
 async function renderEdgeChart() {
   if (!edgeChartRef.value || !graph.value) return
   const edgeTypes = {}
-  graph.value.edges.forEach(e => { edgeTypes[e.type] = (edgeTypes[e.type] || 0) + 1 })
+  graph.value.edges.forEach((e) => {
+    edgeTypes[e.type] = (edgeTypes[e.type] || 0) + 1
+  })
   const data = Object.entries(edgeTypes).sort((a, b) => b[1] - a[1])
   if (!edgeChart) edgeChart = (await loadEcharts()).init(edgeChartRef.value, getCyberTheme())
   edgeChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     grid: { left: '3%', right: '6%', top: 10, bottom: 5, containLabel: true },
     xAxis: { type: 'value', name: '边数' },
-    yAxis: { type: 'category', data: data.map(d => d[0]).reverse(), axisLabel: { fontSize: 11 } },
-    series: [{
-      type: 'bar',
-      data: data.map(d => d[1]).reverse().map((v, i) => ({ value: v, itemStyle: { color: colorPalette[i % colorPalette.length], borderRadius: [0, 4, 4, 0] } })),
-      barMaxWidth: 28,
-      label: { show: true, position: 'right', fontSize: 11 }
-    }]
+    yAxis: { type: 'category', data: data.map((d) => d[0]).reverse(), axisLabel: { fontSize: 11 } },
+    series: [
+      {
+        type: 'bar',
+        data: data
+          .map((d) => d[1])
+          .reverse()
+          .map((v, i) => ({
+            value: v,
+            itemStyle: { color: colorPalette[i % colorPalette.length], borderRadius: [0, 4, 4, 0] }
+          })),
+        barMaxWidth: 28,
+        label: { show: true, position: 'right', fontSize: 11 }
+      }
+    ]
   })
 }
 
 function disposeAll() {
-  [langChart, layerChart, edgeChart].forEach(c => { if (c) { c.dispose(); c = null } })
+  ;[langChart, layerChart, edgeChart].forEach((c) => {
+    if (c) {
+      c.dispose()
+      c = null
+    }
+  })
 }
 
 function onResize() {
-  [langChart, layerChart, edgeChart].forEach(c => { if (c) c.resize() })
+  ;[langChart, layerChart, edgeChart].forEach((c) => {
+    if (c) c.resize()
+  })
 }
 
 async function loadGraph() {
@@ -426,7 +472,9 @@ onBeforeUnmount(() => {
 }
 
 .kg-row {
-  .section-card { height: 100%; }
+  .section-card {
+    height: 100%;
+  }
 }
 
 .kg-chart {
@@ -443,8 +491,16 @@ onBeforeUnmount(() => {
 
 .tour-card {
   margin-bottom: 4px;
-  h4 { margin: 0 0 6px; font-size: 14px; color: var(--text-primary); }
-  p { margin: 0 0 6px; font-size: 12px; color: var(--text-secondary); }
+  h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  p {
+    margin: 0 0 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
 }
 
 .search-results {
@@ -459,7 +515,9 @@ onBeforeUnmount(() => {
   transition: background 0.15s;
   border: 1px solid transparent;
 
-  &:hover { background: var(--bg-hover); }
+  &:hover {
+    background: var(--bg-hover);
+  }
 }
 
 .search-item-head {
@@ -473,10 +531,18 @@ onBeforeUnmount(() => {
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
-  &.java { background: #f97316; }
-  &.vue { background: #22c55e; }
-  &.javascript { background: #eab308; }
-  &.scss { background: #ec4899; }
+  &.java {
+    background: #f97316;
+  }
+  &.vue {
+    background: #22c55e;
+  }
+  &.javascript {
+    background: #eab308;
+  }
+  &.scss {
+    background: #ec4899;
+  }
 }
 
 .search-name {

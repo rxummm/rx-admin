@@ -93,7 +93,7 @@ public class SysPermissionRequestService extends ServiceImpl<SysPermissionReques
      * 将申请的菜单/按钮权限直接写入 sys_user_menu 表（个性化权限）
      * 不再创建独立角色，避免角色冗余
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void approve(Long requestId) {
         SysPermissionRequest request = getById(requestId);
         if (request == null || request.getStatus() != 0) {

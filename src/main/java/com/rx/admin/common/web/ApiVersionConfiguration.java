@@ -38,7 +38,7 @@ public class ApiVersionConfiguration implements WebMvcRegistrations {
     private static class ApiVersionRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 
         @Override
-        @SuppressWarnings({"null", "unused"})
+        @SuppressWarnings("unused")
         protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
             RequestMappingInfo info = super.getMappingForMethod(method, handlerType);
             if (info == null) {

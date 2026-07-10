@@ -12,12 +12,7 @@
         style="width: 200px"
         @change="handleLibraryChange"
       >
-        <el-option
-          v-for="lib in libraryOptions"
-          :key="lib"
-          :label="lib"
-          :value="lib"
-        />
+        <el-option v-for="lib in libraryOptions" :key="lib" :label="lib" :value="lib" />
       </el-select>
       <el-input
         v-model="keyword"
@@ -73,18 +68,60 @@
         style="width: 100%"
         @sort-change="handleSortChange"
       >
-        <el-table-column v-if="visibleColumns.includes('library')" prop="library" :label="$t('as400.library')" width="120" sortable="custom" />
-        <el-table-column v-if="visibleColumns.includes('objectName')" prop="objectName" :label="$t('as400.objectName')" width="150" show-overflow-tooltip sortable="custom" />
-        <el-table-column v-if="visibleColumns.includes('objectType')" prop="objectType" :label="$t('as400.objectType')" width="120" sortable="custom">
+        <el-table-column
+          v-if="visibleColumns.includes('library')"
+          prop="library"
+          :label="$t('as400.library')"
+          width="120"
+          sortable="custom"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('objectName')"
+          prop="objectName"
+          :label="$t('as400.objectName')"
+          width="150"
+          show-overflow-tooltip
+          sortable="custom"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('objectType')"
+          prop="objectType"
+          :label="$t('as400.objectType')"
+          width="120"
+          sortable="custom"
+        >
           <template #default="{ row }">
             <el-tag size="small" :type="getTypeTag(row.objectType)">{{ row.objectType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('attribute')" prop="attribute" :label="$t('as400.attribute')" width="130" />
-        <el-table-column v-if="visibleColumns.includes('text')" prop="text" :label="$t('as400.text')" min-width="160" show-overflow-tooltip />
+        <el-table-column
+          v-if="visibleColumns.includes('attribute')"
+          prop="attribute"
+          :label="$t('as400.attribute')"
+          width="130"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('text')"
+          prop="text"
+          :label="$t('as400.text')"
+          min-width="160"
+          show-overflow-tooltip
+        />
         <el-table-column v-if="visibleColumns.includes('owner')" prop="owner" :label="$t('as400.owner')" width="90" />
-        <el-table-column v-if="visibleColumns.includes('createDate')" prop="createDate" :label="$t('as400.createDate')" width="180" sortable="custom" />
-        <el-table-column v-if="visibleColumns.includes('size')" prop="size" :label="$t('as400.size')" width="100" sortable="custom">
+        <el-table-column
+          v-if="visibleColumns.includes('createDate')"
+          prop="createDate"
+          :label="$t('as400.createDate')"
+          width="180"
+          sortable="custom"
+        />
+        <el-table-column
+          v-if="visibleColumns.includes('size')"
+          prop="size"
+          :label="$t('as400.size')"
+          width="100"
+          sortable="custom"
+        >
           <template #default="{ row }">
             {{ formatSize(row.size) }}
           </template>
@@ -93,10 +130,14 @@
 
       <!-- 分页条 -->
       <el-pagination
-        v-model:current-page="page" v-model:page-size="size" :total="filteredData.length"
-        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="filteredData.length"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
         class="page-pagination"
-        @size-change="handlePageChange" @current-change="handlePageChange"
+        @size-change="handlePageChange"
+        @current-change="handlePageChange"
       />
     </div>
   </div>
@@ -144,13 +185,14 @@ const filteredData = computed(() => {
   let data = tableData.value
   if (keyword.value) {
     const kw = keyword.value.toLowerCase()
-    data = data.filter(row =>
-      (row.objectName && row.objectName.toLowerCase().includes(kw)) ||
-      (row.objectType && row.objectType.toLowerCase().includes(kw)) ||
-      (row.library && row.library.toLowerCase().includes(kw)) ||
-      (row.attribute && row.attribute.toLowerCase().includes(kw)) ||
-      (row.text && row.text.toLowerCase().includes(kw)) ||
-      (row.owner && row.owner.toLowerCase().includes(kw))
+    data = data.filter(
+      (row) =>
+        (row.objectName && row.objectName.toLowerCase().includes(kw)) ||
+        (row.objectType && row.objectType.toLowerCase().includes(kw)) ||
+        (row.library && row.library.toLowerCase().includes(kw)) ||
+        (row.attribute && row.attribute.toLowerCase().includes(kw)) ||
+        (row.text && row.text.toLowerCase().includes(kw)) ||
+        (row.owner && row.owner.toLowerCase().includes(kw))
     )
   }
   return data
@@ -183,12 +225,19 @@ const pagedTableData = computed(() => {
 // 类型统计
 const typeStats = computed(() => {
   const map = {}
-  filteredData.value.forEach(row => {
+  filteredData.value.forEach((row) => {
     const type = row.objectType || 'UNKNOWN'
     map[type] = (map[type] || 0) + 1
   })
   // 使用 info 作为兜底类型，避免空字符串导致 ElTag 警告
-  const tagColors = { '*PGM': 'primary', '*FILE': 'success', '*MSGF': 'warning', '*DTAARA': 'info', '*CMD': 'danger', '*SRVPGM': 'info' }
+  const tagColors = {
+    '*PGM': 'primary',
+    '*FILE': 'success',
+    '*MSGF': 'warning',
+    '*DTAARA': 'info',
+    '*CMD': 'danger',
+    '*SRVPGM': 'info'
+  }
   return Object.entries(map).map(([type, count]) => ({
     type,
     count,
@@ -198,7 +247,14 @@ const typeStats = computed(() => {
 
 function getTypeTag(type) {
   // 返回有效 ElTag type 值，避免空字符串警告
-  const map = { '*PGM': 'primary', '*FILE': 'success', '*MSGF': 'warning', '*DTAARA': 'info', '*CMD': 'danger', '*SRVPGM': 'info' }
+  const map = {
+    '*PGM': 'primary',
+    '*FILE': 'success',
+    '*MSGF': 'warning',
+    '*DTAARA': 'info',
+    '*CMD': 'danger',
+    '*SRVPGM': 'info'
+  }
   return map[type] || 'info'
 }
 

@@ -19,4 +19,6 @@ public interface ISysMenuService {
     void updateMenu(MenuUpdateDTO dto);
 
     void removeMenu(Long id);
+
+    void deleteMenuBatch(List<Long> ids);
 }
